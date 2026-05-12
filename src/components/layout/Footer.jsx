@@ -1,10 +1,6 @@
 import {
   FaLinkedinIn,
-  FaTwitter,
-  FaYoutube,
   FaInstagram,
-  FaDiscord,
-  FaFacebookF,
 } from "react-icons/fa";
 import { ArrowRight, MapPin, Phone, Mail, Heart } from "lucide-react";
 import Button from "../ui/Button";
@@ -22,8 +18,6 @@ const TECH_COLUMNS = [
           "JavaScript",
           "React.js",
           "Angular",
-          "Vue.js",
-          "Svelte",
           "Next.js",
         ],
       },
@@ -31,13 +25,10 @@ const TECH_COLUMNS = [
         title: "Backend",
         links: [
           "Node.js",
-          "Python (Django, Flask, FastAPI)",
-          "Ruby on Rails",
+          "Python",
           "Java",
           "Go (Golang)",
-          "PHP (Laravel)",
           "ASP.NET (C#, VB)",
-          "Scala",
         ],
       },
     ],
@@ -50,18 +41,15 @@ const TECH_COLUMNS = [
         links: [
           "MySQL",
           "PostgreSQL",
-          "Oracle",
           "Microsoft SQL Server",
           "MongoDB",
           "Redis",
-          "Cassandra",
         ],
       },
       {
         title: "Testing",
         links: [
           "Jest / Mocha / Jasmine",
-          "RTL / Vitest",
           "Cypress / Selenium",
           "Postman / Newman",
           "Playwright",
@@ -82,21 +70,19 @@ const TECH_COLUMNS = [
           "Amazon Web Services (AWS)",
           "Microsoft Azure",
           "Google Cloud Platform (GCP)",
-          "Heroku",
-          "Netlify / Vercel",
         ],
       },
       {
         title: "Authentication & Authorization",
-        links: ["OAuth / JWT", "Firebase Auth", "Auth0", "Keycloak"],
+        links: ["OAuth / JWT", "Firebase Auth", "Keycloak"],
       },
       {
         title: "Version Control",
         links: [
           "Git",
-          "GitHub / GitLab / Bitbucket",
-          "SVN / Perforce / Azure",
-          "Slack / Microsoft Teams",
+          "GitHub",
+          "Azure",
+          "Microsoft Teams",
         ],
       },
     ],
@@ -110,15 +96,11 @@ const TECH_COLUMNS = [
           "Docker",
           "Jenkins",
           "GitHub Actions",
-          "CircleCI",
-          "ArgoCD",
-          "Ansible",
-          "Prometheus + Grafana",
         ],
       },
       {
         title: "APIs & Microservices",
-        links: ["REST APIs", "GraphQL", "gRPC", "WebSockets"],
+        links: ["REST APIs", "GraphQL", "WebSockets"],
       },
       {
         title: "Analytics & Monitoring",
@@ -129,16 +111,12 @@ const TECH_COLUMNS = [
 ];
 
 const SOCIALS = [
-  { label: "Facebook", icon: FaFacebookF, href: "#" },
   {
     label: "LinkedIn",
     icon: FaLinkedinIn,
     href: "https://www.linkedin.com/company/cloudnexusorg/posts/?feedView=all",
   },
   { label: "Instagram", icon: FaInstagram, href: "#" },
-  { label: "Twitter", icon: FaTwitter, href: "#" },
-  { label: "YouTube", icon: FaYoutube, href: "#" },
-  { label: "Discord", icon: FaDiscord, href: "#" },
 ];
 
 function CategoryBlock({ title, links }) {
@@ -172,20 +150,15 @@ function CategoryBlock({ title, links }) {
 export default function Footer({ logoText = "CLOUD NEXUS" }) {
   return (
     <footer className="relative bg-bg">
-      {/* Gradient hairline divider at the very top */}
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
-      />
 
-      <div className="mx-auto w-full max-w-[1320px] px-5 pt-10 sm:px-6 md:pt-14 lg:px-8">
+      <div className="mx-auto w-full max-w-[1320px] px-5 pt-15 sm:px-6 md:pt-14 lg:px-8">
         {/* Section eyebrow */}
         <div className="mb-6 flex items-center gap-3">
           <span
             aria-hidden
             className="h-px flex-1 bg-gradient-to-r from-transparent to-border"
           />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-subtle">
+          <span className="text-[15px] font-semibold uppercase tracking-[0.24em] text-subtle">
             Explore the stack
           </span>
           <span
@@ -195,15 +168,10 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
         </div>
 
         {/* 2. MAIN GRID — brand + tech columns */}
-        <div className="grid gap-x-8 gap-y-10 lg:grid-cols-[1.1fr_1fr_1fr_1.15fr_1.15fr]">
+        <div className="grid gap-x-20 gap-y-15 lg:grid-cols-[1.1fr_1fr_1fr_1.15fr_1.15fr]">
           {/* Brand column */}
           <div>
-            <BrandMark logoText={logoText} size="md" />
-
-            <p className="mt-4 max-w-xs text-[13px] leading-6 text-muted">
-              Mentor-led tracks in cloud, AI, and full-stack — graded on real
-              projects, shipped by engineers from ex-FAANG teams.
-            </p>
+            <BrandMark logoText={logoText} size="sm" />
 
             <div className="mt-5 space-y-3 text-[13px] leading-5 text-muted">
               <div className="flex items-start gap-2.5">
@@ -215,7 +183,6 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
                 />
                 <span>
                   7250 Dallas Parkway, Suite 400
-                  <br />
                   Plano, TX 75024, United States
                 </span>
               </div>
@@ -231,8 +198,6 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
                 />
                 <span>
                   +1 (555) 867-5309
-                  <br />
-                  +1 (123) 275-7454
                 </span>
               </a>
               <a

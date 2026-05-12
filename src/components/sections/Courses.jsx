@@ -54,7 +54,6 @@ function CourseCard({ course, index }) {
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{
         duration: 0.55,
@@ -93,7 +92,7 @@ function CourseCard({ course, index }) {
         <div className="relative p-4 pb-0">
           <div
             className={`
-              relative h-[220px]
+              relative h-[190px]
               overflow-hidden
               bg-[#071018]
               ${variant.imageRadius}
@@ -106,8 +105,6 @@ function CourseCard({ course, index }) {
               className="
                 h-full w-full
                 object-cover
-                transition-transform duration-700
-                group-hover:scale-105
               "
             />
 
@@ -125,12 +122,12 @@ function CourseCard({ course, index }) {
             {/* BADGE */}
             <div
               className={`
-                absolute left-4 top-4
+                absolute right-2 top-2
                 inline-flex items-center gap-2
                 rounded-full
-                px-3 py-1
+                px-1 py-1
                 text-[10px]
-                font-semibold
+                font-normal
                 uppercase tracking-[0.18em]
                 backdrop-blur-xl
                 ${variant.badge}
@@ -143,153 +140,56 @@ function CourseCard({ course, index }) {
         </div>
 
         {/* CONTENT */}
-        <div className="flex flex-1 flex-col px-5 pb-5 pt-5">
-          {/* TITLE */}
-          <h3
-            className="
-              text-[23px]
-              font-semibold
-              leading-[1.12]
-              tracking-tight
-              text-text
-              transition-colors duration-300
-              group-hover:text-primary
-            "
-          >
-            {course.title}
-          </h3>
+        {/* CONTENT */}
+<div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+  {/* TITLE & RATING ROW (Dono ko ek line mein ya upar-neeche balanced rakhein) */}
+  <div className="flex flex-col gap-1">
+    <h3 className="text-[22px] font-semibold leading-[1.2] tracking-tight text-text transition-colors duration-300 group-hover:text-primary">
+      {course.title}
+    </h3>
+    <p className="text-[12px] font-medium text-text transition-colors duration-300 group-hover:text-primary uppercase tracking-[0.1em] ">
+      By {course.professor}
+    </p>
+  </div>
 
-          {/* DESCRIPTION */}
-          <p
-            className="
-              mt-3
-              text-[13.5px]
-              leading-6
-              text-muted
-            "
-          >
-            Learn practical cloud-native engineering skills with
-            real-world projects and production-ready mentorship.
-          </p>
+  {/* META STATS - Title ke thik niche for quick value check */}
+  <div className="mt-4 flex flex-wrap items-center gap-2">
+    <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
+      <Star size={12} className="fill-primary text-primary" />
+      <span className="text-[13px] font-bold text-text">{course.rating}</span>
+    </div>
+    
+    <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
+      <Clock3 size={12} className="text-muted" />
+      <span className="text-[13px] font-medium text-text">{course.duration}</span>
+    </div>
 
-          {/* META */}
-          <div
-            className="
-              mt-6
-              flex flex-wrap items-center
-              gap-2
-            "
-          >
-            {/* RATING */}
-            <div
-              className="
-                inline-flex items-center gap-1.5
-                rounded-xl
-                bg-surface
-                px-3 py-2
-              "
-            >
-              <Star
-                size={13}
-                className="fill-primary text-primary"
-              />
+    <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
+      <Layers3 size={12} className="text-muted" />
+      <span className="text-[13px] font-medium text-text">{course.modules} Modules</span>
+    </div>
+  </div>
 
-              <span className="text-[12px] font-semibold text-text">
-                {course.rating}
-              </span>
-            </div>
+  {/* DESCRIPTION - Thoda gap dekar */}
+  <p className="mt-3 text-[13.5px] leading-relaxed text-text line-clamp-2 opacity-90">
+    "{course.description}"
+  </p>
 
-            {/* TIME */}
-            <div
-              className="
-                inline-flex items-center gap-1.5
-                rounded-xl
-                bg-surface
-                px-3 py-2
-              "
-            >
-              <Clock3
-                size={13}
-                className="text-primary"
-              />
+  {/* FOOTER - Sabse niche aligned */}
+  <div className="mt-auto pt-6 flex items-center justify-between border-t border-border/30">
+    <div className="flex items-center gap-2 text-[12px] text-muted">
+      <Users size={16} className="opacity-70" />
+      <span>
+        <span className="font-semibold text-text">{course.enrolled}</span> enrolled
+      </span>
+    </div>
 
-              <span className="text-[12px] font-semibold text-text">
-                {course.duration}
-              </span>
-            </div>
-
-            {/* MODULES */}
-            <div
-              className="
-                inline-flex items-center gap-1.5
-                rounded-xl
-                bg-surface
-                px-3 py-2
-              "
-            >
-              <Layers3
-                size={13}
-                className="text-primary"
-              />
-
-              <span className="text-[12px] font-semibold text-text">
-                {course.modules} Modules
-              </span>
-            </div>
-          </div>
-
-          {/* FOOTER */}
-          <div
-            className="
-              mt-auto pt-7
-              flex items-center justify-between
-            "
-          >
-            {/* USERS */}
-            <div
-              className="
-                flex items-center gap-2
-                text-[12px]
-                text-muted
-              "
-            >
-              <Users size={13} />
-
-              <span>
-                <span className="font-semibold text-text">
-                  {course.enrolled}
-                </span>{" "}
-                enrolled
-              </span>
-            </div>
-
-            {/* BUTTON */}
-            <div
-              className="
-                inline-flex items-center gap-2
-                rounded-full
-                bg-primary
-                px-4 py-2
-                text-[12px]
-                font-semibold
-                text-white
-                shadow-[0_10px_25px_rgba(37,99,235,0.28)]
-                transition-all duration-300
-                group-hover:translate-x-1
-              "
-            >
-              Explore
-
-              <ArrowRight
-                size={13}
-                className="
-                  transition-transform duration-300
-                  group-hover:translate-x-1
-                "
-              />
-            </div>
-          </div>
-        </div>
+    <div className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[12px] font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105 active:scale-95">
+      Explore
+      <ArrowRight size={16} />
+    </div>
+  </div>
+</div>
       </Link>
     </motion.div>
   );
@@ -340,8 +240,7 @@ export default function Courses() {
               text-[14px]
               font-semibold
               text-text
-              transition-all duration-300
-              hover:-translate-y-1
+              transition-all duration-300 ease-out
               hover:border-primary
               hover:text-primary
             "
@@ -351,8 +250,7 @@ export default function Courses() {
             <ArrowRight
               size={15}
               className="
-                transition-transform duration-300
-                group-hover:translate-x-1
+                transition-all duration-300 ease-out
               "
             />
           </Link>
