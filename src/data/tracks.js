@@ -25,6 +25,29 @@ export const tracks = [
       photo:
         "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=120&h=120&fit=crop&q=80",
     },
+    heroMentors: [
+      {
+        name: "Rohit Sharma",
+        role: "Staff Cloud Architect",
+        company: "Ex-AWS",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg",
+      },
+      {
+        name: "Ananya Verma",
+        role: "Cloud Solutions Lead",
+        company: "Ex-Microsoft Azure",
+        photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg",
+      },
+      {
+        name: "Karan Patel",
+        role: "Cloud Engineering Lead",
+        company: "Ex-Google Cloud",
+        photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg",
+      },
+    ],
     salary: "₹22 LPA",
     medianSalary: "$135k",
     activeLearners: 142,
@@ -163,6 +186,29 @@ export const tracks = [
       photo:
         "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&q=80",
     },
+    heroMentors: [
+      {
+        name: "Priya Nair",
+        role: "AI Research Lead",
+        company: "Ex-OpenAI",
+        photo: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+      },
+      {
+        name: "Aditya Rao",
+        role: "ML Platform Engineer",
+        company: "Ex-Google DeepMind",
+        photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg",
+      },
+      {
+        name: "Meera Iyer",
+        role: "NLP Engineer",
+        company: "Ex-Meta AI",
+        photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg",
+      },
+    ],
     salary: "₹25 LPA",
     medianSalary: "$155k",
     activeLearners: 98,
@@ -286,6 +332,29 @@ export const tracks = [
       photo:
         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&q=80",
     },
+    heroMentors: [
+      {
+        name: "Arjun Mehta",
+        role: "Senior Frontend Engineer",
+        company: "Ex-Netflix",
+        photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+      },
+      {
+        name: "Priya Kapoor",
+        role: "React Architect",
+        company: "Ex-Adobe",
+        photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+      },
+      {
+        name: "Rohan Singh",
+        role: "UI Systems Engineer",
+        company: "Ex-Stripe",
+        photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+      },
+    ],
     salary: "₹18 LPA",
     medianSalary: "$120k",
     activeLearners: 76,
@@ -403,6 +472,29 @@ export const tracks = [
       photo:
         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&q=80",
     },
+    heroMentors: [
+      {
+        name: "Vikram Joshi",
+        role: "Principal Backend Engineer",
+        company: "Ex-Uber",
+        photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+      },
+      {
+        name: "Sneha Gupta",
+        role: "API Platform Lead",
+        company: "Ex-Razorpay",
+        photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
+      },
+      {
+        name: "Amit Verma",
+        role: "Systems Architect",
+        company: "Ex-Flipkart",
+        photo: "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg",
+      },
+    ],
     salary: "₹20 LPA",
     medianSalary: "$140k",
     activeLearners: 64,
@@ -515,6 +607,29 @@ export const tracks = [
       photo:
         "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&fit=crop&q=80",
     },
+    heroMentors: [
+      {
+        name: "Nikhil Reddy",
+        role: "Staff SRE",
+        company: "Ex-Shopify",
+        photo: "https://images.unsplash.com/photo-1548449112-96a38a643324?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg",
+      },
+      {
+        name: "Divya Menon",
+        role: "DevOps Architect",
+        company: "Ex-HashiCorp",
+        photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg",
+      },
+      {
+        name: "Rahul Saxena",
+        role: "Platform Engineer",
+        company: "Ex-GitLab",
+        photo: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg",
+      },
+    ],
     salary: "₹24 LPA",
     medianSalary: "$145k",
     activeLearners: 89,
@@ -627,6 +742,29 @@ export const tracks = [
       photo:
         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&q=80",
     },
+    heroMentors: [
+      {
+        name: "Tanvi Shah",
+        role: "Data Engineering Lead",
+        company: "Ex-Airbnb",
+        photo: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apachekafka/apachekafka-original.svg",
+      },
+      {
+        name: "Suresh Pillai",
+        role: "Staff Data Engineer",
+        company: "Ex-Databricks",
+        photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apachespark/apachespark-original.svg",
+      },
+      {
+        name: "Kavya Nair",
+        role: "Analytics Architect",
+        company: "Ex-Netflix",
+        photo: "https://images.unsplash.com/photo-1598550874175-4d0ef436c909?w=160&h=160&fit=crop&q=80",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
+      },
+    ],
     salary: "₹26 LPA",
     medianSalary: "$160k",
     activeLearners: 71,

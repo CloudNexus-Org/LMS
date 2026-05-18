@@ -7,7 +7,7 @@ export const mentors = [
     location: "Bengaluru, India",
     bio: "12+ years architecting petabyte-scale systems. Lead instructor for AWS Solution Architect certification track.",
     longBio:
-      "Arjan has spent the last decade designing distributed systems that serve hundreds of millions of users. At AWS he led the regional reliability program for EC2 and was a core contributor to the multi-AZ failover playbook still used internally today. Today he teaches working engineers how to think in trade-offs — latency vs. cost, throughput vs. consistency, simplicity vs. control — and walks them through real production decisions, not whiteboard exercises.",
+  "Arjan has spent years building large-scale cloud systems that handle millions of users every day. At AWS, he worked on reliability and failover systems for EC2, helping engineers keep services stable under massive traffic. Today, he mentors developers by breaking down complex infrastructure concepts into practical, real-world lessons that actually make sense.",
     avatar: "https://i.pravatar.cc/400?u=arjan",
     cover:
       "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&w=1600&q=80",
@@ -86,7 +86,7 @@ export const mentors = [
     location: "Seattle, USA",
     bio: "Built generative AI services used by 40M users. Specializes in LLM fine-tuning and Azure ML pipelines.",
     longBio:
-      "Sarah led applied research for one of Microsoft's first generative-AI products inside Office. She has shipped systems used by 40M+ monthly users and has spent the last three years specifically on retrieval-augmented generation, evaluation harnesses, and the unglamorous engineering required to make models behave in production. She teaches AI like a senior engineer would — with rigorous evals, not vibes.",
+  "Sarah has worked on AI systems used by millions of people worldwide. During her time at Microsoft, she helped build early generative AI experiences and focused heavily on making AI products reliable in production. She loves teaching engineers how modern AI systems really work beyond just prompts and demos.",
     avatar: "https://i.pravatar.cc/400?u=sarah",
     cover:
       "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1600&q=80",
@@ -166,7 +166,7 @@ export const mentors = [
     location: "London, UK",
     bio: "Author of two best-selling JS books. Teaches modern React patterns, performance, and architecture.",
     longBio:
-      "David spent eight years at Meta working on Facebook's web infrastructure team and was a core contributor to the React Concurrent rendering effort. He has written two best-selling JavaScript books and lectures part-time at Imperial College London. His teaching focuses on the patterns and trade-offs that actually matter in real frontend codebases — not framework lore.",
+  "David spent years building and optimizing large frontend systems at Meta and Spotify. He enjoys teaching React and modern frontend architecture in a way that feels practical, clean, and easy to apply in real projects. His sessions focus on writing scalable code that teams can actually maintain.",
     avatar: "https://i.pravatar.cc/400?u=david",
     cover:
       "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=80",
@@ -245,7 +245,7 @@ export const mentors = [
     location: "Los Gatos, USA",
     bio: "Designs streaming-scale data platforms. Pythonista and Apache Spark contributor.",
     longBio:
-      "Angela led the data platform team at Netflix that processes more than 5 trillion events per day. She is a long-time Apache Spark contributor and one of the authors of an internal data-quality framework now open-sourced. She teaches data engineering from a platform-thinking angle — modeling, contracts, and reliability rather than just pipelines.",
+  "Angela specializes in building data platforms that process huge amounts of information reliably and efficiently. At Netflix and Airbnb, she worked on large-scale data systems powering analytics and recommendations. She teaches data engineering with a strong focus on reliability, scalability, and clean architecture.",
     avatar: "https://i.pravatar.cc/400?u=angela",
     cover:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80",
@@ -318,7 +318,8 @@ export const mentors = [
     location: "Mountain View, USA",
     bio: "Shipped CI/CD pipelines for thousands of microservices. Docker captain and Kubernetes contributor.",
     longBio:
-      "James spent a decade at Google in SRE and DevTools, owning the CI/CD platform that thousands of internal services depend on. He is a Docker Captain and an active Kubernetes contributor. His teaching style is hands-on and obsessively practical — every lesson ships with a working repo, a failing test, and the exact commit that fixes it.",
+  "James has spent over a decade automating infrastructure and improving developer workflows at companies like Google and GitHub. He enjoys helping engineers simplify deployments, understand Kubernetes deeply, and build DevOps pipelines that are stable, scalable, and easy to manage.",
+
     avatar: "https://i.pravatar.cc/400?u=james",
     cover:
       "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=80",
@@ -399,7 +400,7 @@ export const mentors = [
     location: "Dublin, Ireland",
     bio: "Built fault-tolerant payment infra. Teaches Kubernetes, service mesh, and production reliability.",
     longBio:
-      "Elena led parts of Stripe's payments orchestration platform — the system that has to never lose money even when entire data centers fail. She specializes in fault tolerance, idempotency, and the un-glamorous reliability work that makes financial systems boring (in the best way). She teaches like she debugs: methodically, from first principles, and always with a real trace open.",
+  "Elena worked on payment infrastructure where reliability and fault tolerance were critical. At Stripe and Square, she helped design systems that could safely handle millions of transactions without failure. Her teaching style is calm, structured, and focused on solving real engineering problems step by step.",
     avatar: "https://i.pravatar.cc/400?u=elena",
     cover:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80",
@@ -479,7 +480,7 @@ export const mentors = [
     location: "Singapore",
     bio: "Application security veteran. Teaches threat modeling, zero-trust, and AppSec from the inside-out.",
     longBio:
-      "Marcus has spent a decade hardening internet-scale platforms against real attackers. He led parts of the Cloudflare WAF team and ran red-team engagements for two FAANG companies before that.",
+  "Marcus has spent years protecting internet-scale systems and working closely with security teams to stop real-world attacks. He teaches security from a practical engineering perspective, helping developers understand how to build safer applications without unnecessary complexity.",
     avatar: "https://i.pravatar.cc/200?u=marcus",
     courses: 5,
     learners: "7.1k",
@@ -505,7 +506,7 @@ export const mentors = [
     location: "Bengaluru, India",
     bio: "Built the merchant payments dashboard. Teaches React, Rails, and the craft of shipping product fast.",
     longBio:
-      "Priya led the merchant-facing payments experience at Shopify, and before that built parts of Razorpay's first dashboard. She loves the messy middle of product engineering.",
+  "Priya loves building fast-moving products that balance great engineering with great user experience. At Shopify and Razorpay, she worked on merchant platforms used by thousands of businesses. She teaches frontend and product engineering with a focus on simplicity, speed, and smart decision-making.",
     avatar: "https://i.pravatar.cc/200?u=priya",
     courses: 6,
     learners: "9.3k",
@@ -531,7 +532,7 @@ export const mentors = [
     location: "Lagos, Nigeria",
     bio: "Built Uber's rider app for emerging markets. Specialist in React Native, offline-first, and low-end devices.",
     longBio:
-      "Yusuf was a tech lead on Uber's lite app, optimizing for sub-50MB binaries and 2G networks. He teaches mobile like someone who's actually shipped to a billion users.",
+  "Yusuf worked on mobile experiences optimized for low-end devices and slower networks at Uber. He enjoys teaching developers how to build apps that feel fast, reliable, and smooth even under difficult real-world conditions.",
     avatar: "https://i.pravatar.cc/200?u=yusuf",
     courses: 4,
     learners: "5.6k",
@@ -557,7 +558,7 @@ export const mentors = [
     location: "Berlin, Germany",
     bio: "Observability and incident response specialist. Teaches SLOs, on-call, and the post-mortem culture that actually works.",
     longBio:
-      "Hannah was on the Datadog SRE team that maintained 99.999% uptime across multiple regions. Her on-call playbook is now used by half a dozen unicorns.",
+  "Hannah specializes in observability, reliability, and incident response. She spent years improving uptime and monitoring systems at Datadog and now helps engineers understand how strong SRE practices can make systems more stable and teams less stressed.",
     avatar: "https://i.pravatar.cc/200?u=hannah",
     courses: 5,
     learners: "6.4k",
@@ -583,7 +584,7 @@ export const mentors = [
     location: "Tokyo, Japan",
     bio: "Built Mercari's feature store. Teaches the unglamorous infra side of machine learning.",
     longBio:
-      "Kenta architected Mercari's ML platform serving billions of predictions a day. He focuses on the infrastructure work that 90% of ML engineers actually do.",
+  "Kenta focuses on the infrastructure side of machine learning and has built systems serving billions of predictions daily. He teaches MLOps and ML platforms in a very practical way, helping engineers understand the real work behind production AI systems.",
     avatar: "https://i.pravatar.cc/200?u=kenta",
     courses: 4,
     learners: "4.8k",
@@ -609,7 +610,7 @@ export const mentors = [
     location: "São Paulo, Brazil",
     bio: "Built core banking ledgers at one of Latin America's largest fintechs. Teaches Clojure, event sourcing, and accounting-grade systems.",
     longBio:
-      "Lina spent six years at Nubank working on the ledger that records every transaction across 80M+ customers. She teaches event-driven systems from a fintech-grade reliability standpoint.",
+  "Lina has deep experience building financial systems where accuracy and reliability matter the most. At Nubank, she worked on core banking infrastructure and now teaches engineers how to design backend systems that are scalable, event-driven, and trustworthy.",
     avatar: "https://i.pravatar.cc/200?u=lina",
     courses: 3,
     learners: "3.9k",
@@ -635,7 +636,7 @@ export const mentors = [
     location: "Austin, USA",
     bio: "Specialised in real-time systems. Built the original SMS routing engine. Teaches WebRTC, queues, and message reliability.",
     longBio:
-      "Noah was one of the earliest engineers at Twilio working on the SMS routing layer that powers half the world's 2FA codes. He teaches real-time and queue systems with rare depth.",
+  "Noah specializes in real-time communication systems and messaging infrastructure. During his time at Twilio, he helped build reliable systems powering millions of authentication and communication flows worldwide. He enjoys teaching backend engineering through practical distributed systems concepts.",
     avatar: "https://i.pravatar.cc/200?u=noah",
     courses: 5,
     learners: "7.5k",
@@ -661,7 +662,7 @@ export const mentors = [
     location: "Sydney, Australia",
     bio: "10+ years managing distributed teams. Teaches engineering leadership, performance reviews, and the craft of growing senior engineers.",
     longBio:
-      "Amira has built and managed teams across Atlassian and Canva. She runs leadership cohorts that have helped 200+ engineers move into management — or thoughtfully decide not to.",
+  "Amira has spent years leading engineering teams and helping developers grow into confident senior engineers and managers. She teaches leadership in a grounded and practical way, focusing on communication, mentorship, hiring, and building healthy engineering cultures.",
     avatar: "https://i.pravatar.cc/200?u=amira",
     courses: 3,
     learners: "4.2k",
@@ -687,7 +688,7 @@ export const mentors = [
     location: "Los Angeles, USA",
     bio: "Worked on the League of Legends netcode. Teaches low-latency systems, ECS architecture, and modern C++.",
     longBio:
-      "Leon spent eight years at Riot Games working on the networking layer of League of Legends. He teaches game-style low-latency engineering applied to general backend problems.",
+  "Leon worked on low-latency networking systems at Riot Games and loves solving performance-heavy engineering problems. He teaches systems programming and game-engine concepts in a way that makes advanced topics approachable and exciting.",
     avatar: "https://i.pravatar.cc/200?u=leon",
     courses: 4,
     learners: "5.0k",
@@ -712,8 +713,7 @@ export const mentors = [
     company: "Ex-Spotify",
     location: "Stockholm, Sweden",
     bio: "Built the recommendation models behind Discover Weekly. Teaches recommender systems, A/B testing, and applied ML.",
-    longBio:
-      "Sofia spent five years at Spotify on the personalization team. She works on the messy applied side of ML — the parts that decide whether models actually make the product better.",
+    longBio:  "Sofia worked on recommendation systems and personalization models at Spotify. She enjoys helping engineers understand how machine learning impacts real products and teaches applied AI with a strong focus on experimentation, measurement, and practical outcomes.",
     avatar: "https://i.pravatar.cc/200?u=sofia",
     courses: 4,
     learners: "6.7k",

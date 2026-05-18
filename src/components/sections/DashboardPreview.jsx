@@ -16,10 +16,10 @@ import {
   Radio,
   ChevronDown,
 } from "lucide-react";
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Container from "../ui/Container";
-import Tag from "../ui/Tag";
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Container from '@/components/ui/Container';
+import Tag from '@/components/ui/Tag';
 
 // Drop your video at: public/videos/dashboard-preview.mp4
 // Vite serves the public folder as-is, so no import / rebuild needed.
@@ -164,7 +164,7 @@ export default function DashboardPreview() {
     }
 
     const v = videoRef.current;
-    if (v?.paused) v.play().catch(() => {});
+    if (v?.paused) v.play().catch(() => { });
 
     startRef.current = performance.now();
 
@@ -236,35 +236,6 @@ export default function DashboardPreview() {
           />
 
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-            className="absolute -top-3 left-6 z-20 inline-flex items-center gap-2 rounded-full border border-border bg-elevated px-3 py-1.5 shadow-[var(--shadow-card)]"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-            </span>
-            <span className="text-[11px] font-semibold text-text">
-              3,412 watching
-            </span>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: 0.85 }}
-            className="absolute -bottom-3 right-6 z-20 hidden items-center gap-1.5 rounded-full border border-border bg-elevated px-3 py-1.5 shadow-[var(--shadow-card)] sm:inline-flex"
-          >
-            <Radio size={11} className="text-primary" />
-            <span className="text-[11px] font-semibold text-text">
-              Synced to your progress
-            </span>
-          </motion.div>
-
-          <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
             className="overflow-hidden rounded-2xl border border-border bg-elevated shadow-[var(--shadow-elevated)]"
@@ -325,11 +296,10 @@ export default function DashboardPreview() {
                       >
                         <button
                           type="button"
-                          className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[12px] font-medium transition ${
-                            it.active
-                              ? "bg-primary-soft text-primary"
-                              : "text-muted hover:bg-bg/60 hover:text-text"
-                          }`}
+                          className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[12px] font-medium transition ${it.active
+                            ? "bg-primary-soft text-primary"
+                            : "text-muted hover:bg-bg/60 hover:text-text"
+                            }`}
                         >
                           {it.active ? (
                             <span
@@ -422,9 +392,8 @@ export default function DashboardPreview() {
                           aria-label="EC2 deep dive lesson preview"
                           onLoadedData={() => setVideoReady(true)}
                           onError={() => setVideoFailed(true)}
-                          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-                            videoReady ? "opacity-100" : "opacity-0"
-                          }`}
+                          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"
+                            }`}
                         />
                       ) : null}
 
@@ -515,13 +484,12 @@ export default function DashboardPreview() {
                           >
                             <button
                               type="button"
-                              className={`relative flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-[12px] transition ${
-                                isCurrent
-                                  ? "border-primary/40 bg-primary-soft text-text"
-                                  : isDone
-                                    ? "border-transparent text-muted/85 hover:bg-bg/60"
-                                    : "border-transparent text-muted hover:bg-bg/60 hover:text-text"
-                              }`}
+                              className={`relative flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-[12px] transition ${isCurrent
+                                ? "border-primary/40 bg-primary-soft text-text"
+                                : isDone
+                                  ? "border-transparent text-muted/85 hover:bg-bg/60"
+                                  : "border-transparent text-muted hover:bg-bg/60 hover:text-text"
+                                }`}
                             >
                               {isCurrent ? (
                                 <span

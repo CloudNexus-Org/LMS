@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
-import Button from "../ui/Button";
-import photo from "../../assets/Girlimage.png";
+import Button from '@/components/ui/Button';
+import photo from '@/assets/Girlimage.png';
 
 function Field({ label, id, children }) {
   return (

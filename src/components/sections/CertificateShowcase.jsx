@@ -6,9 +6,9 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Container from "../ui/Container";
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Container from '@/components/ui/Container';
 
 const POINTS = [
   "Industry-recognized and verifiable on LinkedIn",
@@ -185,7 +185,7 @@ export default function CertificateShowcase() {
             eyebrow="Certificates"
             title="Earn a credential"
             highlight="that actually counts"
-            description="Our certificates are verifiable, project-backed, and recognized by hiring teams \u2014 not just a PDF you forget about."
+            description="Our certificates are verifiable, project-backed, and recognized by hiring teams not just a PDF you forget about."
             className="mb-0"
           >
             <ul className="mt-6 space-y-3">

@@ -1,21 +1,21 @@
-import useIsDarkTheme from "../../hooks/useIsDarkTheme";
+import useIsDarkTheme from '@/hooks/useIsDarkTheme';
 
 // Logos that look the same in both themes
-import google from "../../assets/company-logo/google.png";
-import ibm from "../../assets/company-logo/ibm.png";
-import microsoft from "../../assets/company-logo/microsoft.png";
-import adobe from "../../assets/company-logo/adobe-removebg-preview.png";
-import netflix from "../../assets/company-logo/netflix.png";
+import google from '@/assets/company-logo/google.png';
+import ibm from '@/assets/company-logo/ibm.png';
+import microsoft from '@/assets/company-logo/microsoft.png';
+import adobe from '@/assets/company-logo/adobe-removebg-preview.png';
+import netflix from '@/assets/company-logo/netflix.png';
 
 // Logos that need a different version per theme
-import jpmorganBlack from "../../assets/company-logo/jpmorgan-black.png";
-import jpmorganWhite from "../../assets/company-logo/jpmorgan-white.png";
-import amazonBlack from "../../assets/company-logo/amazon-black.png";
-import amazonOrange from "../../assets/company-logo/amazon-orange.png";
-import toyotaBlack from "../../assets/company-logo/toyota-black.png";
-import toyotaWhite from "../../assets/company-logo/toyota-white-removebg-preview.png";
-import metaLight from "../../assets/company-logo/meta-black.png";
-import metaDark from "../../assets/company-logo/meta.png";
+import jpmorganBlack from '@/assets/company-logo/jpmorgan-black.png';
+import jpmorganWhite from '@/assets/company-logo/jpmorgan-white.png';
+import amazonBlack from '@/assets/company-logo/amazon-black.png';
+import amazonOrange from '@/assets/company-logo/amazon-orange.png';
+import toyotaBlack from '@/assets/company-logo/toyota-black.png';
+import toyotaWhite from '@/assets/company-logo/toyota-white-removebg-preview.png';
+import metaLight from '@/assets/company-logo/meta-black.png';
+import metaDark from '@/assets/company-logo/meta.png';
 
 // Naming convention used here:
 //   *Black  → file intended for LIGHT theme (logo IS in black/dark colors)

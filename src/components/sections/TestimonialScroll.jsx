@@ -1,13 +1,13 @@
 import { Star, Quote } from "lucide-react";
-import { testimonials } from "../../data/testimonials";
+import { testimonials } from '@/data/testimonials';
 
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Avatar from "../ui/Avatar";
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Avatar from '@/components/ui/Avatar';
 
-import Testimonialbg1 from "../../assets/Testimonialbg.png";
-import Testimonialbg2 from "../../assets/Testimonialbg2.png";
-import Testimonialbg3 from "../../assets/Testimonialbg3.png";
+import Testimonialbg1 from '@/assets/Testimonialbg.png';
+import Testimonialbg2 from '@/assets/Testimonialbg2.png';
+import Testimonialbg3 from '@/assets/Testimonialbg3.png';
 
 const bgImages = [
   Testimonialbg1,

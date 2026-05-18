@@ -2,9 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-import { faqs } from "../../data/faq";
-import SectionShell from "../ui/SectionShell";
-import Container from "../ui/Container";
+import { faqs } from '@/data/faq';
+import SectionShell from "@/app/layouts/SectionShell";
+import Container from '@/components/ui/Container';
 
 const EASE = [0.16, 1, 0.3, 1];
 

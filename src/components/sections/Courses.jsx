@@ -6,14 +6,19 @@ import {
   Clock3,
   Users,
   Layers3,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 
-import { featuredCourses } from "../../data/courses";
-import { tracks } from "../../data/tracks";
+import { featuredCourses } from '@/data/courses';
+import { tracks } from '@/data/tracks';
 
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Container from "../ui/Container";
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Container from '@/components/ui/Container';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -52,15 +57,9 @@ function CourseCard({ course, index }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: 0.55,
-        ease: EASE,
-        delay: index * 0.06,
-      }}
-      className="group h-full"
+      className="group h-full min-h-[300px]"
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.3, ease: EASE }}
     >
       <Link
         to={href}
@@ -140,56 +139,55 @@ function CourseCard({ course, index }) {
         </div>
 
         {/* CONTENT */}
-        {/* CONTENT */}
-<div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-  {/* TITLE & RATING ROW (Dono ko ek line mein ya upar-neeche balanced rakhein) */}
-  <div className="flex flex-col gap-1">
-    <h3 className="text-[22px] font-semibold leading-[1.2] tracking-tight text-text transition-colors duration-300 group-hover:text-primary">
-      {course.title}
-    </h3>
-    <p className="text-[12px] font-medium text-text transition-colors duration-300 group-hover:text-primary uppercase tracking-[0.1em] ">
-      By {course.professor}
-    </p>
-  </div>
+        <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+          {/* TITLE & RATING ROW (Dono ko ek line mein ya upar-neeche balanced rakhein) */}
+          <div className="flex flex-col gap-1">
+            <h3 className="text-[22px] font-semibold leading-[1.2] tracking-tight text-text transition-colors duration-300 group-hover:text-primary">
+              {course.title}
+            </h3>
+            <p className="text-[12px] font-medium text-text transition-colors duration-300 group-hover:text-primary uppercase tracking-[0.1em] ">
+              By {course.professor}
+            </p>
+          </div>
 
-  {/* META STATS - Title ke thik niche for quick value check */}
-  <div className="mt-4 flex flex-wrap items-center gap-2">
-    <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
-      <Star size={12} className="fill-primary text-primary" />
-      <span className="text-[13px] font-bold text-text">{course.rating}</span>
-    </div>
-    
-    <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
-      <Clock3 size={12} className="text-muted" />
-      <span className="text-[13px] font-medium text-text">{course.duration}</span>
-    </div>
+          {/* META STATS - Title ke thik niche for quick value check */}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
+              <Star size={12} className="fill-primary text-primary" />
+              <span className="text-[13px] font-bold text-text">{course.rating}</span>
+            </div>
 
-    <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
-      <Layers3 size={12} className="text-muted" />
-      <span className="text-[13px] font-medium text-text">{course.modules} Modules</span>
-    </div>
-  </div>
+            <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
+              <Clock3 size={12} className="text-muted" />
+              <span className="text-[13px] font-medium text-text">{course.duration}</span>
+            </div>
 
-  {/* DESCRIPTION - Thoda gap dekar */}
-  <p className="mt-3 text-[13.5px] leading-relaxed text-text line-clamp-2 opacity-90">
-    "{course.description}"
-  </p>
+            <div className="inline-flex items-center gap-1.5 rounded-lg bg-surface px-2.5 py-1.5 border border-border/40">
+              <Layers3 size={12} className="text-muted" />
+              <span className="text-[13px] font-medium text-text">{course.modules} Modules</span>
+            </div>
+          </div>
 
-  {/* FOOTER - Sabse niche aligned */}
-  <div className="mt-auto pt-6 flex items-center justify-between border-t border-border/30">
-    <div className="flex items-center gap-2 text-[12px] text-muted">
-      <Users size={16} className="opacity-70" />
-      <span>
-        <span className="font-semibold text-text">{course.enrolled}</span> enrolled
-      </span>
-    </div>
+          {/* DESCRIPTION - Thoda gap dekar */}
+          <p className="mt-3 text-[13.5px] leading-relaxed text-text line-clamp-2 opacity-90">
+            "{course.description}"
+          </p>
 
-    <div className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[12px] font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105 active:scale-95">
-      Explore
-      <ArrowRight size={16} />
-    </div>
-  </div>
-</div>
+          {/* FOOTER - Sabse niche aligned */}
+          <div className="mt-auto pt-5 flex items-center justify-between border-t border-border/30">
+            <div className="flex items-center gap-2 text-[12px] text-muted">
+              <Users size={16} className="opacity-70" />
+              <span>
+                <span className="font-semibold text-text">{course.enrolled}</span> enrolled
+              </span>
+            </div>
+
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[12px] font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105 active:scale-95">
+              Explore
+              <ArrowRight size={16} />
+            </div>
+          </div>
+        </div>
       </Link>
     </motion.div>
   );
@@ -197,6 +195,80 @@ function CourseCard({ course, index }) {
 
 // MAIN COMPONENT
 export default function Courses() {
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      slidesToScroll: 1,
+      dragFree: true,
+      containScroll: "trimSnaps",
+    },
+    [Autoplay({ delay: 4000, stopOnInteraction: true })]
+  );
+
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onScroll = useCallback(() => {
+    if (!emblaApi) return;
+    const progress = Math.max(0, Math.min(1, emblaApi.scrollProgress()));
+    setScrollProgress(progress * 100);
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("scroll", onScroll);
+    onScroll();
+  }, [emblaApi, onScroll]);
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+  }, [emblaApi, onSelect]);
+
+  // Initialize state on mount
+  useEffect(() => {
+    if (emblaApi) {
+      setCanScrollPrev(emblaApi.canScrollPrev());
+      setCanScrollNext(emblaApi.canScrollNext());
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        scrollPrev();
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        scrollNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [scrollPrev, scrollNext]);
+
   return (
     <SectionShell id="courses" glow>
       <Container>
@@ -208,23 +280,70 @@ export default function Courses() {
           description="Curated tracks designed for the next generation of cloud, AI, and full-stack engineers."
         />
 
-        {/* GRID */}
-        <div
-          className="
-            mt-14
-            grid grid-cols-1
-            gap-7
-            md:grid-cols-2
-            xl:grid-cols-3
-          "
-        >
-          {featuredCourses.map((course, i) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              index={i}
-            />
-          ))}
+        {/* CAROUSEL CONTAINER */}
+        <div className="relative mt-14">
+          {/* FADE EDGES */}
+          <div className="absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-background via-background/80 to-transparent pointer-events-none md:w-20" />
+          <div className="absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none md:w-20" />
+
+          {/* NAVIGATION BUTTONS */}
+          <button
+            onClick={scrollPrev}
+            disabled={!canScrollPrev}
+            className={`
+              absolute top-1/2 z-20 -translate-y-1/2
+              left-0 md:-left-4 lg:-left-12
+              flex h-10 w-10 items-center justify-center
+              rounded-full border border-border/80 bg-elevated/95 text-text backdrop-blur-xl
+              shadow-md transition-all duration-300
+              hover:border-primary/50 hover:bg-surface hover:text-primary hover:shadow-lg
+              disabled:opacity-0 disabled:cursor-not-allowed
+              ${canScrollPrev ? "opacity-100" : "opacity-0"}
+            `}
+            aria-label="Previous courses"
+          >
+            <ChevronLeft size={20} className="transition-transform duration-300 hover:-translate-x-0.5" />
+          </button>
+
+          <button
+            onClick={scrollNext}
+            disabled={!canScrollNext}
+            className={`
+              absolute top-1/2 z-20 -translate-y-1/2
+              right-0 md:-right-4 lg:-right-12
+              flex h-10 w-10 items-center justify-center
+              rounded-full border border-border/80 bg-elevated/95 text-text backdrop-blur-xl
+              shadow-md transition-all duration-300
+              hover:border-primary/50 hover:bg-surface hover:text-primary hover:shadow-lg
+              disabled:opacity-0 disabled:cursor-not-allowed
+              ${canScrollNext ? "opacity-100" : "opacity-0"}
+            `}
+            aria-label="Next courses"
+          >
+            <ChevronRight size={20} className="transition-transform duration-300 hover:translate-x-0.5" />
+          </button>
+
+          {/* CAROUSEL */}
+          <div
+            className="overflow-hidden"
+            ref={emblaRef}
+            onMouseEnter={() => emblaApi?.plugins()?.autoplay?.stop()}
+            onMouseLeave={() => emblaApi?.plugins()?.autoplay?.play()}
+          >
+            <div className="flex gap-4 px-4 md:gap-6 md:px-6">
+              {featuredCourses.map((course, i) => (
+                <div
+                  key={course.id}
+                  className="flex-none w-full sm:w-72 md:w-[340px] lg:w-[360px]"
+                >
+                  <CourseCard
+                    course={course}
+                    index={i}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* BUTTON */}

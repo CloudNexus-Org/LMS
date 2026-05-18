@@ -1,4 +1,4 @@
-import { useTheme } from "../context/ThemeProvider";
+import { useTheme } from "@/app/providers/ThemeProvider";
 
 /**
  * Convenience hook: returns `true` when the active theme is `"dark"`.

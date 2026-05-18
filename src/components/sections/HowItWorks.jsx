@@ -1,10 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Compass, Users, Award, Check } from "lucide-react";
-import { howItWorksSteps } from "../../data/howItWorks";
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Container from "../ui/Container";
+import { howItWorksSteps } from '@/data/howItWorks';
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Container from '@/components/ui/Container';
 
 const ICONS = { Compass, Users, Award };
 // Used only as the fallback loop length when the real video hasn't loaded.

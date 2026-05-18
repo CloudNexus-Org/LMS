@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { animate } from "framer-motion";
-import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
-import { prefersReducedMotion } from "../../utils/motion";
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { prefersReducedMotion } from '@/utils/motion';
 
 export default function CountUp({
   end,

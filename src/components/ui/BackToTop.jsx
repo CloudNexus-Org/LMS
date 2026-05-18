@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import useScrollThreshold from "../../hooks/useScrollThreshold";
-import { scrollToTop } from "../../utils/scroll";
+import useScrollThreshold from '@/hooks/useScrollThreshold';
+import { scrollToTop } from '@/utils/scroll';
 
 const REVEAL_THRESHOLD = 320;
 

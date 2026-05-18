@@ -5,7 +5,7 @@ import { Menu, X, ArrowRight } from "lucide-react";
 import ThemeToggle from "../ui/ThemeToggle";
 import Button from "../ui/Button";
 import BrandMark from "../ui/BrandMark";
-import useScrollThreshold from "../../hooks/useScrollThreshold";
+import useSmartNavbar from "../../hooks/useSmartNavbar";
 import { scrollToSection as scrollSectionUtil } from "../../utils/scroll";
 
 const DEFAULT_LINKS = [
@@ -18,7 +18,9 @@ const DEFAULT_LINKS = [
 
 const NAV_HEIGHT = 80;
 const DETECTION_OFFSET = 100;
-const SCROLLED_THRESHOLD = 8;
+const NAVBAR_HIDE_TOP_GUARD = 80;
+const NAVBAR_SCROLL_THRESHOLD = 14;
+const NAVBAR_STOP_DELAY = 150;
 
 export default function Navbar({
   logoText = "CLOUD NEXUS",
@@ -27,12 +29,18 @@ export default function Navbar({
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-  const isScrolled = useScrollThreshold(SCROLLED_THRESHOLD);
   const pendingScrollRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === "/";
   const { scrollYProgress } = useScroll();
+  const navbarState = useSmartNavbar({
+    threshold: NAVBAR_SCROLL_THRESHOLD,
+    topGuard: NAVBAR_HIDE_TOP_GUARD,
+    stopDelay: NAVBAR_STOP_DELAY,
+  });
+  const isVisible = isMobileMenuOpen ? true : navbarState.isVisible;
+  const isScrolled = navbarState.isScrolled;
 
   // Smooth-scroll to a hash target and update the active state.
   const scrollToSection = useCallback((href) => {
@@ -117,7 +125,8 @@ export default function Navbar({
 
   // Close mobile menu on route change (in case it stays open through navigation)
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    const id = setTimeout(() => setIsMobileMenuOpen(false), 0);
+    return () => clearTimeout(id);
   }, [location.pathname]);
 
   const handleNavClick = (e, href) => {
@@ -145,12 +154,21 @@ export default function Navbar({
         Skip to content
       </a>
 
-      <nav
-        className={`fixed left-0 top-0 z-50 w-full transition-colors duration-200 ${
-          isScrolled
-            ? "border-b border-border bg-bg/85 backdrop-blur-xl"
-            : "border-b border-transparent bg-transparent"
-        }`}
+      <motion.nav
+        initial={false}
+        animate={{
+          y: isVisible ? "0%" : "-100%",
+          opacity: isVisible ? 1 : 0
+        }}
+        transition={{
+          duration: 0.4,
+          ease: "easeOut"
+        }}
+        className={`fixed left-0 top-0 z-50 w-full border-b transition-colors duration-300 will-change-transform ${isScrolled
+            ? "border-border/60 bg-bg/78 shadow-[0_16px_50px_rgba(15,23,42,0.12)] backdrop-blur-2xl"
+            : "border-transparent bg-transparent shadow-none backdrop-blur-0"
+          } ${isVisible ? "pointer-events-auto" : "pointer-events-none"}`}
+        aria-hidden={!isVisible}
       >
         <div className="mx-auto flex h-[68px] w-full max-w-[1320px] items-center justify-between px-5 sm:px-6 lg:px-8">
           <BrandMark
@@ -170,11 +188,10 @@ export default function Navbar({
                   href={targetHref}
                   onClick={(e) => handleNavClick(e, link.href)}
                   aria-current={isActive ? "page" : undefined}
-                  className={`relative rounded-md px-3 py-1.5 text-[13px] font-medium transition-all duration-200 ${
-                    isActive
-                      ? "bg-primary-soft text-primary"
-                      : "text-muted hover:bg-surface hover:text-text"
-                  }`}
+                  className={`relative rounded-md px-3 py-1.5 text-[14px] font-medium transition-all duration-200 ${isActive
+                    ? "bg-primary-soft text-primary"
+                    : "text-text/85 hover:bg-surface hover:text-text"
+                    }`}
                 >
                   {link.label}
                 </a>
@@ -196,8 +213,8 @@ export default function Navbar({
                   to="/signup"
                   variant="primary"
                   size="sm"
+                  className="!rounded-[18px] !bg-[#215cff] !px-5 !text-white !shadow-[0_12px_28px_rgba(33,92,255,0.30)] hover:!bg-[#4b79ff]"
                   rightIcon={<ArrowRight size={13} />}
-                  className="transition-transform duration-200 hover:scale-[1.03]"
                 >
                   Get started
                 </Button>
@@ -223,15 +240,14 @@ export default function Navbar({
           style={{ scaleX: scrollYProgress }}
           className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-gradient-to-r from-primary via-accent to-primary"
         />
-      </nav>
+      </motion.nav>
 
       <div
         id="mobile-menu"
-        className={`fixed inset-x-0 top-[68px] z-40 origin-top border-b border-border bg-bg/95 px-5 pb-6 pt-3 backdrop-blur-2xl transition-all duration-200 md:hidden ${
-          isMobileMenuOpen
-            ? "translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-2 opacity-0"
-        }`}
+        className={`fixed inset-x-0 top-[68px] z-40 origin-top border-b border-border bg-bg/95 px-5 pb-6 pt-3 backdrop-blur-2xl transition-all duration-200 md:hidden ${isMobileMenuOpen
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none -translate-y-2 opacity-0"
+          }`}
       >
         <div className="flex flex-col gap-1">
           {navLinks.map((link) => {
@@ -243,11 +259,10 @@ export default function Navbar({
                 href={targetHref}
                 onClick={(e) => handleNavClick(e, link.href)}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex items-center justify-between rounded-lg px-4 py-3 text-[15px] font-medium transition ${
-                  isActive
-                    ? "bg-primary-soft text-primary"
-                    : "text-text hover:bg-surface"
-                }`}
+                className={`flex items-center justify-between rounded-lg px-4 py-3 text-[15px] font-medium transition ${isActive
+                  ? "bg-primary-soft text-primary"
+                  : "text-text hover:bg-surface"
+                  }`}
               >
                 {link.label}
               </a>
@@ -272,6 +287,7 @@ export default function Navbar({
               size="md"
               fullWidth
               onClick={() => setIsMobileMenuOpen(false)}
+              className="!rounded-[18px] !bg-[#215cff] !text-white !shadow-[0_12px_28px_rgba(33,92,255,0.30)] hover:!bg-[#4b79ff]"
             >
               Get started
             </Button>
