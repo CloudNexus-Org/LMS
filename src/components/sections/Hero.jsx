@@ -78,20 +78,16 @@ export default function Hero() {
             {/* BADGE */}
             <motion.div
               {...fadeUp(10, 0.05)}
-              className={`${badgeClass} inline-flex items-center gap-2 rounded-full px-4 py-2 text-[12px] font-semibold`}
+              className={`${badgeClass} inline-flex items-center gap-2 rounded-[5px] px-4 py-2 text-[12px] font-bold`}
             >
-              <Sparkles
-                size={14}
-                style={{ color: primaryBlue }}
-              />
 
               Trusted by 12,000+ learners worldwide
             </motion.div>
 
             {/* HEADING */}
             <motion.h1
-              {...fadeUp(12, 0.12, 0.6)}
-              className={`hero-title mt-8 max-w-[760px] leading-[1.02] tracking-[-0.03em] ${headlineColor}`}
+              {...fadeUp(2, 0.12, 0.6)}
+              className={`hero-title mt-8 max-w-[720px] font-extrabold  leading-[1] tracking-[-0.03em] ${headlineColor}`}
             >
               Find suitable courses from the{" "}
               <span
@@ -115,68 +111,7 @@ export default function Hero() {
               taught by expert mentors.
             </motion.p>
 
-            {/* STATS */}
-            <motion.div
-              {...fadeUp(10, 0.3)}
-              className="mt-14 flex flex-wrap items-center gap-5"
-            >
-              {/* CARD 1 */}
-              <div
-                className={`flex items-center gap-3 rounded-2xl px-5 py-4 ${mutedCardClass}`}
-              >
-                <Star
-                  size={16}
-                  style={{
-                    fill: primaryBlue,
-                    color: primaryBlue,
-                  }}
-                  aria-hidden
-                />
 
-                <div>
-                  <div className="text-[14px] font-semibold">
-                    4.9/5 Rating
-                  </div>
-
-                  <div
-                    className={
-                      isDarkTheme
-                        ? "text-[12px] text-white/60"
-                        : "text-[12px] text-slate-500"
-                    }
-                  >
-                    2k+ reviews
-                  </div>
-                </div>
-              </div>
-
-              {/* CARD 2 */}
-              <div
-                className={`flex items-center gap-3 rounded-2xl px-5 py-4 ${mutedCardClass}`}
-              >
-                <Zap
-                  size={16}
-                  style={{ color: primaryBlue }}
-                  aria-hidden
-                />
-
-                <div>
-                  <div className="text-[14px] font-semibold">
-                    Fast-track learning
-                  </div>
-
-                  <div
-                    className={
-                      isDarkTheme
-                        ? "text-[12px] text-white/60"
-                        : "text-[12px] text-slate-500"
-                    }
-                  >
-                    Job-ready skills
-                  </div>
-                </div>
-              </div>
-            </motion.div>
 
             {/* BUTTONS */}
             <motion.div
@@ -186,7 +121,42 @@ export default function Hero() {
               <Button
                 to="/signup"
                 size="lg"
-                className="!rounded-[18px] !bg-[#215cff] !px-7 !text-white hover:!bg-[#4b79ff]"
+                 className=" -mb-[100px]
+    relative
+    inline-flex
+    h-[40px]
+    min-w-[90px]
+    items-center
+    justify-center
+
+   
+
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-white
+    dark:bg-[#2563ff]
+
+    px-6
+
+    text-[14px]
+    font-semibold
+
+    text-black
+    dark:text-white
+overflow-hidden
+rounded-none
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
                 rightIcon={<ArrowRight size={18} />}
               >
                 Start free trial
@@ -194,9 +164,43 @@ export default function Hero() {
 
               <Button
                 to="/demo"
-                variant="ghost"
+                
                 size="lg"
-                className={`!rounded-[18px] !px-7 ${secondaryButtonClass}`}
+                 className=" -mb-[100px]
+    relative
+    inline-flex
+    h-[40px]
+    min-w-[90px]
+    items-center
+    justify-center
+
+    overflow-hidden
+rounded-none
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-white
+    dark:bg-[#2563ff]
+
+    px-6
+
+    text-[14px]
+    font-semibold
+
+    text-black
+    dark:text-white
+
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
                 leftIcon={<PlayCircle size={18} />}
               >
                 Watch demo

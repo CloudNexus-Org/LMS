@@ -207,11 +207,11 @@ export default function CertificateShowcase() {
           <div className="relative mx-auto w-full max-w-[560px]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -inset-6 -z-10 rounded-[32px] bg-gradient-to-br from-primary/10 via-transparent to-accent/[0.06] blur-2xl"
+              className="pointer-events-none absolute -inset-6 -z-10 rounded-[5px] bg-gradient-to-br from-primary/10 via-transparent to-accent/[0.06] blur-2xl"
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -inset-1 -z-10 rounded-[28px] bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-25 blur-lg"
+              className="pointer-events-none absolute -inset-1 -z-10 rounded-[5px] bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-25 blur-lg"
             />
 
             <motion.figure
@@ -220,15 +220,15 @@ export default function CertificateShowcase() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{ rotate: 0, y: -6 }}
-              className="certificate-paper group relative isolate aspect-[5/4] overflow-hidden rounded-3xl border border-border bg-elevated p-6 text-text shadow-[var(--shadow-elevated)] sm:p-8"
+              className="certificate-paper group relative isolate aspect-[5/4] overflow-hidden rounded-[5px] border border-border bg-elevated p-6 text-text shadow-[var(--shadow-elevated)] sm:p-8"
             >
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-3 rounded-2xl border border-primary/25"
+                className="pointer-events-none absolute inset-3 rounded-[5px] border border-primary/25"
               />
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-[14px] rounded-[18px] border border-primary/10"
+                className="pointer-events-none absolute inset-[14px] rounded-[5px] border border-primary/10"
               />
 
               <CornerOrnament className="pointer-events-none absolute left-5 top-5 h-5 w-5 text-primary" />
@@ -369,7 +369,7 @@ export default function CertificateShowcase() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.5, delay: 0.85 }}
-                    className="flex h-16 w-16 shrink-0 flex-col items-center justify-center gap-0.5 rounded-md border border-border bg-surface p-1.5 shadow-[var(--shadow-card)] sm:h-[72px] sm:w-[72px]"
+                    className="flex h-16 w-16 shrink-0 flex-col items-center justify-center gap-0.5 rounded-[5px] border border-border bg-surface p-1.5 shadow-[var(--shadow-card)] sm:h-[72px] sm:w-[72px]"
                   >
                     <div className="h-9 w-9 sm:h-10 sm:w-10">
                       <MiniQR />

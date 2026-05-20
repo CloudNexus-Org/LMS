@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { motion, useScroll } from "framer-motion";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Menu, X, ArrowRight } from "lucide-react";
+
 import ThemeToggle from "../ui/ThemeToggle";
 import Button from "../ui/Button";
 import BrandMark from "../ui/BrandMark";
+
 import useSmartNavbar from "../../hooks/useSmartNavbar";
 import { scrollToSection as scrollSectionUtil } from "../../utils/scroll";
 
@@ -16,11 +18,7 @@ const DEFAULT_LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
-const NAV_HEIGHT = 80;
-const DETECTION_OFFSET = 100;
-const NAVBAR_HIDE_TOP_GUARD = 80;
-const NAVBAR_SCROLL_THRESHOLD = 14;
-const NAVBAR_STOP_DELAY = 150;
+const NAV_HEIGHT = 82;
 
 export default function Navbar({
   logoText = "CLOUD NEXUS",
@@ -29,30 +27,37 @@ export default function Navbar({
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+
   const pendingScrollRef = useRef(null);
+
   const location = useLocation();
   const navigate = useNavigate();
+
   const isHome = location.pathname === "/";
-  const { scrollYProgress } = useScroll();
+
   const navbarState = useSmartNavbar({
-    threshold: NAVBAR_SCROLL_THRESHOLD,
-    topGuard: NAVBAR_HIDE_TOP_GUARD,
-    stopDelay: NAVBAR_STOP_DELAY,
+    threshold: 14,
+    topGuard: 80,
+    stopDelay: 150,
   });
+
   const isVisible = isMobileMenuOpen ? true : navbarState.isVisible;
   const isScrolled = navbarState.isScrolled;
 
-  // Smooth-scroll to a hash target and update the active state.
+  // SCROLL TO SECTION
   const scrollToSection = useCallback((href) => {
-    if (!href || !href.startsWith("#")) return false;
+    if (!href?.startsWith("#")) return false;
+
     const ok = scrollSectionUtil(href, NAV_HEIGHT);
-    if (ok) setActiveSection(href);
+
+    if (ok) {
+      setActiveSection(href);
+    }
+
     return ok;
   }, []);
 
-  // Active-section detection — picks the section whose VERTICAL RANGE
-  // currently contains the scroll position. Works regardless of nav-link
-  // order vs. DOM order.
+  // ACTIVE SECTION
   useEffect(() => {
     const handleScroll = () => {
       if (!isHome) {
@@ -60,138 +65,147 @@ export default function Navbar({
         return;
       }
 
-      const scrollPos = window.scrollY + DETECTION_OFFSET;
+      const scrollPos = window.scrollY + 120;
       let current = "";
+
       for (const link of navLinks) {
         const section = document.querySelector(link.href);
+
         if (!section) continue;
+
         const top = section.offsetTop;
         const bottom = top + section.offsetHeight;
+
         if (scrollPos >= top && scrollPos < bottom) {
           current = link.href;
           break;
         }
       }
-      // If past the last detected section (footer area), keep the last one active.
-      if (!current && window.scrollY > 0) {
-        let lastMatch = "";
-        for (const link of navLinks) {
-          const section = document.querySelector(link.href);
-          if (!section) continue;
-          if (window.scrollY + DETECTION_OFFSET >= section.offsetTop) {
-            lastMatch = link.href;
-          }
-        }
-        current = lastMatch;
-      }
+
       setActiveSection(current);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [navLinks, isHome]);
 
-  // After navigating home with a pending hash target, smooth-scroll to it
-  // once the section has mounted (handles cross-page nav).
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHome, navLinks]);
+
+  // PENDING HASH
   useEffect(() => {
     if (!isHome) return;
+
     const target = pendingScrollRef.current;
+
     if (!target) return;
 
-    let cancelled = false;
-    const tryScroll = (attempt = 0) => {
-      if (cancelled) return;
-      const ok = scrollToSection(target);
-      if (ok || attempt > 10) {
-        pendingScrollRef.current = null;
-        return;
-      }
-      setTimeout(() => tryScroll(attempt + 1), 80);
-    };
-    requestAnimationFrame(() => tryScroll());
-    return () => {
-      cancelled = true;
-    };
-  }, [isHome, location.pathname, location.key, scrollToSection]);
+    requestAnimationFrame(() => {
+      scrollToSection(target);
+      pendingScrollRef.current = null;
+    });
+  }, [isHome, location.pathname, scrollToSection]);
 
-  // Body scroll lock for mobile menu
+  // BODY LOCK
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
   }, [isMobileMenuOpen]);
 
-  // Close mobile menu on route change (in case it stays open through navigation)
-  useEffect(() => {
-    const id = setTimeout(() => setIsMobileMenuOpen(false), 0);
-    return () => clearTimeout(id);
-  }, [location.pathname]);
-
   const handleNavClick = (e, href) => {
-    if (!href || !href.startsWith("#")) return;
     e.preventDefault();
+
     setIsMobileMenuOpen(false);
 
     if (isHome) {
       scrollToSection(href);
     } else {
-      // Cross-page hash navigation — store target and route home.
       pendingScrollRef.current = href;
       navigate("/");
     }
   };
 
-  const handleBrandNavigate = useCallback(() => {
-    setIsMobileMenuOpen(false);
-    setActiveSection("");
-  }, []);
-
   return (
     <>
-      <a href="#main" className="skip-link">
-        Skip to content
-      </a>
-
       <motion.nav
         initial={false}
         animate={{
           y: isVisible ? "0%" : "-100%",
-          opacity: isVisible ? 1 : 0
+          opacity: isVisible ? 1 : 0,
         }}
         transition={{
           duration: 0.4,
-          ease: "easeOut"
+          ease: "easeOut",
         }}
-        className={`fixed left-0 top-0 z-50 w-full border-b transition-colors duration-300 will-change-transform ${isScrolled
-            ? "border-border/60 bg-bg/78 shadow-[0_16px_50px_rgba(15,23,42,0.12)] backdrop-blur-2xl"
-            : "border-transparent bg-transparent shadow-none backdrop-blur-0"
-          } ${isVisible ? "pointer-events-auto" : "pointer-events-none"}`}
-        aria-hidden={!isVisible}
+        className={`
+          fixed left-0 top-0 z-50 w-full
+          border-b
+          transition-all duration-500
+          border-transparent
+          shadow-none
+        `}
       >
-        <div className="mx-auto flex h-[68px] w-full max-w-[1320px] items-center justify-between px-5 sm:px-6 lg:px-8">
+        {/* NEW CLIPPED BACKGROUND FOR LINES DESIGN */}
+        <div
+          className="absolute inset-0 -z-10 bg-surface dark:bg-surface pointer-events-none"
+          style={{
+            clipPath:
+              "polygon(0 0, 100% 0, 100% 81px, 83% 81px, 78.6% 56px, 21.4% 56px, 17% 81px, 0 81px)",
+          }}
+        />
+
+        {/* MAIN */}
+        <div
+          className="
+            relative z-10
+            mx-auto
+            flex h-[82px]
+            w-full max-w-[1440px]
+            items-center justify-between
+            px-1 sm:px-4 lg:px-[1px]
+          "
+        >
+          {/* LOGO */}
           <BrandMark
             logoText={logoText}
             size="sm"
-            onNavigate={handleBrandNavigate}
+            onNavigate={() => {
+              setActiveSection("");
+              setIsMobileMenuOpen(false);
+            }}
           />
 
-          {/* Center nav */}
-          <div className="hidden items-center gap-0.5 md:flex">
+          {/* CENTER NAV */}
+          <div className="hidden items-center gap-5 md:flex lg:gap-8">
             {navLinks.map((link) => {
               const isActive = isHome && activeSection === link.href;
-              const targetHref = isHome ? link.href : `/${link.href}`;
+
               return (
                 <a
                   key={link.label}
-                  href={targetHref}
+                  href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`relative rounded-md px-3 py-1.5 text-[14px] font-medium transition-all duration-200 ${isActive
-                    ? "bg-primary-soft text-primary"
-                    : "text-text/85 hover:bg-surface hover:text-text"
-                    }`}
+                  className={`
+                    relative pb-3
+                    text-[13px]
+                    font-semibold
+                    transition-all duration-300
+                    ${
+                      isActive
+                        ? `
+                        text-text
+                        dark:text-text
+                      `
+                        : `
+                        text-muted
+                        dark:text-muted
+                        hover:text-text
+                        dark:hover:text-text
+                      `
+                    }
+                  `}
                 >
                   {link.label}
                 </a>
@@ -199,100 +213,232 @@ export default function Navbar({
             })}
           </div>
 
-          {/* Right cluster */}
-          <div className="flex items-center gap-2">
+          {/* RIGHT */}
+          <div className=" flex items-center gap-3 -mt-4 -mr-10">
             <ThemeToggle />
 
-            {showAuthButtons ? (
-              <div className="hidden items-center gap-2 lg:flex">
-                <span aria-hidden className="h-5 w-px bg-border" />
-                <Button to="/login" variant="ghost" size="sm">
-                  Log in
-                </Button>
-                <Button
-                  to="/signup"
-                  variant="primary"
-                  size="sm"
-                  className="!rounded-[18px] !bg-[#215cff] !px-5 !text-white !shadow-[0_12px_28px_rgba(33,92,255,0.30)] hover:!bg-[#4b79ff]"
-                  rightIcon={<ArrowRight size={13} />}
+            {showAuthButtons && (
+              <div className="hidden items-center gap-3 lg:flex ">
+                <Link
+                  to="/login"
+                  className="
+                    relative
+                    inline-flex
+                    h-[40px]
+                    min-w-[90px]
+                    items-center
+                    justify-center
+                    overflow-hidden
+                    border border-[#d9e2ff]
+                    dark:border-white/10
+                    bg-white
+                    dark:bg-[#215cff]
+                    px-6
+                    text-[14px]
+                    font-semibold
+                    text-black
+                    dark:text-white
+                    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-[2px]
+                    hover:border-[#2563ff]/40
+                    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                  "
                 >
-                  Get started
-                </Button>
-              </div>
-            ) : null}
+                  <span className="relative z-10 block">Log in</span>
+                </Link>
 
+                {/* SIGNUP */}
+                <Link
+                  to="/signup"
+                  className="
+                    relative
+                    inline-flex
+                    h-[40px]
+                    min-w-[90px]
+                    items-center
+                    justify-center
+                    overflow-hidden
+                    border border-[#d9e2ff]
+                    dark:border-white/10
+                    bg-white
+                    dark:bg-[#2563ff]
+                    px-6
+                    text-[14px]
+                    font-semibold
+                    text-black
+                    dark:text-white
+                    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-[2px]
+                    hover:border-[#2563ff]/40
+                    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                  "
+                >
+                  <span className="relative z-10 block">Signup</span>
+                </Link>
+              </div>
+            )}
+
+            {/* MOBILE */}
             <button
-              type="button"
               onClick={() => setIsMobileMenuOpen((v) => !v)}
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-text md:hidden"
+              className="
+                z-20
+                flex h-10 w-10
+                items-center justify-center
+                border
+                border-border
+                bg-surface
+                text-text
+                md:hidden
+              "
             >
               {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
 
-        {/* Scroll progress bar */}
-        <motion.div
-          aria-hidden
-          style={{ scaleX: scrollYProgress }}
-          className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-gradient-to-r from-primary via-accent to-primary"
+        {/* BOTTOM LINES */}
+
+        {/* LEFT */}
+        <div
+          className="
+            pointer-events-none
+            absolute left-0 top-[81px]
+            h-[1.5px]
+            w-[17%]
+            bg-[#0606df]
+            dark:bg-[#2f4675]
+            opacity-90
+            dark:opacity-100
+          "
+        />
+
+        {/* LEFT CURVE */}
+        <div
+          className="
+            pointer-events-none
+            absolute left-[17%] top-[81px]
+            h-[1.5px]
+            w-[72px]
+            origin-left rotate-[-20deg]
+            bg-[#cbd5e1]
+            dark:bg-[#3d5a96]
+            opacity-90
+            dark:opacity-100
+          "
+        />
+
+        {/* CENTER */}
+        <div
+          className="
+            pointer-events-none
+            absolute left-[21%] top-[56px]
+            h-[1.5px]
+            w-[58%]
+            bg-[#cbd5e1]
+            dark:bg-[#29406d]
+            opacity-90
+            dark:opacity-100
+          "
+        />
+
+        {/* RIGHT CURVE */}
+        <div
+          className="
+            pointer-events-none
+            absolute right-[17%] top-[81px]
+            h-[1.5px]
+            w-[72px]
+            origin-right rotate-[20deg]
+            bg-[#cbd5e1]
+            dark:bg-[#3d5a96]
+            opacity-90
+            dark:opacity-100
+          "
+        />
+
+        {/* RIGHT */}
+        <div
+          className="
+            pointer-events-none
+            absolute right-0 top-[81px]
+            h-[1.5px]
+            w-[17%]
+            bg-[#cbd5e1]
+            dark:bg-[#2f4675]
+            opacity-90
+            dark:opacity-100
+          "
         />
       </motion.nav>
 
+      {/* MOBILE MENU */}
       <div
-        id="mobile-menu"
-        className={`fixed inset-x-0 top-[68px] z-40 origin-top border-b border-border bg-bg/95 px-5 pb-6 pt-3 backdrop-blur-2xl transition-all duration-200 md:hidden ${isMobileMenuOpen
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-2 opacity-0"
-          }`}
+        className={`
+          fixed left-0 top-[82px]
+          z-40
+          h-[calc(100vh-82px)]
+          w-full
+          px-5 py-6
+          transition-all duration-300
+          bg-surface
+          md:hidden
+          ${
+            isMobileMenuOpen
+              ? `
+              translate-x-0
+              opacity-100
+            `
+              : `
+              pointer-events-none
+              translate-x-full
+              opacity-0
+            `
+          }
+        `}
       >
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           {navLinks.map((link) => {
-            const isActive = isHome && activeSection === link.href;
-            const targetHref = isHome ? link.href : `/${link.href}`;
+            const isActive = activeSection === link.href;
+
             return (
               <a
                 key={link.label}
-                href={targetHref}
+                href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                aria-current={isActive ? "page" : undefined}
-                className={`flex items-center justify-between rounded-lg px-4 py-3 text-[15px] font-medium transition ${isActive
-                  ? "bg-primary-soft text-primary"
-                  : "text-text hover:bg-surface"
-                  }`}
+                className={`
+                  relative
+                  border
+                  px-4 py-4
+                  text-[15px]
+                  font-semibold
+                  transition
+                  ${
+                    isActive
+                      ? `
+                      border-[#2563ff]/20
+                      bg-[#2563ff]/10
+                      text-[#2563ff]
+                    `
+                      : `
+                      border-border
+                      bg-surface
+                      text-text
+                    `
+                  }
+                `}
               >
                 {link.label}
               </a>
             );
           })}
         </div>
-
-        {showAuthButtons ? (
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <Button
-              to="/login"
-              variant="outline"
-              size="md"
-              fullWidth
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Log in
-            </Button>
-            <Button
-              to="/signup"
-              variant="primary"
-              size="md"
-              fullWidth
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="!rounded-[18px] !bg-[#215cff] !text-white !shadow-[0_12px_28px_rgba(33,92,255,0.30)] hover:!bg-[#4b79ff]"
-            >
-              Get started
-            </Button>
-          </div>
-        ) : null}
       </div>
     </>
   );

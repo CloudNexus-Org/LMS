@@ -5,7 +5,7 @@ const navConfig = {
   student: [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/student/dashboard' },
     { name: 'My Courses', icon: BookOpen, path: '/student/courses' },
-    { name: 'Continue Learning', icon: PlaySquare, path: '/student/learn' },
+    { name: 'Analytics', icon: BarChart, path: '/student/analyticse' },
     { name: 'Wishlist', icon: Heart, path: '/student/wishlist' },
     { name: 'Certificates', icon: Award, path: '/student/certificates' },
     { name: 'Notes', icon: FileText, path: '/student/notes' },
@@ -36,7 +36,7 @@ export default function DashboardSidebar({ role, onClose }) {
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between px-6 border-b border-border shrink-0">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold font-display shadow-sm">
+          <div className="h-8 w-8 rounded-[5px] bg-primary text-white flex items-center justify-center font-bold font-display shadow-sm">
             CN
           </div>
           <span className="font-semibold text-lg text-text">Cloud Nexus</span>
@@ -54,7 +54,7 @@ export default function DashboardSidebar({ role, onClose }) {
               key={link.name}
               to={link.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                `flex items-center gap-3 rounded-[5px] px-4 py-3 text-sm font-semibold transition-all duration-200 ${
                   isActive
                     ? 'bg-primary-soft text-primary'
                     : 'text-muted hover:bg-surface hover:text-text hover:shadow-sm'
@@ -69,7 +69,7 @@ export default function DashboardSidebar({ role, onClose }) {
       </nav>
 
       <div className="p-4 border-t border-border shrink-0">
-        <div className="rounded-xl bg-bg p-4 border border-border shadow-sm">
+        <div className="rounded-[5px] bg-bg p-4 border border-border shadow-sm">
           <p className="font-bold text-text text-sm">
             {role.charAt(0).toUpperCase() + role.slice(1)} Pro
           </p>

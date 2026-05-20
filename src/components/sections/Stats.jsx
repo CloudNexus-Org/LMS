@@ -101,7 +101,7 @@ function StatItem({
         className="
           stat-meta
           mt-4
-          text-[24px]
+          text-[18px]
           font-normal
           leading-tight
           text-text

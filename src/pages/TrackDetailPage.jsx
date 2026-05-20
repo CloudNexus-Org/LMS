@@ -70,8 +70,8 @@ function CurriculumItem({
           onClick={onToggle}
           aria-label={`Toggle ${module.title}`}
           className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-display text-[15px] font-bold shadow-sm transition-all duration-300 ${isOpen
-              ? "bg-primary/10 text-primary ring-1 ring-primary/30 shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)]"
-              : "border border-border bg-elevated/50 text-muted hover:border-primary/40 hover:bg-elevated hover:text-primary hover:shadow-lg hover:shadow-primary/[0.08]"
+            ? "bg-primary/10 text-primary ring-1 ring-primary/30 shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)]"
+            : "border border-border bg-elevated/50 text-muted hover:border-primary/40 hover:bg-elevated hover:text-primary hover:shadow-lg hover:shadow-primary/[0.08]"
             }`}
         >
           {String(index + 1).padStart(2, "0")}
@@ -81,8 +81,8 @@ function CurriculumItem({
           <div
             aria-hidden
             className={`absolute bottom-[-24px] top-14 w-[2px] rounded-full transition-all duration-300 ${isOpen
-                ? "bg-gradient-to-b from-primary/40 to-border opacity-100"
-                : "bg-border opacity-60 group-hover/timeline:bg-primary/20"
+              ? "bg-gradient-to-b from-primary/40 to-border opacity-100"
+              : "bg-border opacity-60 group-hover/timeline:bg-primary/20"
               }`}
           />
         )}
@@ -231,7 +231,7 @@ export default function TrackDetailPage() {
 
       <main id="main" className="relative">
         {/* ================= HERO ================= */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-bg via-bg to-[color:color-mix(in_oklab,var(--primary)_3%,var(--bg))] pt-24 pb-16 md:pt-28 md:pb-24">
+        <section className="relative overflow-hidden bg-gradient-to-b from-bg via-bg to-[color:color-mix(in_oklab,var(--primary)_3%,var(--bg))] pt-6 pb-6 md:pt-25 md:pb-10">
           {/* Ambient glow */}
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute right-[10%] top-[5%] h-[500px] w-[500px] rounded-full bg-primary/[0.04] blur-[120px]" />
@@ -241,114 +241,64 @@ export default function TrackDetailPage() {
           <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10">
             {/* Breadcrumb removed */}
 
-            <div className="grid items-start gap-16 lg:grid-cols-[1.15fr_0.85fr] xl:gap-20">
-              {/* ─── LEFT COLUMN ─── */}
+            <div className="flex flex-col items-center text-center">
+              <h1 className="font-display text-[38px] font-black leading-[1.02] tracking-[-0.03em] text-text sm:text-[44px] xl:text-[56px]">
+                {track.name}
+              </h1>
+              <p className="mt-3 max-w-[640px] text-[18px] font-normal leading-8 text-muted sm:text-[18px]">
+                {track.tagline}
+              </p>
+              <p className="mt-3 max-w-[700px] text-[15px] leading-[1.6] text-subtle md:text-[15px]">
+                {track.longDescription}
+              </p>
+            </div>
+
+            {/* ─── MIDDLE ROW: FEATURES & MENTORS ─── */}
+            <div className="mt-8 grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1fr_auto_1fr]">
+
+              {/* Left Feature Block */}
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: EASE }}
+                className="hidden flex-col items-start lg:flex rounded-[1.5rem] bg-elevated/50 p-6 sm:p-7 border border-border/50 h-full justify-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
               >
-                {/* Badge removed as requested */}
-
-                {/* Title */}
-                <h1 className="mt-7 font-display text-[48px] font-black leading-[1.02] tracking-[-0.03em] text-text sm:text-[60px] xl:text-[72px]">
-                  {track.name}
-                </h1>
-
-                {/* Subtitle */}
-                <p className="mt-6 max-w-[640px] text-[20px] font-medium leading-8 text-muted sm:text-[24px]">
-                  {track.tagline}
+                <h3 className="font-display text-[18px] font-bold text-text">From idea to shipped product</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-muted">
+                  Learn by building real projects that take you from zero to production with confidence.
                 </p>
-
-                {/* Description */}
-                <p className="mt-8 max-w-[620px] text-[16px] leading-[2] text-subtle sm:text-[17px]">
-                  {track.longDescription}
-                </p>
-
-                {/* Metadata row */}
-                <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-[14px] text-muted">
-                  <span className="inline-flex items-center gap-2">
-                    <Star size={14} className="fill-current text-primary" aria-hidden />
-                    <span className="font-semibold text-text">{track.rating}</span>
-                    <span>({track.reviews?.toLocaleString()} reviews)</span>
-                  </span>
-                  <span className="inline-flex items-center gap-2">
-                    <Users size={14} className="text-muted" aria-hidden />
-                    <span className="font-semibold text-text">{track.enrolled}</span>
-                    enrolled
-                  </span>
-                  <span className="inline-flex items-center gap-2">
-                    <Clock size={14} className="text-muted" aria-hidden />
-                    {track.durationWeeks} weeks · {track.hoursPerWeek}h/week
-                  </span>
-                </div>
-
-                {/* CTA buttons */}
-                <div className="mt-10 flex flex-wrap items-center gap-4 sm:gap-6">
-                  <Link
-                    to={`/learn/${track.id}`}
-                    className="inline-flex items-center gap-2.5 rounded-2xl bg-primary px-10 py-5 text-[15px] font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                  >
-                    <PlayCircle size={18} aria-hidden />
-                    Start learning
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="inline-flex items-center gap-2.5 rounded-2xl border border-border bg-elevated px-8 py-5 text-[15px] font-semibold text-text shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
-                  >
-                    <Calendar size={16} aria-hidden />
-                    Enroll for {track.nextCohort.split(",")[1]?.trim() || "the next cohort"}
-                  </Link>
-                </div>
-
-                {/* Trust row */}
-                <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-subtle">
-                  <span className="inline-flex items-center gap-1.5">
-                    <ShieldCheck size={14} className="text-success" aria-hidden />
-                    7-day free trial
-                  </span>
-                  <span aria-hidden className="text-border">·</span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <ShieldCheck size={14} className="text-success" aria-hidden />
-                    No credit card needed
-                  </span>
-                  <span aria-hidden className="text-border">·</span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Award size={14} className="text-primary" aria-hidden />
-                    Certificate included
-                  </span>
+                <div className="mt-6 w-full border-t border-dashed border-border/50 pt-6 mt-auto">
+                  <ul className="space-y-3 text-[13px] font-medium text-subtle">
+                    <li className="flex items-center gap-3"><CheckCircle2 size={16} className="text-primary" /> Real-world projects</li>
+                    <li className="flex items-center gap-3"><CheckCircle2 size={16} className="text-primary" /> Production-ready code</li>
+                    <li className="flex items-center gap-3"><CheckCircle2 size={16} className="text-primary" /> Industry best practices</li>
+                  </ul>
                 </div>
               </motion.div>
 
-              {/* ─── RIGHT COLUMN: MENTOR SHOWCASE ─── */}
-              <motion.aside
-                initial={{ opacity: 0, y: 16 }}
+              {/* Center Mentors Carousel */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: EASE, delay: 0.12 }}
-                className="flex flex-col items-center pt-4 lg:pt-8"
+                transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
+                className="relative mx-auto w-full px-2 sm:px-4"
               >
-                {/* Header */}
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
-                  Learn from experts
-                </span>
-                <h2 className="mt-3 text-center font-display text-[22px] font-bold tracking-tight text-text sm:text-[26px]">
-                  Your mentors for this track
-                </h2>
-                <div className="mt-3 h-[3px] w-10 rounded-full bg-primary" aria-hidden />
+                {/* Nav Arrows */}
+                {/* <button className="absolute left-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-elevated text-muted shadow-sm hover:text-primary sm:flex">
+                  <ArrowLeft size={18} />
+                </button>
+                <button className="absolute right-0 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-elevated text-muted shadow-sm hover:text-primary sm:flex">
+                  <ArrowRight size={18} />
+                </button> */}
 
-                {/* Mentors grid */}
-                <div className="mt-10 flex items-start justify-center gap-6 sm:gap-8">
+                <div className="flex items-stretch justify-center gap-4 sm:gap-4">
                   {(track.heroMentors || []).map((m, i) => (
-                    <motion.div
+                    <div
                       key={m.name}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, ease: EASE, delay: 0.2 + i * 0.08 }}
-                      className="group flex flex-col items-center text-center"
+                      className="group flex w-[160px] flex-col items-center rounded-[1.5rem] bg-elevated p-5 text-center shadow-sm ring-1 ring-border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:ring-primary/20"
                     >
-                      {/* Portrait with floating logo */}
-                      <div className="relative mb-4">
-                        <div className="relative h-[120px] w-[120px] overflow-hidden rounded-full ring-2 ring-primary/10 ring-offset-2 ring-offset-bg transition-all duration-300 group-hover:ring-primary/25 sm:h-[140px] sm:w-[140px]">
+                      <div className="relative mb-3">
+                        <div className="relative h-[95px] w-[95px] overflow-hidden rounded-full ring-2 ring-primary/10 ring-offset-2 ring-offset-elevated transition-all duration-300 group-hover:ring-primary/25">
                           <img
                             src={m.photo}
                             alt={m.name}
@@ -356,36 +306,155 @@ export default function TrackDetailPage() {
                             loading="lazy"
                           />
                         </div>
-                        {/* Floating logo */}
-                        <motion.div
-                          whileHover={{ scale: 1.12 }}
-                          className="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full border-2 border-bg bg-elevated shadow-md"
-                        >
-                          <img src={m.logo} alt="" className="h-6 w-6" aria-hidden />
-                        </motion.div>
+                        <div className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-elevated bg-bg shadow-md">
+                          <img src={m.logo} alt="" className="h-4 w-4" aria-hidden />
+                        </div>
                       </div>
-
-                      {/* Info */}
-                      <h3 className="font-display text-[15px] font-bold tracking-tight text-text">
+                      <h3 className="font-display text-[13px] font-bold tracking-tight text-text line-clamp-1">
                         {m.name}
                       </h3>
-                      <p className="mt-1 text-[12.5px] font-medium text-primary">
+                      <p className="mt-1 text-[11px] font-medium text-primary line-clamp-2">
                         {m.role}
                       </p>
-                      <p className="mt-1 inline-flex items-center gap-1 text-[11.5px] text-subtle">
+                      <p className="mt-1 flex items-center justify-center gap-1 text-[10px] text-subtle">
                         <Briefcase size={10} aria-hidden />
-                        {m.company}
+                        <span className="truncate">{m.company}</span>
                       </p>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
-              </motion.aside>
+              </motion.div>
+
+              {/* Right Feature Block */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: EASE }}
+                className="hidden flex-col items-start lg:flex rounded-[1.5rem] bg-elevated/50 p-6 sm:p-7 border border-border/50 h-full justify-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+              >
+                <h3 className="font-display text-[18px] font-bold text-text">Build. Ship. Scale.</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-muted">
+                  Master the tools and mindset used by top engineers to build, deploy and scale modern apps.
+                </p>
+                <div className="mt-6 w-full border-t border-dashed border-border/50 pt-6 mt-auto">
+                  <ul className="space-y-3 text-[13px] font-medium text-subtle">
+                    <li className="flex items-center gap-3"><CheckCircle2 size={16} className="text-primary" /> Modern tech stack</li>
+                    <li className="flex items-center gap-3"><CheckCircle2 size={16} className="text-primary" /> Scalable architecture</li>
+                    <li className="flex items-center gap-3"><CheckCircle2 size={16} className="text-primary" /> Career growth focused</li>
+                  </ul>
+                </div>
+              </motion.div>
             </div>
+
+            {/* ─── CTA ROW ─── */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
+              className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6"
+            >
+              <Link
+                to={`/learn/${track.id}`}
+                className="inline-flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-[14px] font-semibold text-white shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
+              >
+                <PlayCircle size={18} aria-hidden />
+                Start learning
+              </Link>
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 rounded-2xl border border-border bg-elevated px-6 py-4 text-[14px] font-semibold text-text shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
+              >
+                <Calendar size={16} aria-hidden />
+                Enroll for {track.nextCohort.split(",")[1]?.trim() || "the next cohort"}
+              </Link>
+            </motion.div>
+
+            {/* ─── BOTTOM TRUST BAR ─── */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.3 }}
+              className="mt-16 overflow-hidden rounded-2xl border border-border bg-elevated/80 shadow-sm backdrop-blur-sm"
+            >
+              <div className="flex flex-col items-center justify-between gap-8 p-6 lg:flex-row lg:px-10 py-8">
+                {/* Trusted By Logos */}
+                <div className="flex flex-col items-center gap-4 lg:items-start max-w-sm">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-subtle">
+                    Trusted by learners & teams at
+                  </span>
+                  <div className="flex flex-wrap items-center justify-center gap-6 text-[15px] font-display font-bold text-muted lg:justify-start">
+                    <span className="flex items-center gap-1.5 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"><span className="text-blue-500">G</span><span className="text-red-500">o</span><span className="text-yellow-500">o</span><span className="text-blue-500">g</span><span className="text-green-500">l</span><span className="text-red-500">e</span></span>
+                    <span className="text-red-600 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">NETFLIX</span>
+                    <span className="text-black dark:text-white grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">Uber</span>
+                    <span className="grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">amazon</span>
+                    <span className="text-red-500 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">Adobe</span>
+                  </div>
+                </div>
+
+                <div className="hidden h-16 w-px bg-border/80 lg:block" aria-hidden />
+
+                {/* Track Stats */}
+                <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+                  {/* Rating */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Star size={20} className="fill-current" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5 text-[15px] font-bold text-text">
+                        {track.rating}
+                        <div className="flex text-yellow-400 text-[12px] gap-0.5">
+                          <Star size={12} className="fill-current" />
+                          <Star size={12} className="fill-current" />
+                          <Star size={12} className="fill-current" />
+                          <Star size={12} className="fill-current" />
+                          <Star size={12} className="fill-current" />
+                        </div>
+                      </div>
+                      <div className="text-[12px] text-subtle">({track.reviews?.toLocaleString()} reviews)</div>
+                    </div>
+                  </div>
+
+                  {/* Enrollments */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Users size={20} />
+                    </div>
+                    <div>
+                      <div className="text-[15px] font-bold text-text">{track.enrolled}</div>
+                      <div className="text-[12px] text-subtle">Enrolled learners</div>
+                    </div>
+                  </div>
+
+                  {/* Duration */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Clock size={20} />
+                    </div>
+                    <div>
+                      <div className="text-[15px] font-bold text-text">{track.durationWeeks} Weeks</div>
+                      <div className="text-[12px] text-subtle">{track.hoursPerWeek}h/week</div>
+                    </div>
+                  </div>
+
+                  {/* Certificate */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Award size={20} />
+                    </div>
+                    <div>
+                      <div className="text-[15px] font-bold text-text">Certificate</div>
+                      <div className="text-[12px] text-subtle">Included</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ================= WHAT YOU'LL LEARN ================= */}
-        <section className="relative overflow-hidden py-20 md:py-28">
+        <section className="relative overflow-hidden py-20 md:py-32">
           {/* Ambient background */}
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary/[0.03] blur-[120px]" />
@@ -412,7 +481,7 @@ export default function TrackDetailPage() {
             </motion.div>
 
             {/* ─── FEATURE CARDS ─── */}
-            <div className="mt-14 grid gap-5 sm:grid-cols-2">
+            {/* <div className="mt-7 grid gap-5 sm:grid-cols-1">
               {track.outcomes.map((outcome, i) => {
                 // Auto-assign icons per position for visual variety
                 const ICONS = [Network, BookOpen, Search, Rocket, ClipboardCheck, Link2];
@@ -425,64 +494,98 @@ export default function TrackDetailPage() {
                     viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.45, ease: EASE, delay: i * 0.06 }}
                     className="group relative flex items-center gap-5 overflow-hidden rounded-3xl border border-border bg-elevated p-7 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/[0.06] sm:p-8"
-                  >
-                    {/* Left accent line */}
-                    <div
+                  > */}
+            {/* Left accent line */}
+            {/* <div
                       aria-hidden
                       className="pointer-events-none absolute inset-y-0 left-0 w-[3px] bg-primary/20 transition-all duration-300 group-hover:bg-primary/60 group-hover:shadow-[0_0_8px_rgba(var(--color-primary-rgb),0.3)]"
-                    />
-                    {/* Icon */}
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/[0.07] transition-transform duration-300 group-hover:scale-105 sm:h-16 sm:w-16">
+                    /> */}
+            {/* Icon */}
+            {/* <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/[0.07] transition-transform duration-300 group-hover:scale-105 sm:h-16 sm:w-16">
                       <OutcomeIcon size={24} className="text-primary" strokeWidth={1.6} aria-hidden />
-                    </div>
-                    {/* Content */}
-                    <div className="min-w-0 flex-1">
+                    </div> */}
+            {/* Content */}
+            {/* <div className="min-w-0 flex-1">
                       <h3 className="font-display text-[15px] font-bold tracking-tight text-text sm:text-[16px]">
                         {outcome}
                       </h3>
-                    </div>
-                    {/* Arrow */}
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 group-hover:border-primary/30 group-hover:bg-primary/[0.05] group-hover:text-primary">
+                    </div> */}
+            {/* Arrow */}
+            {/* <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 group-hover:border-primary/30 group-hover:bg-primary/[0.05] group-hover:text-primary">
                       <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                     </div>
                   </motion.div>
                 );
               })}
-            </div>
+            </div> */}
 
-            {/* ─── BOTTOM TRUST STRIP ─── */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}
-              className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-border bg-border shadow-sm md:grid-cols-4"
-            >
-              {[
-                { icon: Briefcase, title: "Job-ready skills", sub: "Built for senior-engineer roles" },
-                { icon: Rocket, title: "Real-world projects", sub: "Build what companies ship" },
-                { icon: Users, title: "Industry mentors", sub: "Learn from practitioners" },
-                { icon: Award, title: "Certificate of completion", sub: "Showcase your achievement" },
-              ].map((item) => {
-                const TrustIcon = item.icon;
+
+            <div className="mt-2 max-w-[700px] mx-auto grid gap-4 sm:grid-cols-1">
+              {track.outcomes.map((outcome, i) => {
+                const ICONS = [
+                  Network,
+                  BookOpen,
+                  Search,
+                  Rocket,
+                  ClipboardCheck,
+                  Link2,
+                ];
+
+                const OutcomeIcon = ICONS[i % ICONS.length];
+
                 return (
-                  <div key={item.title} className="flex items-center gap-3 bg-elevated px-5 py-5 sm:px-6">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/[0.06]">
-                      <TrustIcon size={18} className="text-primary" strokeWidth={1.6} aria-hidden />
+                  <motion.div
+                    key={outcome}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{
+                      duration: 0.45,
+                      ease: EASE,
+                      delay: i * 0.06,
+                    }}
+                    className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-border bg-elevated p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/[0.06]"
+                  >
+                    {/* Left accent line */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-primary/20 transition-all duration-300 group-hover:bg-primary/60"
+                    />
+
+                    {/* Icon */}
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/[0.07] transition-transform duration-300 group-hover:scale-105">
+                      <OutcomeIcon
+                        size={18}
+                        className="text-primary"
+                        strokeWidth={1.8}
+                        aria-hidden
+                      />
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-[13px] font-bold text-text">{item.title}</p>
-                      <p className="mt-0.5 text-[11.5px] text-subtle">{item.sub}</p>
+
+                    {/* Content */}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-display text-sm font-semibold tracking-tight text-text">
+                        {outcome}
+                      </h3>
                     </div>
-                  </div>
+
+                    {/* Arrow */}
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 group-hover:border-primary/30 group-hover:bg-primary/[0.05] group-hover:text-primary">
+                      <ArrowRight
+                        size={12}
+                        className="transition-transform duration-300 group-hover:translate-x-0.5"
+                        aria-hidden
+                      />
+                    </div>
+                  </motion.div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* ================= SKILLS ================= */}
-        <section className="relative overflow-hidden py-16 md:py-24">
+        <section className="relative overflow-hidden py-12 md:py-6">
           {/* Ambient Glow */}
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="h-[300px] w-[600px] rounded-full bg-primary/[0.03] blur-[120px]" />

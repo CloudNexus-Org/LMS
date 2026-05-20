@@ -66,7 +66,7 @@ function CourseCard({ course, index }) {
         className="
           relative flex h-full flex-col
           overflow-hidden
-          rounded-[10px]
+          rounded-[5px]
           border border-border/60
           bg-elevated/90
           backdrop-blur-xl
@@ -142,10 +142,10 @@ function CourseCard({ course, index }) {
         <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
           {/* TITLE & RATING ROW (Dono ko ek line mein ya upar-neeche balanced rakhein) */}
           <div className="flex flex-col gap-1">
-            <h3 className="text-[22px] font-semibold leading-[1.2] tracking-tight text-text transition-colors duration-300 group-hover:text-primary">
+            <h4 className="text-[22px] font-semibold leading-[1.2] tracking-tight text-text transition-colors duration-300 group-hover:text-primary">
               {course.title}
-            </h3>
-            <p className="text-[12px] font-medium text-text transition-colors duration-300 group-hover:text-primary uppercase tracking-[0.1em] ">
+            </h4>
+            <p className="text-[12px] font-normal text-text transition-colors duration-300 group-hover:text-primary uppercase tracking-[0.1em] ">
               By {course.professor}
             </p>
           </div>
@@ -182,7 +182,41 @@ function CourseCard({ course, index }) {
               </span>
             </div>
 
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[12px] font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105 active:scale-95">
+            <div                 className="
+    relative
+    inline-flex
+    h-[32px]
+    min-w-[90px]
+    items-center
+    justify-center
+
+    overflow-hidden
+rounded-none
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-white
+    dark:bg-[#2563ff]
+
+    px-6
+
+    text-[14px]
+    font-semibold
+
+    text-black
+    dark:text-white
+
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  ">
               Explore
               <ArrowRight size={16} />
             </div>

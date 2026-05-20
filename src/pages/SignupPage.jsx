@@ -78,7 +78,7 @@ export default function SignupPage() {
             w-full max-w-[980px]
             h-[780px]
             overflow-hidden
-            rounded-[34px]
+            rounded-[5px]
             border-2 border-blue-500/90
             bg-elevated/90
             shadow-[0_30px_100px_rgba(0,0,0,0.35)]
@@ -281,7 +281,7 @@ export default function SignupPage() {
                 <div
                   className={`
                     flex h-[52px] items-center
-                    rounded-[16px]
+                    rounded-[5px]
                     border ${errors.fullName ? 'border-danger' : 'border-border'}
                     bg-bg px-4
                     transition
@@ -315,7 +315,7 @@ export default function SignupPage() {
                 <div
                   className={`
                     flex h-[52px] items-center
-                    rounded-[16px]
+                    rounded-[5px]
                     border ${errors.username ? 'border-danger' : 'border-border'}
                     bg-bg px-4
                     transition
@@ -350,7 +350,7 @@ export default function SignupPage() {
                 <div
                   className={`
                     flex h-[52px] items-center
-                    rounded-[16px]
+                    rounded-[5px]
                     border ${errors.email ? 'border-danger' : 'border-border'}
                     bg-bg px-4
                     transition
@@ -384,7 +384,7 @@ export default function SignupPage() {
                 <div
                   className={`
                     flex h-[52px] items-center
-                    rounded-[16px]
+                    rounded-[5px]
                     border ${errors.password ? 'border-danger' : 'border-border'}
                     bg-bg px-4
                     transition
@@ -428,7 +428,7 @@ export default function SignupPage() {
                 disabled={isLoading}
                 className={`
                   flex h-[52px] w-full items-center justify-center gap-2
-                  rounded-[16px]
+                  rounded-[5px]
                   bg-primary
                   text-[14px] font-bold
                   text-white
@@ -467,7 +467,7 @@ export default function SignupPage() {
                 type="button"
                 className="
                   flex h-[50px] w-full items-center justify-center gap-3
-                  rounded-[15px]
+                  rounded-[5px]
                   border border-border
                   bg-bg
                   text-[13px] font-semibold text-text
@@ -488,7 +488,7 @@ export default function SignupPage() {
                 type="button"
                 className="
                   flex h-[50px] w-full items-center justify-center gap-3
-                  rounded-[15px]
+                  rounded-[5px]
                   border border-border
                   bg-bg
                   text-[13px] font-semibold text-text

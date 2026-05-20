@@ -5,9 +5,10 @@ import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Avatar from '@/components/ui/Avatar';
 
-import Testimonialbg1 from '@/assets/Testimonialbg.png';
-import Testimonialbg2 from '@/assets/Testimonialbg2.png';
-import Testimonialbg3 from '@/assets/Testimonialbg3.png';
+import Testimonialbg1 from '@/assets/Testimonialbg1.png';
+import Testimonialbg2 from '@/assets/Testimonialbg2 (2).png';
+import Testimonialbg3 from '@/assets/Testimonialbg4.png';
+
 
 const bgImages = [
   Testimonialbg1,
@@ -16,11 +17,14 @@ const bgImages = [
 ];
 
 function ReviewCard({ item, index }) {
+
   const bgImage = bgImages[index % bgImages.length];
 
   return (
+
     <article
       className="
+        testimonial-card
         group
 
         relative
@@ -28,202 +32,284 @@ function ReviewCard({ item, index }) {
         flex h-[280px] w-[360px]
         shrink-0 flex-col
 
-        overflow-hidden
+        overflow-visible
 
-        rounded-[10px]
+        rounded-[8px]
 
         border border-border
 
         bg-elevated
 
-        p-6
-
-        shadow-[var(--shadow-card)]
+        p-[2px]
 
         transition-all duration-500
 
-        hover:border-primary/40
-
         md:w-[420px]
+
+        hover:-translate-y-3
       "
     >
-      {/* BACKGROUND IMAGE */}
+{/* ANIMATED BORDER */}
+<div
+  className="
+    absolute
+    inset-0
+
+    rounded-[8px]
+
+    opacity-0
+
+    transition-opacity duration-500
+
+    group-hover:opacity-100
+  "
+>
+
+  <div
+    className="
+      absolute
+      -inset-[3px]
+
+      rounded-[10px]
+
+      animate-spin-slow
+
+      
+
+      blur-[0.5px]
+    "
+  />
+
+</div>
+
+      {/* MAIN CARD */}
       <div
         className="
-          absolute inset-0
+          relative
 
-          opacity-0
+          flex h-full w-full flex-col
+
+          overflow-hidden
+
+          rounded-[7px]
+
+          bg-elevated
+
+          p-6
 
           transition-all duration-500
 
-          group-hover:opacity-100
+          group-hover:border-blue-500/40
+
+          group-hover:shadow-[0_0_40px_rgba(37,99,235,0.45)]
+
+          dark:group-hover:shadow-[0_0_55px_rgba(37,99,235,0.35)]
         "
       >
-        <img
-          src={bgImage}
-          alt="testimonial background"
 
-          className="
-            h-full w-full
-            object-cover
-          "
-        />
-
-        {/* DARK OVERLAY */}
+        {/* BG IMAGE */}
         <div
           className="
             absolute inset-0
 
-            bg-black/55
+            scale-[1.18]
+
+            opacity-0
+
+            transition-all duration-700
+
+            group-hover:scale-100
+            
+            group-hover:opacity-100
           "
-        />
-      </div>
+        >
 
-      {/* CONTENT */}
-      <div className="relative z-10 flex h-full flex-col">
-
-        {/* TOP */}
-        <div className="flex items-start justify-between">
-
-          {/* USER */}
-          <div className="flex items-center gap-3">
-            <Avatar
-              src={item.avatar}
-              name={item.name}
-              size="md"
-            />
-
-            <div className="min-w-0">
-              <div
-                className="
-                  truncate
-
-                  text-[15px]
-                  font-semibold
-
-                  text-text
-
-                  transition-colors duration-300
-
-                  group-hover:text-white
-                "
-              >
-                {item.name}
-              </div>
-
-              <div
-                className="
-                  text-[12px]
-
-                  text-muted
-
-                  transition-colors duration-300
-
-                  group-hover:text-white/70
-                "
-              >
-                {item.role}
-              </div>
-            </div>
-          </div>
-
-          {/* QUOTE */}
-          <Quote
-            size={24}
+          <img
+            src={bgImage}
+            alt="testimonial background"
             className="
-              rotate-180
-
-              text-primary/40
-
-              transition-colors duration-300
-
-              group-hover:text-white/70
+              h-full w-full
+              object-cover
             "
           />
+
+          {/* OVERLAY */}
+          <div
+            className="
+              absolute inset-0
+
+              bg-black/72
+
+              transition-all duration-500
+
+              group-hover:bg-black/58
+
+              dark:bg-black/72
+            "
+          />
+
+
         </div>
 
-        {/* LINE */}
-        <div
-          className="
-            mt-5
 
-            h-px
-            w-full
 
-            bg-border
+        {/* CONTENT */}
+        <div className="relative z-10 flex h-full flex-col">
 
-            transition-colors duration-300
+          {/* TOP */}
+          <div className="flex items-start justify-between">
 
-            group-hover:bg-white/20
-          "
-        />
+            <div className="flex items-center gap-3">
 
-        {/* RATING */}
-        <div className="mt-5 flex items-center gap-3">
+              <Avatar
+                src={item.avatar}
+                name={item.name}
+                size="md"
+              />
 
-          <span
+              <div className="min-w-0">
+
+                <div
+                  className="
+                    truncate
+
+                    text-[15px]
+                    font-semibold
+
+                    text-text
+
+                    transition-all duration-300
+
+                    group-hover:text-white
+                  "
+                >
+                  {item.name}
+                </div>
+
+                <div
+                  className="
+                    text-[12px]
+
+                    text-muted
+
+                    transition-all duration-300
+
+                    group-hover:text-white/75
+                  "
+                >
+                  {item.role}
+                </div>
+
+              </div>
+
+            </div>
+
+            <Quote
+              size={24}
+              className="
+                rotate-180
+
+                text-primary/40
+
+                transition-all duration-500
+
+                group-hover:scale-110
+                group-hover:text-blue-300
+              "
+            />
+
+          </div>
+
+          {/* LINE */}
+          <div
             className="
+              mt-5
+
+              h-px
+              w-full
+
+              bg-border
+
+              transition-all duration-500
+
+              group-hover:bg-blue-400/40
+            "
+          />
+
+          {/* RATING */}
+          <div className="mt-5 flex items-center gap-3">
+
+            <span
+              className="
+                text-[15px]
+                font-medium
+
+                text-muted
+
+                transition-all duration-300
+
+                group-hover:text-white/80
+              "
+            >
+              {item.rating}.0
+            </span>
+
+            <div className="flex items-center gap-1">
+
+              {Array.from({ length: item.rating }).map((_, i) => (
+
+                <Star
+                  key={i}
+                  size={14}
+                  className="
+                    fill-warning
+                    text-warning
+                  "
+                />
+
+              ))}
+
+            </div>
+
+          </div>
+
+          {/* REVIEW */}
+          <p
+            className="
+              mt-6
+
+              flex-1
+
               text-[15px]
-              font-medium
+              leading-8
 
               text-muted
 
-              transition-colors duration-300
+              transition-all duration-500
 
-              group-hover:text-white/80
+              group-hover:text-white/92
             "
           >
-            {item.rating}.0
-          </span>
+            {item.text}
+          </p>
 
-          <div className="flex items-center gap-1">
-            {Array.from({ length: item.rating }).map((_, i) => (
-              <Star
-                key={i}
-                size={14}
-                className="
-                  fill-warning
-                  text-warning
-                "
-              />
-            ))}
-          </div>
         </div>
 
-        {/* REVIEW */}
-        <p
-          className="
-            mt-6
-
-            flex-1
-
-            text-[15px]
-            leading-8
-
-            text-muted
-
-            transition-colors duration-300
-
-            group-hover:text-white/90
-          "
-        >
-          {item.text}
-        </p>
       </div>
+
     </article>
+
   );
 }
 
 export default function TestimonialScroll() {
+
   const firstRow = [...testimonials, ...testimonials];
 
-  const secondRow = [
-    ...testimonials.slice().reverse(),
-    ...testimonials.slice().reverse(),
-  ];
-
   return (
+
     <SectionShell id="testimonials">
+
       <SectionHeading
         eyebrow="Learner stories"
         title="Real progress,"
@@ -233,32 +319,27 @@ export default function TestimonialScroll() {
 
       <div className="space-y-6">
 
-        {/* TOP ROW */}
-        <div className="testimonial-mask overflow-hidden">
-          <div className="testimonial-row-left flex w-max gap-5">
+        <div className="testimonial-mask overflow-visible">
+
+          <div className="testimonial-row-left flex w-max gap-5 py-6">
+
             {firstRow.map((item, index) => (
+
               <ReviewCard
                 key={`top-${index}`}
                 item={item}
                 index={index}
               />
+
             ))}
+
           </div>
+
         </div>
 
-        {/* BOTTOM ROW */}
-        <div className="testimonial-mask hidden overflow-hidden md:block">
-          <div className="testimonial-row-right flex w-max gap-5 translate-x-62">
-            {secondRow.map((item, index) => (
-              <ReviewCard
-                key={`bottom-${index}`}
-                item={item}
-                index={index + 3}
-              />
-            ))}
-          </div>
-        </div>
       </div>
+
     </SectionShell>
+
   );
 }

@@ -129,9 +129,9 @@ export default function TrustedCompanies() {
 
         {/* Heading */}
         <div className="mb-12 text-center">
-          <p className="text-[30px] font-bold uppercase tracking-[0.5em] text-primary">
+          <h3 className="text-[30px] font-semibold uppercase tracking-[0.5em] text-primary">
             Our learners now work at
-          </p>
+          </h3>
         </div>
 
         {/* Logos */}
