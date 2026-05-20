@@ -48,7 +48,41 @@ function Plan({ tier }) {
         size="md"
         fullWidth
         variant={isHighlight ? "primary" : "outline"}
-        className="mt-6 plan-cta"
+                         className="
+    relative
+    inline-flex
+    h-[40px]
+    min-w-[90px]
+    items-center
+    justify-center
+
+    overflow-hidden
+rounded-none
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-white
+    dark:bg-[#2563ff]
+
+    px-6
+
+    text-[14px]
+    font-semibold
+
+    text-black
+    dark:text-white
+
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
         rightIcon={<ArrowRight size={14} />}
       >
         {tier.cta}

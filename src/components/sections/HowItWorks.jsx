@@ -359,7 +359,7 @@ export default function HowItWorks() {
               </div>
 
               {/* Screen */}
-              <div className="relative aspect-video overflow-hidden rounded-[14px] bg-elevated md:rounded-[16px]">
+              <div className="relative aspect-video overflow-hidden rounded-[5px] bg-elevated md:rounded-[5px]">
                 <VideoFrame src={VIDEO_SRC} videoRef={videoRef} />
 
                 {/* Subtle screen glare */}
@@ -394,7 +394,7 @@ export default function HowItWorks() {
                 className="h-2.5 w-10 bg-gradient-to-b from-[#1c2235] to-[#10162a]"
                 style={{ clipPath: "polygon(20% 0, 80% 0, 100% 100%, 0 100%)" }}
               />
-              <div className="h-1.5 w-24 rounded-b-md bg-gradient-to-b from-[#10162a] to-[#0a0e1c] shadow-[0_8px_18px_-6px_rgba(11,16,32,0.35)]" />
+              <div className="h-1.5 w-24 rounded-b-[5px] bg-gradient-to-b from-[#10162a] to-[#0a0e1c] shadow-[0_8px_18px_-6px_rgba(11,16,32,0.35)]" />
             </div>
           </div>
         </div>

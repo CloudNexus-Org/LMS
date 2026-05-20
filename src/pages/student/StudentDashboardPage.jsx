@@ -1,103 +1,634 @@
-import { Clock, BookOpen, Award, PlayCircle } from 'lucide-react';
-import { WidgetCard, StatsCard, ActivityTimeline } from '@/features/dashboard/components/DashboardWidgets';
-
-const mockActivities = [
-  { title: 'Completed module "React Hooks Deep Dive"', time: '2 hours ago' },
-  { title: 'Earned "Fast Learner" badge', time: '1 day ago' },
-  { title: 'Started "Advanced Next.js Architecture"', time: '2 days ago' },
-  { title: 'Completed Quiz: State Management', time: '3 days ago' },
-];
+import {
+  Play,
+  Sparkles,
+  CalendarDays,
+  ArrowRight,
+  Trophy,
+  Star,
+} from "lucide-react";
 
 export default function StudentDashboardPage() {
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
-      
-      {/* Hero Header */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl lg:text-4xl font-bold text-text font-display tracking-tight">
-          Welcome back, Alex!
-        </h1>
-        <p className="text-muted font-medium text-lg">
-          You're on a <span className="text-orange-500 font-bold">12-day learning streak</span>. Keep it up! 🔥
-        </p>
-      </div>
+    <div className="relative min-h-screen overflow-hidden bg-bg text-text">
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <StatsCard 
-          title="Hours Learned" 
-          value="42.5h" 
-          icon={Clock} 
-          trend="up" 
-          trendValue="2.5h this week" 
-        />
-        <StatsCard 
-          title="Courses Completed" 
-          value="4" 
-          icon={BookOpen} 
-        />
-        <StatsCard 
-          title="Certificates Earned" 
-          value="2" 
-          icon={Award} 
-          trend="up"
-          trendValue="1 new"
-        />
-      </div>
+      {/* DARK MODE GLOW */}
+      <div
+        className="
+          hidden dark:block
+          pointer-events-none absolute
+          left-1/2 top-0
+          h-[500px] w-[500px]
+          -translate-x-1/2
+          rounded-full
+         
+          blur-[140px]
+        "
+      />
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        
-        {/* Left Column (Wider) */}
-        <div className="lg:col-span-2 space-y-6">
-          <WidgetCard 
-            title="Jump Back In" 
-            action={<button className="text-sm font-bold text-primary hover:text-primary-hover hover:underline transition-colors">View all</button>}
+
+
+      <div className="relative z-10 w-full space-y-8 px-2 sm:px-4 lg:px-6 pt-1">
+
+        {/* TOP HERO */}
+        <section className="grid grid-cols-1 gap-6 xl:grid-cols-3 items-start">
+
+          {/* LEFT */}
+          <div className="xl:col-span-2">
+
+            <h1
+              className="
+                text-[42px]
+                font-black
+                tracking-[-0.05em]
+                leading-tight
+              "
+            >
+              Welcome back,
+              <span className="text-primary"> Kunal</span>
+            </h1>
+
+            <p
+              className="
+                mt-4 max-w-2xl
+                text-[15px]
+                leading-8
+                text-muted
+              "
+            >
+              You’ve completed 72% of your current module.
+              Your mentor uploaded a new critique of your
+              parametric facade design.
+            </p>
+
+          </div>
+
+          {/* STREAK CARD */}
+          <div
+            className="
+              relative overflow-hidden
+              rounded-[5px]
+              border border-gray-200 dark:border-border
+              bg-white dark:bg-elevated/80
+              p-6
+              shadow-sm
+            "
           >
-            <div className="group relative overflow-hidden rounded-xl border border-border bg-bg flex flex-col sm:flex-row cursor-pointer transition-colors hover:border-border-strong">
-              <div className="relative h-48 w-full sm:h-auto sm:w-[40%] bg-surface overflow-hidden shrink-0">
-                <img 
-                  src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop" 
-                  alt="React Architecture" 
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="h-14 w-14 rounded-full bg-primary/90 flex items-center justify-center text-white backdrop-blur-md shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                    <PlayCircle className="h-7 w-7" />
-                  </div>
-                </div>
-              </div>
-              <div className="p-6 sm:p-8 flex-1 flex flex-col justify-center">
-                <div className="text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
-                  Module 4 • Lesson 2
-                </div>
-                <h4 className="text-xl font-bold text-text mb-3 font-display">
-                  Advanced State Management with Zustand
-                </h4>
-                <p className="text-sm text-muted mb-8 font-medium line-clamp-2">
-                  Learn how to architect complex states using Zustand and React Query for enterprise-grade SaaS applications.
-                </p>
-                <div className="flex items-center gap-4 mt-auto">
-                  <div className="h-2 flex-1 rounded-full bg-border overflow-hidden">
-                    <div className="h-full w-[65%] rounded-full bg-primary relative overflow-hidden">
-                      <div className="absolute inset-0 bg-white/20 shimmer-sweep" />
-                    </div>
-                  </div>
-                  <span className="text-sm font-bold text-muted">65%</span>
-                </div>
-              </div>
-            </div>
-          </WidgetCard>
-        </div>
 
-        {/* Right Column */}
-        <div className="space-y-6">
-          <WidgetCard title="Recent Activity">
-            <ActivityTimeline activities={mockActivities} />
-          </WidgetCard>
-        </div>
+            <div
+              className="
+                absolute right-[-30px] bottom-[-30px]
+                text-blue-500/10
+              "
+            >
+              <Trophy size={120} />
+            </div>
+
+            <p className="text-sm font-semibold text-muted">
+              Weekly Streak
+            </p>
+
+            <h2 className="mt-3 text-[44px] font-black leading-none">
+              14 Days
+            </h2>
+
+            <div className="mt-6 flex gap-2">
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-primary text-white font-bold">
+                M
+              </div>
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-[5px]  bg-primary text-white font-bold">
+                T
+              </div>
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-primary text-white font-bold">
+                W
+              </div>
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-bg text-muted font-bold border border-gray-200 dark:border-border">
+                T
+              </div>
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-bg text-muted font-bold border border-gray-200 dark:border-border">
+                F
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* MAIN GRID */}
+        <section className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+
+          {/* BIG CARD */}
+          <div className="xl:col-span-8">
+
+            <div
+              className="
+                group relative overflow-hidden
+                rounded-[5px]
+                
+                min-h-[420px]
+              "
+            >
+
+              {/* IMAGE */}
+              <div className="absolute inset-0">
+
+                <img
+                  src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop"
+                  alt="Learning"
+                  className="
+                    h-full w-full object-cover
+                    opacity-100 dark:opacity-20
+                    transition duration-700
+                    group-hover:scale-105
+                  "
+                />
+
+                <div
+                  className="
+                    absolute inset-0
+                  
+                  "
+                />
+
+              </div>
+
+              <div className="relative z-10 flex min-h-[420px] flex-col justify-end p-8">
+
+                <div className="mb-4 flex items-center gap-3">
+
+                  <span
+                    className="
+                      rounded-full
+                      border border-primary/20
+                      bg-primary/10
+                      px-4 py-2
+                      text-[11px]
+                      font-bold
+                      uppercase tracking-[0.18em]
+                      text-primary
+                    "
+                  >
+                    Next Lesson
+                  </span>
+
+                  <span className="text-xs text-muted">
+                    12 min read
+                  </span>
+
+                </div>
+
+                <h2
+                  className="
+                    max-w-2xl
+                    text-[42px]
+                    font-black
+                    leading-tight
+                    tracking-[-0.04em]
+                  "
+                >
+                  Mastering Generative Space Design
+                </h2>
+
+                <p
+                  className="
+                    mt-5 max-w-xl
+                    text-[15px]
+                    leading-8
+                    text-muted
+                  "
+                >
+                  Explore the intersection of algorithmic logic
+                  and human ergonomics in contemporary urban planning.
+                </p>
+
+                <button
+                  className="
+                    mt-8 inline-flex w-fit items-center gap-3
+                    rounded-[5px]
+                    bg-primary
+                    px-7 py-4
+                    text-sm font-bold
+                    text-white
+                    transition
+                    hover:-translate-y-1
+                  "
+                >
+                  Start Learning
+                  <Play size={18} />
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* CURRICULUM */}
+          <div className="xl:col-span-4">
+
+            <div
+              className="
+                rounded-[5px]
+                border border-gray-200 dark:border-border
+                bg-white dark:bg-elevated/80
+                p-6
+                shadow-sm
+              "
+            >
+
+              <div className="flex items-center justify-between">
+
+                <h3 className="text-[22px] font-black">
+                  Curriculum
+                </h3>
+
+                <button className="text-muted">
+                  ...
+                </button>
+
+              </div>
+
+              <div className="mt-8 space-y-7">
+
+                {[
+                  {
+                    title: "Urban Planning 101",
+                    progress: "85%",
+                    width: "85%",
+                  },
+                  {
+                    title: "Structural Integrity",
+                    progress: "42%",
+                    width: "42%",
+                  },
+                  {
+                    title: "Sustainable Materials",
+                    progress: "18%",
+                    width: "18%",
+                  },
+                ].map((item, index) => (
+                  <div key={index}>
+
+                    <div className="mb-3 flex items-center justify-between">
+
+                      <p className="text-sm font-semibold">
+                        {item.title}
+                      </p>
+
+                      <span className="text-xs text-primary">
+                        {item.progress}
+                      </span>
+
+                    </div>
+
+                    <div className="h-2 overflow-hidden rounded-full bg-border">
+
+                      <div
+                        className="h-full rounded-full bg-primary"
+                        style={{ width: item.width }}
+                      />
+
+                    </div>
+
+                  </div>
+                ))}
+
+              </div>
+
+              {/* AI TIP */}
+              <div
+                className="
+                  mt-10 rounded-[5px]
+                  border border-gray-200 dark:border-border
+                  bg-bg/70
+                  p-1
+                "
+              >
+
+                <div className="flex items-start gap-4">
+
+                  <div
+                    className="
+                      flex h-12 w-12 shrink-0
+                      items-center justify-center
+                      rounded-[5px]
+                      bg-primary/10
+                      text-primary
+                    "
+                  >
+                    <Sparkles size={22} />
+                  </div>
+
+                  <div>
+
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-subtle">
+                      AI Mentor Tip
+                    </p>
+
+                    <p className="mt-2 text-sm leading-7 text-muted">
+                      Focus on “Structural” this week
+                      to hit your learning goal faster.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* BOTTOM GRID */}
+        <section className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+
+          {/* CERTIFICATIONS */}
+          <div className="xl:col-span-5">
+
+            <div
+              className="
+                rounded-[5px]
+                border border-gray-200 dark:border-border
+                bg-white dark:bg-elevated/80
+                p-7
+                shadow-sm
+              "
+            >
+
+              <h3 className="text-[24px] font-black">
+                Recent Certifications
+              </h3>
+
+              <div className="mt-7 space-y-5">
+
+                {[
+                  {
+                    title: "BIM Excellence Level 1",
+                    date: "Issued Oct 24, 2024",
+                  },
+                  {
+                    title: "Advanced CAD Modeling",
+                    date: "Issued Sep 12, 2024",
+                  },
+                  
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    className="
+                      flex items-center gap-4
+                      rounded-[5px]
+                      border border-gray-200 dark:border-border
+                      bg-bg/60
+                      p-6
+                      transition
+                      hover:border-primary/20
+                    "
+                  >
+
+                    <div
+                      className="
+                        flex h-12 w-12
+                        items-center justify-center
+                        rounded-[5px]
+                        bg-primary/10
+                        text-primary
+                      "
+                    >
+                      <Star size={20} />
+                    </div>
+
+                    <div className="flex-1">
+
+                      <h4 className="text-sm font-bold">
+                        {item.title}
+                      </h4>
+
+                      <p className="mt-1 text-xs text-muted">
+                        {item.date}
+                      </p>
+
+                    </div>
+
+                    <ArrowRight
+                      size={18}
+                      className="text-muted"
+                    />
+
+                  </div>
+                ))}
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* MENTOR */}
+          <div className="xl:col-span-7">
+
+            <div
+              className="
+                flex flex-col gap-8
+                rounded-[5px]
+                border border-gray-200 dark:border-border
+                bg-white dark:bg-elevated/80
+                p-5
+                shadow-sm
+                lg:flex-row
+              "
+            >
+
+              <div
+                className="
+                  h-[220px]
+                  overflow-hidden
+                  rounded-[5px]
+                  lg:w-[260px]
+                "
+              >
+
+                <img
+                  src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=1974&auto=format&fit=crop"
+                  alt="Mentor"
+                  className="h-full w-full object-cover"
+                />
+
+              </div>
+
+              <div className="flex-1">
+
+                <div className="flex items-center justify-between">
+
+                  <div>
+
+                    <h3 className="text-[28px] font-black text-primary">
+                      Elena Rossi
+                    </h3>
+
+                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-subtle">
+                      Senior Mentor
+                    </p>
+
+                  </div>
+
+                  <div
+                    className="
+                      rounded-full
+                      border border-primary/20
+                      bg-primary/10
+                      px-4 py-2
+                      text-[11px]
+                      font-bold
+                      uppercase tracking-[0.15em]
+                      text-primary
+                    "
+                  >
+                    New Message
+                  </div>
+
+                </div>
+
+                <p
+                  className="
+                    mt-6
+                    text-[15px]
+                    italic leading-8
+                    text-muted
+                  "
+                >
+                  “Your use of negative space in the plaza
+                  design is revolutionary, Julian. However,
+                  let’s revisit the structural load before
+                  you finalize the 3D model.”
+                </p>
+
+                <div className="mt-8 flex gap-4">
+
+                  <button
+                    className="
+                      flex-1 rounded-[5px]
+                      border border-gray-200 dark:border-border
+                      bg-bg
+                      py-4
+                      text-sm font-bold
+                      transition
+                      hover:border-primary/20
+                    "
+                  >
+                    Reply
+                  </button>
+
+                  <button
+                    className="
+                      flex-1 rounded-[5px]
+                      bg-primary
+                      py-4
+                      text-sm font-bold
+                      text-white
+                      transition
+                      hover:-translate-y-1
+                    "
+                  >
+                    View Critique
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* LEARNING SCHEDULE */}
+        <section>
+
+          <div className="mb-6 flex items-center justify-between">
+
+            <h3 className="text-[28px] font-black">
+              Learning Schedule
+            </h3>
+
+            <button className="text-sm font-semibold text-primary hover:underline">
+              View Calendar
+            </button>
+
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+
+            {[
+              {
+                date: "Tomorrow",
+                title: "Final Design Submission",
+                subtitle: "Modernism Module 4",
+              },
+              {
+                date: "In 3 Days",
+                title: "Peer Review Workshop",
+                subtitle: "Sustainability Cohort",
+              },
+              {
+                date: "Nov 12",
+                title: "Materials Science Quiz",
+                subtitle: "Materiality Lab",
+              },
+              {
+                date: "Nov 15",
+                title: "Group Presentation",
+                subtitle: "Urban Dynamics",
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="
+                  rounded-[5px]
+                  border border-gray-200 dark:border-border
+                  bg-white dark:bg-elevated/80
+                  p-6
+                  shadow-sm
+                  transition
+                  hover:border-primary/20
+                "
+              >
+
+                <div className="flex items-center gap-2 text-primary">
+
+                  <CalendarDays size={16} />
+
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em]">
+                    {item.date}
+                  </p>
+
+                </div>
+
+                <h4 className="mt-5 text-lg font-black leading-snug">
+                  {item.title}
+                </h4>
+
+                <p className="mt-2 text-sm text-muted">
+                  {item.subtitle}
+                </p>
+
+              </div>
+            ))}
+
+          </div>
+
+        </section>
+
       </div>
+
     </div>
   );
 }

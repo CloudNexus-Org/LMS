@@ -1,133 +1,550 @@
-import { useState, useEffect } from 'react';
-import { BookOpen, CheckCircle } from 'lucide-react';
-import EmptyState from '@/components/ui/EmptyState';
-import { DashboardGridSkeleton } from '@/components/ui/Skeletons';
+import { useState, useEffect } from "react";
+
+import {
+  BookOpen,
+  CheckCircle,
+  Users,
+  Star,
+  Clock3,
+  Layers3,
+} from "lucide-react";
+
+import EmptyState from "@/components/ui/EmptyState";
+import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 
 const MOCK_COURSES = [
   {
     id: 1,
-    title: 'Advanced State Management with Zustand',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1000&auto=format&fit=crop',
+    title: "AWS Solution Architect",
+    image:
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
     progress: 65,
-    status: 'in-progress',
+    status: "in-progress",
     totalLessons: 42,
-    completedLessons: 27
+    completedLessons: 27,
+    badge: "Intermediate",
+    badgeColor: "bg-cyan-500/10 text-cyan-300",
+    instructor: "Dr. Arjan Singh",
+    rating: "4.8",
+    duration: "24 Hours",
+    modules: "12 Modules",
+    students: "15.4k",
+    description:
+      "Master EC2, S3, and Lambda to build highly scalable and fault-tolerant cloud infrastructures.",
   },
+
   {
     id: 2,
-    title: 'Cloud Architecture Patterns',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop',
+    title: "Azure Generative AI ",
+    image:
+      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1600&auto=format&fit=crop",
     progress: 100,
-    status: 'completed',
+    status: "completed",
     totalLessons: 50,
-    completedLessons: 50
+    completedLessons: 50,
+    badge: "Advanced",
+    badgeColor: "bg-violet-500/10 text-violet-300",
+    instructor: "Sarah Jenkins",
+    rating: "4.9",
+    duration: "18 Hours",
+    modules: "9 Modules",
+    students: "5k",
+    description:
+      "Dive deep into generative models, neural networks, and the future of machine learning integration on Azure.",
   },
+
   {
     id: 3,
-    title: 'Enterprise React Systems',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop',
+    title: "Modern JavaScript",
+    image:
+      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
     progress: 12,
-    status: 'in-progress',
+    status: "in-progress",
     totalLessons: 30,
-    completedLessons: 4
-  }
+    completedLessons: 4,
+    badge: "Beginner",
+    badgeColor: "bg-blue-500/10 text-blue-300",
+    instructor: "Prof. David Miller",
+    rating: "4.7",
+    duration: "30 Hours",
+    modules: "15 Modules",
+    students: "12k",
+    description:
+      "Build robust frontend applications with ES6+, asynchronous patterns, and scalable architectural techniques.",
+  },
 ];
 
 export default function MyCoursesPage() {
-  const [filter, setFilter] = useState('all');
+
+  const [filter, setFilter] = useState("all");
+
   const [isLoading, setIsLoading] = useState(true);
+
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    // Simulate API fetch
+
     const timer = setTimeout(() => {
+
       setCourses(MOCK_COURSES);
+
       setIsLoading(false);
+
     }, 1200);
+
     return () => clearTimeout(timer);
+
   }, []);
 
-  const filteredCourses = courses.filter(course => 
-    filter === 'all' ? true : course.status === filter
+  const filteredCourses = courses.filter((course) =>
+    filter === "all"
+      ? true
+      : course.status === filter
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div
+      className="
+        mx-auto max-w-7xl
+        space-y-8
+        animate-in fade-in slide-in-from-bottom-4 duration-500
+      "
+    >
+
+      {/* HEADER */}
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
         <div>
-          <h1 className="text-3xl font-bold text-text font-display tracking-tight">My Courses</h1>
-          <p className="text-muted mt-1 font-medium">Pick up right where you left off.</p>
+
+          <h1
+            className="
+              text-4xl
+              font-black
+              tracking-[-0.04em]
+              text-text
+            "
+          >
+            My Courses
+          </h1>
+
+          <p className="mt-2 text-muted text-lg">
+            Pick up right where you left off.
+          </p>
+
         </div>
-        
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 bg-surface p-1.5 rounded-xl border border-border shrink-0 overflow-x-auto shadow-sm">
-          {['all', 'in-progress', 'completed'].map((f) => (
+
+        {/* FILTERS */}
+        <div
+          className="
+            flex items-center gap-2
+            overflow-x-auto
+            rounded-[5px]
+            border border-border
+            bg-surface
+            p-2
+            shadow-sm
+          "
+        >
+
+          {["all", "in-progress", "completed"].map((f) => (
+
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-5 py-2.5 rounded-lg text-[13px] font-bold capitalize transition-all whitespace-nowrap ${
-                filter === f 
-                  ? 'bg-text text-bg shadow-md' 
-                  : 'text-muted hover:text-text hover:bg-bg'
-              }`}
+              className={`
+                whitespace-nowrap
+                rounded-[5px]
+                px-5 py-3
+                text-[13px]
+                font-bold
+                capitalize
+                transition-all duration-300
+
+                ${
+                  filter === f
+                    ? "bg-text text-bg shadow-md"
+                    : "text-muted hover:bg-bg hover:text-text"
+                }
+              `}
             >
-              {f.replace('-', ' ')}
+
+              {f.replace("-", " ")}
+
             </button>
+
           ))}
+
         </div>
+
       </div>
 
+      {/* CONTENT */}
       {isLoading ? (
+
         <DashboardGridSkeleton cards={4} />
+
       ) : filteredCourses.length === 0 ? (
-        <EmptyState 
-          icon={BookOpen} 
-          title="No courses found" 
+
+        <EmptyState
+          icon={BookOpen}
+          title="No courses found"
           description={
-            filter === 'all' 
-              ? "You haven't enrolled in any courses yet." 
+            filter === "all"
+              ? "You haven't enrolled in any courses yet."
               : `You don't have any ${filter} courses right now.`
           }
           actionLabel="Browse Courses"
-          onAction={() => window.location.href = '/tracks'}
+          onAction={() => (window.location.href = "/tracks")}
         />
+
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredCourses.map(course => (
-            <div key={course.id} className="group relative overflow-hidden rounded-2xl border border-border bg-surface shadow-sm hover:shadow-card hover:border-border-strong transition-all flex flex-col sm:flex-row cursor-pointer h-full">
-              <div className="relative h-48 sm:h-auto sm:w-2/5 shrink-0 overflow-hidden bg-bg">
-                <img src={course.image} alt={course.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                {course.progress === 100 ? (
-                  <div className="absolute top-3 left-3 bg-success text-white text-[11px] uppercase tracking-wider font-bold px-2.5 py-1 rounded flex items-center gap-1.5 shadow-md">
-                    <CheckCircle className="h-3.5 w-3.5" /> Completed
-                  </div>
-                ) : null}
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-center">
-                <h3 className="text-lg font-bold text-text mb-2 line-clamp-2 leading-snug">{course.title}</h3>
-                <p className="text-sm text-muted mb-6 font-medium">
-                  {course.completedLessons} of {course.totalLessons} lessons completed
-                </p>
-                <div className="mt-auto space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-text mb-1">
-                    <span className="uppercase tracking-wider">{course.progress === 100 ? 'Completed' : 'Progress'}</span>
-                    <span>{course.progress}%</span>
-                  </div>
-                  <div className="h-2.5 w-full rounded-full bg-bg overflow-hidden border border-border">
-                    <div 
-                      className={`h-full rounded-full relative overflow-hidden ${course.progress === 100 ? 'bg-success' : 'bg-primary'}`} 
-                      style={{ width: `${course.progress}%` }} 
-                    >
-                      <div className="absolute inset-0 bg-white/20 shimmer-sweep" />
-                    </div>
-                  </div>
+
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
+
+          {filteredCourses.map((course) => (
+
+            <div
+              key={course.id}
+              className="
+                group relative overflow-hidden
+
+                rounded-[5px]
+
+                border border-gray-200
+
+                bg-white
+
+                p-4
+
+                shadow-sm
+
+                transition-all duration-500
+
+                hover:-translate-y-1
+                hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]
+              "
+            >
+
+              {/* IMAGE */}
+              <div
+                className="
+                  relative h-[240px]
+                  overflow-hidden
+                  rounded-[5px]
+                "
+              >
+
+                <img
+                  src={course.image}
+                  alt={course.title}
+                  className="
+                    h-full w-full
+                    object-cover
+                    transition-transform duration-700
+                    group-hover:scale-105
+                  "
+                />
+
+                {/* OVERLAY */}
+                <div
+                  className="
+                    absolute inset-0
+
+                    bg-gradient-to-t
+                    from-black/60
+                    via-black/10
+                    to-transparent
+                  "
+                />
+
+                {/* BADGE */}
+                <div
+                  className={`
+                    absolute right-4 top-4
+
+                    rounded-full
+
+                    px-2 py-1
+
+                    text-[11px]
+                    font-bold
+
+                    uppercase
+                    tracking-[0.2em]
+
+                    backdrop-blur-xl
+
+                    ${course.badgeColor}
+                  `}
+                >
+
+                  {course.badge}
+
                 </div>
+
               </div>
+
+              {/* CONTENT */}
+              <div className="pt-5">
+
+                <h3
+                  className="
+                    text-[22px]
+                    font-black
+
+                    tracking-[-0.03em]
+
+                    text-[#172554]
+                  "
+                >
+                  {course.title}
+                </h3>
+
+                <p
+                  className="
+                    mt-2
+
+                    text-[13px]
+
+                    font-semibold
+
+                    uppercase
+                    tracking-[0.18em]
+
+                    text-[#1d4ed8]
+                  "
+                >
+                  BY {course.instructor}
+                </p>
+
+                {/* STATS */}
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+
+                  <div
+                    className="
+                      inline-flex items-center gap-2
+
+                      rounded-[5px]
+
+                      border border-gray-200
+
+                      bg-white
+
+                      px-3 py-2
+                    "
+                  >
+
+                    <Star
+                      size={14}
+                      className="fill-blue-500 text-blue-500"
+                    />
+
+                    <span
+                      className="
+                        text-[14px]
+                        font-bold
+
+                        text-[#0f172a]
+                      "
+                    >
+                      {course.rating}
+                    </span>
+
+                  </div>
+
+                  <div
+                    className="
+                      inline-flex items-center gap-2
+
+                      rounded-[5px]
+
+                      border border-gray-200
+
+                      bg-white
+
+                      px-3 py-2
+                    "
+                  >
+
+                    <Clock3
+                      size={14}
+                      className="text-gray-500"
+                    />
+
+                    <span className="text-[14px] text-[#0f172a]">
+                      {course.duration}
+                    </span>
+
+                  </div>
+
+                  <div
+                    className="
+                      inline-flex items-center gap-2
+
+                      rounded-[5px]
+
+                      border border-gray-200
+
+                      bg-white
+
+                      px-3 py-2
+                    "
+                  >
+
+                    <Layers3
+                      size={14}
+                      className="text-gray-500"
+                    />
+
+                    <span className="text-[14px] text-[#0f172a]">
+                      {course.modules}
+                    </span>
+
+                  </div>
+
+                </div>
+
+                {/* DESCRIPTION */}
+                <p
+                  className="
+                    mt-6
+
+                    text-[16px]
+                    leading-8
+
+                    text-[#374151]
+
+                    line-clamp-3
+                  "
+                >
+                  "{course.description}"
+                </p>
+
+                {/* PROGRESS SECTION */}
+                <div className="mt-7">
+
+                  {/* TOP */}
+                  <div className="mb-3 flex items-center justify-between">
+
+                    <div className="flex items-center gap-2">
+
+                      {course.status === "completed" ? (
+
+                        <div
+                          className="
+                            inline-flex items-center gap-2
+
+                            rounded-full
+
+                            bg-emerald-500/10
+
+                            px-3 py-1.5
+
+                            text-[11px]
+                            font-bold
+
+                            uppercase
+                            tracking-[0.15em]
+
+                            text-emerald-600
+                          "
+                        >
+
+                          <CheckCircle size={13} />
+
+                          Completed
+
+                        </div>
+
+                      ) : (
+
+                        <div
+                          className="
+                            inline-flex items-center gap-2
+
+                            rounded-full
+
+                            bg-blue-500/10
+
+                            px-3 py-1.5
+
+                            text-[11px]
+                            font-bold
+
+                            uppercase
+                            tracking-[0.15em]
+
+                            text-blue-600
+                          "
+                        >
+
+                          <BookOpen size={13} />
+
+                          {course.progress}% In Progress
+
+                        </div>
+
+                      )}
+
+                    </div>
+
+                    <span
+                      className="
+                        text-[13px]
+                        font-semibold
+
+                        text-[#64748b]
+                      "
+                    >
+                      {course.completedLessons}/{course.totalLessons} Lessons
+                    </span>
+
+                  </div>
+
+                  {/* PROGRESS BAR */}
+                  <div
+                    className="
+                      h-3
+
+                      overflow-hidden
+
+                      rounded-full
+
+                      bg-gray-200
+                    "
+                  >
+
+                    <div
+                      className={`
+                        h-full rounded-full
+
+                        transition-all duration-700
+
+                        ${
+                          course.status === "completed"
+                            ? "bg-gradient-to-r from-emerald-500 to-emerald-400"
+                            : "bg-gradient-to-r from-blue-600 to-blue-400"
+                        }
+                      `}
+                      style={{
+                        width: `${course.progress}%`,
+                      }}
+                    />
+
+                  </div>
+
+                </div>  
+
+              </div>
+
             </div>
+
           ))}
+
         </div>
+
       )}
+
     </div>
   );
 }
