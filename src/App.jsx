@@ -55,8 +55,8 @@ const AdminNotificationsPage = lazy(() => import('@/pages/admin/AdminNotificatio
 
 function App() {
   return (
-    <ErrorBoundary>
-      <Router>
+      <ErrorBoundary>
+        <Router>
         <ScrollToTop />
         <BackToTop />
         <Suspense fallback={<LoadingFallback />}>

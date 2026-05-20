@@ -31,25 +31,54 @@ export default function HeroBackdrop({
   // Premium, stable parallax: smooth 150px movement
   const imageY = useTransform(scrollY, [0, 1000], [0, 150]);
 
+  // Content Parallax transformations (applied to content layer only, NOT the image)
+  const contentY = useTransform(scrollY, [0, 800], [0, 120]);
+  const contentOpacity = useTransform(scrollY, [0, 800], [1, 0.85]);
+
+  // Subtle atmospheric overlay motion
+  const overlayY = useTransform(scrollY, [0, 800], [0, 50]);
+
   return (
-    <section id={id} ref={ref} data-hero-uid={safeUid} className="relative isolate overflow-hidden">
+    <section id={id} ref={ref} data-hero-uid={safeUid} className="relative overflow-hidden isolate">
       <style>{css}</style>
 
-      <div aria-hidden className={`absolute inset-x-0 bottom-0 top-[68px] -z-10 overflow-hidden bg-bg ${className}`}>
-        <motion.img
+      {/* fixed visual image - remains completely stationary relative to viewport, clipped strictly to parent */}
+      <div
+        className="absolute inset-0 -z-10 pointer-events-none"
+        style={{ clipPath: "inset(0)" }}
+      >
+        <img
           src={imageSrc}
           alt=""
+          className="hero-bg-img fixed inset-0 w-full h-full object-cover transition-colors duration-300"
           aria-hidden
-          className="hero-bg-img absolute inset-0 h-full w-full object-cover"
-          style={{
-            objectPosition: desktopPos,
-            y: shouldReduceMotion ? 0 : imageY,
-            willChange: "transform", // Hardware acceleration for buttery smooth stability
-          }}
         />
       </div>
 
-      {children}
+      {/* animated overlays/gradients */}
+      {!shouldReduceMotion ? (
+        <motion.div
+          style={{ y: overlayY }}
+          className="absolute inset-0 pointer-events-none -z-10 bg-gradient-to-b from-transparent via-bg/5 to-bg/20"
+          aria-hidden
+        />
+      ) : (
+        <div className="absolute inset-0 pointer-events-none -z-10 bg-transparent" aria-hidden />
+      )}
+
+      {/* Hero content - receives parallax depth motion */}
+      {!shouldReduceMotion ? (
+        <motion.div
+          style={{ y: contentY, opacity: contentOpacity }}
+          className="relative z-10"
+        >
+          {children}
+        </motion.div>
+      ) : (
+        <div className="relative z-10">
+          {children}
+        </div>
+      )}
     </section>
   );
 }

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { motion, useScroll } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useMotionTemplate } from "framer-motion";
 import { Menu, X, ArrowRight } from "lucide-react";
 import ThemeToggle from "../ui/ThemeToggle";
 import Button from "../ui/Button";
 import BrandMark from "../ui/BrandMark";
 import useSmartNavbar from "../../hooks/useSmartNavbar";
+import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 import { scrollToSection as scrollSectionUtil } from "../../utils/scroll";
 
 const DEFAULT_LINKS = [
@@ -18,8 +19,8 @@ const DEFAULT_LINKS = [
 
 const NAV_HEIGHT = 80;
 const DETECTION_OFFSET = 100;
-const NAVBAR_HIDE_TOP_GUARD = 80;
-const NAVBAR_SCROLL_THRESHOLD = 14;
+const NAVBAR_HIDE_TOP_GUARD = 80; // Changed to match NAV_HEIGHT
+const NAVBAR_SCROLL_THRESHOLD = 80; // Changed to match NAV_HEIGHT so it naturally scrolls away first
 const NAVBAR_STOP_DELAY = 150;
 
 export default function Navbar({
@@ -33,7 +34,9 @@ export default function Navbar({
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === "/";
-  const { scrollYProgress } = useScroll();
+  const isTrackDetailPage = location.pathname.startsWith("/tracks/");
+  const isDarkTheme = useIsDarkTheme();
+  const { scrollY, scrollYProgress } = useScroll();
   const navbarState = useSmartNavbar({
     threshold: NAVBAR_SCROLL_THRESHOLD,
     topGuard: NAVBAR_HIDE_TOP_GUARD,
@@ -41,6 +44,13 @@ export default function Navbar({
   });
   const isVisible = isMobileMenuOpen ? true : navbarState.isVisible;
   const isScrolled = navbarState.isScrolled;
+  const [isNearTop, setIsNearTop] = useState(true);
+
+  // For absolute parallax parity in the hero section:
+  // The hero text moves with a parallax depth of [0, 800] -> [0, 120].
+  // Net visual movement is [0, 800] -> [0, -680].
+  // By mapping the navbar to this exact ratio, it visually anchors to the text layer!
+  const mappedY = useTransform(scrollY, [0, 800], [0, -680]);
 
   // Smooth-scroll to a hash target and update the active state.
   const scrollToSection = useCallback((href) => {
@@ -48,6 +58,17 @@ export default function Navbar({
     const ok = scrollSectionUtil(href, NAV_HEIGHT);
     if (ok) setActiveSection(href);
     return ok;
+  }, []);
+
+  // Track if we are near the top to prevent animation jitter 
+  // when switching from absolute to fixed position
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsNearTop(window.scrollY < NAV_HEIGHT * 2);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Active-section detection — picks the section whose VERTICAL RANGE
@@ -155,20 +176,24 @@ export default function Navbar({
       </a>
 
       <motion.nav
+        style={{ y: isNearTop && !isMobileMenuOpen ? mappedY : undefined }}
         initial={false}
-        animate={{
-          y: isVisible ? "0%" : "-100%",
+        animate={isNearTop && !isMobileMenuOpen ? {} : {
+          y: isVisible ? 0 : -NAV_HEIGHT,
           opacity: isVisible ? 1 : 0
         }}
         transition={{
           duration: 0.4,
           ease: "easeOut"
         }}
-        className={`fixed left-0 top-0 z-50 w-full border-b transition-colors duration-300 will-change-transform ${isScrolled
-            ? "border-border/60 bg-bg/78 shadow-[0_16px_50px_rgba(15,23,42,0.12)] backdrop-blur-2xl"
-            : "border-transparent bg-transparent shadow-none backdrop-blur-0"
-          } ${isVisible ? "pointer-events-auto" : "pointer-events-none"}`}
-        aria-hidden={!isVisible}
+        className={`fixed left-0 top-0 z-50 w-full border-b transition-all duration-300 will-change-transform ${isTrackDetailPage && !isDarkTheme
+          ? "border-border bg-white shadow-[0_1px_0_rgba(255,255,255,0.9),0_6px_18px_rgba(0,0,0,0.06)] backdrop-blur-0"
+          : isScrolled
+            ? isTrackDetailPage
+              ? "border-border bg-surface shadow-sm backdrop-blur-0"
+              : "border-border bg-surface shadow-sm backdrop-blur-0"
+            : "border-transparent bg-transparent shadow-none backdrop-blur-0"} ${isVisible || isNearTop ? "pointer-events-auto" : "pointer-events-none"}`}
+        aria-hidden={!isVisible && !isNearTop}
       >
         <div className="mx-auto flex h-[68px] w-full max-w-[1320px] items-center justify-between px-5 sm:px-6 lg:px-8">
           <BrandMark
@@ -244,7 +269,7 @@ export default function Navbar({
 
       <div
         id="mobile-menu"
-        className={`fixed inset-x-0 top-[68px] z-40 origin-top border-b border-border bg-bg/95 px-5 pb-6 pt-3 backdrop-blur-2xl transition-all duration-200 md:hidden ${isMobileMenuOpen
+        className={`fixed inset-x-0 top-[68px] z-40 origin-top border-b ${isTrackDetailPage && !isDarkTheme ? "border-border bg-white backdrop-blur-0" : "border-border bg-surface backdrop-blur-0"} px-5 pb-6 pt-3 transition-all duration-200 md:hidden ${isMobileMenuOpen
           ? "translate-y-0 opacity-100"
           : "pointer-events-none -translate-y-2 opacity-0"
           }`}

@@ -94,14 +94,10 @@ function MarqueeRow({ data }) {
   const extendedData = [...data, ...data];
 
   return (
-    <div className="group relative mx-auto flex max-w-[1250px] overflow-hidden py-4">
-
-      {/* Left Fade */}
-      <div className="pointer-events-none absolute left-0 top-0 z-20 h-full w-32 bg-gradient-to-r from-[var(--bg)] to-transparent" />
-
-      {/* Right Fade */}
-      <div className="pointer-events-none absolute right-0 top-0 z-20 h-full w-32 bg-gradient-to-l from-[var(--bg)] to-transparent" />
-
+    <div 
+      className="group relative mx-auto flex max-w-[1250px] overflow-hidden py-4"
+      style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
+    >
       {/* Marquee */}
       <div className="flex w-max shrink-0 gap-12 animate-marquee">
         {extendedData.map((company, index) => (
@@ -117,10 +113,7 @@ function MarqueeRow({ data }) {
 
 export default function TrustedCompanies() {
   return (
-    <section className="relative overflow-hidden bg-bg py-20 text-text transition-colors duration-300">
-
-      {/* Background */}
-      <div className="absolute inset-0 bg-bg transition-colors duration-300" />
+    <section className="relative overflow-hidden bg-transparent py-20 text-text transition-colors duration-300">
 
       {/* Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--grid-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid-line)_1px,transparent_1px)] bg-[size:120px_120px] opacity-20" />

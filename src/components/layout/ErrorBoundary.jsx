@@ -34,11 +34,11 @@ export default class ErrorBoundary extends Component {
             <Button onClick={() => window.location.reload()} variant="primary">
               Refresh Page
             </Button>
-            <Button as={Link} to="/" variant="outline">
+            <Button as="a" href="/" variant="outline">
               Return Home
             </Button>
           </div>
-          {process.env.NODE_ENV === 'development' && (
+          {import.meta.env.DEV && (
             <pre className="mt-12 max-w-2xl overflow-auto rounded-lg bg-surface p-4 text-left text-sm text-subtle shadow-card">
               {this.state.error?.toString()}
             </pre>

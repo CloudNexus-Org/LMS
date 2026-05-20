@@ -1,4 +1,3 @@
-
 import Hero from '@/components/sections/Hero';
 import TrustedCompanies from '@/components/sections/TrustedCompanies';
 import Stats from '@/components/sections/Stats';
@@ -14,23 +13,23 @@ import Contact from '@/components/sections/Contact';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-bg text-text">
-
-      <main id="main">
-        <Hero />
-        <TrustedCompanies />
-        <Stats />
-        <HowItWorks />
-        <Courses />
-        <DashboardPreview />
-        <Mentors />
-        <CertificateShowcase />
-        <Pricing />
-        <TestimonialScroll />
-        <FAQ />
-        <Contact />
-      </main>
-
+    <div className="min-h-screen text-text bg-bg transition-colors duration-300">
+      <div className="min-h-screen">
+        <main id="main">
+          <Hero />
+          <TrustedCompanies />
+          <Stats />
+          <HowItWorks />
+          <Courses />
+          <DashboardPreview />
+          <Mentors />
+          <CertificateShowcase />
+          <Pricing />
+          <TestimonialScroll />
+          <FAQ />
+          <Contact />
+        </main>
+      </div>
     </div>
   );
 }

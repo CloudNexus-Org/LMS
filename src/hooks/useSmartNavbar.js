@@ -9,7 +9,7 @@ export default function useSmartNavbar({
     isVisible: true,
     isScrolled: false,
   });
-  
+
   const lastScrollY = useRef(0);
   const rafRef = useRef(null);
   const timeoutRef = useRef(null);
@@ -25,7 +25,7 @@ export default function useSmartNavbar({
         const currentScrollY = window.scrollY;
         const isScrolled = currentScrollY > threshold;
         const isAtTop = currentScrollY <= topGuard;
-        
+
         // Determine scroll direction (allow 5px threshold to avoid jitter)
         const diff = currentScrollY - lastScrollY.current;
         const isScrollingUp = diff < -5;
@@ -33,7 +33,7 @@ export default function useSmartNavbar({
 
         setState((prev) => {
           let nextVisible = prev.isVisible;
-          
+
           if (isAtTop) {
             nextVisible = true;
           } else if (isScrollingUp) {
@@ -67,7 +67,7 @@ export default function useSmartNavbar({
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);

@@ -16,7 +16,7 @@ export default function SectionShell({
   return (
     <section
       id={id}
-      className={`relative scroll-mt-[68px] overflow-hidden bg-bg ${padding} ${className}`}
+      className={`relative scroll-mt-[68px] overflow-hidden bg-transparent ${padding} ${className}`}
       {...props}
     >
       {pattern ? (
