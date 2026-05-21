@@ -7,11 +7,9 @@ import SectionHeading from "@/app/layouts/SectionHeading";
 import Container from '@/components/ui/Container';
 
 const ICONS = { Compass, Users, Award };
-// Used only as the fallback loop length when the real video hasn't loaded.
+
 const FALLBACK_DURATION_MS = 9000;
 
-// Drop your video at: public/videos/how-it-works.mp4
-// Vite will serve it at /videos/how-it-works.mp4 (no import / rebuild needed)
 const VIDEO_SRC = "/videos/how-it-works.mp4";
 
 function StepRow({ step, index, isActive, isCompleted, circleRef }) {
@@ -179,9 +177,6 @@ export default function HowItWorks() {
     return () => observer.disconnect();
   }, []);
 
-  // Measure the actual on-screen position of each step circle so the dot/line
-  // can land precisely on them — regardless of how each step's description
-  // wraps. Re-measures on resize and on content/font load.
   useLayoutEffect(() => {
     const measure = () => {
       const ol = olRef.current;
@@ -237,8 +232,6 @@ export default function HowItWorks() {
         Number.isFinite(vid.duration) &&
         vid.duration > 0
       ) {
-        // Use the real video duration so a 9.2s clip doesn't glitch in the
-        // last 0.2s before the loop point.
         frac = vid.currentTime / vid.duration;
       } else {
         frac =
@@ -246,11 +239,9 @@ export default function HowItWorks() {
           FALLBACK_DURATION_MS;
       }
 
-      // Clamp into [0, 1) so the floor below never returns 3.
       const clamped = Math.max(0, Math.min(0.99999, frac));
       const next = Math.floor(clamped * howItWorksSteps.length);
 
-      // Only re-render when the step actually changes — cheap, race-free.
       setActiveStep((prev) => (prev !== next ? next : prev));
       rafRef.current = requestAnimationFrame(tick);
     };

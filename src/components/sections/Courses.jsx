@@ -182,7 +182,7 @@ function CourseCard({ course, index }) {
               </span>
             </div>
 
-            <div                 className="
+            <div className="
     relative
     inline-flex
     h-[32px]

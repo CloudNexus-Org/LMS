@@ -185,7 +185,7 @@ function App() {
                   element={<MyCoursesPage />}
                 />
                 <Route
-                  path="analyticse"
+                  path="analytics"
                   element={<Analytics/>}
                 />
 

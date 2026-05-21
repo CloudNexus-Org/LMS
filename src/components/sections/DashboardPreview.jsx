@@ -21,11 +21,9 @@ import SectionHeading from "@/app/layouts/SectionHeading";
 import Container from '@/components/ui/Container';
 import Tag from '@/components/ui/Tag';
 
-// Drop your video at: public/videos/dashboard-preview.mp4
-// Vite serves the public folder as-is, so no import / rebuild needed.
+
 const VIDEO_SRC = "/videos/dashboard-preview.mp4";
 
-// Loop length used when no video has loaded yet (ms)
 const FALLBACK_LOOP_MS = 9000;
 
 const SIDEBAR_ITEMS = [
@@ -71,7 +69,6 @@ const LESSONS = [
 
 const TOTAL_TRACK_MIN = LESSONS.reduce((s, l) => s + l.durationMin, 0);
 
-// Precompute each lesson's normalised [start, end] position in the 0..1 loop.
 const LESSON_BOUNDS = (() => {
   let cum = 0;
   return LESSONS.map((l) => {
@@ -185,8 +182,7 @@ export default function DashboardPreview() {
 
       const { index, within } = findLessonAt(loopFrac);
 
-      // Track progress is weighted by real lesson lengths, so longer lessons
-      // move the bar more — same as a real LMS.
+
       let completedMin = 0;
       for (let i = 0; i < index; i++) completedMin += LESSONS[i].durationMin;
       completedMin += within * LESSONS[index].durationMin;
@@ -215,7 +211,7 @@ export default function DashboardPreview() {
           eyebrow="The platform"
           title="A learning workspace,"
           highlight="not a video player"
-          description="Track progress, ship projects, and join live sessions \u2014 all from one focused workspace."
+          description="Track progress, ship projects, and join live sessions all from one focused workspace."
         />
 
         <motion.div

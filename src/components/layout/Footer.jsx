@@ -1,10 +1,23 @@
+import { Link } from "react-router-dom";
+
 import {
   FaLinkedinIn,
   FaInstagram,
 } from "react-icons/fa";
-import { ArrowRight, MapPin, Phone, Mail, Heart } from "lucide-react";
+
+import {
+  ArrowRight,
+  MapPin,
+  Phone,
+  Mail,
+  Heart
+} from "lucide-react";
+
 import Button from '@/components/ui/Button';
-import BrandMark from '@/components/ui/BrandMark';
+import useIsDarkTheme from "../../hooks/useIsDarkTheme";
+
+import cnlg from "../../assets/Cnlogo.png";
+import cnlg1 from "../../assets/cnlogo1.png";
 
 const TECH_COLUMNS = [
   {
@@ -123,10 +136,6 @@ function CategoryBlock({ title, links }) {
   return (
     <div>
       <h4 className="relative  text-[12px] font-bold uppercase tracking-[0.18em] text-text">
-        {/* <span
-          aria-hidden
-          className="absolute left-0 top-1/2 h-3 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-primary to-accent"
-        /> */}
         {title}
       </h4>
       <ul className="mt-1 space-y-0.5 text-[13px] leading-5">
@@ -148,6 +157,8 @@ function CategoryBlock({ title, links }) {
 }
 
 export default function Footer({ logoText = "CLOUD NEXUS" }) {
+  
+const isDarkTheme = useIsDarkTheme();
   return (
     <footer className="relative bg-bg">
 
@@ -171,7 +182,35 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
         <div className="grid gap-x-15 gap-y-8 lg:grid-cols-[1.1fr_1fr_1fr_1.15fr_1.15fr]">
           {/* Brand column */}
           <div>
-            <BrandMark logoText={logoText} size="sm" />
+           <Link
+  to="/"
+  className="flex items-center gap-3"
+>
+  <img
+    src={isDarkTheme ? cnlg : cnlg1}
+    alt="Cloud Nexus Logo"
+    className="
+      h-[48px]
+      w-[48px]
+      object-contain
+    "
+  />
+
+  <h1
+    className={`
+      text-[20px]
+      font-extrabold
+      tracking-tight
+
+      ${isDarkTheme
+        ? "text-white"
+        : "text-black"
+      }
+    `}
+  >
+    CLOUD NEXUS
+  </h1>
+</Link>
 
             <div className="mt-5 space-y-3 text-[13px] leading-5 text-muted">
               <div className="flex items-start gap-2.5">
@@ -182,8 +221,7 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
                   aria-hidden
                 />
                 <span>
-                  7250 Dallas Parkway, Suite 400
-                  Plano, TX 75024, United States
+                  Cloud Nexus, Katara Hills(Bhopal)
                 </span>
               </div>
               <a
