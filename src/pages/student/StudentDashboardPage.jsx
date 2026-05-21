@@ -34,7 +34,52 @@ export default function StudentDashboardPage() {
 
           {/* LEFT */}
           <div className="xl:col-span-2">
+{/* TOP TAGS */}
+  <div className="mb-5 flex flex-wrap items-center gap-3">
 
+    <span
+      className="
+        rounded-[6px]
+
+        border border-blue-500/20
+
+        bg-blue-500/10
+
+        px-4 py-2
+
+        text-[11px]
+        font-bold
+        uppercase
+        tracking-[0.18em]
+
+        text-blue-500
+      "
+    >
+      Student Dashboard
+    </span>
+
+    <span
+      className="
+        rounded-[6px]
+
+        border border-cyan-400/20
+
+        bg-cyan-400/10
+
+        px-4 py-2
+
+        text-[11px]
+        font-bold
+        uppercase
+        tracking-[0.18em]
+
+        text-cyan-400
+      "
+    >
+      Live Progress
+    </span>
+
+  </div>
             <h1
               className="
                 text-[42px]
@@ -93,7 +138,7 @@ export default function StudentDashboardPage() {
 
             <div className="mt-6 flex gap-2">
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-primary text-white font-bold">
+              <div className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-primary text-white font-bold ">
                 M
               </div>
 
@@ -134,28 +179,47 @@ export default function StudentDashboardPage() {
               "
             >
 
-              {/* IMAGE */}
-              <div className="absolute inset-0">
+              <div className="absolute inset-0 overflow-hidden rounded-[5px]">
 
-                <img
-                  src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop"
-                  alt="Learning"
-                  className="
-                    h-full w-full object-cover
-                    opacity-100 dark:opacity-20
-                    transition duration-700
-                    group-hover:scale-105
-                  "
-                />
+  {/* IMAGE */}
+  <img
+    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop"
+    alt="Learning"
+    className="
+      h-full w-full object-cover
 
-                <div
-                  className="
-                    absolute inset-0
-                  
-                  "
-                />
+      scale-[1.02]
 
-              </div>
+      opacity-80 dark:opacity-100
+
+      transition-all duration-700
+
+      group-hover:scale-105
+    "
+  />
+
+  {/* PREMIUM OVERLAY */}
+  <div
+    className="
+      absolute inset-0
+
+      bg-gradient-to-t
+      from-black/80
+      via-black/35
+      to-black/10
+    "
+  />
+
+  {/* BLUE GLOW */}
+  <div
+    className="
+      absolute inset-0
+
+      bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.28),transparent_35%)]
+    "
+  />
+
+</div>
 
               <div className="relative z-10 flex min-h-[420px] flex-col justify-end p-8">
 
@@ -384,7 +448,7 @@ export default function StudentDashboardPage() {
                 rounded-[5px]
                 border border-gray-200 dark:border-border
                 bg-white dark:bg-elevated/80
-                p-7
+                p-9
                 shadow-sm
               "
             >
@@ -466,7 +530,7 @@ export default function StudentDashboardPage() {
                 rounded-[5px]
                 border border-gray-200 dark:border-border
                 bg-white dark:bg-elevated/80
-                p-8
+                p-7
                 shadow-sm
                 lg:flex-row
               "
@@ -540,13 +604,33 @@ export default function StudentDashboardPage() {
 
                   <button
                     className="
-                      flex-1 rounded-[5px]
+                      flex-1
                       border border-gray-200 dark:border-border
                       bg-bg
-                      py-4
+                      py-1
                       text-sm font-bold
                       transition
                       hover:border-primary/20
+                      relative
+                    items-center
+                    justify-center
+                    overflow-hidden
+                    border border-[#d9e2ff]
+                    dark:border-white/10
+                    bg-white
+                    dark:bg-[#47484a]
+                    rounded-none
+                    text-[14px]
+                    font-semibold
+                    text-black
+                    dark:text-white
+                    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-[2px]
+                    hover:border-[#2563ff]/40
+                    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                       
                     "
                   >
@@ -562,6 +646,21 @@ export default function StudentDashboardPage() {
                       text-white
                       transition
                       hover:-translate-y-1
+                      relative
+                    items-center
+                    justify-center
+                    overflow-hidden
+                   
+                    rounded-none
+                    text-black
+                    dark:text-white
+                    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-[2px]
+                    hover:border-[#2563ff]/40
+                    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     "
                   >
                     View Critique

@@ -9,6 +9,7 @@ import {
   Layers3,
 } from "lucide-react";
 
+import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 import EmptyState from "@/components/ui/EmptyState";
 import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 
@@ -75,6 +76,8 @@ const MOCK_COURSES = [
 ];
 
 export default function MyCoursesPage() {
+
+  const isDarkTheme = useIsDarkTheme();
 
   const [filter, setFilter] = useState("all");
 
@@ -210,19 +213,20 @@ export default function MyCoursesPage() {
 
                 rounded-[5px]
 
-                border border-gray-200
-
-                bg-white
-
                 p-4
-
-                shadow-sm
 
                 transition-all duration-500
 
                 hover:-translate-y-1
-                hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]
               "
+              style={{
+                backgroundColor: isDarkTheme ? "#0b1220" : "#ffffff",
+                borderColor: isDarkTheme ? "black" : "#e5e7eb",
+                border: "1px solid",
+                boxShadow: isDarkTheme
+                  ? "0 16px 40px rgba(0, 15, 42, 0.35)"
+                  : "0 20px 60px rgba(0, 0, 0, 0.08)",
+              }}
             >
 
               {/* IMAGE */}
@@ -293,9 +297,10 @@ export default function MyCoursesPage() {
                     font-black
 
                     tracking-[-0.03em]
-
-                    text-[#172554]
                   "
+                  style={{
+                    color: isDarkTheme ? "#ffffff" : "#172554",
+                  }}
                 >
                   {course.title}
                 </h3>
@@ -310,9 +315,10 @@ export default function MyCoursesPage() {
 
                     uppercase
                     tracking-[0.18em]
-
-                    text-[#1d4ed8]
                   "
+                  style={{
+                    color: isDarkTheme ? "#60a5fa" : "#1d4ed8",
+                  }}
                 >
                   BY {course.instructor}
                 </p>
@@ -326,12 +332,13 @@ export default function MyCoursesPage() {
 
                       rounded-[5px]
 
-                      border border-gray-200
-
-                      bg-white
-
                       px-3 py-2
                     "
+                    style={{
+                      backgroundColor: isDarkTheme ? "rgba(255,255,255,0.03)" : "#ffffff",
+                      borderColor: isDarkTheme ? "rgba(148, 163, 184, 0.15)" : "#e5e7eb",
+                      border: "1px solid",
+                    }}
                   >
 
                     <Star
@@ -343,9 +350,10 @@ export default function MyCoursesPage() {
                       className="
                         text-[14px]
                         font-bold
-
-                        text-[#0f172a]
                       "
+                      style={{
+                        color: isDarkTheme ? "#f8fafc" : "#0f172a",
+                      }}
                     >
                       {course.rating}
                     </span>
@@ -358,20 +366,26 @@ export default function MyCoursesPage() {
 
                       rounded-[5px]
 
-                      border border-gray-200
-
-                      bg-white
-
                       px-3 py-2
                     "
+                    style={{
+                      backgroundColor: isDarkTheme ? "rgba(255,255,255,0.03)" : "#ffffff",
+                      borderColor: isDarkTheme ? "rgba(148, 163, 184, 0.15)" : "#e5e7eb",
+                      border: "1px solid",
+                    }}
                   >
 
                     <Clock3
                       size={14}
-                      className="text-gray-500"
+                      className="text-gray-400"
                     />
 
-                    <span className="text-[14px] text-[#0f172a]">
+                    <span
+                      className="text-[14px]"
+                      style={{
+                        color: isDarkTheme ? "#e2e8f0" : "#0f172a",
+                      }}
+                    >
                       {course.duration}
                     </span>
 
@@ -383,20 +397,26 @@ export default function MyCoursesPage() {
 
                       rounded-[5px]
 
-                      border border-gray-200
-
-                      bg-white
-
                       px-3 py-2
                     "
+                    style={{
+                      backgroundColor: isDarkTheme ? "rgba(255,255,255,0.03)" : "#ffffff",
+                      borderColor: isDarkTheme ? "rgba(148, 163, 184, 0.15)" : "#e5e7eb",
+                      border: "1px solid",
+                    }}
                   >
 
                     <Layers3
                       size={14}
-                      className="text-gray-500"
+                      className="text-gray-400"
                     />
 
-                    <span className="text-[14px] text-[#0f172a]">
+                    <span
+                      className="text-[14px]"
+                      style={{
+                        color: isDarkTheme ? "#e2e8f0" : "#0f172a",
+                      }}
+                    >
                       {course.modules}
                     </span>
 
@@ -412,10 +432,11 @@ export default function MyCoursesPage() {
                     text-[16px]
                     leading-8
 
-                    text-[#374151]
-
                     line-clamp-3
                   "
+                  style={{
+                    color: isDarkTheme ? "#cbd5e1" : "#374151",
+                  }}
                 >
                   "{course.description}"
                 </p>
@@ -492,9 +513,10 @@ export default function MyCoursesPage() {
                       className="
                         text-[13px]
                         font-semibold
-
-                        text-[#64748b]
                       "
+                      style={{
+                        color: isDarkTheme ? "#cbd5e1" : "#64748b",
+                      }}
                     >
                       {course.completedLessons}/{course.totalLessons} Lessons
                     </span>
