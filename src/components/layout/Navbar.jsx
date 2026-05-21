@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform, useMotionValue, useMotionTemplate } from "framer-motion";
+import { motion } from "framer-motion";
 import { Menu, X, ArrowRight } from "lucide-react";
 
 import ThemeToggle from "../ui/ThemeToggle";
@@ -8,7 +8,6 @@ import Button from "../ui/Button";
 import BrandMark from "../ui/BrandMark";
 
 import useSmartNavbar from "../../hooks/useSmartNavbar";
-import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 import { scrollToSection as scrollSectionUtil } from "../../utils/scroll";
 
 const DEFAULT_LINKS = [
@@ -19,11 +18,7 @@ const DEFAULT_LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
-const NAV_HEIGHT = 80;
-const DETECTION_OFFSET = 100;
-const NAVBAR_HIDE_TOP_GUARD = 80; // Changed to match NAV_HEIGHT
-const NAVBAR_SCROLL_THRESHOLD = 80; // Changed to match NAV_HEIGHT so it naturally scrolls away first
-const NAVBAR_STOP_DELAY = 150;
+const NAV_HEIGHT = 82;
 
 export default function Navbar({
   logoText = "CLOUD NEXUS",
@@ -39,9 +34,7 @@ export default function Navbar({
   const navigate = useNavigate();
 
   const isHome = location.pathname === "/";
-  const isTrackDetailPage = location.pathname.startsWith("/tracks/");
-  const isDarkTheme = useIsDarkTheme();
-  const { scrollY, scrollYProgress } = useScroll();
+
   const navbarState = useSmartNavbar({
     threshold: 14,
     topGuard: 80,
@@ -50,13 +43,6 @@ export default function Navbar({
 
   const isVisible = isMobileMenuOpen ? true : navbarState.isVisible;
   const isScrolled = navbarState.isScrolled;
-  const [isNearTop, setIsNearTop] = useState(true);
-
-  // For absolute parallax parity in the hero section:
-  // The hero text moves with a parallax depth of [0, 800] -> [0, 120].
-  // Net visual movement is [0, 800] -> [0, -680].
-  // By mapping the navbar to this exact ratio, it visually anchors to the text layer!
-  const mappedY = useTransform(scrollY, [0, 800], [0, -680]);
 
   // SCROLL TO SECTION
   const scrollToSection = useCallback((href) => {
@@ -71,20 +57,7 @@ export default function Navbar({
     return ok;
   }, []);
 
-  // Track if we are near the top to prevent animation jitter 
-  // when switching from absolute to fixed position
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsNearTop(window.scrollY < NAV_HEIGHT * 2);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Active-section detection — picks the section whose VERTICAL RANGE
-  // currently contains the scroll position. Works regardless of nav-link
-  // order vs. DOM order.
+  // ACTIVE SECTION
   useEffect(() => {
     const handleScroll = () => {
       if (!isHome) {
@@ -157,24 +130,22 @@ export default function Navbar({
   return (
     <>
       <motion.nav
-        style={{ y: isNearTop && !isMobileMenuOpen ? mappedY : undefined }}
         initial={false}
-        animate={isNearTop && !isMobileMenuOpen ? {} : {
-          y: isVisible ? 0 : -NAV_HEIGHT,
-          opacity: isVisible ? 1 : 0
+        animate={{
+          y: isVisible ? "0%" : "-100%",
+          opacity: isVisible ? 1 : 0,
         }}
         transition={{
           duration: 0.4,
           ease: "easeOut",
         }}
-        className={`fixed left-0 top-0 z-50 w-full border-b transition-all duration-300 will-change-transform ${isTrackDetailPage && !isDarkTheme
-          ? "border-border bg-white shadow-[0_1px_0_rgba(255,255,255,0.9),0_6px_18px_rgba(0,0,0,0.06)] backdrop-blur-0"
-          : isScrolled
-            ? isTrackDetailPage
-              ? "border-border bg-surface shadow-sm backdrop-blur-0"
-              : "border-border bg-surface shadow-sm backdrop-blur-0"
-            : "border-transparent bg-transparent shadow-none backdrop-blur-0"} ${isVisible || isNearTop ? "pointer-events-auto" : "pointer-events-none"}`}
-        aria-hidden={!isVisible && !isNearTop}
+        className={`
+          fixed left-0 top-0 z-50 w-full
+          border-b
+          transition-all duration-500
+          border-transparent
+          shadow-none
+        `}
       >
         {/* NEW CLIPPED BACKGROUND FOR LINES DESIGN */}
         <div
@@ -193,7 +164,7 @@ export default function Navbar({
             flex h-[82px]
             w-full max-w-[1440px]
             items-center justify-between
-            px-1 sm:px-4 lg:px-[1px]
+            px-1 sm:px-2 lg:px-[10px]
           "
         >
           {/* LOGO */}
@@ -243,7 +214,7 @@ export default function Navbar({
           </div>
 
           {/* RIGHT */}
-          <div className=" flex items-center gap-3 -mt-4 -mr-10">
+          <div className=" flex items-center gap-3 -mt-1 -mr-16">
             <ThemeToggle />
 
             {showAuthButtons && (
@@ -341,7 +312,7 @@ export default function Navbar({
             absolute left-0 top-[81px]
             h-[1.5px]
             w-[17%]
-            bg-[#0606df]
+            bg-[#cbd5e1]
             dark:bg-[#2f4675]
             opacity-90
             dark:opacity-100
@@ -409,11 +380,28 @@ export default function Navbar({
 
       {/* MOBILE MENU */}
       <div
-        id="mobile-menu"
-        className={`fixed inset-x-0 top-[68px] z-40 origin-top border-b ${isTrackDetailPage && !isDarkTheme ? "border-border bg-white backdrop-blur-0" : "border-border bg-surface backdrop-blur-0"} px-5 pb-6 pt-3 transition-all duration-200 md:hidden ${isMobileMenuOpen
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-2 opacity-0"
-          }`}
+        className={`
+          fixed left-0 top-[82px]
+          z-40
+          h-[calc(100vh-82px)]
+          w-full
+          px-5 py-6
+          transition-all duration-300
+          bg-surface
+          md:hidden
+          ${
+            isMobileMenuOpen
+              ? `
+              translate-x-0
+              opacity-100
+            `
+              : `
+              pointer-events-none
+              translate-x-full
+              opacity-0
+            `
+          }
+        `}
       >
         <div className="flex flex-col gap-2">
           {navLinks.map((link) => {
