@@ -18,7 +18,7 @@ export default function SectionHeading({
         </span>
       ) : null}
 
-      <h2 className="font-display text-[34px] font-bold leading-[1.1] tracking-[-0.02em] text-text md:text-[44px] lg:text-[48px]">
+      <h2 className="font-display text-[clamp(2rem,4vw,2.5rem)] font-extrabold leading-[1.08] tracking-[-0.025em] text-text md:text-[44px] lg:text-[48px]">
         {highlight ? (
           <>
             {title} <span className="gradient-text">{highlight}</span>
@@ -29,7 +29,7 @@ export default function SectionHeading({
       </h2>
 
       {description ? (
-        <p className="max-w-[640px] text-[16px] leading-7 text-muted md:text-[17px]">
+        <p className="max-w-[640px] font-sans text-[1.125rem] font-medium leading-[1.5] text-muted md:text-[17px]">
           {description}
         </p>
       ) : null}

@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
+import { useRef } from "react";
 import { Compass, Users, Award, Star } from "lucide-react";
 
-import { stats } from "../../data/stats";
-import SectionShell from "../ui/SectionShell";
-import Container from "../ui/Container";
-import CountUp from "../ui/CountUp";
+import { stats } from '@/data/stats';
+import SectionShell from "@/app/layouts/SectionShell";
+import Container from '@/components/ui/Container';
+import CountUp from '@/components/ui/CountUp';
 
 const ICONS = {
   Compass,
@@ -23,6 +24,24 @@ function StatItem({
   isLast,
 }) {
   const Icon = ICONS[icon] || Users;
+  const ref = useRef(null);
+
+  const handleMouseMove = (e) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty("--x", `${x}%`);
+    el.style.setProperty("--y", `${y}%`);
+  };
+
+  const handleMouseLeave = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--x", `50%`);
+    el.style.setProperty("--y", `50%`);
+  };
 
   return (
     <motion.div
@@ -34,22 +53,21 @@ function StatItem({
         delay,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className={`
-        relative flex flex-col items-start
-        px-8 py-10
-        text-left
-        ${!isLast ? "xl:border-r xl:border-border/50" : ""}
-      `}
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ ['--x']: '50%', ['--y']: '50%' }}
+      className={`stat-card relative flex flex-col items-start px-8 py-10 text-left ${!isLast ? "xl:border-r xl:border-border/50" : ""}`}
     >
       {/* TOP ACCENT LINE */}
-      <div className="mb-6 h-[3px] w-14 rounded-full bg-primary" />
+      <div className="mb-6 h-[3px] stat-accent rounded-full bg-primary" />
 
 
       <div className="flex items-center gap-4">
   {/* ICON */}
   <Icon
     size={35}
-    className="text-primary"
+    className="stat-icon text-primary"
     strokeWidth={2}
     aria-hidden
   />
@@ -57,6 +75,7 @@ function StatItem({
   {/* NUMBER */}
   <div
     className="
+      stat-label
       font-display
       text-[36px]
       font-bold
@@ -65,12 +84,14 @@ function StatItem({
       text-text
     "
   >
-    <CountUp
-      end={value}
-      duration={1.6}
-      decimals={decimals || 0}
-      delay={delay}
-    />
+    <span className="stat-number">
+      <CountUp
+        end={value}
+        duration={1.6}
+        decimals={decimals || 0}
+        delay={delay}
+      />
+    </span>
     {suffix ? <span>{suffix}</span> : null}
   </div>
 </div>
@@ -78,8 +99,9 @@ function StatItem({
       {/* TITLE */}
       <div
         className="
+          stat-meta
           mt-4
-          text-[24px]
+          text-[18px]
           font-normal
           leading-tight
           text-text

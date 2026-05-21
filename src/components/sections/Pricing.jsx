@@ -1,19 +1,15 @@
 import { Check, Sparkles, ArrowRight } from "lucide-react";
-import { pricingTiers } from "../../data/pricing";
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Container from "../ui/Container";
-import Button from "../ui/Button";
+import { pricingTiers } from '@/data/pricing';
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Container from '@/components/ui/Container';
+import Button from '@/components/ui/Button';
 
 function Plan({ tier }) {
   const isHighlight = tier.highlighted;
   return (
     <div
-      className={`relative flex h-full flex-col rounded-2xl border p-6 transition md:p-8 ${
-        isHighlight
-          ? "border-primary bg-elevated shadow-[var(--shadow-elevated)]"
-          : "border-border bg-elevated shadow-[var(--shadow-card)]"
-      }`}
+      className={`pricing-card relative flex h-full flex-col rounded-2xl border p-6 transition md:p-8 ${isHighlight ? 'featured border-primary bg-elevated shadow-[var(--shadow-elevated)]' : 'border-border bg-elevated shadow-[var(--shadow-card)]'}`}
     >
       {isHighlight ? (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -52,7 +48,41 @@ function Plan({ tier }) {
         size="md"
         fullWidth
         variant={isHighlight ? "primary" : "outline"}
-        className="mt-6"
+                         className="
+    relative
+    inline-flex
+    h-[40px]
+    min-w-[90px]
+    items-center
+    justify-center
+
+    overflow-hidden
+rounded-none
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-white
+    dark:bg-[#2563ff]
+
+    px-6
+
+    text-[14px]
+    font-semibold
+
+    text-black
+    dark:text-white
+
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
         rightIcon={<ArrowRight size={14} />}
       >
         {tier.cta}
@@ -60,19 +90,17 @@ function Plan({ tier }) {
 
       <ul className="mt-6 flex-1 space-y-3 border-t border-border pt-6">
         {tier.features.map((feature) => (
-          <li
-            key={feature}
-            className="flex items-start gap-2.5 text-[13px] text-text"
-          >
-            <span
-              className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
-                isHighlight ? "bg-primary text-white" : "bg-success/15 text-success"
-              }`}
+            <li
+              key={feature}
+              className="flex items-start gap-2.5 text-[13px] text-text"
             >
-              <Check size={11} strokeWidth={3} />
-            </span>
-            {feature}
-          </li>
+              <span
+                className={`feature-icon mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${isHighlight ? "bg-primary text-white" : "bg-success/15 text-success"}`}
+              >
+                <Check size={11} strokeWidth={3} />
+              </span>
+              {feature}
+            </li>
         ))}
       </ul>
     </div>
@@ -90,7 +118,7 @@ export default function Pricing() {
           description="Start free. Upgrade when you're ready to certify and ship."
         />
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div className="pricing-grid grid grid-cols-1 gap-5 lg:grid-cols-3">
           {pricingTiers.map((tier) => (
             <Plan key={tier.name} tier={tier} />
           ))}

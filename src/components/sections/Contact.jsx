@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
-import Button from "../ui/Button";
-import photo from "../../assets/Girlimage.png";
+import Button from '@/components/ui/Button';
+import photo from '@/assets/Girlimage.png';
 
 function Field({ label, id, children }) {
   return (
@@ -15,7 +15,7 @@ function Field({ label, id, children }) {
 }
 
 const inputCls =
-  "h-[52px] w-full rounded-[16px] border border-border bg-bg px-5 text-[14px] text-text outline-none transition placeholder:text-subtle focus:border-primary focus:ring-2 focus:ring-primary/20";
+  "h-[52px] w-full rounded-[5px] border border-border bg-bg px-5 text-[14px] text-text outline-none transition placeholder:text-subtle focus:border-primary focus:ring-2 focus:ring-primary/20";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -51,14 +51,14 @@ export default function Contact() {
         </div>
 
         {/* MAIN BOX */}
-        <div className="rounded-[10px] border border-border bg-elevated p-5 shadow-[var(--shadow-elevated)] backdrop-blur-xl md:p-7">
+        <div className="rounded-[5px] border border-border bg-elevated p-5 shadow-[var(--shadow-elevated)] backdrop-blur-xl md:p-7">
 
           <div className="grid gap-5 lg:grid-cols-[0.88fr_1.12fr]">
 
             {/* LEFT */}
             <div
               className="
-                relative overflow-hidden rounded-[10px]
+                relative overflow-hidden rounded-[5px]
                 border border-border
                 bg-bg
                 p-7
@@ -161,7 +161,7 @@ export default function Contact() {
                     rows="4"
                     placeholder="Write your message..."
                     className="
-                      w-full resize-none rounded-[18px]
+                      w-full resize-none rounded-[5px]
                       border border-border
                       bg-bg
                       px-5 py-4
@@ -187,6 +187,41 @@ export default function Contact() {
                   <Button
                     type="submit"
                     size="lg"
+                                     className="
+    relative
+    inline-flex
+    h-[35px]
+    min-w-[80px]
+    items-center
+    justify-center
+
+    overflow-hidden
+rounded-none
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-white
+    dark:bg-[#2563ff]
+
+    px-6
+
+    text-[12px]
+    font-semibold
+
+    text-black
+    dark:text-white
+
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
                     rightIcon={<Send size={16} />}
                   >
                     {submitted

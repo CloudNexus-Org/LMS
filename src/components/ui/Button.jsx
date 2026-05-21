@@ -20,7 +20,7 @@ const SIZES = {
 };
 
 const BASE =
-  "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg whitespace-nowrap";
+  "inline-flex items-center justify-center font-sans font-semibold tracking-tight rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg whitespace-nowrap";
 
 const Button = forwardRef(function Button(
   {
@@ -49,7 +49,7 @@ const Button = forwardRef(function Button(
   const content = (
     <>
       {leftIcon ? <span className="inline-flex shrink-0">{leftIcon}</span> : null}
-      <span>{children}</span>
+      <span className="font-sans font-semibold tracking-tight text-base leading-[1.2]">{children}</span>
       {rightIcon ? <span className="inline-flex shrink-0">{rightIcon}</span> : null}
     </>
   );

@@ -3,8 +3,8 @@ import {
   FaInstagram,
 } from "react-icons/fa";
 import { ArrowRight, MapPin, Phone, Mail, Heart } from "lucide-react";
-import Button from "../ui/Button";
-import BrandMark from "../ui/BrandMark";
+import Button from '@/components/ui/Button';
+import BrandMark from '@/components/ui/BrandMark';
 
 const TECH_COLUMNS = [
   {
@@ -122,14 +122,14 @@ const SOCIALS = [
 function CategoryBlock({ title, links }) {
   return (
     <div>
-      <h4 className="relative pl-3 text-[12px] font-bold uppercase tracking-[0.18em] text-text">
-        <span
+      <h4 className="relative  text-[12px] font-bold uppercase tracking-[0.18em] text-text">
+        {/* <span
           aria-hidden
           className="absolute left-0 top-1/2 h-3 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-primary to-accent"
-        />
+        /> */}
         {title}
       </h4>
-      <ul className="mt-3 space-y-2 text-[13px] leading-5">
+      <ul className="mt-1 space-y-0.5 text-[13px] leading-5">
         {links.map((link) => (
           <li key={link}>
             <a
@@ -168,7 +168,7 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
         </div>
 
         {/* 2. MAIN GRID — brand + tech columns */}
-        <div className="grid gap-x-20 gap-y-15 lg:grid-cols-[1.1fr_1fr_1fr_1.15fr_1.15fr]">
+        <div className="grid gap-x-15 gap-y-8 lg:grid-cols-[1.1fr_1fr_1fr_1.15fr_1.15fr]">
           {/* Brand column */}
           <div>
             <BrandMark logoText={logoText} size="sm" />
@@ -218,7 +218,41 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
               to="/contact"
               size="md"
               rightIcon={<ArrowRight size={14} />}
-              className="mt-5"
+                               className="mt-5
+    relative
+    inline-flex
+    h-[40px]
+    min-w-[90px]
+    items-center
+    justify-center
+
+    overflow-hidden
+rounded-none
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-white
+    dark:bg-[#2563ff]
+
+    px-6
+
+    text-[14px]
+    font-semibold
+
+    text-black
+    dark:text-white
+
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
             >
               Contact us
             </Button>
@@ -246,7 +280,7 @@ export default function Footer({ logoText = "CLOUD NEXUS" }) {
 
           {/* 4 tech-stack columns */}
           {TECH_COLUMNS.map((col) => (
-            <div key={col.id} className="space-y-7">
+            <div key={col.id} className="space-y-5">
               {col.categories.map((cat) => (
                 <CategoryBlock
                   key={cat.title}

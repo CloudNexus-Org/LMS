@@ -17,7 +17,15 @@ export default function ScrollToTop() {
     // Skip the auto-top-scroll when navigation includes a hash target —
     // the Navbar will smooth-scroll to it instead.
     if (hash) return;
-    window.scrollTo(0, 0);
+    
+    // Use a small timeout to allow Suspense/lazy routes to render their content first
+    const timeoutId = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      document.documentElement.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      document.body.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }, 50);
+    
+    return () => clearTimeout(timeoutId);
   }, [pathname, hash]);
 
   return null;

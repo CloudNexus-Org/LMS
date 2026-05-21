@@ -1,13 +1,14 @@
 import { Star, Quote } from "lucide-react";
-import { testimonials } from "../../data/testimonials";
+import { testimonials } from "@/data/testimonials";
+import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Avatar from "../ui/Avatar";
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Avatar from "@/components/ui/Avatar";
 
-import Testimonialbg1 from "../../assets/Testimonialbg.png";
-import Testimonialbg2 from "../../assets/Testimonialbg2.png";
-import Testimonialbg3 from "../../assets/Testimonialbg3.png";
+import Testimonialbg1 from "@/assets/Testimonialbg1.png";
+import Testimonialbg2 from "@/assets/Testimonialbg2 (2).png";
+import Testimonialbg3 from "@/assets/Testimonialbg4.png";
 
 const bgImages = [
   Testimonialbg1,
@@ -16,77 +17,264 @@ const bgImages = [
 ];
 
 function ReviewCard({ item, index }) {
+  const isDarkTheme = useIsDarkTheme();
   const bgImage = bgImages[index % bgImages.length];
 
   return (
     <article
       className="
         group
-
         relative
 
-        flex h-[280px] w-[360px]
-        shrink-0 flex-col
+        flex
+        h-[280px]
+        w-[360px]
+        shrink-0
+        flex-col
 
         overflow-hidden
 
-        rounded-[10px]
+        rounded-[26px]
 
-        border border-border
+        border
+        border-black/[0.06]
+        dark:border-white/[0.08]
 
-        bg-elevated
-
-        p-6
-
-        shadow-[var(--shadow-card)]
-
-        transition-all duration-500
-
-        hover:border-primary/40
+        transition-all
+        duration-700
 
         md:w-[420px]
+
+        hover:-translate-y-2
+
+        hover:border-[#2563ff]/30
+
+        hover:shadow-[0_0_70px_rgba(37,99,235,0.18)]
+
+        dark:hover:shadow-[0_0_90px_rgba(37,99,235,0.22)]
       "
+      style={{
+        backgroundColor: isDarkTheme ? "#06070b" : "#ffffff",
+        backdropFilter: "blur(12px)",
+      }}
     >
-      {/* BACKGROUND IMAGE */}
+
+      {/* BIG BLUE AMBIENT GLOW */}
       <div
         className="
-          absolute inset-0
+          pointer-events-none
+
+          absolute
+
+          -bottom-28
+          -left-24
+
+          h-72
+          w-72
+
+          rounded-full
 
           opacity-0
 
-          transition-all duration-500
+          blur-[90px]
+
+          transition-all
+          duration-700
+
+          group-hover:opacity-100
+        "
+        style={{
+          background:
+            "radial-gradient(circle, rgba(37,99,255,0.65) 0%, rgba(37,99,255,0.35) 42%, transparent 74%)",
+        }}
+      />
+
+      {/* EXTRA TOP BLUE GLOW */}
+      <div
+        className="
+          pointer-events-none
+
+          absolute
+
+          -right-16
+          -top-16
+
+          h-44
+          w-44
+
+          rounded-full
+
+          opacity-0
+
+          blur-[70px]
+
+          transition-all
+          duration-700
+
+          group-hover:opacity-100
+        "
+        style={{
+          background:
+            "radial-gradient(circle, rgba(96,165,250,0.55) 0%, rgba(37,99,255,0.25) 45%, transparent 72%)",
+        }}
+      />
+
+      {/* ROTATING BLURRED BORDER */}
+      <div
+        className="
+          pointer-events-none
+
+          absolute
+          inset-0
+
+          rounded-[26px]
+
+          opacity-0
+
+          transition-all
+          duration-700
 
           group-hover:opacity-100
         "
       >
+
+        {/* WIDE GLOW */}
+        <div
+          className="
+            absolute
+            -inset-[4px]
+
+            rounded-[30px]
+
+            animate-spin-slow
+
+            blur-xl
+          "
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0deg, rgba(37,99,255,0.95) 55deg, transparent 110deg)",
+          }}
+        />
+
+        {/* SHARP INNER BORDER */}
+        <div
+          className="
+            absolute
+            -inset-[1px]
+
+            rounded-[28px]
+
+            animate-spin-slow
+
+            blur-[3px]
+          "
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0deg, rgba(96,165,250,1) 45deg, transparent 95deg)",
+          }}
+        />
+
+        {/* CENTER MASK */}
+        <div
+          className="
+            absolute
+            inset-[1.5px]
+
+            rounded-[24px]
+
+            backdrop-blur-xl
+          "
+          style={{
+            backgroundColor: isDarkTheme ? "rgba(6, 7, 11, 0.88)" : "rgba(255, 255, 255, 0.88)",
+          }}
+        />
+
+      </div>
+
+      {/* BG IMAGE */}
+      <div
+        className="
+          absolute
+          inset-0
+
+          overflow-hidden
+        "
+      >
+
         <img
           src={bgImage}
           alt="testimonial background"
-
           className="
-            h-full w-full
+            h-full
+            w-full
+
             object-cover
+
+            scale-[1.12]
+
+            opacity-[0.14]
+
+            transition-all
+            duration-700
+            ease-out
+
+            brightness-[1.15]
+
+            group-hover:scale-[1.22]
+
+            group-hover:opacity-[0.65]
           "
+          style={{
+            filter: isDarkTheme ? "blur(4px)" : "none",
+          }}
         />
 
-        {/* DARK OVERLAY */}
+        {/* LIGHT THEME OVERLAY */}
         <div
           className="
-            absolute inset-0
+            absolute
+            inset-0
 
-            bg-black/55
+            transition-all
+            duration-700
+            
+            opacity-100
+            group-hover:opacity-40
           "
+          style={{
+            display: isDarkTheme ? "none" : "block",
+            background: "linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.98))",
+          }}
         />
+
+        {/* DARK THEME OVERLAY */}
+        <div
+          className="
+            absolute
+            inset-0
+
+            transition-all
+            duration-700
+            
+            opacity-100
+            group-hover:opacity-50
+          "
+          style={{
+            display: isDarkTheme ? "block" : "none",
+            background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.68), rgba(5, 6, 10, 0.92))",
+          }}
+        />
+
       </div>
 
       {/* CONTENT */}
-      <div className="relative z-10 flex h-full flex-col">
+      <div className="relative z-10 flex h-full flex-col p-6">
 
         {/* TOP */}
         <div className="flex items-start justify-between">
 
-          {/* USER */}
           <div className="flex items-center gap-3">
+
             <Avatar
               src={item.avatar}
               name={item.name}
@@ -94,6 +282,7 @@ function ReviewCard({ item, index }) {
             />
 
             <div className="min-w-0">
+
               <div
                 className="
                   truncate
@@ -101,12 +290,12 @@ function ReviewCard({ item, index }) {
                   text-[15px]
                   font-semibold
 
-                  text-text
-
-                  transition-colors duration-300
-
-                  group-hover:text-white
+                  transition-all
+                  duration-300
                 "
+                style={{
+                  color: isDarkTheme ? "#ffffff" : "#0f172a",
+                }}
               >
                 {item.name}
               </div>
@@ -115,31 +304,38 @@ function ReviewCard({ item, index }) {
                 className="
                   text-[12px]
 
-                  text-muted
+                  transition-all
+                  duration-300
 
-                  transition-colors duration-300
-
-                  group-hover:text-white/70
+                  group-hover:text-[#2563ff]
+                  dark:group-hover:text-white/80
                 "
+                style={{
+                  color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(100, 116, 139)",
+                }}
               >
                 {item.role}
               </div>
+
             </div>
+
           </div>
 
-          {/* QUOTE */}
           <Quote
             size={24}
             className="
               rotate-180
 
-              text-primary/40
+              text-[#2563ff]/40
 
-              transition-colors duration-300
+              transition-all
+              duration-500
 
-              group-hover:text-white/70
+              group-hover:scale-110
+              group-hover:text-[#2563ff]
             "
           />
+
         </div>
 
         {/* LINE */}
@@ -150,12 +346,14 @@ function ReviewCard({ item, index }) {
             h-px
             w-full
 
-            bg-border
+            transition-all
+            duration-700
 
-            transition-colors duration-300
-
-            group-hover:bg-white/20
+            group-hover:bg-[#2563ff]/35
           "
+          style={{
+            backgroundColor: isDarkTheme ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)",
+          }}
         />
 
         {/* RATING */}
@@ -166,28 +364,36 @@ function ReviewCard({ item, index }) {
               text-[15px]
               font-medium
 
-              text-muted
+              transition-all
+              duration-300
 
-              transition-colors duration-300
-
-              group-hover:text-white/80
+              group-hover:text-[#2563ff]
+              dark:group-hover:text-white
             "
+            style={{
+              color: isDarkTheme ? "rgba(255, 255, 255, 0.7)" : "rgb(71, 85, 105)",
+            }}
           >
             {item.rating}.0
           </span>
 
           <div className="flex items-center gap-1">
+
             {Array.from({ length: item.rating }).map((_, i) => (
+
               <Star
                 key={i}
                 size={14}
                 className="
-                  fill-warning
-                  text-warning
+                  fill-[#2563ff]
+                  text-[#2563ff]
                 "
               />
+
             ))}
+
           </div>
+
         </div>
 
         {/* REVIEW */}
@@ -200,30 +406,33 @@ function ReviewCard({ item, index }) {
             text-[15px]
             leading-8
 
-            text-muted
+            transition-all
+            duration-500
 
-            transition-colors duration-300
-
-            group-hover:text-white/90
+            group-hover:text-slate-800
+            dark:group-hover:text-white/92
           "
+          style={{
+            color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(71, 85, 105)",
+          }}
         >
           {item.text}
         </p>
+
       </div>
+
     </article>
   );
 }
 
 export default function TestimonialScroll() {
+
   const firstRow = [...testimonials, ...testimonials];
 
-  const secondRow = [
-    ...testimonials.slice().reverse(),
-    ...testimonials.slice().reverse(),
-  ];
-
   return (
+
     <SectionShell id="testimonials">
+
       <SectionHeading
         eyebrow="Learner stories"
         title="Real progress,"
@@ -233,32 +442,27 @@ export default function TestimonialScroll() {
 
       <div className="space-y-6">
 
-        {/* TOP ROW */}
-        <div className="testimonial-mask overflow-hidden">
-          <div className="testimonial-row-left flex w-max gap-5">
+        <div className="testimonial-mask overflow-visible">
+
+          <div className="testimonial-row-left flex w-max gap-5 py-6">
+
             {firstRow.map((item, index) => (
+
               <ReviewCard
                 key={`top-${index}`}
                 item={item}
                 index={index}
               />
+
             ))}
+
           </div>
+
         </div>
 
-        {/* BOTTOM ROW */}
-        <div className="testimonial-mask hidden overflow-hidden md:block">
-          <div className="testimonial-row-right flex w-max gap-5 translate-x-62">
-            {secondRow.map((item, index) => (
-              <ReviewCard
-                key={`bottom-${index}`}
-                item={item}
-                index={index + 3}
-              />
-            ))}
-          </div>
-        </div>
       </div>
+
     </SectionShell>
+
   );
 }

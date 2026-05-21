@@ -1,11 +1,11 @@
-import AWS from "../assets/courses/image1.png";
-import Azure from "../assets/courses/image2.png";
-import JAVASCRIPT from "../assets/courses/image3.png";
-import Go from "../assets/courses/image4.png";
-import PYTHON from "../assets/courses/image5.png";
-import GCP from "../assets/courses/image6.png";
-import DOCKER from "../assets/courses/image7.png";
-import KUBERNETES from "../assets/courses/image8.png";
+import AWS from '@/assets/courses/image1.png';
+import Azure from '@/assets/courses/image2.png';
+import JAVASCRIPT from '@/assets/courses/image3.png';
+import Go from '@/assets/courses/image4.png';
+import PYTHON from '@/assets/courses/image5.png';
+import GCP from '@/assets/courses/image6.png';
+import DOCKER from '@/assets/courses/image7.png';
+import KUBERNETES from '@/assets/courses/image8.png';
 
 export const featuredCourses = [{
         id: 1,

@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
-import { mentors } from "../../data/mentors";
-import SectionShell from "../ui/SectionShell";
-import SectionHeading from "../ui/SectionHeading";
-import Container from "../ui/Container";
-import Button from "../ui/Button";
+import { mentors } from '@/data/mentors';
+import SectionShell from "@/app/layouts/SectionShell";
+import SectionHeading from "@/app/layouts/SectionHeading";
+import Container from '@/components/ui/Container';
+import Button from '@/components/ui/Button';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -21,66 +21,74 @@ function MentorCard({ mentor, index }) {
       <Link
         to={`/mentors/${mentor.slug}`}
         aria-label={`View profile for ${mentor.name}`}
-        className="group/mentor relative flex h-full flex-col rounded-2xl border border-border bg-elevated p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-border-strong focus-visible:-translate-y-0.5 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        className="group relative flex h-full flex-col overflow-hidden rounded-[24px] border border-border bg-elevated/40 p-7 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:bg-elevated hover:shadow-xl hover:shadow-primary/[0.08]"
       >
-        {/* Subtle "view profile" affordance — top right */}
-        <span
-          aria-hidden
-          className="absolute right-5 top-5 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-bg/70 text-muted opacity-0 transition-all duration-200 group-hover/mentor:opacity-100 group-hover/mentor:border-primary group-hover/mentor:text-primary group-focus-visible/mentor:opacity-100"
-        >
-          <ArrowUpRight size={13} strokeWidth={2.2} />
-        </span>
+        {/* Soft background glow on hover */}
+        <div className="pointer-events-none absolute -inset-px bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-        {/* Identity row */}
-        <div className="flex items-center gap-4">
-          <img
-            src={mentor.avatar}
-            alt={mentor.name}
-            loading="lazy"
-            className="h-14 w-14 shrink-0 rounded-full object-cover"
-          />
-          <div className="min-w-0 flex-1 pr-8">
-            <h3 className="truncate font-display text-[16px] font-semibold tracking-tight text-text">
+        {/* Identity Row */}
+        <div className="relative z-10 flex items-start gap-4">
+          <div className="relative shrink-0">
+            {/* Glowing avatar ring */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary to-accent opacity-40 blur-[8px] transition-opacity duration-300 group-hover:opacity-80" />
+            <img
+              src={mentor.avatar}
+              alt={mentor.name}
+              loading="lazy"
+              className="relative h-16 w-16 rounded-full object-cover ring-2 ring-elevated transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+          
+          <div className="min-w-0 flex-1 pt-1">
+            <h3 className="truncate font-display text-[17px] font-semibold tracking-tight text-text transition-colors group-hover:text-primary">
               {mentor.name}
             </h3>
-            <p className="mt-0.5 truncate text-[13px] text-muted">
-              {mentor.role} at{" "}
-              <span className="text-text">
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="truncate text-[13.5px] text-muted">
+                {mentor.role}
+              </span>
+              <span className="h-1 w-1 shrink-0 rounded-full bg-border-strong" aria-hidden />
+              <span className="truncate text-[13.5px] font-medium text-text">
                 {mentor.company.replace(/^Ex-/, "")}
               </span>
-            </p>
+            </div>
           </div>
         </div>
 
         {/* Bio */}
-        <p className="mt-5 text-[13.5px] leading-6 text-muted">{mentor.bio}</p>
+        <p className="relative z-10 mt-6 text-[14.5px] leading-relaxed text-subtle line-clamp-3">
+          {mentor.bio}
+        </p>
 
-        {/* Specialties */}
-        <div className="mt-4 text-[12px] text-subtle">
-          {mentor.specialties.slice(0, 3).join(" · ")}
+        {/* Specialties Tags */}
+        <div className="relative z-10 mt-5 flex flex-wrap gap-2">
+          {mentor.specialties.slice(0, 3).map((spec) => (
+            <span 
+              key={spec} 
+              className="inline-flex items-center rounded-full border border-border/80 bg-bg/50 px-3 py-1 text-[11.5px] font-medium text-muted transition-colors group-hover:border-primary/20 group-hover:text-text"
+            >
+              {spec}
+            </span>
+          ))}
         </div>
 
-        {/* Footer — stats + "view profile" hint */}
-        <div className="mt-auto flex items-center justify-between border-t border-border pt-4 text-[12.5px] text-muted">
-          <span>
-            <span className="font-semibold text-text">{mentor.courses}</span>{" "}
-            courses
-            <span className="mx-2 text-subtle" aria-hidden>
-              ·
-            </span>
-            <span className="font-semibold text-text">{mentor.learners}</span>{" "}
-            learners
-          </span>
+        {/* Footer Stats & Action */}
+        <div className="relative z-10 mt-auto flex items-end justify-between border-t border-border/60 pt-6 mt-6">
+          <div className="flex items-center gap-5">
+            <div className="flex flex-col">
+              <span className="font-display text-[16px] font-semibold leading-none text-text">{mentor.courses}</span>
+              <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted">Courses</span>
+            </div>
+            <div className="h-7 w-px bg-border/80" aria-hidden />
+            <div className="flex flex-col">
+              <span className="font-display text-[16px] font-semibold leading-none text-text">{mentor.learners}</span>
+              <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted">Learners</span>
+            </div>
+          </div>
 
-          <span className="inline-flex items-center gap-1 font-medium text-muted transition-colors duration-200 group-hover/mentor:text-primary">
-            View profile
-            <ArrowUpRight
-              size={12}
-              strokeWidth={2.2}
-              aria-hidden
-              className="transition-transform duration-200 group-hover/mentor:translate-x-0.5 group-hover/mentor:-translate-y-0.5"
-            />
-          </span>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-primary group-hover:text-white group-hover:shadow-md group-hover:shadow-primary/20">
+            <ArrowUpRight size={18} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </div>
         </div>
       </Link>
     </motion.div>

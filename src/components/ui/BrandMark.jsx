@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Layers } from "lucide-react";
-import { scrollToTop } from "../../utils/scroll";
+import { scrollToTop } from '@/utils/scroll';
 
 const SIZES = {
   sm: {
