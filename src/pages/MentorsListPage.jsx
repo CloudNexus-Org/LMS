@@ -301,7 +301,7 @@ export default function MentorsListPage() {
         </section>
 
         {/* ================= TOOLBAR (sticky) ================= */}
-        <div className="sticky top-[68px] z-30 border-t border-border bg-bg/85 backdrop-blur-xl">
+        <div className="border-y border-border bg-bg/80">
           <Container size="lg">
             <div className="flex flex-col gap-3 py-3 md:flex-row md:items-center md:gap-4">
               {/* Search */}

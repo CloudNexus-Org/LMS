@@ -8,7 +8,7 @@ export const mentors = [
     bio: "12+ years architecting petabyte-scale systems. Lead instructor for AWS Solution Architect certification track.",
     longBio:
   "Arjan has spent years building large-scale cloud systems that handle millions of users every day. At AWS, he worked on reliability and failover systems for EC2, helping engineers keep services stable under massive traffic. Today, he mentors developers by breaking down complex infrastructure concepts into practical, real-world lessons that actually make sense.",
-    avatar: "https://i.pravatar.cc/400?u=arjan",
+    avatar: "https://i.pravatar.cc/400?u=rahul",
     cover:
       "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&w=1600&q=80",
     courses: 6,
@@ -320,7 +320,7 @@ export const mentors = [
     longBio:
   "James has spent over a decade automating infrastructure and improving developer workflows at companies like Google and GitHub. He enjoys helping engineers simplify deployments, understand Kubernetes deeply, and build DevOps pipelines that are stable, scalable, and easy to manage.",
 
-    avatar: "https://i.pravatar.cc/400?u=james",
+    avatar: "https://i.pravatar.cc/400?u=jimmy",
     cover:
       "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=80",
     courses: 7,
@@ -637,7 +637,7 @@ export const mentors = [
     bio: "Specialised in real-time systems. Built the original SMS routing engine. Teaches WebRTC, queues, and message reliability.",
     longBio:
   "Noah specializes in real-time communication systems and messaging infrastructure. During his time at Twilio, he helped build reliable systems powering millions of authentication and communication flows worldwide. He enjoys teaching backend engineering through practical distributed systems concepts.",
-    avatar: "https://i.pravatar.cc/200?u=noah",
+    avatar: "https://i.pravatar.cc/200?u=deepanshu",
     courses: 5,
     learners: "7.5k",
     rating: 4.7,
@@ -663,7 +663,7 @@ export const mentors = [
     bio: "10+ years managing distributed teams. Teaches engineering leadership, performance reviews, and the craft of growing senior engineers.",
     longBio:
   "Amira has spent years leading engineering teams and helping developers grow into confident senior engineers and managers. She teaches leadership in a grounded and practical way, focusing on communication, mentorship, hiring, and building healthy engineering cultures.",
-    avatar: "https://i.pravatar.cc/200?u=amira",
+    avatar: "https://i.pravatar.cc/200?u=sahu",
     courses: 3,
     learners: "4.2k",
     rating: 4.9,
@@ -714,7 +714,7 @@ export const mentors = [
     location: "Stockholm, Sweden",
     bio: "Built the recommendation models behind Discover Weekly. Teaches recommender systems, A/B testing, and applied ML.",
     longBio:  "Sofia worked on recommendation systems and personalization models at Spotify. She enjoys helping engineers understand how machine learning impacts real products and teaches applied AI with a strong focus on experimentation, measurement, and practical outcomes.",
-    avatar: "https://i.pravatar.cc/200?u=sofia",
+    avatar: "https://i.pravatar.cc/200?u=sofiaa",
     courses: 4,
     learners: "6.7k",
     rating: 4.9,

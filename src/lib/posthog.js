@@ -3,11 +3,12 @@ import posthog from 'posthog-js';
 // In a real application, you would put this in your .env file
 // VITE_POSTHOG_KEY=phc_XXXXXXXXXXXX
 // VITE_POSTHOG_HOST=https://app.posthog.com
-const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY || 'mock_key_for_development';
+const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com';
 
 export const initTelemetry = () => {
-  if (typeof window !== 'undefined') {
+  // Only initialize PostHog if a valid key is provided
+  if (typeof window !== 'undefined' && POSTHOG_KEY && !POSTHOG_KEY.includes('mock')) {
     posthog.init(POSTHOG_KEY, {
       api_host: POSTHOG_HOST,
       // Enable debug mode in development

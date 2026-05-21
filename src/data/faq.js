@@ -11,7 +11,7 @@ export const faqs = [{
         answer: "Our certificates are industry-recognized and verifiable on LinkedIn via a unique credential URL. They are issued after you complete the lessons, hands-on project, and pass the final assessment.",
     },
     {
-        question: "What if I don't like the course \u2014 can I get a refund?",
+        question: "What if I don't like the course can I get a refund?",
         answer: "Pro Learner subscriptions come with a 14-day money-back guarantee. If you're not satisfied within 14 days of your first paid charge, email support and we'll refund the full amount.",
     },
     {
@@ -20,7 +20,7 @@ export const faqs = [{
     },
     {
         question: "What devices does Cloud Nexus work on?",
-        answer: "Anywhere a modern browser runs \u2014 desktop, tablet, and mobile. Lessons, quizzes, and the project workspace are fully responsive, with offline-capable note saving.",
+        answer: "Anywhere a modern browser runs desktop, tablet, and mobile. Lessons, quizzes, and the project workspace are fully responsive, with offline-capable note saving.",
     },
     {
         question: "Do you offer team or enterprise plans?",
