@@ -8,6 +8,7 @@ import Button from "../ui/Button";
 import BrandMark from "../ui/BrandMark";
 
 import useSmartNavbar from "../../hooks/useSmartNavbar";
+import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 import { scrollToSection as scrollSectionUtil } from "../../utils/scroll";
 
 const DEFAULT_LINKS = [
@@ -32,6 +33,7 @@ export default function Navbar({
 
   const location = useLocation();
   const navigate = useNavigate();
+  const isDarkTheme = useIsDarkTheme();
 
   const isHome = location.pathname === "/";
 
@@ -149,7 +151,9 @@ export default function Navbar({
       >
         {/* NEW CLIPPED BACKGROUND FOR LINES DESIGN */}
         <div
-          className="absolute inset-0 -z-10 bg-surface dark:bg-surface pointer-events-none"
+          className={`absolute inset-0 -z-10 pointer-events-none ${
+            isDarkTheme ? "bg-black" : "bg-white"
+          }`}
           style={{
             clipPath:
               "polygon(0 0, 100% 0, 100% 81px, 83% 81px, 78.6% 56px, 21.4% 56px, 17% 81px, 0 81px)",
