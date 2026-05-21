@@ -219,7 +219,7 @@ export default function Navbar({
           </div>
 
           {/* RIGHT */}
-          <div className=" flex items-center gap-3 -mt-1 -mr-16">
+          <div className=" flex items-center gap-3 -mt-1 -mr-5">
             <ThemeToggle />
 
             {showAuthButtons && (
@@ -317,11 +317,11 @@ export default function Navbar({
           className="
             pointer-events-none
             absolute left-0 top-[81px]
-            h-[1.5px]
+            h-[0.3px]
             w-[17%]
             bg-[#cbd5e1]
-            dark:bg-[#626161d7]
-            opacity-90
+            dark:bg-[#777777]
+            opacity-100
             dark:opacity-100
           "
         />
@@ -331,11 +331,11 @@ export default function Navbar({
           className="
             pointer-events-none
             absolute left-[17%] top-[81px]
-            h-[1.5px]
+            h-[0.3px]
             w-[72px]
             origin-left rotate-[-20deg]
             bg-[#cbd5e1]
-            dark:bg-[#3d5a96]
+            dark:bg-[#777777]
             opacity-90
             dark:opacity-100
           "
@@ -345,11 +345,11 @@ export default function Navbar({
         <div
           className="
             pointer-events-none
-            absolute left-[21%] top-[56px]
-            h-[1.5px]
-            w-[58%]
+            absolute left-[21.4%] top-[56px]
+            h-[0.3px]
+            w-[57.2%]
             bg-[#cbd5e1]
-            dark:bg-[#29406d]
+            dark:bg-[#777777]
             opacity-90
             dark:opacity-100
           "
@@ -360,11 +360,11 @@ export default function Navbar({
           className="
             pointer-events-none
             absolute right-[17%] top-[81px]
-            h-[1.5px]
+            h-[0.3px]
             w-[72px]
             origin-right rotate-[20deg]
             bg-[#cbd5e1]
-            dark:bg-[#3d5a96]
+            dark:bg-[#777777]
             opacity-90
             dark:opacity-100
           "
@@ -375,10 +375,10 @@ export default function Navbar({
           className="
             pointer-events-none
             absolute right-0 top-[81px]
-            h-[1.5px]
+            h-[0.3px]
             w-[17%]
             bg-[#cbd5e1]
-            dark:bg-[#2f4675]
+            dark:bg-[#777777]
             opacity-90
             dark:opacity-100
           "
@@ -394,6 +394,7 @@ export default function Navbar({
           w-full
           px-5 py-6
           transition-all duration-300
+          bg-white dark:bg-black
           md:hidden
           ${
             isMobileMenuOpen
@@ -408,9 +409,6 @@ export default function Navbar({
             `
           }
         `}
-        style={{
-          backgroundColor: bgColor,
-        }}
       >
         <div className="flex flex-col gap-2">
           {navLinks.map((link) => {

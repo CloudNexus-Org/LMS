@@ -128,30 +128,21 @@ export default function Hero() {
     min-w-[90px]
     items-center
     justify-center
-
-   
-
     border border-[#d9e2ff]
     dark:border-white/10
-
     bg-white
     dark:bg-[#2563ff]
-
     px-6
-
     text-[14px]
-    font-semibold
-
+    font-semibol
     text-black
     dark:text-white
 overflow-hidden
 rounded-none
     shadow-[0_10px_30px_rgba(37,99,235,0.08)]
     dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
-
     transition-all
     duration-300
-
     hover:-translate-y-[2px]
     hover:border-[#2563ff]/40
 

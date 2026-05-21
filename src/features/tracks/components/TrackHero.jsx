@@ -15,16 +15,15 @@ export default function TrackHero({ track }) {
   const tags = track.skills || ["Machine Learning", "Deep Learning", "Gen-AI", "Python"];
 
   // Theme-aware colors
-  // Force dark styling for the hero section regardless of global theme
-  const bgClass = "bg-black";
-  const textClass = "text-white";
-  const mutedTextClass = "text-white/75";
-  const borderClass = "border-white/10 bg-[#071017]";
+  const bgClass = isDarkTheme ? "bg-black" : "bg-white";
+  const textClass = isDarkTheme ? "text-white" : "text-black";
+  const mutedTextClass = isDarkTheme ? "text-white/75" : "text-black/75";
+  const borderClass = isDarkTheme ? "border-white/10 bg-[#071017]" : "border-black/10 bg-white";
   const glowColorClass = "bg-primary/12";
   const buttonPrimaryClass = "bg-gradient-to-r from-[#215cff] to-[#4b79ff] hover:from-[#4b79ff] hover:to-[#215cff] text-white shadow-[0_12px_28px_rgba(33,92,255,0.30)]";
-  const buttonSecondaryClass = "border-white/10 bg-white/5 hover:bg-white/10 text-white/80";
-  const cardBgClass = "bg-[#0b0f14] border-white/8";
-  const tagBgClass = "bg-white/[0.03] border-white/10 text-white/80";
+  const buttonSecondaryClass = isDarkTheme ? "border-white/10 bg-white/5 hover:bg-white/10 text-white/80" : "border-black/10 bg-black/5 hover:bg-black/10 text-black/80";
+  const cardBgClass = isDarkTheme ? "bg-[#0b0f14] border-white/8" : "bg-white border-black/10 shadow-[0_4px_16px_rgba(0,0,0,0.08)]";
+  const tagBgClass = isDarkTheme ? "bg-white/[0.03] border-white/10 text-white/80" : "bg-black/[0.03] border-black/10 text-black/80";
 
   return (
     <section className={`relative overflow-hidden min-h-screen ${bgClass} ${textClass}`}>
@@ -37,8 +36,8 @@ export default function TrackHero({ track }) {
           className={`absolute inset-0 ${isDarkTheme ? "opacity-[0.08]" : "opacity-[0.05]"}`}
           style={{
             backgroundImage: `
-            linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)
+            linear-gradient(${isDarkTheme ? "rgba(255,255,255,.2)" : "rgba(0,0,0,.1)"} 1px, transparent 1px),
+            linear-gradient(90deg, ${isDarkTheme ? "rgba(255,255,255,.2)" : "rgba(0,0,0,.1)"} 1px, transparent 1px)
             `,
             backgroundSize:"90px 90px"
           }}
@@ -72,17 +71,17 @@ export default function TrackHero({ track }) {
 
             {/* pricing */}
               <div className="mt-8 flex flex-col">
-              <span className={`text-[11px] font-semibold ${isDarkTheme ? "text-zinc-500" : "text-slate-500"} uppercase tracking-widest mb-2`}>
+              <span className={`text-[11px] font-semibold ${isDarkTheme ? "text-zinc-500" : "text-slate-600"} uppercase tracking-widest mb-2`}>
                 Course Investment
               </span>
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className={`text-primary text-4xl md:text-[48px] font-display font-medium tracking-normal leading-none`}>
                   Rs.6999
                 </span>
-                <span className={`${isDarkTheme ? "text-zinc-500" : "text-slate-400"} line-through text-xl font-medium ml-2`}>
+                <span className={`${isDarkTheme ? "text-zinc-500" : "text-slate-500"} line-through text-xl font-medium ml-2`}>
                   Rs.14891
                 </span>
-                <span className={`text-[14px] ${isDarkTheme ? "text-zinc-400" : "text-slate-500"} font-medium ml-1`}>
+                <span className={`text-[14px] ${isDarkTheme ? "text-zinc-400" : "text-slate-600"} font-medium ml-1`}>
                   (+GST)
                 </span>
               </div>
@@ -126,12 +125,12 @@ export default function TrackHero({ track }) {
                   className="w-full h-full object-cover"
                   alt="Track Preview"
                 />
-                <div className={`absolute inset-0 ${isDarkTheme ? "bg-black/20" : "bg-black/10"}`}/>
+                <div className={`absolute inset-0 ${isDarkTheme ? "bg-black/20" : "bg-black/5"}`}/>
                 
                 {/* play */}
                 <Link
                   to={`/learn/${track.id}`}
-                  className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full ${isDarkTheme ? "bg-white/20" : "bg-white/30"} backdrop-blur-xl flex items-center justify-center cursor-pointer hover:scale-110 duration-300`}
+                  className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full ${isDarkTheme ? "bg-white/20" : "bg-white/40"} backdrop-blur-xl flex items-center justify-center cursor-pointer hover:scale-110 duration-300`}
                 >
                   <Play fill="white" size={28} />
                 </Link>

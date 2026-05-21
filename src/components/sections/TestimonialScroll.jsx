@@ -1,14 +1,14 @@
 import { Star, Quote } from "lucide-react";
-import { testimonials } from '@/data/testimonials';
+import { testimonials } from "@/data/testimonials";
+import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
-import Avatar from '@/components/ui/Avatar';
+import Avatar from "@/components/ui/Avatar";
 
-import Testimonialbg1 from '@/assets/Testimonialbg1.png';
-import Testimonialbg2 from '@/assets/Testimonialbg2 (2).png';
-import Testimonialbg3 from '@/assets/Testimonialbg4.png';
-
+import Testimonialbg1 from "@/assets/Testimonialbg1.png";
+import Testimonialbg2 from "@/assets/Testimonialbg2 (2).png";
+import Testimonialbg3 from "@/assets/Testimonialbg4.png";
 
 const bgImages = [
   Testimonialbg1,
@@ -17,288 +17,411 @@ const bgImages = [
 ];
 
 function ReviewCard({ item, index }) {
-
+  const isDarkTheme = useIsDarkTheme();
   const bgImage = bgImages[index % bgImages.length];
 
   return (
-
     <article
       className="
-        testimonial-card
         group
-
         relative
 
-        flex h-[280px] w-[360px]
-        shrink-0 flex-col
+        flex
+        h-[280px]
+        w-[360px]
+        shrink-0
+        flex-col
 
-        overflow-visible
+        overflow-hidden
 
-        rounded-[8px]
+        rounded-[26px]
 
-        border border-border
+        border
+        border-black/[0.06]
+        dark:border-white/[0.08]
 
-        bg-elevated
-
-        p-[2px]
-
-        transition-all duration-500
+        transition-all
+        duration-700
 
         md:w-[420px]
 
-        hover:-translate-y-3
+        hover:-translate-y-2
+
+        hover:border-[#2563ff]/30
+
+        hover:shadow-[0_0_70px_rgba(37,99,235,0.18)]
+
+        dark:hover:shadow-[0_0_90px_rgba(37,99,235,0.22)]
       "
+      style={{
+        backgroundColor: isDarkTheme ? "#06070b" : "#ffffff",
+        backdropFilter: "blur(12px)",
+      }}
     >
-{/* ANIMATED BORDER */}
-<div
-  className="
-    absolute
-    inset-0
 
-    rounded-[8px]
-
-    opacity-0
-
-    transition-opacity duration-500
-
-    group-hover:opacity-100
-  "
->
-
-  <div
-    className="
-      absolute
-      -inset-[3px]
-
-      rounded-[10px]
-
-      animate-spin-slow
-
-      
-
-      blur-[0.5px]
-    "
-  />
-
-</div>
-
-      {/* MAIN CARD */}
+      {/* BIG BLUE AMBIENT GLOW */}
       <div
         className="
-          relative
+          pointer-events-none
 
-          flex h-full w-full flex-col
+          absolute
 
-          overflow-hidden
+          -bottom-28
+          -left-24
 
-          rounded-[7px]
+          h-72
+          w-72
 
-          bg-elevated
+          rounded-full
 
-          p-6
+          opacity-0
 
-          transition-all duration-500
+          blur-[90px]
 
-          group-hover:border-blue-500/40
+          transition-all
+          duration-700
 
-          group-hover:shadow-[0_0_40px_rgba(37,99,235,0.45)]
+          group-hover:opacity-100
+        "
+        style={{
+          background:
+            "radial-gradient(circle, rgba(37,99,255,0.65) 0%, rgba(37,99,255,0.35) 42%, transparent 74%)",
+        }}
+      />
 
-          dark:group-hover:shadow-[0_0_55px_rgba(37,99,235,0.35)]
+      {/* EXTRA TOP BLUE GLOW */}
+      <div
+        className="
+          pointer-events-none
+
+          absolute
+
+          -right-16
+          -top-16
+
+          h-44
+          w-44
+
+          rounded-full
+
+          opacity-0
+
+          blur-[70px]
+
+          transition-all
+          duration-700
+
+          group-hover:opacity-100
+        "
+        style={{
+          background:
+            "radial-gradient(circle, rgba(96,165,250,0.55) 0%, rgba(37,99,255,0.25) 45%, transparent 72%)",
+        }}
+      />
+
+      {/* ROTATING BLURRED BORDER */}
+      <div
+        className="
+          pointer-events-none
+
+          absolute
+          inset-0
+
+          rounded-[26px]
+
+          opacity-0
+
+          transition-all
+          duration-700
+
+          group-hover:opacity-100
         "
       >
 
-        {/* BG IMAGE */}
+        {/* WIDE GLOW */}
         <div
           className="
-            absolute inset-0
+            absolute
+            -inset-[4px]
 
-            scale-[1.18]
+            rounded-[30px]
 
-            opacity-0
+            animate-spin-slow
 
-            transition-all duration-700
-
-            group-hover:scale-100
-            
-            group-hover:opacity-100
+            blur-xl
           "
-        >
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0deg, rgba(37,99,255,0.95) 55deg, transparent 110deg)",
+          }}
+        />
 
-          <img
-            src={bgImage}
-            alt="testimonial background"
-            className="
-              h-full w-full
-              object-cover
-            "
-          />
+        {/* SHARP INNER BORDER */}
+        <div
+          className="
+            absolute
+            -inset-[1px]
 
-          {/* OVERLAY */}
-          <div
-            className="
-              absolute inset-0
+            rounded-[28px]
 
-              bg-black/72
+            animate-spin-slow
 
-              transition-all duration-500
+            blur-[3px]
+          "
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0deg, rgba(96,165,250,1) 45deg, transparent 95deg)",
+          }}
+        />
 
-              group-hover:bg-black/58
+        {/* CENTER MASK */}
+        <div
+          className="
+            absolute
+            inset-[1.5px]
 
-              dark:bg-black/72
-            "
-          />
+            rounded-[24px]
 
+            backdrop-blur-xl
+          "
+          style={{
+            backgroundColor: isDarkTheme ? "rgba(6, 7, 11, 0.88)" : "rgba(255, 255, 255, 0.88)",
+          }}
+        />
 
-        </div>
+      </div>
 
+      {/* BG IMAGE */}
+      <div
+        className="
+          absolute
+          inset-0
 
+          overflow-hidden
+        "
+      >
 
-        {/* CONTENT */}
-        <div className="relative z-10 flex h-full flex-col">
+        <img
+          src={bgImage}
+          alt="testimonial background"
+          className="
+            h-full
+            w-full
 
-          {/* TOP */}
-          <div className="flex items-start justify-between">
+            object-cover
 
-            <div className="flex items-center gap-3">
+            scale-[1.12]
 
-              <Avatar
-                src={item.avatar}
-                name={item.name}
-                size="md"
-              />
+            opacity-[0.14]
 
-              <div className="min-w-0">
+            transition-all
+            duration-700
+            ease-out
 
-                <div
-                  className="
-                    truncate
+            brightness-[1.15]
 
-                    text-[15px]
-                    font-semibold
+            group-hover:scale-[1.22]
 
-                    text-text
+            group-hover:opacity-[0.65]
+          "
+          style={{
+            filter: isDarkTheme ? "blur(4px)" : "none",
+          }}
+        />
 
-                    transition-all duration-300
+        {/* LIGHT THEME OVERLAY */}
+        <div
+          className="
+            absolute
+            inset-0
 
-                    group-hover:text-white
-                  "
-                >
-                  {item.name}
-                </div>
+            transition-all
+            duration-700
+            
+            opacity-100
+            group-hover:opacity-40
+          "
+          style={{
+            display: isDarkTheme ? "none" : "block",
+            background: "linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.98))",
+          }}
+        />
 
-                <div
-                  className="
-                    text-[12px]
+        {/* DARK THEME OVERLAY */}
+        <div
+          className="
+            absolute
+            inset-0
 
-                    text-muted
+            transition-all
+            duration-700
+            
+            opacity-100
+            group-hover:opacity-50
+          "
+          style={{
+            display: isDarkTheme ? "block" : "none",
+            background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.68), rgba(5, 6, 10, 0.92))",
+          }}
+        />
 
-                    transition-all duration-300
+      </div>
 
-                    group-hover:text-white/75
-                  "
-                >
-                  {item.role}
-                </div>
+      {/* CONTENT */}
+      <div className="relative z-10 flex h-full flex-col p-6">
 
+        {/* TOP */}
+        <div className="flex items-start justify-between">
+
+          <div className="flex items-center gap-3">
+
+            <Avatar
+              src={item.avatar}
+              name={item.name}
+              size="md"
+            />
+
+            <div className="min-w-0">
+
+              <div
+                className="
+                  truncate
+
+                  text-[15px]
+                  font-semibold
+
+                  transition-all
+                  duration-300
+                "
+                style={{
+                  color: isDarkTheme ? "#ffffff" : "#0f172a",
+                }}
+              >
+                {item.name}
+              </div>
+
+              <div
+                className="
+                  text-[12px]
+
+                  transition-all
+                  duration-300
+
+                  group-hover:text-[#2563ff]
+                  dark:group-hover:text-white/80
+                "
+                style={{
+                  color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(100, 116, 139)",
+                }}
+              >
+                {item.role}
               </div>
 
             </div>
 
-            <Quote
-              size={24}
-              className="
-                rotate-180
-
-                text-primary/40
-
-                transition-all duration-500
-
-                group-hover:scale-110
-                group-hover:text-blue-300
-              "
-            />
-
           </div>
 
-          {/* LINE */}
-          <div
+          <Quote
+            size={24}
             className="
-              mt-5
+              rotate-180
 
-              h-px
-              w-full
+              text-[#2563ff]/40
 
-              bg-border
+              transition-all
+              duration-500
 
-              transition-all duration-500
-
-              group-hover:bg-blue-400/40
+              group-hover:scale-110
+              group-hover:text-[#2563ff]
             "
           />
 
-          {/* RATING */}
-          <div className="mt-5 flex items-center gap-3">
+        </div>
 
-            <span
-              className="
-                text-[15px]
-                font-medium
+        {/* LINE */}
+        <div
+          className="
+            mt-5
 
-                text-muted
+            h-px
+            w-full
 
-                transition-all duration-300
+            transition-all
+            duration-700
 
-                group-hover:text-white/80
-              "
-            >
-              {item.rating}.0
-            </span>
+            group-hover:bg-[#2563ff]/35
+          "
+          style={{
+            backgroundColor: isDarkTheme ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)",
+          }}
+        />
 
-            <div className="flex items-center gap-1">
+        {/* RATING */}
+        <div className="mt-5 flex items-center gap-3">
 
-              {Array.from({ length: item.rating }).map((_, i) => (
+          <span
+            className="
+              text-[15px]
+              font-medium
 
-                <Star
-                  key={i}
-                  size={14}
-                  className="
-                    fill-warning
-                    text-warning
-                  "
-                />
+              transition-all
+              duration-300
 
-              ))}
+              group-hover:text-[#2563ff]
+              dark:group-hover:text-white
+            "
+            style={{
+              color: isDarkTheme ? "rgba(255, 255, 255, 0.7)" : "rgb(71, 85, 105)",
+            }}
+          >
+            {item.rating}.0
+          </span>
 
-            </div>
+          <div className="flex items-center gap-1">
+
+            {Array.from({ length: item.rating }).map((_, i) => (
+
+              <Star
+                key={i}
+                size={14}
+                className="
+                  fill-[#2563ff]
+                  text-[#2563ff]
+                "
+              />
+
+            ))}
 
           </div>
 
-          {/* REVIEW */}
-          <p
-            className="
-              mt-6
-
-              flex-1
-
-              text-[15px]
-              leading-8
-
-              text-muted
-
-              transition-all duration-500
-
-              group-hover:text-white/92
-            "
-          >
-            {item.text}
-          </p>
-
         </div>
+
+        {/* REVIEW */}
+        <p
+          className="
+            mt-6
+
+            flex-1
+
+            text-[15px]
+            leading-8
+
+            transition-all
+            duration-500
+
+            group-hover:text-slate-800
+            dark:group-hover:text-white/92
+          "
+          style={{
+            color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(71, 85, 105)",
+          }}
+        >
+          {item.text}
+        </p>
 
       </div>
 
     </article>
-
   );
 }
 

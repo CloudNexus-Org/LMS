@@ -44,13 +44,13 @@ export default function HeroBackdrop({
 
       {/* fixed visual image - remains completely stationary relative to viewport, clipped strictly to parent */}
       <div
-        className="absolute inset-0 -z-10 pointer-events-none"
-        style={{ clipPath: "inset(0)" }}
-      >
+  className="absolute inset-x-0 top-[58px] bottom-0 -z-10 pointer-events-none"
+  style={{ clipPath: "inset(0)" }}
+>
         <img
           src={imageSrc}
           alt=""
-          className="hero-bg-img fixed inset-0 w-full h-full object-cover transition-colors duration-300"
+          className="hero-bg-img absolute inset-0 w-full h-full object-cover transition-colors duration-300"
           aria-hidden
         />
       </div>
