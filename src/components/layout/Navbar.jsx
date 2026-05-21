@@ -129,6 +129,8 @@ export default function Navbar({
     }
   };
 
+  const bgColor = isDarkTheme ? "#000000" : "#ffffff";
+
   return (
     <>
       <motion.nav
@@ -151,10 +153,9 @@ export default function Navbar({
       >
         {/* NEW CLIPPED BACKGROUND FOR LINES DESIGN */}
         <div
-          className={`absolute inset-0 -z-10 pointer-events-none ${
-            isDarkTheme ? "bg-black" : "bg-white"
-          }`}
+          className="absolute inset-0 -z-10 pointer-events-none"
           style={{
+            backgroundColor: bgColor,
             clipPath:
               "polygon(0 0, 100% 0, 100% 81px, 83% 81px, 78.6% 56px, 21.4% 56px, 17% 81px, 0 81px)",
           }}
@@ -297,10 +298,12 @@ export default function Navbar({
                 items-center justify-center
                 border
                 border-border
-                bg-surface
                 text-text
                 md:hidden
               "
+              style={{
+                backgroundColor: bgColor,
+              }}
             >
               {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -317,7 +320,7 @@ export default function Navbar({
             h-[1.5px]
             w-[17%]
             bg-[#cbd5e1]
-            dark:bg-[#2f4675]
+            dark:bg-[#626161d7]
             opacity-90
             dark:opacity-100
           "
@@ -391,7 +394,6 @@ export default function Navbar({
           w-full
           px-5 py-6
           transition-all duration-300
-          bg-surface
           md:hidden
           ${
             isMobileMenuOpen
@@ -406,6 +408,9 @@ export default function Navbar({
             `
           }
         `}
+        style={{
+          backgroundColor: bgColor,
+        }}
       >
         <div className="flex flex-col gap-2">
           {navLinks.map((link) => {
