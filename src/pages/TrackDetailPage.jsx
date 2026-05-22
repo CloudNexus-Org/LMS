@@ -4,12 +4,7 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
-  CheckCircle2,
-  ChevronDown,
-  Users,
   Star,
-  TrendingUp,
-  ShieldCheck,
   Briefcase,
   Sparkles,
   BookOpen,
@@ -18,11 +13,11 @@ import {
   Rocket,
   ClipboardCheck,
   Link2,
+  ChevronDown,
 } from "lucide-react";
 import { tracks, getTrackById } from '@/data/tracks';
 import { getMentorBySlug } from '@/data/mentors';
 import Container from '@/components/ui/Container';
-import Button from '@/components/ui/Button';
 import {
   EASE,
   COLOR_TINT,

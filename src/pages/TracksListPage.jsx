@@ -343,7 +343,7 @@ export default function TracksListPage() {
                 >
                   Become a{" "}
                   <span className="animated-gradient-text">senior engineer</span>{" "}
-                  — faster.
+                  faster.
                 </motion.h1>
 
                 <motion.p
@@ -394,7 +394,7 @@ export default function TracksListPage() {
         </section>
 
         {/* ═══════════════ STICKY TOOLBAR ═══════════════ */}
-        <div className="sticky top-[68px] z-30 border-y border-border bg-bg/80 backdrop-blur-xl">
+        <div className="border-y border-border bg-bg">
           <Container size="lg">
             <div className="flex flex-col gap-3 py-3 md:flex-row md:items-center md:gap-4">
               {/* Search */}
@@ -529,56 +529,6 @@ export default function TracksListPage() {
                 ))}
               </div>
             )}
-          </Container>
-        </section>
-
-        {/* ═══════════════ BOTTOM CTA ═══════════════ */}
-        <section className="relative py-12 md:py-20">
-          <Container size="lg">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: EASE }}
-              className="relative overflow-hidden rounded-3xl border border-border bg-elevated px-6 py-12 shadow-[var(--shadow-card)] md:px-14 md:py-16"
-            >
-              {/* BG effects */}
-              <div
-                aria-hidden
-                className="mesh-orb pointer-events-none absolute -left-24 -top-24 h-[340px] w-[340px] rounded-full bg-primary-soft opacity-50 blur-[120px]"
-              />
-              <div
-                aria-hidden
-                className="mesh-orb-2 pointer-events-none absolute -bottom-28 -right-20 h-[280px] w-[280px] rounded-full bg-accent-soft opacity-40 blur-[100px]"
-              />
-
-              <div className="relative grid items-center gap-8 md:grid-cols-[1fr_auto]">
-                <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-subtle">
-                    Not sure which track?
-                  </div>
-                  <h2 className="mt-3 font-display text-[26px] font-bold tracking-[-0.01em] text-text md:text-[34px]">
-                    Take a 2-minute career quiz.
-                  </h2>
-                  <p className="mt-3 max-w-[560px] text-[14.5px] leading-7 text-muted">
-                    Answer a few questions about your background and goals,
-                    we&rsquo;ll recommend the best track for you.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    to="/signup"
-                    size="lg"
-                    rightIcon={<ArrowRight size={16} />}
-                  >
-                    Start the quiz
-                  </Button>
-                  <Button to="/#contact" variant="outline" size="lg">
-                    Talk to us
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
           </Container>
         </section>
       </main>

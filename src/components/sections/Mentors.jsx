@@ -38,7 +38,7 @@ function MentorCard({ mentor, index }) {
               className="relative h-16 w-16 rounded-full object-cover ring-2 ring-elevated transition-transform duration-300 group-hover:scale-105"
             />
           </div>
-          
+
           <div className="min-w-0 flex-1 pt-1">
             <h3 className="truncate font-display text-[17px] font-semibold tracking-tight text-text transition-colors group-hover:text-primary">
               {mentor.name}
@@ -56,15 +56,15 @@ function MentorCard({ mentor, index }) {
         </div>
 
         {/* Bio */}
-        <p className="relative z-10 mt-6 text-[14.5px] leading-relaxed text-subtle line-clamp-3">
+        <p className="relative z-10 mt-6 text-[14.5px] leading-relaxed text-subtle line-clamp-2">
           {mentor.bio}
         </p>
 
         {/* Specialties Tags */}
-        <div className="relative z-10 mt-5 flex flex-wrap gap-2">
+        <div className="relative z-10 mt-1 flex flex-wrap gap-2">
           {mentor.specialties.slice(0, 3).map((spec) => (
-            <span 
-              key={spec} 
+            <span
+              key={spec}
               className="inline-flex items-center rounded-full border border-border/80 bg-bg/50 px-3 py-1 text-[11.5px] font-medium text-muted transition-colors group-hover:border-primary/20 group-hover:text-text"
             >
               {spec}
@@ -73,16 +73,26 @@ function MentorCard({ mentor, index }) {
         </div>
 
         {/* Footer Stats & Action */}
-        <div className="relative z-10 mt-auto flex items-end justify-between border-t border-border/60 pt-6 mt-6">
+        <div className="relative z-10 flex items-end justify-between border-t border-border/60 mt-1">
           <div className="flex items-center gap-5">
-            <div className="flex flex-col">
-              <span className="font-display text-[16px] font-semibold leading-none text-text">{mentor.courses}</span>
-              <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted">Courses</span>
+            <div className="flex items-center gap-2">
+              <span className="font-display text-[16px] font-semibold leading-none text-text">
+                {mentor.courses}
+              </span>
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
+                Courses
+              </span>
             </div>
+
             <div className="h-7 w-px bg-border/80" aria-hidden />
-            <div className="flex flex-col">
-              <span className="font-display text-[16px] font-semibold leading-none text-text">{mentor.learners}</span>
-              <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted">Learners</span>
+
+            <div className="flex items-center gap-2">
+              <span className="font-display text-[16px] font-semibold leading-none text-text">
+                {mentor.learners}
+              </span>
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
+                Learners
+              </span>
             </div>
           </div>
 
