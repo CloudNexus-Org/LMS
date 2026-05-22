@@ -40,16 +40,16 @@ export default function NotesAndBookmarksPage() {
   return (
     <div className="relative min-h-[calc(100vh-120px)] overflow-hidden px-4 py-6 lg:px-0">
       
-      {/* BACKGROUND GLOW */}
+      
    
 
       <div className="relative mx-auto flex max-w-7xl flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
         
         {/* HEADER */}
-        <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mb-2 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           
           <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-[5px] border border-[#2563ff]/20 bg-[#2563ff]/10 px-4 py-2 text-[12px] font-bold uppercase tracking-[0.18em] text-[#2563ff]">
+            <div className="mb-7 inline-flex items-center gap-2 rounded-[5px] border border-[#2563ff]/20 bg-[#2563ff]/10 px-4 py-2 text-[12px] font-bold uppercase tracking-[0.18em] text-[#2563ff]">
               <Sparkles className="h-4 w-4" />
               Smart Learning Notes
             </div>

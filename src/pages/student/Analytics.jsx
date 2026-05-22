@@ -21,8 +21,6 @@ const Analytics = () => {
     <div className="min-h-screen bg-bg text-text p-1 space-y-6">
       {/* HEADER */}
       <div>
-        
-
         <div className="relative z-10 space-y-3">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-[5px] border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-blue-500">
@@ -34,11 +32,11 @@ const Analytics = () => {
             </span>
           </div>
 
-          <h2 className="font-display text-[clamp(2.2rem,5vw,3.5rem)] font-black leading-[1.02] tracking-[-0.04em] text-text">
+          <h2 className="font-display text-[42px] font-black leading-[1.02] tracking-[-0.04em] text-text">
             Student Insights
           </h2>
 
-          <p className=" text-lg font-medium leading-[1.7] text-muted">
+          <p className=" text-lg  font-medium leading-[1.7] text-muted">
             Visualizing your learning growth, performance trends,
             certification readiness, and placement progress with
             intelligent analytics.
@@ -61,7 +59,7 @@ const Analytics = () => {
               ${cardBorder}
               ${cardBg}
               ${glassGlow}
-              group p-6 transition-all duration-300 hover:-translate-y-1
+              group p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]
             `}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.06] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -77,7 +75,7 @@ const Analytics = () => {
                 </h3>
               </div>
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300 group-hover:scale-110">
                 <span className="material-symbols-outlined text-[28px]">
                   {icon}
                 </span>
@@ -126,7 +124,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* CHART */}
+          {/* DYNAMIC CHART */}
           <div className="relative z-10 flex h-[320px] items-end gap-5 sm:gap-8">
             {[
               ["Mon", "40%"],
@@ -138,11 +136,12 @@ const Analytics = () => {
             ].map(([day, height]) => (
               <div
                 key={day}
-                className="flex w-1/6 flex-col items-center gap-3"
+                className="group flex w-1/6 flex-col items-center gap-3"
               >
                 <div
                   className={`
-                    relative flex h-[240px] w-full max-w-[70px] items-end overflow-hidden rounded-[6px]
+                    relative flex h-[240px] w-full max-w-[70px]
+                    items-end overflow-hidden rounded-[6px]
                     ${isDark ? "bg-white/[0.04]" : "bg-muted"}
                     border border-white/5
                   `}
@@ -152,7 +151,11 @@ const Analytics = () => {
                       absolute inset-x-0 bottom-0 rounded-[6px]
                       bg-gradient-to-t ${barFrom} ${barTo}
                       shadow-[0_0_30px_rgba(59,130,246,0.45)]
-                      transition-all duration-500 hover:brightness-110
+                      transition-all duration-500 ease-out
+                      hover:brightness-110
+                      group-hover:scale-y-125
+                      group-hover:shadow-[0_0_60px_rgba(59,130,246,0.85)]
+                      origin-bottom
                     `}
                     style={{ height }}
                   />
@@ -160,7 +163,7 @@ const Analytics = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.04] to-white/[0.08]" />
                 </div>
 
-                <span className="text-sm font-bold uppercase tracking-wider text-muted">
+                <span className="text-sm font-bold uppercase tracking-wider text-muted transition-all duration-300 group-hover:text-blue-500 group-hover:scale-110">
                   {day}
                 </span>
               </div>
@@ -193,15 +196,11 @@ const Analytics = () => {
             </p>
           </div>
 
-          {/* CIRCLE */}
           <div className="relative z-10 flex justify-center py-10">
             <div className="relative h-52 w-52">
               <div className="absolute inset-0 rounded-full bg-blue-500/10 blur-2xl" />
 
-              <svg
-                className="-rotate-90"
-                viewBox="0 0 200 200"
-              >
+              <svg className="-rotate-90" viewBox="0 0 200 200">
                 <circle
                   cx="100"
                   cy="100"
@@ -225,10 +224,6 @@ const Analytics = () => {
                   fill="none"
                   strokeDasharray="440"
                   strokeDashoffset="110"
-                  style={{
-                    filter:
-                      "drop-shadow(0px 0px 12px rgba(59,130,246,0.7))",
-                  }}
                 />
               </svg>
 
@@ -247,25 +242,14 @@ const Analytics = () => {
           <button
             className="
               relative inline-flex h-[44px] w-full items-center justify-center overflow-hidden
-              rounded-[5px]
-              border border-blue-500/20
-              bg-blue-500
-              px-6
-             relative
-                      items-center
-                      justify-center
-                      overflow-hidden
-                   
-                    rounded-none
-                    text-black
-                    dark:text-white
-                      shadow-[0_10px_30px_rgba(37,99,235,0.08)]
-                      dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
-                      transition-all
-                      duration-300
-                      hover:-translate-y-[2px]
-                    hover:border-[#2563ff]/40
-                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+              rounded-none border border-blue-500/20 bg-blue-500 px-6
+              text-black dark:text-white
+              shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+              transition-all duration-300
+              hover:-translate-y-[2px]
+              hover:scale-[1.02]
+              hover:border-[#2563ff]/40
+              [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
             "
           >
             Optimize CV
@@ -275,24 +259,9 @@ const Analytics = () => {
         {/* DOMAIN CARDS */}
         <div className="col-span-12 grid grid-cols-1 gap-6 xl:grid-cols-3">
           {[
-            [
-              "AWS Architect",
-              "82%",
-              "Advanced",
-              "cloud",
-            ],
-            [
-              "Azure Solutions",
-              "45%",
-              "Intermediate",
-              "terminal",
-            ],
-            [
-              "GCP Engineer",
-              "15%",
-              "Novice",
-              "dataset",
-            ],
+            ["AWS Architect", "82%", "Advanced", "cloud"],
+            ["Azure Solutions", "45%", "Intermediate", "terminal"],
+            ["GCP Engineer", "15%", "Novice", "dataset"],
           ].map(([title, percent, level, icon]) => (
             <div
               key={title}
@@ -302,14 +271,12 @@ const Analytics = () => {
                 ${cardBg}
                 ${glassGlow}
                 group p-6 backdrop-blur-xl
-                transition-all duration-300 hover:-translate-y-1
+                transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]
               `}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
               <div className="relative z-10">
                 <div className="mb-8 flex justify-between">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500 shadow-[0_0_25px_rgba(59,130,246,0.15)]">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
                     <span className="material-symbols-outlined">
                       {icon}
                     </span>
@@ -334,7 +301,7 @@ const Analytics = () => {
                     className="
                       h-full rounded-[5px]
                       bg-gradient-to-r from-blue-500 to-cyan-400
-                      shadow-[0_0_20px_rgba(59,130,246,0.4)]
+                      transition-all duration-500 group-hover:w-full
                     "
                     style={{ width: percent }}
                   />
@@ -342,7 +309,6 @@ const Analytics = () => {
 
                 <div className="mt-3 flex justify-between text-sm text-muted">
                   <span>{percent} Mastered</span>
-
                   <span>Level 7</span>
                 </div>
               </div>
@@ -374,21 +340,9 @@ const Analytics = () => {
 
           <div className="space-y-5">
             {[
-              [
-                "Serverless Architecture",
-                "94/100",
-                "2 hours ago",
-              ],
-              [
-                "VPC Networking",
-                "82/100",
-                "Yesterday",
-              ],
-              [
-                "IAM Policies",
-                "78/100",
-                "3 days ago",
-              ],
+              ["Serverless Architecture", "94/100", "2 hours ago"],
+              ["VPC Networking", "82/100", "Yesterday"],
+              ["IAM Policies", "78/100", "3 days ago"],
             ].map(([title, score, time]) => (
               <div
                 key={title}
@@ -396,7 +350,7 @@ const Analytics = () => {
                   flex items-center justify-between rounded-[6px]
                   border border-blue-500/10
                   ${isDark ? "bg-blue-500/[0.07]" : "bg-blue-500/[0.05]"}
-                  p-5 transition-all duration-300 hover:translate-x-1
+                  p-5 transition-all duration-300 hover:translate-x-2
                 `}
               >
                 <div className="flex items-center gap-4">
@@ -482,35 +436,12 @@ const Analytics = () => {
                       className="
                         h-full rounded-[5px]
                         bg-gradient-to-r from-blue-500 to-cyan-400
-                        shadow-[0_0_20px_rgba(59,130,246,0.4)]
                       "
                       style={{ width: `${width}%` }}
                     />
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* AI TIP */}
-            <div className="mt-10 rounded-[6px] border border-blue-500/10 bg-blue-500/[0.05] p-5">
-              <div className="flex gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
-                  <span className="material-symbols-outlined">
-                    auto_awesome
-                  </span>
-                </div>
-
-                <div>
-                  <h4 className="font-bold">
-                    AI Recommendation
-                  </h4>
-
-                  <p className="mt-1 text-sm leading-7 text-muted">
-                    Focus on Lambda cold-start optimization
-                    to reach Elite Tier Architect status.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

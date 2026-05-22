@@ -186,11 +186,11 @@ export default function StudentDashboardPage() {
                   src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop"
                   alt="Learning"
                   className="
-      h-full w-full object-cover
+                      h-full w-full object-cover
 
-      scale-[1.02]
+                    scale-[1.02]
 
-      opacity-80 dark:opacity-100
+                        opacity-80 dark:opacity-100
 
       transition-all duration-700
 
@@ -247,7 +247,7 @@ export default function StudentDashboardPage() {
                 </div>
 
                 <div>
- 
+
                   <h2
                     className="
                     

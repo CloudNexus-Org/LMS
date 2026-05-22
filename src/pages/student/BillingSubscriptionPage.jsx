@@ -58,6 +58,8 @@ export default function BillingSubscriptionPage() {
             ${glassGlow}
             p-6
             sm:p-8
+            -mt-3
+            -ml-4
             lg:p-10
             transition-all
             duration-300
@@ -74,7 +76,7 @@ export default function BillingSubscriptionPage() {
           />
 
           {/* GRID */}
-          <div className="relative z-10 grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="relative z-10  grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
 
             {/* LEFT */}
             <div>
@@ -85,7 +87,7 @@ export default function BillingSubscriptionPage() {
                   inline-flex
                   items-center
                   gap-2
-
+                  
                   rounded-[5px]
 
                   border border-primary/20
@@ -327,7 +329,7 @@ export default function BillingSubscriptionPage() {
                 </div>
 
                 {/* BUTTONS */}
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
 
                   <button
                     className="
@@ -414,7 +416,7 @@ export default function BillingSubscriptionPage() {
         </div>
 
         {/* LOWER GRID */}
-        <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
+        <div className="grid grid-cols-1 -ml-4 gap-8 xl:grid-cols-12">
 
           {/* PAYMENT */}
           <div className="xl:col-span-4">
@@ -436,7 +438,7 @@ export default function BillingSubscriptionPage() {
     `}
             >
 
-              <div className="flex min-h-[350px] flex-col">
+              <div className="flex min-h-[350px]  flex-col">
 
                 {/* HEADER */}
                 <div className="flex items-center justify-between">

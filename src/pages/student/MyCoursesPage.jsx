@@ -121,7 +121,7 @@ export default function MyCoursesPage() {
 
           <h1
             className="
-              text-4xl
+              text-[42px]
               font-black
               tracking-[-0.04em]
               text-text
