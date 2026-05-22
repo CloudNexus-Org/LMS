@@ -34,11 +34,11 @@ export default function StudentDashboardPage() {
 
           {/* LEFT */}
           <div className="xl:col-span-2">
-{/* TOP TAGS */}
-  <div className="mb-5 flex flex-wrap items-center gap-3">
+            {/* TOP TAGS */}
+            <div className="mb-5 flex flex-wrap items-center gap-3">
 
-    <span
-      className="
+              <span
+                className="
         rounded-[6px]
 
         border border-blue-500/20
@@ -54,12 +54,12 @@ export default function StudentDashboardPage() {
 
         text-blue-500
       "
-    >
-      Student Dashboard
-    </span>
+              >
+                Student Dashboard
+              </span>
 
-    <span
-      className="
+              <span
+                className="
         rounded-[6px]
 
         border border-cyan-400/20
@@ -75,11 +75,11 @@ export default function StudentDashboardPage() {
 
         text-cyan-400
       "
-    >
-      Live Progress
-    </span>
+              >
+                Live Progress
+              </span>
 
-  </div>
+            </div>
             <h1
               className="
                 text-[42px]
@@ -181,11 +181,11 @@ export default function StudentDashboardPage() {
 
               <div className="absolute inset-0 overflow-hidden rounded-[5px]">
 
-  {/* IMAGE */}
-  <img
-    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop"
-    alt="Learning"
-    className="
+                {/* IMAGE */}
+                <img
+                  src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop"
+                  alt="Learning"
+                  className="
       h-full w-full object-cover
 
       scale-[1.02]
@@ -196,11 +196,11 @@ export default function StudentDashboardPage() {
 
       group-hover:scale-105
     "
-  />
+                />
 
-  {/* PREMIUM OVERLAY */}
-  <div
-    className="
+                {/* PREMIUM OVERLAY */}
+                <div
+                  className="
       absolute inset-0
 
       bg-gradient-to-t
@@ -208,26 +208,27 @@ export default function StudentDashboardPage() {
       via-black/35
       to-black/10
     "
-  />
+                />
 
-  {/* BLUE GLOW */}
-  <div
-    className="
+                {/* BLUE GLOW */}
+                <div
+                  className="
       absolute inset-0
 
       bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.28),transparent_35%)]
     "
-  />
+                />
 
-</div>
+              </div>
 
               <div className="relative z-10 flex min-h-[420px] flex-col justify-end p-8">
 
-                <div className="mb-4 flex items-center gap-3">
+                <div className="mb-27 flex items-center gap-3">
 
                   <span
                     className="
-                      rounded-full
+                      rounded-[5px]
+                      
                       border border-primary/20
                       bg-primary/10
                       px-4 py-2
@@ -240,7 +241,7 @@ export default function StudentDashboardPage() {
                     Next Lesson
                   </span>
 
-                  <span className="text-xs text-muted">
+                  <span className="text-xs text-muted text-white">
                     12 min read
                   </span>
 
@@ -253,6 +254,7 @@ export default function StudentDashboardPage() {
                     font-black
                     leading-tight
                     tracking-[-0.04em]
+                    text-white
                   "
                 >
                   Mastering Generative Space Design
@@ -264,6 +266,7 @@ export default function StudentDashboardPage() {
                     text-[15px]
                     leading-8
                     text-muted
+                    text-white
                   "
                 >
                   Explore the intersection of algorithmic logic
@@ -468,7 +471,7 @@ export default function StudentDashboardPage() {
                     title: "Advanced CAD Modeling",
                     date: "Issued Sep 12, 2024",
                   },
-                  
+
                 ].map((item, index) => (
                   <div
                     key={index}
