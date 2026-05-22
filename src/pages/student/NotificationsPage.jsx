@@ -49,12 +49,12 @@ export default function NotificationsPage() {
           <p className="text-muted mt-1 font-medium">Stay updated with your courses and mentors.</p>
         </div>
         
-        <button onClick={markAllRead} className="flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-hover transition-colors bg-primary-soft px-4 py-2 rounded-lg">
+        <button onClick={markAllRead} className="flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-hover transition-colors bg-primary-soft px-4 py-2 rounded-[5px]">
           <Check className="h-4 w-4" /> Mark all as read
         </button>
       </div>
 
-      <div className="bg-surface border border-border rounded-2xl shadow-card overflow-hidden flex flex-col">
+      <div className="bg-surface border border-border rounded-[5px] shadow-card overflow-hidden flex flex-col">
         
         {/* Filters */}
         <div className="flex items-center gap-6 px-6 border-b border-border bg-bg/50 overflow-x-auto">

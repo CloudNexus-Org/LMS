@@ -5,7 +5,7 @@ const navConfig = {
   student: [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/student/dashboard' },
     { name: 'My Courses', icon: BookOpen, path: '/student/courses' },
-    { name: 'Analytics', icon: BarChart, path: '/student/analyticse' },
+    { name: 'Analytics', icon: BarChart, path: '/student/analytics' },
     { name: 'Wishlist', icon: Heart, path: '/student/wishlist' },
     { name: 'Certificates', icon: Award, path: '/student/certificates' },
     { name: 'Notes', icon: FileText, path: '/student/notes' },

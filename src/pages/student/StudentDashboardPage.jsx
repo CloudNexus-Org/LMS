@@ -221,16 +221,15 @@ export default function StudentDashboardPage() {
 
               </div>
 
-              <div className="relative z-10 flex min-h-[420px] flex-col justify-end p-8">
+              <div className="relative z-10 flex min-h-[420px] flex-col justify-between p-8">
 
-                <div className="mb-27 flex items-center gap-3">
+                <div className="flex items-center gap-3">
 
                   <span
                     className="
                       rounded-[5px]
-                      
                       border border-primary/20
-                      bg-primary/10
+                      bg-black/10
                       px-4 py-2
                       text-[11px]
                       font-bold
@@ -247,35 +246,39 @@ export default function StudentDashboardPage() {
 
                 </div>
 
-                <h2
-                  className="
-                    max-w-2xl
-                    text-[42px]
-                    font-black
-                    leading-tight
-                    tracking-[-0.04em]
-                    text-white
-                  "
-                >
-                  Mastering Generative Space Design
-                </h2>
+                <div>
+ 
+                  <h2
+                    className="
+                    
+                      max-w-2xl
+                      text-[42px]
+                      font-black
+                      leading-tight
+                      tracking-[-0.04em]
+                      text-white"
+                  >
+                    Mastering Generative Space Design
+                  </h2>
+                  <p
+                    className="
+                     max-w-xl
+                      mt-4
+                      text-[15px]
+                      leading-8
+                      text-muted
+                      text-white
+                    "
+                  >
+                    Explore the intersection of algorithmic logic
+                    and human ergonomics in contemporary urban planning.
+                  </p>
 
-                <p
-                  className="
-                    mt-5 max-w-xl
-                    text-[15px]
-                    leading-8
-                    text-muted
-                    text-white
-                  "
-                >
-                  Explore the intersection of algorithmic logic
-                  and human ergonomics in contemporary urban planning.
-                </p>
+                </div>
 
                 <button
                   className="
-                    mt-8 inline-flex w-fit items-center gap-3
+                    inline-flex w-fit items-center gap-3
                     rounded-[5px]
                     bg-primary
                     px-7 py-4

@@ -41,10 +41,7 @@ export default function NotesAndBookmarksPage() {
     <div className="relative min-h-[calc(100vh-120px)] overflow-hidden px-4 py-6 lg:px-0">
       
       {/* BACKGROUND GLOW */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-[-120px] top-[-120px] h-[320px] w-[320px] rounded-full bg-[#2563ff]/10 blur-3xl" />
-        <div className="absolute bottom-[-120px] right-[-120px] h-[320px] w-[320px] rounded-full bg-[#2563ff]/10 blur-3xl" />
-      </div>
+   
 
       <div className="relative mx-auto flex max-w-7xl flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
         
@@ -52,7 +49,7 @@ export default function NotesAndBookmarksPage() {
         <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           
           <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#2563ff]/20 bg-[#2563ff]/10 px-4 py-2 text-[12px] font-bold uppercase tracking-[0.18em] text-[#2563ff]">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-[5px] border border-[#2563ff]/20 bg-[#2563ff]/10 px-4 py-2 text-[12px] font-bold uppercase tracking-[0.18em] text-[#2563ff]">
               <Sparkles className="h-4 w-4" />
               Smart Learning Notes
             </div>
@@ -70,7 +67,7 @@ export default function NotesAndBookmarksPage() {
           {/* STATS */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             
-            <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+            <div className="rounded-[5px] border border-border bg-surface p-5 shadow-sm">
               <div className="mb-2 flex items-center gap-2">
                 <Bookmark className="h-4 w-4 text-[#2563ff]" />
                 <span className="text-xs font-bold uppercase tracking-wider text-muted">
@@ -81,7 +78,7 @@ export default function NotesAndBookmarksPage() {
               <h3 className="text-2xl font-black text-text">24</h3>
             </div>
 
-            <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+            <div className="rounded-[5px] border border-border bg-surface p-5 shadow-sm">
               <div className="mb-2 flex items-center gap-2">
                 <Clock className="h-4 w-4 text-[#2563ff]" />
                 <span className="text-xs font-bold uppercase tracking-wider text-muted">
@@ -92,7 +89,7 @@ export default function NotesAndBookmarksPage() {
               <h3 className="text-2xl font-black text-text">18h</h3>
             </div>
 
-            <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm col-span-2 sm:col-span-1">
+            <div className="rounded-[5px] border border-border bg-surface p-5 shadow-sm col-span-2 sm:col-span-1">
               <div className="mb-2 flex items-center gap-2">
                 <Star className="h-4 w-4 text-[#2563ff]" />
                 <span className="text-xs font-bold uppercase tracking-wider text-muted">
@@ -106,7 +103,7 @@ export default function NotesAndBookmarksPage() {
         </div>
 
         {/* MAIN CONTAINER */}
-        <div className="flex h-[calc(100vh-220px)] overflow-hidden rounded-[28px] border border-border bg-surface/90 shadow-[0_20px_80px_rgba(37,99,235,0.08)] backdrop-blur-xl">
+        <div className="flex h-[calc(100vh-220px)] overflow-hidden rounded-[5px] border border-border bg-surface/90 shadow-[0_20px_80px_rgba(37,99,235,0.08)] backdrop-blur-xl">
           
           {/* SIDEBAR */}
           <div className="flex w-full flex-col border-r border-border bg-bg/40 sm:w-[340px]">
@@ -122,7 +119,7 @@ export default function NotesAndBookmarksPage() {
                   className="
                     h-[48px]
                     w-full
-                    rounded-xl
+                    rounded-[5px]
                     border border-border
                     bg-surface
                     pl-11 pr-4
@@ -169,11 +166,11 @@ export default function NotesAndBookmarksPage() {
                     `}
                   >
                     {isActive && (
-                      <div className="absolute left-0 top-0 h-full w-[4px] rounded-r-full bg-[#2563ff]" />
+                      <div className="absolute left-0 top-0 h-full w-[4px] rounded-[5px] bg-[#2563ff]" />
                     )}
 
                     <div className="mb-2 flex items-center justify-between">
-                      <span className="rounded-full bg-[#2563ff]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#2563ff]">
+                      <span className="rounded-[5px] bg-[#2563ff]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-[#2563ff]">
                         {note.category}
                       </span>
 
@@ -191,7 +188,7 @@ export default function NotesAndBookmarksPage() {
                     </p>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <div className="inline-flex items-center gap-2 rounded-lg border border-[#2563ff]/10 bg-[#2563ff]/10 px-3 py-1.5 text-[12px] font-bold text-[#2563ff]">
+                      <div className="inline-flex items-center gap-2 rounded-[5px] border border-[#2563ff]/10 bg-[#2563ff]/10 px-3 py-1.5 text-[12px] font-bold text-[#2563ff]">
                         <Clock className="h-3.5 w-3.5" />
                         {note.timestamp}
                       </div>
@@ -232,7 +229,7 @@ export default function NotesAndBookmarksPage() {
 
                     <h2 className="flex items-center gap-4 text-3xl font-black tracking-tight text-text">
                       
-                      <span className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-[#2563ff] text-[15px] font-black text-white shadow-lg shadow-[#2563ff]/30">
+                      <span className="flex h-[52px] w-[52px] items-center justify-center rounded-[5px] bg-[#2563ff] text-[15px] font-black text-white shadow-lg shadow-[#2563ff]/30">
                         {activeNote.timestamp}
                       </span>
 
@@ -243,7 +240,7 @@ export default function NotesAndBookmarksPage() {
                   <button
                     className="
                       flex items-center gap-2
-                      rounded-xl
+                      rounded-[5px]
                       border border-border
                       bg-bg
                       px-5 py-3
@@ -264,11 +261,11 @@ export default function NotesAndBookmarksPage() {
                 {/* NOTE BODY */}
                 <div className="flex-1 overflow-y-auto bg-bg/20 p-6 lg:p-8">
                   
-                  <div className="mx-auto max-w-4xl rounded-[28px] border border-border bg-surface p-8 shadow-lg">
+                  <div className="mx-auto max-w-4xl rounded-[5px] border border-border bg-surface p-8 shadow-lg">
                     
                     <div className="mb-6 flex items-center gap-3">
                       
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563ff]/10">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-[#2563ff]/10">
                         <PlayCircle className="h-6 w-6 text-[#2563ff]" />
                       </div>
 
@@ -283,7 +280,7 @@ export default function NotesAndBookmarksPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-2xl border border-border bg-bg/30 p-6">
+                    <div className="rounded-[5px] border border-border bg-bg/30 p-6">
                       <p className="whitespace-pre-wrap text-[15px] font-medium leading-[2] text-text">
                         {activeNote.content}
                       </p>
@@ -293,7 +290,7 @@ export default function NotesAndBookmarksPage() {
               </>
             ) : (
               <div className="flex flex-1 flex-col items-center justify-center text-muted">
-                <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-bg">
+                <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-[5px] bg-bg">
                   <FileText className="h-10 w-10" />
                 </div>
 
