@@ -16,15 +16,6 @@ import toyotaBlack from '@/assets/company-logo/toyota-black.png';
 import toyotaWhite from '@/assets/company-logo/toyota-white-removebg-preview.png';
 import metaLight from '@/assets/company-logo/meta-black.png';
 import metaDark from '@/assets/company-logo/meta.png';
-
-// Naming convention used here:
-//   *Black  → file intended for LIGHT theme (logo IS in black/dark colors)
-//   *White  → file intended for DARK  theme (logo IS in white/light colors)
-//   single-name (no -black/-white suffix) → works on BOTH themes (full color)
-//
-// So for theme-aware companies we map by image CONTENT, not by filename:
-//   lightLogo = dark-colored version  (visible on white bg)
-//   darkLogo  = light-colored version (visible on dark bg)
 const companies = [
   {
     name: "JPMorgan",
