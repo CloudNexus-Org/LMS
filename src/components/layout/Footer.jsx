@@ -10,7 +10,6 @@ import {
   MapPin,
   Phone,
   Mail,
-  Heart
 } from "lucide-react";
 
 import Button from '@/components/ui/Button';
@@ -157,21 +156,19 @@ function CategoryBlock({ title, links }) {
 }
 
 export default function Footer({ logoText = "CLOUD NEXUS" }) {
-  
-const isDarkTheme = useIsDarkTheme();
+
+  const isDarkTheme = useIsDarkTheme();
   return (
     <footer className="relative bg-bg">
 
-      <div className="mx-auto w-full max-w-[1320px] px-5 pt-15 sm:px-6 md:pt-14 lg:px-8">
+      <div className="mx-auto w-full max-w-[1320px] px-5 pb-16 pt-15 sm:px-6 md:pt-14 lg:px-8">
         {/* Section eyebrow */}
         <div className="mb-6 flex items-center gap-3">
           <span
             aria-hidden
             className="h-px flex-1 bg-gradient-to-r from-transparent to-border"
           />
-          <span className="text-[15px] font-semibold uppercase tracking-[0.24em] text-subtle">
-            Explore the stack
-          </span>
+
           <span
             aria-hidden
             className="h-px flex-1 bg-gradient-to-l from-transparent to-border"
@@ -182,35 +179,35 @@ const isDarkTheme = useIsDarkTheme();
         <div className="grid gap-x-15 gap-y-8 lg:grid-cols-[1.1fr_1fr_1fr_1.15fr_1.15fr]">
           {/* Brand column */}
           <div>
-           <Link
-  to="/"
-  className="flex items-center gap-3"
->
-  <img
-    src={isDarkTheme ? cnlg : cnlg1}
-    alt="Cloud Nexus Logo"
-    className="
-      h-[48px]
-      w-[48px]
-      object-contain
-    "
-  />
+            <Link
+              to="/"
+              className="flex items-center gap-3"
+            >
+              <img
+                src={isDarkTheme ? cnlg : cnlg1}
+                alt="Cloud Nexus Logo"
+                className="
+                            h-[48px]
+                            w-[48px]
+                            object-contain
+                            "
+                          />
 
-  <h1
-    className={`
-      text-[20px]
-      font-extrabold
-      tracking-tight
+              <h1
+                className={`
+                            text-[20px]
+                            font-extrabold
+                            tracking-tight
 
-      ${isDarkTheme
-        ? "text-white"
-        : "text-black"
-      }
-    `}
-  >
-    CLOUD NEXUS
-  </h1>
-</Link>
+                    ${isDarkTheme
+                    ? "text-white"
+                    : "text-black"
+                  }
+                  `}
+              >
+                CLOUD NEXUS
+              </h1>
+            </Link>
 
             <div className="mt-5 space-y-3 text-[13px] leading-5 text-muted">
               <div className="flex items-start gap-2.5">
@@ -256,42 +253,33 @@ const isDarkTheme = useIsDarkTheme();
               to="/contact"
               size="md"
               rightIcon={<ArrowRight size={14} />}
-                               className="mt-5
-    relative
-    inline-flex
-    h-[40px]
-    min-w-[90px]
-    items-center
-    justify-center
+              className="mt-5 relative inline-flex h-[40px] min-w-[90px] items-center justify-center overflow-hidden rounded-none
+                       border border-[#d9e2ff]
+                      dark:border-white/10
 
-    overflow-hidden
-rounded-none
-    border border-[#d9e2ff]
-    dark:border-white/10
+                      bg-white
+                      dark:bg-[#2563ff]
 
-    bg-white
-    dark:bg-[#2563ff]
+                        px-6
 
-    px-6
+                        text-[14px]
+                        font-semibold
 
-    text-[14px]
-    font-semibold
+                     text-black
+                     dark:text-white
 
-    text-black
-    dark:text-white
+                     shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                     dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
 
-    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
-    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                     transition-all
+                     duration-300
 
-    transition-all
-    duration-300
+                      hover:-translate-y-[2px]
+                     hover:border-[#2563ff]/40
 
-    hover:-translate-y-[2px]
-    hover:border-[#2563ff]/40
-
-    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
-  "
-            >
+                     [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                    "
+                    >
               Contact us
             </Button>
 
@@ -328,55 +316,6 @@ rounded-none
               ))}
             </div>
           ))}
-        </div>
-
-        {/* BOTTOM BAND */}
-        <div className="relative mt-10 pt-5 pb-7">
-          <div
-            aria-hidden
-            className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent"
-          />
-          <div className="flex flex-col items-start justify-between gap-4 text-[12px] text-subtle md:flex-row md:items-center">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <p>
-                &copy; {new Date().getFullYear()} Cloud Nexus, Inc. All rights
-                reserved.
-              </p>
-              <a
-                href="#"
-                className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted transition hover:border-success/40 hover:text-text"
-              >
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
-                </span>
-                All systems normal
-              </a>
-              <span className="hidden items-center gap-1 text-[11px] text-muted lg:inline-flex">
-                <Heart
-                  size={11}
-                  className="fill-danger text-danger"
-                  strokeWidth={2}
-                  aria-hidden
-                />
-                Made with care in Plano &amp; Bengaluru
-              </span>
-            </div>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-              <a href="#" className="transition hover:text-text">
-                Privacy policy
-              </a>
-              <a href="#" className="transition hover:text-text">
-                Terms of service
-              </a>
-              <a href="#" className="transition hover:text-text">
-                Cookie policy
-              </a>
-              <a href="#" className="transition hover:text-text">
-                Security
-              </a>
-            </div>
-          </div>
         </div>
       </div>
     </footer>

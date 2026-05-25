@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
-  ArrowRight,
   ArrowUpRight,
   Search,
   Star,
@@ -14,15 +13,12 @@ import {
   Sparkles,
   TrendingUp,
   X,
-  Zap,
   Award,
-  BookOpen,
   Target,
   Shield,
 } from "lucide-react";
 import { tracks } from "@/data/tracks";
 import Container from "@/components/ui/Container";
-import Button from "@/components/ui/Button";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -207,34 +203,6 @@ function TrackListCard({ track, index }) {
                 +{track.skills.length - 4}
               </span>
             )}
-          </div>
-
-          {/* Divider + Footer */}
-          <div className="mt-auto flex items-center justify-between border-t border-border pt-4 text-[12px] text-muted">
-            <div className="flex items-center gap-x-3 gap-y-1">
-              <span className="inline-flex items-center gap-1">
-                <Star
-                  size={12}
-                  className="fill-current text-primary"
-                  aria-hidden
-                />
-                <span className="font-semibold text-text">{track.rating}</span>
-              </span>
-              <span aria-hidden className="text-border">·</span>
-              <span className="inline-flex items-center gap-1">
-                <Users size={12} aria-hidden />
-                <span className="font-semibold text-text">{track.enrolled}</span>
-              </span>
-            </div>
-            <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-muted transition-all duration-300 group-hover/track:gap-2 group-hover/track:text-primary">
-              Explore
-              <ArrowUpRight
-                size={12}
-                strokeWidth={2.2}
-                aria-hidden
-                className="transition-transform duration-300 group-hover/track:translate-x-0.5 group-hover/track:-translate-y-0.5"
-              />
-            </span>
           </div>
         </div>
       </Link>

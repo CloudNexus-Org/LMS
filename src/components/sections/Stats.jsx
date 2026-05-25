@@ -57,7 +57,7 @@ function StatItem({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ ['--x']: '50%', ['--y']: '50%' }}
-      className={`stat-card relative flex flex-col items-start px-8 py-10 text-left ${!isLast ? "xl:border-r xl:border-border/50" : ""}`}
+      className={`stat-card relative flex flex-col items-center text-center px-8 py-10 md:items-start md:text-left ${!isLast ? "xl:border-r xl:border-border/50" : ""}`}
     >
       {/* TOP ACCENT LINE */}
       <div className="mb-6 h-[3px] stat-accent rounded-full bg-primary" />

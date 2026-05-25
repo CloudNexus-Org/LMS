@@ -382,7 +382,7 @@ export default function TrackDetailPage() {
 
         {/* ================= FAQ ================= */}
         {track.faq?.length > 0 && (
-          <RevealSection className="py-24 md:py-36">
+          <RevealSection className="py-18 md:py-25">
             <Container size="lg">
               <div className="mb-20 text-center">
                 <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary">

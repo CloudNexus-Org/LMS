@@ -220,7 +220,7 @@ export default function CertificateShowcase() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{ rotate: 0, y: -6 }}
-              className="certificate-paper group relative isolate aspect-[5/4] overflow-hidden rounded-[5px] border border-border bg-elevated p-6 text-text shadow-[var(--shadow-elevated)] sm:p-8"
+              className="certificate-paper group relative isolate aspect-[5/4] max-sm:min-h-[350px] max-sm:max-w-[350px] max-sm:mx-auto overflow-hidden rounded-[5px] border border-border bg-elevated p-6 text-text shadow-[var(--shadow-elevated)] sm:p-8"
             >
               <div
                 aria-hidden="true"
