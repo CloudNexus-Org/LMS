@@ -29,7 +29,7 @@ export default function SectionHeading({
       </h2>
 
       {description ? (
-        <p className="max-w-[640px] text-[16px] leading-7 text-muted md:text-[17px]">
+        <p className="max-w-[640px] text-[25px] leading-7 text-muted md:text-[20px]">
           {description}
         </p>
       ) : null}

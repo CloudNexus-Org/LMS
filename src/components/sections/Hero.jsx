@@ -166,7 +166,7 @@ export default function Hero() {
                 text-[15px]
                 leading-7
 
-                sm:text-[17px]
+                sm:text-[23px]
                 sm:leading-8
 
                 ${bodyColor}
