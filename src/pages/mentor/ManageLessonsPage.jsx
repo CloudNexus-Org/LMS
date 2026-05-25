@@ -12,16 +12,56 @@ export default function ManageLessonsPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-text font-display tracking-tight">Manage Courses</h1>
+          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Manage Courses</h1>
           <p className="text-muted mt-1 font-medium">Create, edit, and organize your curriculum.</p>
         </div>
         
-        <Link to="/mentor/upload" className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-primary-hover shadow-sm transition-colors">
+        <Link to="/mentor/upload" className="
+                  relative
+                  inline-flex
+
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[120px]
+
+                  items-center
+                  justify-center
+
+                  border
+                  border-[#d9e2ff]
+                  dark:border-white/10
+
+                  bg-white
+                  dark:bg-[#2563ff]
+
+                  px-6
+
+                  text-[14px]
+                  font-semibold
+
+                  text-black
+                  dark:text-white
+
+                  overflow-hidden
+                  rounded-none
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+                  transition-all
+                  duration-300
+
+                  hover:-translate-y-[2px]
+                  hover:border-[#2563ff]/40
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                ">
           <Plus className="h-4 w-4" /> New Course
         </Link>
       </div>
 
-      <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-surface border border-border rounded-[5px] overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-bg border-b border-border">
@@ -39,7 +79,7 @@ export default function ManageLessonsPage() {
                 <tr key={course.id} className="hover:bg-bg/50 transition-colors">
                   <td className="px-6 py-5 font-bold text-text text-base">{course.title}</td>
                   <td className="px-6 py-5">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-[5px] text-xs font-bold uppercase tracking-wider ${
                       course.status === 'Published' ? 'bg-success/20 text-success' : 'bg-border text-muted'
                     }`}>
                       {course.status}
@@ -58,10 +98,10 @@ export default function ManageLessonsPage() {
                   <td className="px-6 py-5 font-bold text-success">{course.revenue}</td>
                   <td className="px-6 py-5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="h-9 w-9 flex items-center justify-center rounded-lg border border-border text-text hover:bg-surface hover:border-primary hover:text-primary transition-all">
+                      <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-text hover:bg-surface hover:border-primary hover:text-primary transition-all">
                         <Edit3 className="h-4 w-4" />
                       </button>
-                      <button className="h-9 w-9 flex items-center justify-center rounded-lg border border-border text-text hover:bg-surface hover:text-danger hover:border-danger transition-all">
+                      <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-text hover:bg-surface hover:text-danger hover:border-danger transition-all">
                         <EyeOff className="h-4 w-4" />
                       </button>
                     </div>

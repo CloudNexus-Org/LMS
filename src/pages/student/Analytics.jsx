@@ -4,43 +4,34 @@ import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 const Analytics = () => {
   const isDark = useIsDarkTheme();
 
-  const barFrom = "from-blue-500";
-  const barTo = "to-cyan-400";
-
   const cardBg = isDark ? "bg-[#0d111d]" : "bg-white";
 
   const cardBorder = isDark
     ? "border-white/10"
     : "border-border";
 
-  const glassGlow = isDark
-    ? "shadow-[0_20px_60px_rgba(37,99,235,0.18)]"
-    : "shadow-[0_20px_60px_rgba(37,99,235,0.08)]";
-
   return (
     <div className="min-h-screen bg-bg text-text p-1 space-y-6">
       {/* HEADER */}
       <div>
-        
-
         <div className="relative z-10 space-y-3">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-[5px] border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-blue-500">
               Analytics Dashboard
             </span>
 
-            <span className="rounded-[5px] border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-cyan-400">
+            <span className="rounded-[5px] border border-violet-500/20 bg-violet-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-violet-500">
               Live Insights
             </span>
           </div>
 
-          <h2 className="font-display text-[clamp(2.2rem,5vw,3.5rem)] font-black leading-[1.02] tracking-[-0.04em] text-text">
+          <h2 className="font-display text-[42px] font-black leading-[1.02] tracking-[-0.04em] text-text">
             Student Insights
           </h2>
 
-          <p className=" text-lg font-medium leading-[1.7] text-muted">
+          <p className="text-lg font-medium leading-[1.7] text-muted">
             Visualizing your learning growth, performance trends,
-            certification readiness, and placement progress with
+            certification readiness and placement progress with
             intelligent analytics.
           </p>
         </div>
@@ -49,37 +40,106 @@ const Analytics = () => {
       {/* QUICK STATS */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Overall Growth", "+24%", "trending_up"],
-          ["Active Streak", "18 Days", "local_fire_department"],
-          ["Practice Hours", "128h", "schedule"],
-          ["Leaderboard", "#12", "military_tech"],
-        ].map(([title, value, icon]) => (
+          {
+            title: "Overall Growth",
+            value: "+24%",
+            icon: "trending_up",
+            iconColor: "text-blue-500",
+            bg: "from-blue-500/30 via-blue-500/10 to-cyan-400/20",
+            glow:
+              "hover:shadow-[0_25px_60px_rgba(37,99,235,0.18)]",
+          },
+          {
+            title: "Active Streak",
+            value: "18 Days",
+            icon: "local_fire_department",
+            iconColor: "text-orange-500",
+            bg: "from-orange-500/30 via-orange-500/10 to-yellow-400/20",
+            glow:
+              "hover:shadow-[0_25px_60px_rgba(249,115,22,0.18)]",
+          },
+          {
+            title: "Practice Hours",
+            value: "128h",
+            icon: "schedule",
+            iconColor: "text-emerald-500",
+            bg: "from-emerald-500/30 via-emerald-500/10 to-lime-400/20",
+            glow:
+              "hover:shadow-[0_25px_60px_rgba(16,185,129,0.18)]",
+          },
+          {
+            title: "Leaderboard",
+            value: "#12",
+            icon: "military_tech",
+            iconColor: "text-violet-500",
+            bg: "from-violet-500/30 via-violet-500/10 to-fuchsia-400/20",
+            glow:
+              "hover:shadow-[0_25px_60px_rgba(139,92,246,0.18)]",
+          },
+        ].map((item) => (
           <div
-            key={title}
+            key={item.title}
             className={`
-              relative overflow-hidden rounded-[6px] border
+              group
+              relative overflow-hidden rounded-[6px]
+              border
               ${cardBorder}
               ${cardBg}
-              ${glassGlow}
-              group p-6 transition-all duration-300 hover:-translate-y-1
+              p-5
+              transition-all duration-500
+              hover:-translate-y-2
+              hover:border-primary/20
+              ${item.glow}
             `}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.06] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            {/* GLOW */}
+            <div
+              className="
+                pointer-events-none
+                absolute inset-0
+                opacity-0
+                transition duration-500
+                group-hover:opacity-100
+                bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_45%)]
+              "
+            />
 
             <div className="relative z-10 flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-muted">
-                  {title}
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                  {item.title}
                 </p>
 
-                <h3 className="mt-3 text-3xl font-black">
-                  {value}
+                <h3 className="mt-4 text-[36px] font-black leading-none">
+                  {item.value}
                 </h3>
               </div>
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
-                <span className="material-symbols-outlined text-[28px]">
-                  {icon}
+              {/* ICON */}
+              <div
+                className={`
+                  relative
+                  flex h-14 w-14 items-center justify-center
+                  rounded-[16px]
+                  bg-gradient-to-br
+                  ${item.bg}
+                  shadow-[0_10px_30px_rgba(0,0,0,0.08)]
+                  overflow-hidden
+                `}
+              >
+                <div
+                  className="
+                    absolute inset-0
+                    bg-gradient-to-br
+                    from-white/40
+                    to-transparent
+                  "
+                />
+
+                <span
+                  className={`material-symbols-outlined relative z-10 text-[28px] ${item.iconColor}`}
+                >
+                  {item.icon}
                 </span>
               </div>
             </div>
@@ -87,7 +147,7 @@ const Analytics = () => {
         ))}
       </div>
 
-      {/* GRID */}
+      {/* MAIN GRID */}
       <div className="grid grid-cols-12 gap-6">
         {/* LEARNING VELOCITY */}
         <div
@@ -97,9 +157,12 @@ const Analytics = () => {
             border
             ${cardBorder}
             ${cardBg}
-            ${glassGlow}
             relative overflow-hidden
-            p-8 backdrop-blur-xl
+            p-8
+            backdrop-blur-xl
+            transition-all duration-500
+            hover:-translate-y-1
+            hover:shadow-[0_30px_70px_rgba(37,99,235,0.18)]
           `}
         >
           <div className="absolute right-0 top-0 h-44 w-44 bg-blue-500/10 blur-3xl" />
@@ -120,7 +183,7 @@ const Analytics = () => {
                 AWS
               </span>
 
-              <span className="rounded-[5px] border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-400">
+              <span className="rounded-[5px] border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm font-bold text-emerald-500">
                 Azure
               </span>
             </div>
@@ -129,20 +192,21 @@ const Analytics = () => {
           {/* CHART */}
           <div className="relative z-10 flex h-[320px] items-end gap-5 sm:gap-8">
             {[
-              ["Mon", "40%"],
-              ["Tue", "60%"],
-              ["Wed", "55%"],
-              ["Thu", "85%"],
-              ["Fri", "70%"],
-              ["Sat", "95%"],
-            ].map(([day, height]) => (
+              ["Mon", "40%", "from-blue-500 to-cyan-400"],
+              ["Tue", "60%", "from-blue-500 to-cyan-400"],
+              ["Wed", "55%", "from-blue-500 to-cyan-400"],
+              ["Thu", "85%", "from-blue-500 to-cyan-400"],
+              ["Fri", "70%", "from-blue-500 to-cyan-400"],
+              ["Sat", "95%", "from-blue-500 to-cyan-400"],
+            ].map(([day, height, gradient]) => (
               <div
                 key={day}
-                className="flex w-1/6 flex-col items-center gap-3"
+                className="group flex w-1/6 flex-col items-center gap-3"
               >
                 <div
                   className={`
-                    relative flex h-[240px] w-full max-w-[70px] items-end overflow-hidden rounded-[6px]
+                    relative flex h-[240px] w-full max-w-[70px]
+                    items-end overflow-hidden rounded-[6px]
                     ${isDark ? "bg-white/[0.04]" : "bg-muted"}
                     border border-white/5
                   `}
@@ -150,9 +214,11 @@ const Analytics = () => {
                   <div
                     className={`
                       absolute inset-x-0 bottom-0 rounded-[6px]
-                      bg-gradient-to-t ${barFrom} ${barTo}
-                      shadow-[0_0_30px_rgba(59,130,246,0.45)]
-                      transition-all duration-500 hover:brightness-110
+                      bg-gradient-to-t ${gradient}
+                      shadow-[0_0_30px_rgba(59,130,246,0.25)]
+                      transition-all duration-500 ease-out
+                      group-hover:scale-y-125
+                      origin-bottom
                     `}
                     style={{ height }}
                   />
@@ -160,7 +226,7 @@ const Analytics = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.04] to-white/[0.08]" />
                 </div>
 
-                <span className="text-sm font-bold uppercase tracking-wider text-muted">
+                <span className="text-sm font-bold uppercase tracking-wider text-muted transition-all duration-300 group-hover:text-blue-500 group-hover:scale-110">
                   {day}
                 </span>
               </div>
@@ -176,12 +242,15 @@ const Analytics = () => {
             border
             ${cardBorder}
             ${cardBg}
-            ${glassGlow}
             relative overflow-hidden
-            p-8 backdrop-blur-xl
+            p-8
+            backdrop-blur-xl
+            transition-all duration-500
+            hover:-translate-y-1
+            hover:shadow-[0_30px_70px_rgba(139,92,246,0.18)]
           `}
         >
-          <div className="absolute bottom-0 left-0 h-40 w-40 bg-cyan-400/10 blur-3xl" />
+          <div className="absolute bottom-0 left-0 h-40 w-40 bg-violet-500/10 blur-3xl" />
 
           <div className="relative z-10 space-y-2">
             <h2 className="text-3xl font-black">
@@ -193,15 +262,11 @@ const Analytics = () => {
             </p>
           </div>
 
-          {/* CIRCLE */}
           <div className="relative z-10 flex justify-center py-10">
             <div className="relative h-52 w-52">
-              <div className="absolute inset-0 rounded-full bg-blue-500/10 blur-2xl" />
+              <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl" />
 
-              <svg
-                className="-rotate-90"
-                viewBox="0 0 200 200"
-              >
+              <svg className="-rotate-90" viewBox="0 0 200 200">
                 <circle
                   cx="100"
                   cy="100"
@@ -221,14 +286,10 @@ const Analytics = () => {
                   r="70"
                   strokeWidth="14"
                   strokeLinecap="round"
-                  className="stroke-blue-500"
+                  className="stroke-primary"
                   fill="none"
                   strokeDasharray="440"
                   strokeDashoffset="110"
-                  style={{
-                    filter:
-                      "drop-shadow(0px 0px 12px rgba(59,130,246,0.7))",
-                  }}
                 />
               </svg>
 
@@ -247,25 +308,13 @@ const Analytics = () => {
           <button
             className="
               relative inline-flex h-[44px] w-full items-center justify-center overflow-hidden
-              rounded-[5px]
-              border border-blue-500/20
-              bg-blue-500
-              px-6
-             relative
-                      items-center
-                      justify-center
-                      overflow-hidden
-                   
-                    rounded-none
-                    text-black
-                    dark:text-white
-                      shadow-[0_10px_30px_rgba(37,99,235,0.08)]
-                      dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
-                      transition-all
-                      duration-300
-                      hover:-translate-y-[2px]
-                    hover:border-[#2563ff]/40
-                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+              rounded-none border border-primary/20 bg-primary px-6
+              text-white
+              transition-all duration-300
+              hover:-translate-y-[2px]
+              hover:scale-[1.02]
+              hover:shadow-[0_25px_60px_rgba(139,92,246,0.18)]
+              [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
             "
           >
             Optimize CV
@@ -273,55 +322,92 @@ const Analytics = () => {
         </div>
 
         {/* DOMAIN CARDS */}
-        <div className="col-span-12 grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <div className="col-span-12 grid grid-cols-1 gap-5 xl:grid-cols-3">
           {[
-            [
-              "AWS Architect",
-              "82%",
-              "Advanced",
-              "cloud",
-            ],
-            [
-              "Azure Solutions",
-              "45%",
-              "Intermediate",
-              "terminal",
-            ],
-            [
-              "GCP Engineer",
-              "15%",
-              "Novice",
-              "dataset",
-            ],
-          ].map(([title, percent, level, icon]) => (
+            {
+              title: "AWS Architect",
+              percent: "82%",
+              level: "Advanced",
+              icon: "cloud",
+              iconColor: "text-blue-500",
+              bg: "from-blue-500/30 via-blue-500/10 to-cyan-400/20",
+              progress: "from-blue-500 to-cyan-400",
+              glow:
+                "hover:shadow-[0_25px_60px_rgba(37,99,235,0.18)]",
+            },
+            {
+              title: "Azure Solutions",
+              percent: "45%",
+              level: "Intermediate",
+              icon: "terminal",
+              iconColor: "text-emerald-500",
+              bg: "from-emerald-500/30 via-emerald-500/10 to-lime-400/20",
+              progress: "from-emerald-500 to-lime-400",
+              glow:
+                "hover:shadow-[0_25px_60px_rgba(16,185,129,0.18)]",
+            },
+            {
+              title: "GCP Engineer",
+              percent: "15%",
+              level: "Novice",
+              icon: "dataset",
+              iconColor: "text-red-500",
+              bg: "from-red-500/30 via-red-500/10 to-orange-400/20",
+              progress: "from-red-500 to-orange-400",
+              glow:
+                "hover:shadow-[0_25px_60px_rgba(239,68,68,0.18)]",
+            },
+          ].map((item) => (
             <div
-              key={title}
+              key={item.title}
               className={`
-                relative overflow-hidden rounded-[6px] border
+                group
+                relative overflow-hidden rounded-[6px]
+                border
                 ${cardBorder}
                 ${cardBg}
-                ${glassGlow}
-                group p-6 backdrop-blur-xl
-                transition-all duration-300 hover:-translate-y-1
+                p-6
+                transition-all duration-500
+                hover:-translate-y-2
+                hover:border-primary/20
+                ${item.glow}
               `}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
               <div className="relative z-10">
                 <div className="mb-8 flex justify-between">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500 shadow-[0_0_25px_rgba(59,130,246,0.15)]">
-                    <span className="material-symbols-outlined">
-                      {icon}
+                  <div
+                    className={`
+                      relative
+                      flex h-14 w-14 items-center justify-center
+                      rounded-[14px]
+                      bg-gradient-to-br
+                      ${item.bg}
+                      overflow-hidden
+                    `}
+                  >
+                    <div
+                      className="
+                        absolute inset-0
+                        bg-gradient-to-br
+                        from-white/40
+                        to-transparent
+                      "
+                    />
+
+                    <span
+                      className={`material-symbols-outlined relative z-10 text-[28px] ${item.iconColor}`}
+                    >
+                      {item.icon}
                     </span>
                   </div>
 
                   <span className="h-fit rounded-[5px] border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-500">
-                    {level}
+                    {item.level}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-black">
-                  {title}
+                <h3 className="text-[24px] font-black">
+                  {item.title}
                 </h3>
 
                 <div
@@ -331,18 +417,16 @@ const Analytics = () => {
                   `}
                 >
                   <div
-                    className="
+                    className={`
                       h-full rounded-[5px]
-                      bg-gradient-to-r from-blue-500 to-cyan-400
-                      shadow-[0_0_20px_rgba(59,130,246,0.4)]
-                    "
-                    style={{ width: percent }}
+                      bg-gradient-to-r ${item.progress}
+                    `}
+                    style={{ width: item.percent }}
                   />
                 </div>
 
                 <div className="mt-3 flex justify-between text-sm text-muted">
-                  <span>{percent} Mastered</span>
-
+                  <span>{item.percent} Mastered</span>
                   <span>Level 7</span>
                 </div>
               </div>
@@ -358,8 +442,9 @@ const Analytics = () => {
             border
             ${cardBorder}
             ${cardBg}
-            ${glassGlow}
             p-8 backdrop-blur-xl
+            transition-all duration-500
+            hover:shadow-[0_30px_70px_rgba(37,99,235,0.18)]
           `}
         >
           <div className="mb-8 flex items-center justify-between">
@@ -374,52 +459,80 @@ const Analytics = () => {
 
           <div className="space-y-5">
             {[
-              [
-                "Serverless Architecture",
-                "94/100",
-                "2 hours ago",
-              ],
-              [
-                "VPC Networking",
-                "82/100",
-                "Yesterday",
-              ],
-              [
-                "IAM Policies",
-                "78/100",
-                "3 days ago",
-              ],
-            ].map(([title, score, time]) => (
+              {
+                title: "Serverless Architecture",
+                score: "94/100",
+                time: "2 hours ago",
+                bg: "from-blue-500/25 via-blue-500/10 to-cyan-400/10",
+                text: "text-blue-500",
+              },
+              {
+                title: "VPC Networking",
+                score: "82/100",
+                time: "Yesterday",
+                bg: "from-emerald-500/25 via-emerald-500/10 to-lime-400/10",
+                text: "text-emerald-500",
+              },
+              {
+                title: "IAM Policies",
+                score: "78/100",
+                time: "3 days ago",
+                bg: "from-red-500/25 via-red-500/10 to-orange-400/10",
+                text: "text-red-500",
+              },
+            ].map((item) => (
               <div
-                key={title}
+                key={item.title}
                 className={`
                   flex items-center justify-between rounded-[6px]
-                  border border-blue-500/10
-                  ${isDark ? "bg-blue-500/[0.07]" : "bg-blue-500/[0.05]"}
-                  p-5 transition-all duration-300 hover:translate-x-1
+                  border border-white/5
+                  ${isDark ? "bg-white/[0.03]" : "bg-gray-100"}
+                  p-5 transition-all duration-300
+                  hover:-translate-y-1
+                  hover:shadow-[0_18px_45px_rgba(37,99,235,0.14)]
                 `}
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
-                    <span className="material-symbols-outlined">
+                  <div
+                    className={`
+                      relative
+                      flex h-12 w-12 items-center justify-center
+                      rounded-[14px]
+                      bg-gradient-to-br
+                      ${item.bg}
+                      overflow-hidden
+                    `}
+                  >
+                    <div
+                      className="
+                        absolute inset-0
+                        bg-gradient-to-br
+                        from-white/40
+                        to-transparent
+                      "
+                    />
+
+                    <span
+                      className={`material-symbols-outlined relative z-10 ${item.text}`}
+                    >
                       quiz
                     </span>
                   </div>
 
                   <div>
                     <h3 className="font-bold">
-                      {title}
+                      {item.title}
                     </h3>
 
                     <p className="text-sm text-muted">
-                      {time}
+                      {item.time}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <h3 className="text-2xl font-black text-blue-500">
-                    {score}
+                  <h3 className={`text-2xl font-black ${item.text}`}>
+                    {item.score}
                   </h3>
 
                   <p className="text-xs uppercase tracking-[0.2em] text-muted">
@@ -439,12 +552,13 @@ const Analytics = () => {
             border
             ${cardBorder}
             ${cardBg}
-            ${glassGlow}
             relative overflow-hidden
             p-8 backdrop-blur-xl
+            transition-all duration-500
+            hover:shadow-[0_30px_70px_rgba(139,92,246,0.18)]
           `}
         >
-          <div className="absolute right-0 top-0 h-36 w-36 bg-blue-500/10 blur-3xl" />
+          <div className="absolute right-0 top-0 h-36 w-36 bg-violet-500/10 blur-3xl" />
 
           <div className="relative z-10">
             <h2 className="text-3xl font-black">
@@ -457,18 +571,36 @@ const Analytics = () => {
 
             <div className="mt-10 space-y-8">
               {[
-                ["Logical Mapping", "Excellent", 80],
-                ["Cost Optimization", "Optimal", 60],
-                ["Security Hardening", "Mastery", 100],
-              ].map(([title, label, width]) => (
-                <div key={title}>
+                {
+                  title: "Logical Mapping",
+                  label: "Excellent",
+                  width: 80,
+                  progress: "from-blue-500 to-cyan-400",
+                  text: "text-blue-500",
+                },
+                {
+                  title: "Cost Optimization",
+                  label: "Optimal",
+                  width: 60,
+                  progress: "from-emerald-500 to-lime-400",
+                  text: "text-emerald-500",
+                },
+                {
+                  title: "Security Hardening",
+                  label: "Mastery",
+                  width: 100,
+                  progress: "from-red-500 to-orange-400",
+                  text: "text-red-500",
+                },
+              ].map((item) => (
+                <div key={item.title}>
                   <div className="mb-3 flex justify-between">
                     <span className="font-semibold">
-                      {title}
+                      {item.title}
                     </span>
 
-                    <span className="font-semibold text-blue-500">
-                      {label}
+                    <span className={`font-semibold ${item.text}`}>
+                      {item.label}
                     </span>
                   </div>
 
@@ -479,38 +611,15 @@ const Analytics = () => {
                     `}
                   >
                     <div
-                      className="
+                      className={`
                         h-full rounded-[5px]
-                        bg-gradient-to-r from-blue-500 to-cyan-400
-                        shadow-[0_0_20px_rgba(59,130,246,0.4)]
-                      "
-                      style={{ width: `${width}%` }}
+                        bg-gradient-to-r ${item.progress}
+                      `}
+                      style={{ width: `${item.width}%` }}
                     />
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* AI TIP */}
-            <div className="mt-10 rounded-[6px] border border-blue-500/10 bg-blue-500/[0.05] p-5">
-              <div className="flex gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
-                  <span className="material-symbols-outlined">
-                    auto_awesome
-                  </span>
-                </div>
-
-                <div>
-                  <h4 className="font-bold">
-                    AI Recommendation
-                  </h4>
-
-                  <p className="mt-1 text-sm leading-7 text-muted">
-                    Focus on Lambda cold-start optimization
-                    to reach Elite Tier Architect status.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

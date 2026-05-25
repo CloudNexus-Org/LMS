@@ -109,7 +109,7 @@ export default function CertificatesPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold text-text font-display tracking-tight">My Certificates</h1>
+        <h1 className="text-[42px] font-bold text-text font-display tracking-tight">My Certificates</h1>
         <p className="text-muted mt-1 font-medium">Showcase your hard-earned achievements.</p>
       </div>
 
@@ -236,10 +236,74 @@ export default function CertificatesPage() {
 
               {/* Action Bar */}
               <div className="flex items-center gap-2 w-full">
-                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-surface border border-border rounded-lg text-xs font-bold text-text hover:bg-bg transition-colors shadow-sm">
+                <button className="
+                      relative
+                      inline-flex
+
+                      h-[46px]
+                      min-w-[180px]
+
+                      items-center
+                      justify-center
+                      gap-2
+
+                      overflow-hidden
+                      rounded-none
+
+                      border border-white/10
+
+                      bg-white
+
+                      px-6
+
+                      text-[14px]
+                      font-semibold
+bg-surface border border-border
+                      text-black
+                      shadow-sm
+
+                      transition-all
+                      duration-300
+
+                      hover:-translate-y-[2px]
+
+                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                    ">
                   <Download className="h-3.5 w-3.5" /> PDF
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#0a66c2] text-white rounded-lg text-xs font-bold hover:bg-[#004182] shadow-sm transition-colors">
+                <button className="
+                      relative
+                      inline-flex
+
+                      h-[46px]
+                      min-w-[180px]
+
+                      items-center
+                      justify-center
+                      gap-2
+
+                      overflow-hidden
+                      rounded-none
+
+                      border border-white/10
+bg-blue-500/100
+                      
+
+                      px-6
+
+                      text-[14px]
+                      font-semibold
+
+                      text-white
+                      shadow-sm
+
+                      transition-all
+                      duration-300
+
+                      hover:-translate-y-[2px]
+
+                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                    ">
                   <Share2 className="h-3.5 w-3.5" /> Share
                 </button>
               </div>
@@ -251,3 +315,4 @@ export default function CertificatesPage() {
     </div>
   );
 }
+// 

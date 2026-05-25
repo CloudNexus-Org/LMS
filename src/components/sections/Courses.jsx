@@ -196,7 +196,7 @@ rounded-none
     dark:border-white/10
 
     bg-white
-    dark:bg-[#2563ff]
+    dark:bg-primary
 
     px-6
 

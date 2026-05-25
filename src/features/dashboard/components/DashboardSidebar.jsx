@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, Heart, Award, Settings, CreditCard, Bell, PlaySquare, X, BarChart, Users, UploadCloud, ShieldAlert, DollarSign, FileText } from 'lucide-react';
 
 const navConfig = {
@@ -35,12 +35,12 @@ export default function DashboardSidebar({ role, onClose }) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between px-6 border-b border-border shrink-0">
-        <div className="flex items-center gap-2">
+        <Link to="/student/dashboard" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-[5px] bg-primary text-white flex items-center justify-center font-bold font-display shadow-sm">
             CN
           </div>
           <span className="font-semibold text-lg text-text">Cloud Nexus</span>
-        </div>
+        </Link>
         <button onClick={onClose} className="lg:hidden text-muted hover:text-text transition-colors">
           <X className="h-5 w-5" />
         </button>

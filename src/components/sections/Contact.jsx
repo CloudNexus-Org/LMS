@@ -45,7 +45,7 @@ export default function Contact() {
             Get In Touch
           </h2>
 
-          <p className="mx-auto mt-4 max-w-[560px] text-[15px] leading-7 text-muted">
+          <p className="mx-auto mt-4 max-w-[560px] text-[20px] leading-7 text-muted">
             Fill up the form and our team will get back to you within 24 hours.
           </p>
         </div>
@@ -103,10 +103,17 @@ export default function Contact() {
                 src={photo}
                 alt="contact"
                 className="
-                  absolute bottom-0 right-0
-                  h-[180px] object-contain
-                  md:h-[240px]
-                "
+                            absolute bottom-0
+                            right-[-18px]
+                            h-[150px]
+                            object-contain
+                          
+                            sm:right-0
+                            sm:h-[180px]
+                          
+                            md:right-[-16%]
+                            md:h-[290px]
+                          "
               />
             </div>
 
@@ -201,7 +208,7 @@ rounded-none
     dark:border-white/10
 
     bg-white
-    dark:bg-[#2563ff]
+    dark:bg-primary
 
     px-6
 

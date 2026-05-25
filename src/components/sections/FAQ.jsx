@@ -111,7 +111,7 @@ export default function FAQ() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
-            className="mt-5 text-[14px] leading-7 text-muted md:whitespace-nowrap md:text-[15px]"
+            className="mt-5 text-[14px] leading-7 text-muted md:whitespace-nowrap md:text-[20px]"
           >
             Everything you need to know about courses, mentors, students,
             assignments, and learning progress.

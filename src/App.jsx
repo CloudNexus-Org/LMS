@@ -45,6 +45,9 @@ const MyCoursesPage = lazy(() =>
 const Analytics = lazy(() =>
   import('@/pages/student/Analytics')
 );
+const ProfilePage = lazy(() =>
+  import('@/pages/student/ProfilePage')
+);
 const CertificatesPage = lazy(() =>
   import('@/pages/student/CertificatesPage')
 );
@@ -185,7 +188,7 @@ function App() {
                   element={<MyCoursesPage />}
                 />
                 <Route
-                  path="analytics"
+                  path="analyticse"
                   element={<Analytics/>}
                 />
 
@@ -227,6 +230,10 @@ function App() {
                 <Route
                   path="notifications"
                   element={<NotificationsPage />}
+                />
+                <Route
+                  path="profile"
+                  element={<ProfilePage />}
                 />
 
                 <Route
