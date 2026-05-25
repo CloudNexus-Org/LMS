@@ -113,7 +113,7 @@ export default function ProfileSettingsPage() {
                 className={`
                   mt-3
 
-                  text-[34px]
+                  text-[42px]
                   sm:text-[48px]
 
                   font-black

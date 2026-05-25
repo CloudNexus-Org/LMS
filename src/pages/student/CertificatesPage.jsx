@@ -109,7 +109,7 @@ export default function CertificatesPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold text-text font-display tracking-tight">My Certificates</h1>
+        <h1 className="text-[42px] font-bold text-text font-display tracking-tight">My Certificates</h1>
         <p className="text-muted mt-1 font-medium">Showcase your hard-earned achievements.</p>
       </div>
 

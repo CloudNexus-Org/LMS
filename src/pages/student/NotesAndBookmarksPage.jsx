@@ -54,7 +54,7 @@ export default function NotesAndBookmarksPage() {
               Smart Learning Notes
             </div>
 
-            <h1 className="text-4xl font-black tracking-tight text-text">
+            <h1 className="text-[42px] font-black tracking-tight text-text">
               Notes & Bookmarks
             </h1>
 
