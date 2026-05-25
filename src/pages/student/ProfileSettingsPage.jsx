@@ -50,7 +50,7 @@ export default function ProfileSettingsPage() {
         <h1
           className={`
             text-[42px]
-            sm:text-[52px]
+            sm:text-[42px]
             font-black
             leading-[0.95]
             tracking-[-0.05em]

@@ -114,7 +114,7 @@ export default function BillingSubscriptionPage() {
                 className={`
                   mt-6
                   text-[42px]
-                  sm:text-[54px]
+                  sm:text-[42px]
                   font-black
                   leading-[0.95]
                   tracking-[-0.05em]

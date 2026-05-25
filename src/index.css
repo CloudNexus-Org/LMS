@@ -1,8 +1,8 @@
     @import "tailwindcss";
     @theme inline {
-        --font-sans: "Ancizar Serif", serif;
-        --font-display: "Ancizar Serif", serif;
-        --font-mono: "Ancizar Serif", serif;
+        --font-sans: "Ancizar", serif;
+        --font-display: "Ancizar ", serif;
+        --font-mono: "Ancizar ", serif;
         --color-bg: var(--bg);
         --color-surface: var(--surface);
         --color-elevated: var(--elevated);
