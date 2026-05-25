@@ -1,82 +1,589 @@
-import { DollarSign, Download, ArrowUpRight, TrendingUp } from 'lucide-react';
+import {
+  DollarSign,
+  Download,
+  ArrowUpRight,
+  TrendingUp,
+  Wallet,
+  CreditCard,
+  Sparkles,
+  CalendarDays,
+  ChevronRight,
+  Clock3,
+  ShieldCheck,
+  BarChart3,
+  Receipt,
+} from "lucide-react";
 
 const PAYOUTS = [
-  { id: 'PO-2026-05', date: 'May 1, 2026', amount: '$4,250.00', status: 'Processing' },
-  { id: 'PO-2026-04', date: 'Apr 1, 2026', amount: '$3,890.00', status: 'Paid' },
-  { id: 'PO-2026-03', date: 'Mar 1, 2026', amount: '$4,010.00', status: 'Paid' },
+  {
+    id: "PO-2026-05",
+    date: "May 1, 2026",
+    amount: "$4,250.00",
+    status: "Processing",
+  },
+  {
+    id: "PO-2026-04",
+    date: "Apr 1, 2026",
+    amount: "$3,890.00",
+    status: "Paid",
+  },
+  {
+    id: "PO-2026-03",
+    date: "Mar 1, 2026",
+    amount: "$4,010.00",
+    status: "Paid",
+  },
 ];
 
 export default function RevenuePage() {
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold text-text font-display tracking-tight">Revenue & Payouts</h1>
-        <p className="text-muted mt-1 font-medium">Track your earnings and payout history.</p>
+    <div className="mx-auto max-w-7xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* HERO */}
+      <div
+        className="
+          relative overflow-hidden
+          rounded-[5px]
+          border border-border
+          bg-surface
+          p-8
+          shadow-sm
+        "
+      >
+        {/* GLOW */}
+        <div className="absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-full bg-blue-500/10 blur-[90px]" />
+
+        <div className="relative z-10 flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
+          {/* LEFT */}
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-[5px] border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-blue-500">
+              <Sparkles className="h-3.5 w-3.5" />
+              Revenue Center
+            </div>
+
+            <h1 className="mt-5 text-[42px] font-black tracking-[-0.05em] text-text leading-none">
+              Revenue & Payouts
+            </h1>
+
+            <p className="mt-5 max-w-[720px] text-[15px] leading-8 text-muted font-medium">
+              Track your earnings, payout history, withdrawals,
+              analytics, and revenue growth across all your active
+              courses.
+            </p>
+
+            {/* QUICK INFO */}
+            <div className="mt-8 flex flex-wrap gap-4">
+              {[
+                {
+                  icon: Wallet,
+                  text: "Instant Withdrawals",
+                },
+                {
+                  icon: ShieldCheck,
+                  text: "Secure Transactions",
+                },
+                {
+                  icon: CalendarDays,
+                  text: "Monthly Payouts",
+                },
+              ].map((item, i) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={i}
+                    className="
+                      flex items-center gap-2
+                      rounded-[5px]
+                      border border-border
+                      bg-bg/60
+                      px-4 py-3
+                    "
+                  >
+                    <Icon className="h-4 w-4 text-blue-500" />
+
+                    <span className="text-sm font-bold text-text">
+                      {item.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* RIGHT PREVIEW */}
+          <div
+            className="
+              relative overflow-hidden
+              rounded-[5px]
+              border border-border
+              bg-bg/70
+              p-6
+              xl:w-[360px]
+            "
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] via-transparent to-cyan-400/[0.04]" />
+
+            <div className="relative z-10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.15em] text-muted">
+                    Monthly Growth
+                  </p>
+
+                  <h3 className="mt-2 text-4xl font-black text-text">
+                    +18%
+                  </h3>
+                </div>
+
+                <div className="rounded-[5px] bg-emerald-500/10 px-3 py-2 text-xs font-black uppercase tracking-[0.15em] text-emerald-500">
+                  May 2026
+                </div>
+              </div>
+
+              {/* MINI CHART */}
+              <div className="mt-8 flex items-end gap-2">
+                {[40, 55, 45, 75, 90, 120].map((h, i) => (
+                  <div
+                    key={i}
+                    className="group flex-1"
+                  >
+                    <div
+                      className="
+                        relative overflow-hidden
+                        rounded-t-[5px]
+                        bg-gradient-to-t
+                        from-blue-600
+                        via-blue-500
+                        to-cyan-400
+                        transition-all duration-500
+                        group-hover:-translate-y-2
+                      "
+                      style={{
+                        height: `${h}px`,
+                      }}
+                    >
+                      <div
+                        className="
+                          absolute inset-0
+                          bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.3)_50%,transparent_80%)]
+                          animate-[shine_2.5s_linear_infinite]
+                        "
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em] text-muted">
+                <span>Jan</span>
+                <span>Jun</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-text text-bg rounded-3xl p-8 sm:p-10 shadow-card relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-8 opacity-10">
-            <DollarSign className="h-48 w-48" />
+      {/* KPI GRID */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          {
+            title: "Available Balance",
+            value: "$4,250",
+            growth: "+12%",
+            icon: Wallet,
+            color: "text-blue-500",
+            bg: "bg-blue-500/10",
+          },
+          {
+            title: "Lifetime Earnings",
+            value: "$42.8k",
+            growth: "+24%",
+            icon: TrendingUp,
+            color: "text-emerald-500",
+            bg: "bg-emerald-500/10",
+          },
+          {
+            title: "Pending Payouts",
+            value: "$2,140",
+            growth: "+4%",
+            icon: Clock3,
+            color: "text-orange-500",
+            bg: "bg-orange-500/10",
+          },
+          {
+            title: "Transactions",
+            value: "148",
+            growth: "+8%",
+            icon: Receipt,
+            color: "text-violet-500",
+            bg: "bg-violet-500/10",
+          },
+        ].map((card, i) => {
+          const Icon = card.icon;
+
+          return (
+            <div
+              key={i}
+              className="
+                group relative overflow-hidden
+                rounded-[5px]
+                border border-border
+                bg-surface
+                p-6
+                shadow-sm
+                transition-all duration-300
+                hover:-translate-y-1
+              "
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+              <div className="relative z-10">
+                <div className="flex items-start justify-between">
+                  <div
+                    className={`
+                      flex h-14 w-14 items-center justify-center rounded-[5px]
+                      ${card.bg}
+                      ${card.color}
+                    `}
+                  >
+                    <Icon className="h-7 w-7" />
+                  </div>
+
+                  <div className="rounded-[5px] bg-emerald-500/10 px-3 py-1 text-xs font-black text-emerald-500">
+                    {card.growth}
+                  </div>
+                </div>
+
+                <p className="mt-6 text-xs font-black uppercase tracking-[0.15em] text-muted">
+                  {card.title}
+                </p>
+
+                <h3 className="mt-2 text-4xl font-black text-text">
+                  {card.value}
+                </h3>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* MAIN GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* BALANCE CARD */}
+        <div
+          className="
+            lg:col-span-2
+            relative overflow-hidden
+            rounded-[5px]
+            bg-text
+            text-bg
+            p-8 sm:p-10
+            shadow-sm
+          "
+        >
+          {/* BG ICON */}
+          <div className="absolute top-0 right-0 p-8 opacity-[0.06]">
+            <DollarSign className="h-56 w-56" />
           </div>
+
+          {/* GLOW */}
+          <div className="absolute right-[-120px] top-[-120px] h-[300px] w-[300px] rounded-full bg-white/10 blur-[100px]" />
+
           <div className="relative z-10 flex flex-col h-full justify-center">
-            <div className="inline-flex items-center gap-2 bg-bg/20 text-bg text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg mb-6 max-w-max backdrop-blur-sm border border-bg/10">
+            <div className="inline-flex items-center gap-2 bg-bg/10 text-bg text-xs font-black uppercase tracking-[0.18em] px-4 py-2 rounded-[5px] mb-6 max-w-max backdrop-blur-sm border border-bg/10">
+              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Next Payout: June 1, 2026
             </div>
-            <p className="text-bg/80 font-bold uppercase tracking-widest text-sm mb-2">Available Balance</p>
-            <h2 className="text-5xl sm:text-6xl font-display font-bold mb-8">$4,250.00</h2>
-            <div className="flex gap-4">
-              <button className="px-6 py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-opacity">
+
+            <p className="text-bg/70 font-black uppercase tracking-[0.18em] text-xs mb-3">
+              Available Balance
+            </p>
+
+            <h2 className="text-6xl font-black tracking-[-0.05em] mb-8">
+              $4,250.00
+            </h2>
+
+            {/* ACTIONS */}
+            <div className="flex flex-wrap gap-4">
+              <button
+                className="
+                  inline-flex items-center gap-2
+                  rounded-[5px]
+                  bg-blue-500
+                  px-6 py-4
+                  text-sm font-black
+                  text-white
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  hover:bg-blue-600
+                "
+              >
                 Withdraw Funds
+                <ArrowUpRight className="h-4 w-4" />
               </button>
-              <button className="px-6 py-3 bg-transparent text-bg border border-bg/30 rounded-xl font-bold text-sm hover:bg-bg/10 transition-colors">
+
+              <button
+                className="
+                  inline-flex items-center gap-2
+                  rounded-[5px]
+                  border border-bg/20
+                  bg-white/5
+                  px-6 py-4
+                  text-sm font-black
+                  text-bg
+                  transition-all duration-300
+                  hover:bg-white/10
+                "
+              >
                 Tax Documents
+                <Download className="h-4 w-4" />
               </button>
+            </div>
+
+            {/* STATS */}
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                {
+                  label: "This Month",
+                  value: "$4.2k",
+                },
+                {
+                  label: "Avg. Revenue",
+                  value: "$3.8k",
+                },
+                {
+                  label: "Refund Rate",
+                  value: "1.8%",
+                },
+                {
+                  label: "Growth",
+                  value: "+18%",
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="
+                    rounded-[5px]
+                    border border-bg/10
+                    bg-white/5
+                    p-4
+                    backdrop-blur-xl
+                  "
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-bg/60">
+                    {item.label}
+                  </p>
+
+                  <h4 className="mt-2 text-2xl font-black text-bg">
+                    {item.value}
+                  </h4>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="bg-surface border border-border rounded-3xl p-8 flex flex-col justify-center">
-          <div className="h-12 w-12 bg-[color:color-mix(in_oklab,var(--success)_15%,transparent)] text-success rounded-xl flex items-center justify-center mb-6">
-            <TrendingUp className="h-6 w-6" />
+        {/* SIDE CARD */}
+        <div className="rounded-[5px] border border-border bg-surface p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-black text-text">
+                Payment Method
+              </h3>
+
+              <p className="mt-1 text-sm text-muted font-medium">
+                Default payout account.
+              </p>
+            </div>
+
+            <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
+              <CreditCard className="h-6 w-6" />
+            </div>
           </div>
-          <p className="text-sm font-bold text-muted uppercase tracking-wider mb-2">Lifetime Earnings</p>
-          <h3 className="text-3xl font-bold text-text font-display mb-2">$42,850.00</h3>
-          <p className="text-sm font-semibold text-success flex items-center gap-1">+12% vs last year</p>
+
+          {/* CARD */}
+          <div
+            className="
+              relative overflow-hidden
+              mt-8 rounded-[5px]
+              bg-gradient-to-br
+              from-blue-600
+              via-blue-500
+              to-cyan-400
+              p-6
+              text-white
+            "
+          >
+            <div className="absolute right-[-40px] top-[-40px] h-[140px] w-[140px] rounded-full bg-white/10" />
+
+            <div className="relative z-10">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-white/70">
+                Visa Platinum
+              </p>
+
+              <h3 className="mt-8 text-2xl font-black tracking-[0.3em]">
+                •••• 4582
+              </h3>
+
+              <div className="mt-8 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
+                    Card Holder
+                  </p>
+
+                  <h4 className="mt-2 text-sm font-black">
+                    JOHN DOE
+                  </h4>
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-white/70">
+                    Expires
+                  </p>
+
+                  <h4 className="mt-2 text-sm font-black">
+                    08/28
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            className="
+              mt-6 inline-flex items-center gap-2
+              text-sm font-black text-blue-500
+              transition-all duration-300
+              hover:gap-3
+            "
+          >
+            Update Payment Method
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
-      <div className="bg-surface border border-border rounded-3xl overflow-hidden shadow-sm">
-        <div className="p-6 sm:p-8 border-b border-border flex items-center justify-between">
-          <h3 className="font-bold text-xl text-text">Payout History</h3>
+      {/* PAYOUT HISTORY */}
+      <div
+        className="
+          overflow-hidden
+          rounded-[5px]
+          border border-border
+          bg-surface
+          shadow-sm
+        "
+      >
+        {/* HEADER */}
+        <div className="border-b border-border p-6 sm:p-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-2xl font-black text-text">
+              Payout History
+            </h3>
+
+            <p className="mt-2 text-sm text-muted font-medium">
+              Track your recent payout transactions.
+            </p>
+          </div>
+
+          <button
+            className="
+              inline-flex items-center gap-2
+              rounded-[5px]
+              bg-blue-500
+              px-5 py-3
+              text-sm font-black
+              text-white
+              transition-all duration-300
+              hover:-translate-y-1
+              hover:bg-blue-600
+            "
+          >
+            Export Report
+            <Download className="h-4 w-4" />
+          </button>
         </div>
+
+        {/* TABLE */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-bg border-b border-border">
               <tr>
-                <th className="px-8 py-5 font-bold text-muted uppercase tracking-wider text-[11px]">Date</th>
-                <th className="px-8 py-5 font-bold text-muted uppercase tracking-wider text-[11px]">Transaction ID</th>
-                <th className="px-8 py-5 font-bold text-muted uppercase tracking-wider text-[11px]">Status</th>
-                <th className="px-8 py-5 font-bold text-muted uppercase tracking-wider text-[11px]">Amount</th>
-                <th className="px-8 py-5 font-bold text-muted uppercase tracking-wider text-[11px] text-right">Receipt</th>
+                <th className="px-8 py-5 text-[11px] font-black uppercase tracking-[0.15em] text-muted">
+                  Date
+                </th>
+
+                <th className="px-8 py-5 text-[11px] font-black uppercase tracking-[0.15em] text-muted">
+                  Transaction ID
+                </th>
+
+                <th className="px-8 py-5 text-[11px] font-black uppercase tracking-[0.15em] text-muted">
+                  Status
+                </th>
+
+                <th className="px-8 py-5 text-[11px] font-black uppercase tracking-[0.15em] text-muted">
+                  Amount
+                </th>
+
+                <th className="px-8 py-5 text-right text-[11px] font-black uppercase tracking-[0.15em] text-muted">
+                  Receipt
+                </th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-border">
               {PAYOUTS.map((inv) => (
-                <tr key={inv.id} className="hover:bg-bg/50 transition-colors">
-                  <td className="px-8 py-5 font-bold text-text">{inv.date}</td>
-                  <td className="px-8 py-5 text-muted font-mono">{inv.id}</td>
-                  <td className="px-8 py-5">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                      inv.status === 'Paid' ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'
-                    }`}>
+                <tr
+                  key={inv.id}
+                  className="
+                    group transition-all duration-300
+                    hover:bg-bg/40
+                  "
+                >
+                  <td className="px-8 py-6 font-black text-text">
+                    {inv.date}
+                  </td>
+
+                  <td className="px-8 py-6 font-mono text-muted">
+                    {inv.id}
+                  </td>
+
+                  <td className="px-8 py-6">
+                    <span
+                      className={`
+                        inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em]
+
+                        ${
+                          inv.status === "Paid"
+                            ? "bg-emerald-500/10 text-emerald-500"
+                            : "bg-orange-500/10 text-orange-500"
+                        }
+                      `}
+                    >
                       {inv.status}
                     </span>
                   </td>
-                  <td className="px-8 py-5 font-bold text-text text-base">{inv.amount}</td>
-                  <td className="px-8 py-5 text-right">
-                    <button className="inline-flex items-center gap-1.5 text-primary hover:text-primary-hover font-bold transition-colors bg-primary-soft px-3 py-1.5 rounded-lg text-xs">
-                      <Download className="h-3.5 w-3.5" /> PDF
+
+                  <td className="px-8 py-6 text-base font-black text-text">
+                    {inv.amount}
+                  </td>
+
+                  <td className="px-8 py-6 text-right">
+                    <button
+                      className="
+                        inline-flex items-center gap-2
+                        rounded-[5px]
+                        bg-blue-500/10
+                        px-4 py-2
+                        text-xs font-black
+                        text-blue-500
+                        transition-all duration-300
+                        hover:bg-blue-500
+                        hover:text-white
+                      "
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      PDF
                     </button>
                   </td>
                 </tr>
@@ -84,6 +591,141 @@ export default function RevenuePage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* EXTRA ANALYTICS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* REVENUE BREAKDOWN */}
+        <div className="rounded-[5px] border border-border bg-surface p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-black text-text">
+                Revenue Breakdown
+              </h3>
+
+              <p className="mt-1 text-sm text-muted font-medium">
+                Earnings source distribution.
+              </p>
+            </div>
+
+            <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
+              <BarChart3 className="h-6 w-6" />
+            </div>
+          </div>
+
+          <div className="mt-8 space-y-6">
+            {[
+              {
+                title: "Course Sales",
+                value: "72%",
+              },
+              {
+                title: "Subscriptions",
+                value: "18%",
+              },
+              {
+                title: "Affiliate Revenue",
+                value: "10%",
+              },
+            ].map((item, i) => (
+              <div key={i}>
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="font-bold text-text">
+                    {item.title}
+                  </span>
+
+                  <span className="text-sm font-black text-blue-500">
+                    {item.value}
+                  </span>
+                </div>
+
+                <div className="h-3 overflow-hidden rounded-full bg-bg border border-border">
+                  <div
+                    className="
+                      h-full rounded-full
+                      bg-gradient-to-r
+                      from-blue-500
+                      to-cyan-400
+                    "
+                    style={{
+                      width: item.value,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* WITHDRAWAL TIMELINE */}
+        <div className="rounded-[5px] border border-border bg-surface p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-black text-text">
+                Withdrawal Timeline
+              </h3>
+
+              <p className="mt-1 text-sm text-muted font-medium">
+                Upcoming payout schedule.
+              </p>
+            </div>
+
+            <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-emerald-500/10 text-emerald-500">
+              <CalendarDays className="h-6 w-6" />
+            </div>
+          </div>
+
+          <div className="mt-8 space-y-6">
+            {[
+              {
+                date: "June 1",
+                amount: "$4,250",
+                status: "Processing",
+              },
+              {
+                date: "July 1",
+                amount: "$5,120",
+                status: "Scheduled",
+              },
+              {
+                date: "August 1",
+                amount: "$6,480",
+                status: "Estimated",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="
+                  flex items-center justify-between
+                  rounded-[5px]
+                  border border-border
+                  bg-bg/40
+                  p-4
+                "
+              >
+                <div className="flex items-center gap-4">
+                  <div className="h-3 w-3 rounded-full bg-blue-500" />
+
+                  <div>
+                    <p className="font-black text-text">
+                      {item.date}
+                    </p>
+
+                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.15em] text-muted">
+                      {item.status}
+                    </p>
+                  </div>
+                </div>
+
+                <h4 className="text-xl font-black text-blue-500">
+                  {item.amount}
+                </h4>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -299,6 +299,7 @@ export default function StudentDashboardPage() {
                     dark:border-white/10
                     bg-white
                     dark:bg-[#2563ff]
+                    rounded-none
                     px-6
                     text-[14px]
                     font-semibold
@@ -656,7 +657,7 @@ export default function StudentDashboardPage() {
                     items-center
                     justify-center
                     overflow-hidden
-                   
+                   dark:bg-[#2563ff]
                     rounded-none
                     text-black
                     dark:text-white
@@ -665,7 +666,7 @@ export default function StudentDashboardPage() {
                     transition-all
                     duration-300
                     hover:-translate-y-[2px]
-                    hover:border-[#2563ff]/40
+                    hover:border-[#2563ff]
                     [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     "
                   >

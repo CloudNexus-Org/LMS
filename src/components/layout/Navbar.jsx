@@ -12,10 +12,10 @@ import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 import { scrollToSection as scrollSectionUtil } from "../../utils/scroll";
 
 const DEFAULT_LINKS = [
-  { label: "How it works", href: "#how-it-works" },
+  { label: "Explore", href: "#how-it-works" },
   { label: "Courses", href: "#courses" },
   { label: "Mentors", href: "#mentors" },
-  { label: "Pricing", href: "#pricing" },
+
   { label: "Contact", href: "#contact" },
 ];
 
@@ -307,7 +307,7 @@ export default function Navbar({
                     border border-[#d9e2ff]
                     dark:border-white/10
                     bg-white
-                    dark:bg-[#215cff]
+                    dark:bg-primary
                     px-6
                     text-[14px]
                     font-semibold
@@ -336,7 +336,7 @@ export default function Navbar({
                     border border-[#d9e2ff]
                     dark:border-white/10
                     bg-white
-                    dark:bg-[#215cff]
+                    dark:bg-primary
                     px-6
                     text-[14px]
                     font-semibold

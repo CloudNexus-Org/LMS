@@ -213,7 +213,7 @@ export default function Hero() {
                   dark:border-white/10
 
                   bg-white
-                  dark:bg-[#2563ff]
+                  dark:bg-primary
 
                   px-6
 
@@ -283,7 +283,7 @@ export default function Hero() {
                   duration-300
 
                   hover:-translate-y-[2px]
-                  hover:border-[#2563ff]/40
+                  
 
                   [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
