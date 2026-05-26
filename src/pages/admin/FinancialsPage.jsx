@@ -9,7 +9,7 @@ export default function FinancialsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-text text-bg rounded-3xl p-8 sm:p-10 shadow-card relative overflow-hidden">
+        <div className="md:col-span-2 bg-text text-bg rounded-[5px] p-8 sm:p-10 shadow-card relative overflow-hidden">
           <div className="relative z-10 flex flex-col h-full justify-center">
             <p className="text-bg/80 font-bold uppercase tracking-widest text-sm mb-2">Net Platform Revenue (YTD)</p>
             <h2 className="text-5xl sm:text-6xl font-display font-bold mb-4">$428,500.00</h2>
@@ -23,14 +23,14 @@ export default function FinancialsPage() {
         </div>
 
         <div className="flex flex-col gap-6">
-          <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm flex-1 flex flex-col justify-center">
+          <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm flex-1 flex flex-col justify-center">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-bold text-muted uppercase tracking-wider">Total Sales</p>
               <ArrowUpRight className="h-4 w-4 text-success" />
             </div>
             <p className="text-2xl font-bold text-text font-display">$1,248,000</p>
           </div>
-          <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm flex-1 flex flex-col justify-center">
+          <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm flex-1 flex flex-col justify-center">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-bold text-muted uppercase tracking-wider">Mentor Payouts</p>
               <ArrowDownRight className="h-4 w-4 text-danger" />
@@ -40,10 +40,10 @@ export default function FinancialsPage() {
         </div>
       </div>
 
-      <div className="bg-surface border border-border rounded-3xl overflow-hidden shadow-sm">
+      <div className="bg-surface border border-border rounded-[5px] overflow-hidden shadow-sm">
         <div className="p-6 sm:p-8 border-b border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <h3 className="font-bold text-xl text-text">Recent Transactions</h3>
-          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-bg border border-border rounded-lg text-xs font-bold text-text hover:border-primary transition-colors shadow-sm">
+          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-bg border border-border rounded-[5px] text-xs font-bold text-text hover:border-primary transition-colors shadow-sm">
             <Download className="h-4 w-4" /> Export CSV
           </button>
         </div>

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   BarChart as BarChartIcon,
   TrendingUp,
@@ -12,8 +13,16 @@ import {
   ChevronRight,
   Flame,
 } from "lucide-react";
+import { useTheme } from "@/app/providers/ThemeProvider";
 
 export default function AnalyticsPage() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const glowClasses = useMemo(() => ({
+    primary: isDark ? "bg-blue-600/30 blur-[120px]" : "bg-blue-500/10 blur-[90px]",
+  }), [isDark]);
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
       {/* HERO */}
@@ -28,7 +37,7 @@ export default function AnalyticsPage() {
         "
       >
         {/* GLOW */}
-        <div className="absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-full bg-blue-500/10 blur-[90px]" />
+        <div className={`absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-full ${glowClasses.primary}`} />
 
         <div className="relative z-10 flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
           {/* LEFT */}
@@ -601,16 +610,47 @@ export default function AnalyticsPage() {
             </p>
 
             <button
-              className="
-                mt-6 inline-flex items-center gap-2
-                rounded-[5px]
-                bg-blue-500
-                px-5 py-3
-                text-sm font-black text-white
-                transition-all duration-300
-                hover:-translate-y-1
-                hover:bg-blue-600
-              "
+             className="
+                  relative
+                  inline-flex
+
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[180px]
+
+                  items-center
+                  justify-center
+
+                  overflow-hidden
+                  rounded-none
+
+                  border
+                  border-[#d9e2ff]
+                  dark:border-white/10
+
+                  bg-white
+                  dark:bg-primary
+
+                  px-6
+
+                  text-[14px]
+                  font-semibold
+
+                  text-black
+                  dark:text-white
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+                  transition-all
+                  duration-300
+
+                  hover:-translate-y-[2px]
+                  
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                "
             >
               View Reviews
               <ChevronRight className="h-4 w-4" />

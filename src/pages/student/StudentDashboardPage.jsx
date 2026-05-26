@@ -53,7 +53,7 @@ export default function StudentDashboardPage() {
 
               <h1
                 className="
-                  text-[36px] sm:text-[48px]
+                  text-[42px] sm:text-[42px]
                   font-black
                   tracking-[-0.05em]
                   leading-tight
@@ -66,7 +66,7 @@ export default function StudentDashboardPage() {
               <p
                 className="
                   mt-4 max-w-2xl
-                  text-[16px]
+                  text-[20px]
                   leading-7
                   text-muted
                 "
@@ -110,95 +110,159 @@ export default function StudentDashboardPage() {
           </div>
         </section>
 
-        {/* STATS */}
-        <section className="grid grid-cols-2 gap-4 xl:grid-cols-4 -ml-5">
-          {[
-            {
-              title: "COURSES",
-              count: "08",
-              subtitle: "2 active",
-              icon: BookOpen,
-              color: "text-blue-500",
-              bg: "bg-gradient-to-br from-blue-500/20 to-blue-500/5",
-            },
-            {
-              title: "LESSONS",
-              count: "42",
-              subtitle: "7 today",
-              icon: CheckCircle2,
-              color: "text-emerald-500",
-              bg: "bg-gradient-to-br from-emerald-500/20 to-emerald-500/5",
-            },
-            {
-              title: "TASKS",
-              count: "05",
-              subtitle: "2 pending",
-              icon: FileText,
-              color: "text-orange-500",
-              bg: "bg-gradient-to-br from-orange-500/20 to-orange-500/5",
-            },
-            {
-              title: "BADGES",
-              count: "12",
-              subtitle: "4 verified",
-              icon: Trophy,
-              color: "text-violet-500",
-              bg: "bg-gradient-to-br from-violet-500/20 to-violet-500/5",
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="
-                group
-                rounded-[5px]
-                border border-gray-200 dark:border-border
-                bg-white dark:bg-elevated/80
-                p-4
-                shadow-sm
-                transition-all duration-300
-                hover:-translate-y-1
-                hover:border-primary/20
-                hover:shadow-[0_20px_50px_rgba(37,99,235,0.12)]
+{/* STATS */}
+<section className="grid grid-cols-2 gap-3 xl:grid-cols-4 -ml-5">
+  {[
+    {
+      title: "Courses",
+      count: "08",
+      subtitle: "2 active",
+      icon: BookOpen,
+      color: "text-blue-500",
+      glow: "group-hover:shadow-blue-500/20",
+      border: "hover:border-blue-500/20",
+      line: "bg-blue-500/20",
+      iconBg: "bg-blue-500/10",
+    },
+    {
+      title: "Lessons",
+      count: "42",
+      subtitle: "7 today",
+      icon: CheckCircle2,
+      color: "text-emerald-500",
+      glow: "group-hover:shadow-emerald-500/20",
+      border: "hover:border-emerald-500/20",
+      line: "bg-emerald-500/20",
+      iconBg: "bg-emerald-500/10",
+    },
+    {
+      title: "Tasks",
+      count: "05",
+      subtitle: "2 pending",
+      icon: FileText,
+      color: "text-orange-500",
+      glow: "group-hover:shadow-orange-500/20",
+      border: "hover:border-orange-500/20",
+      line: "bg-orange-500/20",
+      iconBg: "bg-orange-500/10",
+    },
+    {
+      title: "Badges",
+      count: "12",
+      subtitle: "4 verified",
+      icon: Trophy,
+      color: "text-violet-500",
+      glow: "group-hover:shadow-violet-500/20",
+      border: "hover:border-violet-500/20",
+      line: "bg-violet-500/20",
+      iconBg: "bg-violet-500/10",
+    },
+  ].map((item, index) => (
+    <div
+      key={index}
+      className={`
+        group
+        relative overflow-hidden
+
+        rounded-[5px]
+
+        border border-gray-200
+        dark:border-border
+
+        bg-white
+        dark:bg-elevated/80
+
+        px-4 py-3
+
+        shadow-sm
+
+        transition-all duration-300
+
+        hover:-translate-y-1
+
+        ${item.border}
+
+        hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+      `}
+    >
+      
+
+      {/* CONTENT */}
+      <div className="relative z-10">
+        <div className="flex items-center gap-3">
+          {/* ICON */}
+          <div
+            className={`
+              flex h-10 w-10 items-center justify-center
+              rounded-[10px]
+
+              ${item.iconBg}
+              ${item.color}
+
+              shadow-sm
+              transition-all duration-300
+
+              ${item.glow}
+            `}
+          >
+            <item.icon size={18} />
+          </div>
+
+          {/* NUMBER + TITLE */}
+          <div>
+            <h2
+              className=" ml-2
+                text-[28px]
+                font-black
+                leading-none
+
+                text-text
               "
             >
-              <div className="flex items-start justify-between">
-                <div
-                  className={`
-                    flex h-11 w-11 items-center justify-center
-                    rounded-[10px]
-                    shadow-sm
-                    ${item.bg}
-                    ${item.color}
-                  `}
-                >
-                  <item.icon size={19} />
-                </div>
+              {item.count}
+            </h2>
 
-                <ArrowRight
-                  size={16}
-                  className="
-                    text-muted
-                    transition-transform duration-300
-                    group-hover:translate-x-1
-                    group-hover:-translate-y-1
-                  "
-                />
-              </div>
+            <p
+              className=" ml-2
+                mt-1
+                text-[10px]
+                font-black
+                uppercase
+                tracking-[0.18em]
 
-              <h2 className="mt-5 text-[34px] font-black leading-none">
-                {item.count}
-              </h2>
+                text-muted
+              "
+            >
+              {item.title}
+            </p>
+          </div>
 
-              <p className="mt-3 text-[11px] font-black tracking-[0.14em] text-muted">
-                {item.title}
-              </p>
+          {/* ARROW */}
+          <ArrowRight
+            size={15}
+            className="
+              ml-auto
 
-              <p className="mt-1 text-xs text-muted">
-                {item.subtitle}
-              </p>
-            </div>
-          ))}
-        </section>
+              text-muted
+
+              transition-all duration-300
+
+              group-hover:translate-x-1
+              group-hover:-translate-y-1
+            "
+          />
+        </div>
+
+        {/* SUBTITLE */}
+        <div className="mt-4">
+          <p className="text-xs text-muted">
+            {item.subtitle}
+          </p>
+        </div>
+      </div>
+    </div>
+  ))}
+</section>
 
         {/* LOWER GRID */}
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-12 -ml-5">

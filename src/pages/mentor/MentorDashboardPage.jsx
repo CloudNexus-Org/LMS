@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Users,
   DollarSign,
@@ -15,6 +16,7 @@ import {
   ChevronRight,
   Flame,
 } from "lucide-react";
+import { useTheme } from "@/app/providers/ThemeProvider";
 
 const STATS = [
   {
@@ -97,6 +99,14 @@ const ACTIVITIES = [
 ];
 
 export default function MentorDashboardPage() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const heroGlowClasses = useMemo(() => ({
+    primary: isDark ? "bg-blue-500/8 blur-[120px]" : "bg-blue-500/10 blur-[100px]",
+    secondary: isDark ? "bg-indigo-500/6 blur-[100px]" : "bg-cyan-500/10 blur-[100px]",
+  }), [isDark]);
+
   return (
     <div className="mx-auto max-w-7xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* HERO */}
@@ -104,15 +114,15 @@ export default function MentorDashboardPage() {
         className="
           relative overflow-hidden
           rounded-[5px]
-          border border-border
-          bg-surface
+          border border-gray-200 dark:border-border
+          bg-white/90 dark:bg-elevated/80
           p-8
           shadow-[0_20px_80px_rgba(0,0,0,0.08)]
         "
       >
-        {/* GLOW */}
-        <div className="absolute right-[-120px] top-[-120px] h-[300px] w-[300px] rounded-full bg-blue-500/10 blur-[100px]" />
-        <div className="absolute bottom-[-100px] left-[-100px] h-[240px] w-[240px] rounded-full bg-cyan-500/10 blur-[100px]" />
+      {/* GLOW */}
+        <div className={`absolute right-[-120px] top-[-120px] h-[300px] w-[300px] rounded-full ${heroGlowClasses.primary}`} />
+        <div className={`absolute bottom-[-100px] left-[-100px] h-[240px] w-[240px] rounded-full ${heroGlowClasses.secondary}`} />
 
         <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
@@ -156,11 +166,11 @@ export default function MentorDashboardPage() {
                   justify-center
 
                   border
-                  border-[#d9e2ff]
-                  dark:border-white/10
+                  border-border
+                  dark:border-border
 
                   bg-white
-                  dark:bg-[#2563ff]
+                  dark:bg-primary
 
                   px-6
 
@@ -180,7 +190,8 @@ export default function MentorDashboardPage() {
                   duration-300
 
                   hover:-translate-y-[2px]
-                  hover:border-[#2563ff]/40
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
 
                   [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
@@ -206,11 +217,11 @@ export default function MentorDashboardPage() {
                   rounded-none
 
                   border
-                  border-[#d9e2ff]
-                  dark:border-white/10
+                  border-border
+                  dark:border-border
 
                   bg-white
-                  dark:bg-[#030303]
+                  dark:bg-surface
 
                   px-6
 
@@ -218,7 +229,7 @@ export default function MentorDashboardPage() {
                   font-semibold
 
                   text-black
-                  dark:text-white
+                  dark:text-text
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -227,7 +238,8 @@ export default function MentorDashboardPage() {
                   duration-300
 
                   hover:-translate-y-[2px]
-                  hover:border-[#2563ff]/40
+                  hover:border-primary/40
+                  dark:hover:border-primary/40
 
                   [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
@@ -277,8 +289,8 @@ export default function MentorDashboardPage() {
                   key={i}
                   className="
                     rounded-[5px]
-                    border border-border
-                    bg-bg/70
+                    border border-gray-200 dark:border-border
+                    bg-white dark:bg-elevated/80
                     p-5
                     backdrop-blur-xl
                   "
@@ -318,8 +330,8 @@ export default function MentorDashboardPage() {
               className="
                 group relative overflow-hidden
                 rounded-[5px]
-                border border-border
-                bg-surface
+                border border-gray-200 dark:border-border
+                bg-white dark:bg-elevated/80
                 p-6
                 transition-all duration-300
                 hover:-translate-y-1
@@ -364,7 +376,7 @@ export default function MentorDashboardPage() {
         {/* LEFT SIDE */}
         <div className="space-y-8 xl:col-span-2">
           {/* RECENT ENROLLMENTS */}
-          <div className="rounded-[5px] border border-border bg-surface shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 shadow-sm">
             <div className="flex items-center justify-between border-b border-border px-7 py-6">
               <div>
                 <h3 className="text-2xl font-black text-text">
@@ -384,7 +396,7 @@ export default function MentorDashboardPage() {
 
             <div className="overflow-x-auto">
               <table className="w-full min-w-[700px] text-left">
-                <thead className="border-b border-border bg-bg/50">
+                <thead className="border-b border-gray-200 dark:border-border bg-gray-50 dark:bg-elevated/80">
                   <tr>
                     <th className="px-7 py-4 text-xs font-black uppercase tracking-[0.15em] text-muted">
                       Student
@@ -408,7 +420,7 @@ export default function MentorDashboardPage() {
                   {RECENT_ENROLLMENTS.map((req, i) => (
                     <tr
                       key={i}
-                      className="transition-all hover:bg-bg/50"
+                      className="transition-all hover:bg-elevated/60 dark:hover:bg-elevated/80"
                     >
                       <td className="px-7 py-5">
                         <div className="flex items-center gap-4">
@@ -453,8 +465,8 @@ export default function MentorDashboardPage() {
 <div
   className="
     rounded-[5px]
-    border border-border
-    bg-surface
+    border border-gray-200 dark:border-border
+    bg-white dark:bg-elevated/80
     p-8
     shadow-sm
     transition-all duration-300
@@ -462,7 +474,7 @@ export default function MentorDashboardPage() {
   "
 >
   {/* HEADER */}
-  <div className="flex items-center justify-between">
+  <div className="flex items-center p-3 justify-between">
     <div>
       <h3 className="text-2xl font-black text-text">
         Course Performance
@@ -589,7 +601,7 @@ export default function MentorDashboardPage() {
         {/* RIGHT SIDE */}
         <div className="space-y-8">
           {/* PENDING Q&A */}
-          <div className="rounded-[5px] border border-border bg-surface p-10 shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-10 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-text">
                 Q&A Pending
@@ -601,7 +613,7 @@ export default function MentorDashboardPage() {
             </div>
 
             <div className="mt-6 space-y-5">
-              <div className="rounded-[5px] border border-border bg-bg/60 p-5">
+              <div className="rounded-[5px] border border-gray-200 dark:border-border bg-gray-50 dark:bg-elevated/90 p-5">
                 <div className="flex gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[5px] bg-blue-500/10 font-black text-blue-500">
                     JD
@@ -622,7 +634,7 @@ export default function MentorDashboardPage() {
                       Cloud Architecture · Lesson 3
                     </p>
 
-                    <p className="mt-4 rounded-[5px] border border-border bg-surface p-4 text-sm leading-7 text-text">
+                    <p className="mt-4 rounded-[5px] border border-gray-200 dark:border-border bg-gray-50/80 dark:bg-black/30 p-4 text-sm leading-7 text-text">
                       “Could you clarify the difference between
                       standard and FIFO queues here?”
                     </p>
@@ -638,7 +650,7 @@ export default function MentorDashboardPage() {
           </div>
 
           {/* RECENT ACTIVITY */}
-          <div className="rounded-[5px] border border-border bg-surface p-3 shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-3 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-text">
                 Recent Activity
@@ -654,7 +666,7 @@ export default function MentorDashboardPage() {
                 return (
                   <div
                     key={i}
-                    className="flex gap-4 rounded-[5px] border border-border bg-bg/50 p-4 transition-all hover:bg-bg"
+                    className="flex gap-4 rounded-[5px] border border-gray-200 dark:border-border bg-gray-50 dark:bg-elevated/90 p-4 transition-all hover:bg-gray-100 dark:hover:bg-elevated"
                   >
                     <div
                       className={`
