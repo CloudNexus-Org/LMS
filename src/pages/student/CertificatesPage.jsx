@@ -110,7 +110,7 @@ export default function CertificatesPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <div>
         <h1 className="text-[42px] font-bold text-text font-display tracking-tight">My Certificates</h1>
-        <p className="text-muted mt-1 font-medium">Showcase your hard-earned achievements.</p>
+        <p className="text-[20px] mt-1 font-medium">Showcase your hard-earned achievements.</p>
       </div>
 
       {MOCK_CERTS.length === 0 ? (
@@ -286,7 +286,7 @@ bg-surface border border-border
                       rounded-none
 
                       border border-white/10
-bg-blue-500/100
+bg-primary
                       
 
                       px-6

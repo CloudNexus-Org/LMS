@@ -87,51 +87,208 @@ export default function ManageLessonsPage() {
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
-            <Sparkles className="h-3 w-3" />
+          <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
+          
             Course Manager
           </div>
-          <h1 className="text-3xl font-bold text-text font-display tracking-tight">Manage Courses</h1>
+          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Manage Courses</h1>
           <p className="text-muted mt-1 font-medium">Build, edit, and organize your entire curriculum.</p>
         </div>
         <Link
           to="/mentor/upload"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-sm hover:bg-primary-hover hover:-translate-y-0.5 transition-all duration-200"
+         className="
+                  relative
+                  inline-flex
+
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[180px]
+
+                  items-center
+                  justify-center
+
+                  border
+                  border-border
+                  dark:border-border
+
+                  bg-white
+                  dark:bg-primary
+
+                  px-6
+
+                  text-[14px]
+                  font-semibold
+
+                  text-black
+                  dark:text-white
+
+                  overflow-hidden
+                  rounded-none
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+                  transition-all
+                  duration-300
+
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                "
         >
           <Plus className="h-4 w-4" /> New Course
         </Link>
       </div>
 
       {/* ── KPI STRIP ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Students', value: totalStudents.toLocaleString(), icon: Users, color: 'text-primary', bg: 'bg-primary/10', trend: '+12%' },
-          { label: 'Total Revenue', value: totalRevenue, icon: TrendingUp, color: 'text-success', bg: 'bg-success/10', trend: '+18%' },
-          { label: 'Avg. Rating', value: avgRating, icon: Star, color: 'text-warning', bg: 'bg-warning/10', trend: '+0.1' },
-          { label: 'Published', value: `${published}/${COURSES.length}`, icon: Globe, color: 'text-accent', bg: 'bg-accent/10', trend: '' },
-        ].map((kpi) => {
-          const Icon = kpi.icon;
-          return (
-            <div key={kpi.label} className="bg-surface border border-border rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <div className="flex items-center justify-between mb-3">
-                <div className={`h-9 w-9 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
-                  <Icon className="h-4.5 w-4.5" />
-                </div>
-                {kpi.trend && (
-                  <span className="text-xs font-bold text-success bg-success/10 px-2 py-0.5 rounded-lg flex items-center gap-0.5">
-                    <ArrowUpRight className="h-3 w-3" />{kpi.trend}
-                  </span>
-                )}
-              </div>
-              <p className="text-2xl font-display font-bold text-text">{kpi.value}</p>
-              <p className="text-xs font-bold text-muted mt-0.5">{kpi.label}</p>
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  {[
+    {
+      label: 'Total Students',
+      value: totalStudents.toLocaleString(),
+      icon: Users,
+      color: 'text-blue-500',
+      bg: 'bg-blue-500/10',
+      trend: '+12%',
+      line: 'bg-blue-500/20',
+      hover: 'hover:border-blue-500/20',
+    },
+    {
+      label: 'Total Revenue',
+      value: totalRevenue,
+      icon: TrendingUp,
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+      trend: '+18%',
+      line: 'bg-emerald-500/20',
+      hover: 'hover:border-emerald-500/20',
+    },
+    {
+      label: 'Avg. Rating',
+      value: avgRating,
+      icon: Star,
+      color: 'text-orange-500',
+      bg: 'bg-orange-500/10',
+      trend: '+0.1',
+      line: 'bg-orange-500/20',
+      hover: 'hover:border-orange-500/20',
+    },
+    {
+      label: 'Published',
+      value: `${published}/${COURSES.length}`,
+      icon: Globe,
+      color: 'text-violet-500',
+      bg: 'bg-violet-500/10',
+      trend: '',
+      line: 'bg-violet-500/20',
+      hover: 'hover:border-violet-500/20',
+    },
+  ].map((kpi) => {
+    const Icon = kpi.icon;
+
+    return (
+      <div
+        key={kpi.label}
+        className={`
+          group
+          relative overflow-hidden
+
+          rounded-[5px]
+
+          border border-gray-200
+          dark:border-border
+
+          bg-white
+          dark:bg-elevated/80
+
+          px-5 py-4
+
+          shadow-sm
+
+          transition-all duration-300
+
+          hover:-translate-y-1
+
+          ${kpi.hover}
+
+          hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+        `}
+      >
+       
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            {/* ICON */}
+            <div
+              className={`
+                flex h-11 w-11 items-center justify-center
+                rounded-[5px]
+
+                ${kpi.bg}
+                ${kpi.color}
+
+                shadow-sm
+              `}
+            >
+              <Icon className="h-5 w-5" />
             </div>
-          );
-        })}
+
+            {/* VALUE + TITLE */}
+            <div>
+              <h3 className="text-[30px] font-black leading-none text-text">
+                {kpi.value}
+              </h3>
+
+              <p
+                className="
+                  mt-1
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.18em]
+                  text-muted
+                "
+              >
+                {kpi.label}
+              </p>
+            </div>
+
+            {/* TREND */}
+            {kpi.trend && (
+              <div
+                className="
+                  ml-auto
+                  flex items-center gap-1
+
+                  rounded-[5px]
+
+                  bg-emerald-500/10
+
+                  px-2 py-1
+
+                  text-[10px]
+                  font-black
+
+                  text-emerald-500
+                "
+              >
+                <ArrowUpRight className="h-3 w-3" />
+                {kpi.trend}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+    );
+  })}
+</div>
 
       {/* ── FILTER TABS ── */}
-      <div className="flex items-center gap-1 bg-bg border border-border rounded-xl p-1 w-fit">
+      <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1 w-fit">
         {[
           { key: 'all', label: `All Courses (${COURSES.length})` },
           { key: 'published', label: 'Published' },
@@ -140,7 +297,7 @@ export default function ManageLessonsPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all capitalize ${activeTab === tab.key ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
+            className={`px-4 py-2 rounded-[5px] text-xs font-bold transition-all capitalize ${activeTab === tab.key ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
           >
             {tab.label}
           </button>
@@ -152,12 +309,12 @@ export default function ManageLessonsPage() {
         {filtered.map((course) => {
           const isExpanded = expandedCourse === course.id;
           return (
-            <div key={course.id} className="bg-surface border border-border rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
+            <div key={course.id} className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden transition-all duration-300">
 
               {/* Course Header Row */}
               <div className="flex items-center gap-5 p-5">
                 {/* Thumbnail */}
-                <div className={`h-16 w-20 rounded-xl ${course.thumbnail} flex-shrink-0 flex items-center justify-center shadow-sm`}>
+                <div className={`h-16 w-20 rounded-[5px] ${course.thumbnail} flex-shrink-0 flex items-center justify-center shadow-sm`}>
                   <BookOpen className="h-7 w-7 text-white/80" />
                 </div>
 
@@ -221,15 +378,15 @@ export default function ManageLessonsPage() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <button className="h-9 w-9 flex items-center justify-center rounded-xl border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all">
+                  <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all">
                     <Edit3 className="h-4 w-4" />
                   </button>
-                  <button className="h-9 w-9 flex items-center justify-center rounded-xl border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all">
+                  <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all">
                     <EyeOff className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setExpandedCourse(isExpanded ? null : course.id)}
-                    className="h-9 w-9 flex items-center justify-center rounded-xl border border-border text-muted hover:text-text hover:bg-bg transition-all"
+                    className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-text hover:bg-bg transition-all"
                   >
                     <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                   </button>
@@ -253,7 +410,7 @@ export default function ManageLessonsPage() {
 
                         <span className="text-xs font-bold text-muted w-5 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
 
-                        <div className={`h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                        <div className={`h-7 w-7 rounded-[5px] flex items-center justify-center flex-shrink-0 ${
                           lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
                         }`}>
                           <LessonTypeIcon type={lesson.type} />
@@ -278,10 +435,10 @@ export default function ManageLessonsPage() {
                           }`}>{lesson.published ? 'Live' : 'Draft'}</span>
 
                           <div className="hidden group-hover:flex items-center gap-1">
-                            <button className="h-7 w-7 flex items-center justify-center rounded-lg border border-border text-muted hover:text-primary hover:border-primary/40 transition-all">
+                            <button className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 transition-all">
                               <Edit3 className="h-3.5 w-3.5" />
                             </button>
-                            <button className="h-7 w-7 flex items-center justify-center rounded-lg border border-border text-muted hover:text-danger hover:border-danger/40 transition-all">
+                            <button className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 transition-all">
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           </div>
@@ -293,18 +450,18 @@ export default function ManageLessonsPage() {
                   {/* Course Footer */}
                   <div className="px-5 py-4 bg-bg/30 border-t border-border flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-lg hover:border-primary/40 transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-[5px] hover:border-primary/40 transition-all">
                         <BarChart className="h-3.5 w-3.5" /> Analytics
                       </button>
-                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-lg hover:border-primary/40 transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-[5px] hover:border-primary/40 transition-all">
                         <Eye className="h-3.5 w-3.5" /> Preview
                       </button>
-                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-lg hover:border-primary/40 transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-[5px] hover:border-primary/40 transition-all">
                         <Download className="h-3.5 w-3.5" /> Export
                       </button>
                     </div>
                     {course.status === 'Draft' && (
-                      <button className="flex items-center gap-1.5 text-xs font-bold bg-primary text-white px-4 py-1.5 rounded-lg hover:bg-primary-hover transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold bg-primary text-white px-4 py-1.5 rounded-[5px] hover:bg-primary-hover transition-all">
                         <Globe className="h-3.5 w-3.5" /> Submit for Review
                       </button>
                     )}
@@ -318,11 +475,11 @@ export default function ManageLessonsPage() {
 
       {/* ── EMPTY STATE for filtered ── */}
       {filtered.length === 0 && (
-        <div className="text-center py-20 bg-surface border border-border rounded-2xl">
+        <div className="text-center py-20 bg-surface border border-border rounded-[5px]">
           <BookOpen className="h-14 w-14 mx-auto text-muted opacity-30 mb-4" />
           <p className="font-bold text-text">No courses in this category</p>
           <p className="text-sm text-muted mt-1">Create your first course to get started.</p>
-          <Link to="/mentor/upload" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
+          <Link to="/mentor/upload" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-[5px] font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
             <Plus className="h-4 w-4" /> Create Course
           </Link>
         </div>

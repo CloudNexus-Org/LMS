@@ -57,7 +57,7 @@ export default function StudentsPage() {
             <Sparkles className="h-3 w-3" />
             Student Management
           </div>
-          <h1 className="text-3xl font-bold text-text font-display tracking-tight">Student Roster</h1>
+          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Student Roster</h1>
           <p className="text-muted mt-1 font-medium">Manage learners, track progress, and foster engagement.</p>
         </div>
         <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-surface border border-border rounded-xl font-bold text-sm text-muted hover:text-text hover:border-primary/40 transition-all shadow-sm">
@@ -66,32 +66,150 @@ export default function StudentsPage() {
       </div>
 
       {/* ── KPI STRIP ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Students', value: STUDENTS.length, icon: Users, color: 'text-primary', bg: 'bg-primary/10', trend: '+12%' },
-          { label: 'Active Now', value: active, icon: Activity, color: 'text-success', bg: 'bg-success/10', trend: '' },
-          { label: 'Completed', value: completed, icon: Award, color: 'text-accent', bg: 'bg-accent/10', trend: '' },
-          { label: 'Avg Progress', value: `${avgProgress}%`, icon: TrendingUp, color: 'text-warning', bg: 'bg-warning/10', trend: '+5%' },
-        ].map((kpi) => {
-          const Icon = kpi.icon;
-          return (
-            <div key={kpi.label} className="bg-surface border border-border rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <div className="flex items-center justify-between mb-3">
-                <div className={`h-9 w-9 rounded-xl ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
-                  <Icon className="h-4.5 w-4.5" />
-                </div>
-                {kpi.trend && (
-                  <span className="text-xs font-bold text-success bg-success/10 px-2 py-0.5 rounded-lg flex items-center gap-0.5">
-                    <ArrowUpRight className="h-3 w-3" />{kpi.trend}
-                  </span>
-                )}
-              </div>
-              <p className="text-2xl font-display font-bold text-text">{kpi.value}</p>
-              <p className="text-xs font-bold text-muted mt-0.5">{kpi.label}</p>
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  {[
+    {
+      label: 'Total Students',
+      value: STUDENTS.length,
+      icon: Users,
+      color: 'text-blue-500',
+      bg: 'bg-blue-500/10',
+      trend: '+12%',
+      line: 'bg-blue-500/20',
+      hover: 'hover:border-blue-500/20',
+    },
+    {
+      label: 'Active Now',
+      value: active,
+      icon: Activity,
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+      trend: '',
+      line: 'bg-emerald-500/20',
+      hover: 'hover:border-emerald-500/20',
+    },
+    {
+      label: 'Completed',
+      value: completed,
+      icon: Award,
+      color: 'text-violet-500',
+      bg: 'bg-violet-500/10',
+      trend: '',
+      line: 'bg-violet-500/20',
+      hover: 'hover:border-violet-500/20',
+    },
+    {
+      label: 'Avg Progress',
+      value: `${avgProgress}%`,
+      icon: TrendingUp,
+      color: 'text-orange-500',
+      bg: 'bg-orange-500/10',
+      trend: '+5%',
+      line: 'bg-orange-500/20',
+      hover: 'hover:border-orange-500/20',
+    },
+  ].map((kpi) => {
+    const Icon = kpi.icon;
+
+    return (
+      <div
+        key={kpi.label}
+        className={`
+          group
+          relative overflow-hidden
+
+          rounded-[5px]
+
+          border border-gray-200
+          dark:border-border
+
+          bg-white
+          dark:bg-elevated/80
+
+          px-5 py-4
+
+          shadow-sm
+
+          transition-all duration-300
+
+          hover:-translate-y-1
+
+          ${kpi.hover}
+
+          hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+        `}
+      >
+        
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            {/* ICON */}
+            <div
+              className={`
+                flex h-11 w-11 items-center justify-center
+                rounded-[10px]
+
+                ${kpi.bg}
+                ${kpi.color}
+
+                shadow-sm
+              `}
+            >
+              <Icon className="h-5 w-5" />
             </div>
-          );
-        })}
+
+            {/* VALUE + TITLE */}
+            <div>
+              <h3 className="text-[25px] font-black leading-none text-text">
+                {kpi.value}
+              </h3>
+
+              <p
+                className="
+                  mt-1
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.18em]
+                  text-muted
+                "
+              >
+                {kpi.label}
+              </p>
+            </div>
+
+            {/* TREND */}
+            {kpi.trend && (
+              <div
+                className="
+                  ml-auto
+                  flex items-center gap-1
+
+                  rounded-[5px]
+
+                  bg-emerald-500/10
+
+                  px-2 py-1
+
+                  text-[10px]
+                  font-black
+
+                  text-emerald-500
+                "
+              >
+                <ArrowUpRight className="h-3 w-3" />
+                {kpi.trend}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+    );
+  })}
+</div>
+
+
 
       {/* ── TABLE CARD ── */}
       <div className="bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">

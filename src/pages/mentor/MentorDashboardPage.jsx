@@ -320,56 +320,104 @@ export default function MentorDashboardPage() {
       </div>
 
       {/* KPI GRID */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {STATS.map((stat) => {
-          const Icon = stat.icon;
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  {STATS.map((stat) => {
+    const Icon = stat.icon;
 
-          return (
+    return (
+      <div
+        key={stat.label}
+        className={`
+          group
+          relative overflow-hidden
+
+          rounded-[5px]
+
+          border border-gray-200
+          dark:border-border
+
+          bg-white
+          dark:bg-elevated/80
+
+          px-5 py-4
+
+          shadow-sm
+
+          transition-all duration-300
+
+          hover:-translate-y-1
+          hover:border-primary/20
+
+          hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+        `}
+      >
+        
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            {/* ICON */}
             <div
-              key={stat.label}
+              className={`
+                flex h-11 w-11 items-center justify-center
+                rounded-[10px]
+
+                ${stat.bg}
+                ${stat.color}
+
+                shadow-sm
+              `}
+            >
+              <Icon className="h-5 w-5" />
+            </div>
+
+            {/* VALUE + TITLE */}
+            <div>
+              <h3 className="text-[25px] font-black leading-none text-text">
+                {stat.value}
+              </h3>
+
+              <p
+                className="
+                  mt-1
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.18em]
+                  text-muted
+                "
+              >
+                {stat.label}
+              </p>
+            </div>
+
+            {/* TREND */}
+            <div
               className="
-                group relative overflow-hidden
+                ml-auto
+                flex items-center gap-1
+
                 rounded-[5px]
-                border border-gray-200 dark:border-border
-                bg-white dark:bg-elevated/80
-                p-6
-                transition-all duration-300
-                hover:-translate-y-1
-                hover:shadow-[0_20px_50px_rgba(37,99,235,0.08)]
+
+                bg-emerald-500/10
+
+                px-2 py-1
+
+                text-[10px]
+                font-black
+
+                text-emerald-500
               "
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.04] via-transparent to-cyan-400/[0.04] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <div className="relative z-10">
-                <div className="flex items-start justify-between">
-                  <div
-                    className={`
-                      flex h-14 w-14 items-center justify-center rounded-[5px]
-                      ${stat.bg}
-                      ${stat.color}
-                    `}
-                  >
-                    <Icon className="h-7 w-7" />
-                  </div>
-
-                  <div className="flex items-center gap-1 rounded-[5px] bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-500">
-                    <TrendingUp className="h-3 w-3" />
-                    {stat.trend}
-                  </div>
-                </div>
-
-                <p className="mt-6 text-sm font-bold uppercase tracking-wide text-muted">
-                  {stat.label}
-                </p>
-
-                <h3 className="mt-2 text-4xl font-black tracking-tight text-text">
-                  {stat.value}
-                </h3>
-              </div>
+              <TrendingUp className="h-3 w-3" />
+              {stat.trend}
             </div>
-          );
-        })}
+          </div>
+        </div>
       </div>
+    );
+  })}
+</div>
 
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">

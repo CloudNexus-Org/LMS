@@ -90,23 +90,15 @@ const Analytics = () => {
       className={`
         group
         relative overflow-hidden
-
         rounded-[5px]
-
         border border-gray-200
         dark:border-border
-
         bg-white
         dark:bg-elevated/80
-
         px-5 py-4
-
         shadow-sm
-
         transition-all duration-300
-
         hover:-translate-y-1
-
         ${item.hover}
         ${item.glow}
       `}
@@ -136,7 +128,7 @@ const Analytics = () => {
 
           {/* VALUE + TITLE */}
           <div>
-            <h3 className="text-[30px] font-black leading-none">
+            <h3 className="text-[20px] font-black leading-none">
               {item.value}
             </h3>
 

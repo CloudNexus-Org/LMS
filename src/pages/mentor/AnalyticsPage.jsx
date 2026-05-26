@@ -143,101 +143,148 @@ export default function AnalyticsPage() {
       </div>
 
       {/* KPI OVERVIEW */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          {
-            label: "Course Views",
-            value: "14.2k",
-            trend: "+24%",
-            icon: Eye,
-            color: "text-cyan-500",
-            bg: "bg-cyan-500/10",
-          },
-          {
-            label: "Conversion Rate",
-            value: "8.4%",
-            trend: "+1.2%",
-            icon: Activity,
-            color: "text-emerald-500",
-            bg: "bg-emerald-500/10",
-          },
-          {
-            label: "Completion Rate",
-            value: "42%",
-            trend: "-2%",
-            icon: TrendingUp,
-            color: "text-orange-500",
-            bg: "bg-orange-500/10",
-          },
-          {
-            label: "Active Students",
-            value: "842",
-            trend: "+15%",
-            icon: Users,
-            color: "text-violet-500",
-            bg: "bg-violet-500/10",
-          },
-        ].map((stat, i) => {
-          const Icon = stat.icon;
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  {[
+    {
+      label: "Course Views",
+      value: "14.2k",
+      trend: "+24%",
+      icon: Eye,
+      color: "text-cyan-500",
+      bg: "bg-cyan-500/10",
+      line: "bg-cyan-500/20",
+      hover: "hover:border-cyan-500/20",
+    },
+    {
+      label: "Conversion Rate",
+      value: "8.4%",
+      trend: "+1.2%",
+      icon: Activity,
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+      line: "bg-emerald-500/20",
+      hover: "hover:border-emerald-500/20",
+    },
+    {
+      label: "Completion Rate",
+      value: "42%",
+      trend: "-2%",
+      icon: TrendingUp,
+      color: "text-orange-500",
+      bg: "bg-orange-500/10",
+      line: "bg-orange-500/20",
+      hover: "hover:border-orange-500/20",
+    },
+    {
+      label: "Active Students",
+      value: "842",
+      trend: "+15%",
+      icon: Users,
+      color: "text-violet-500",
+      bg: "bg-violet-500/10",
+      line: "bg-violet-500/20",
+      hover: "hover:border-violet-500/20",
+    },
+  ].map((stat, i) => {
+    const Icon = stat.icon;
 
-          return (
+    return (
+      <div
+        key={i}
+        className={`
+          group
+          relative overflow-hidden
+
+          rounded-[5px]
+
+          border border-gray-200
+          dark:border-border
+
+          bg-white
+          dark:bg-elevated/80
+
+          px-5 py-4
+
+          shadow-sm
+
+          transition-all duration-300
+
+          hover:-translate-y-1
+
+          ${stat.hover}
+
+          hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+        `}
+      >
+       
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            {/* ICON */}
             <div
-              key={i}
-              className="
-                group relative overflow-hidden
-                rounded-[5px]
-                border border-border
-                bg-surface
-                p-6
+              className={`
+                flex h-11 w-11 items-center justify-center
+                rounded-[10px]
+
+                ${stat.bg}
+                ${stat.color}
+
                 shadow-sm
-                transition-all duration-300
-                hover:-translate-y-1
-              "
+              `}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <div className="relative z-10">
-                <div className="flex items-start justify-between">
-                  <div
-                    className={`
-                      flex h-14 w-14 items-center justify-center rounded-[5px]
-                      ${stat.bg}
-                      ${stat.color}
-                    `}
-                  >
-                    <Icon className="h-7 w-7" />
-                  </div>
-
-                  <div
-                    className={`
-                      rounded-[5px]
-                      px-3 py-1
-                      text-xs font-black
-
-                      ${
-                        stat.trend.startsWith("+")
-                          ? "bg-emerald-500/10 text-emerald-500"
-                          : "bg-red-500/10 text-red-500"
-                      }
-                    `}
-                  >
-                    {stat.trend}
-                  </div>
-                </div>
-
-                <p className="mt-6 text-xs font-black uppercase tracking-[0.15em] text-muted">
-                  {stat.label}
-                </p>
-
-                <h3 className="mt-2 text-4xl font-black text-text">
-                  {stat.value}
-                </h3>
-              </div>
+              <Icon className="h-5 w-5" />
             </div>
-          );
-        })}
-      </div>
 
+            {/* VALUE + TITLE */}
+            <div>
+              <h3 className="text-[30px] font-black leading-none text-text">
+                {stat.value}
+              </h3>
+
+              <p
+                className="
+                  mt-1
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.18em]
+                  text-muted
+                "
+              >
+                {stat.label}
+              </p>
+            </div>
+
+            {/* TREND */}
+            <div
+              className={`
+                ml-auto
+                flex items-center gap-1
+
+                rounded-[5px]
+
+                px-2 py-1
+
+                text-[10px]
+                font-black
+
+                ${
+                  stat.trend.startsWith("+")
+                    ? "bg-emerald-500/10 text-emerald-500"
+                    : "bg-red-500/10 text-red-500"
+                }
+              `}
+            >
+              <ArrowUpRight className="h-3 w-3" />
+              {stat.trend}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

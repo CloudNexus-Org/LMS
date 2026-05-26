@@ -175,107 +175,117 @@ export default function NotificationsPage() {
         </div>
 
         {/* STATS */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {[
-            {
-              title: "Unread Alerts",
-              value: notifications.filter((n) => n.unread).length,
-              Icon: Bell,
-              iconColor: "text-blue-500",
-              bg: "from-blue-500/30 via-blue-500/10 to-cyan-400/20",
-              glow:
-                "hover:shadow-[0_25px_60px_rgba(37,99,235,0.18)]",
-            },
-            {
-              title: "Mentor Messages",
-              value: notifications.filter(
-                (n) => n.type === "mentorship"
-              ).length,
-              Icon: MessageSquare,
-              iconColor: "text-emerald-500",
-              bg: "from-emerald-500/30 via-emerald-500/10 to-lime-400/20",
-              glow:
-                "hover:shadow-[0_25px_60px_rgba(16,185,129,0.18)]",
-            },
-            {
-              title: "Achievements",
-              value: notifications.filter(
-                (n) => n.type === "system"
-              ).length,
-              Icon: Award,
-              iconColor: "text-orange-500",
-              bg: "from-orange-500/30 via-orange-500/10 to-yellow-400/20",
-              glow:
-                "hover:shadow-[0_25px_60px_rgba(249,115,22,0.18)]",
-            },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className={`
-                group
-                relative overflow-hidden rounded-[6px]
-                border
-                ${cardBorder}
-                ${cardBg}
-                p-6
-                transition-all duration-500
-                hover:-translate-y-2
-                hover:border-primary/20
-                ${item.glow}
-              `}
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+  {[
+    {
+      title: "Unread Alerts",
+      value: notifications.filter((n) => n.unread).length,
+      Icon: Bell,
+      iconColor: "text-blue-500",
+      line: "bg-blue-500/20",
+      iconBg: "bg-blue-500/10",
+      hover: "hover:border-blue-500/20",
+      glow:
+        "hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]",
+    },
+    {
+      title: "Mentor Messages",
+      value: notifications.filter(
+        (n) => n.type === "mentorship"
+      ).length,
+      Icon: MessageSquare,
+      iconColor: "text-emerald-500",
+      line: "bg-emerald-500/20",
+      iconBg: "bg-emerald-500/10",
+      hover: "hover:border-emerald-500/20",
+      glow:
+        "hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)]",
+    },
+    {
+      title: "Achievements",
+      value: notifications.filter(
+        (n) => n.type === "system"
+      ).length,
+      Icon: Award,
+      iconColor: "text-orange-500",
+      line: "bg-orange-500/20",
+      iconBg: "bg-orange-500/10",
+      hover: "hover:border-orange-500/20",
+      glow:
+        "hover:shadow-[0_20px_50px_rgba(249,115,22,0.10)]",
+    },
+  ].map((item, i) => (
+    <div
+      key={i}
+      className={`
+        group
+        relative overflow-hidden
+
+        rounded-[5px]
+
+        border border-gray-200
+        dark:border-border
+
+        bg-white
+        dark:bg-elevated/80
+
+        px-5 py-4
+
+        shadow-sm
+
+        transition-all duration-300
+
+        hover:-translate-y-1
+
+        ${item.hover}
+        ${item.glow}
+      `}
+    >
+      
+
+      {/* CONTENT */}
+      <div className="relative z-10">
+        <div className="flex items-center gap-3">
+          {/* ICON */}
+          <div
+            className={`
+              flex h-11 w-11 items-center justify-center
+              rounded-[10px]
+
+              ${item.iconBg}
+
+              shadow-sm
+
+              ${item.iconColor}
+            `}
+          >
+            <item.Icon className="h-5 w-5" />
+          </div>
+
+          {/* VALUE + TITLE */}
+          <div>
+            <h3 className="text-[30px] font-black leading-none">
+              {item.value}
+            </h3>
+
+            <p
+              className="
+                mt-1
+                text-[10px]
+                font-black
+                uppercase
+                tracking-[0.18em]
+                text-muted
+              "
             >
-              {/* GLOW */}
-              <div
-                className="
-                  pointer-events-none
-                  absolute inset-0
-                  opacity-0
-                  transition duration-500
-                  group-hover:opacity-100
-                  bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_45%)]
-                "
-              />
-
-              <div className="relative z-10 flex items-center justify-between">
-                <div>
-                  <p className={`text-sm font-semibold ${textSecondary}`}>
-                    {item.title}
-                  </p>
-
-                  <h3 className="mt-3 text-4xl font-black">
-                    {item.value}
-                  </h3>
-                </div>
-
-                {/* ICON */}
-                <div
-                  className={`
-                    relative
-                    flex h-14 w-14 items-center justify-center
-                    rounded-[16px]
-                    bg-gradient-to-br
-                    ${item.bg}
-                    overflow-hidden
-                    shadow-[0_10px_30px_rgba(0,0,0,0.08)]
-                  `}
-                >
-                  <div
-                    className="
-                      absolute inset-0
-                      bg-gradient-to-br
-                      from-white/40
-                      to-transparent
-                    "
-                  />
-
-                  <item.Icon
-                    className={`relative z-10 h-7 w-7 ${item.iconColor}`}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+              {item.title}
+            </p>
+          </div>
         </div>
+      </div>
+    </div>
+  ))}
+</div>
 
         {/* MAIN CARD */}
         <div

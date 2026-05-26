@@ -193,88 +193,146 @@ export default function RevenuePage() {
       </div>
 
       {/* KPI GRID */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          {
-            title: "Available Balance",
-            value: "$4,250",
-            growth: "+12%",
-            icon: Wallet,
-            color: "text-blue-500",
-            bg: "bg-blue-500/10",
-          },
-          {
-            title: "Lifetime Earnings",
-            value: "$42.8k",
-            growth: "+24%",
-            icon: TrendingUp,
-            color: "text-emerald-500",
-            bg: "bg-emerald-500/10",
-          },
-          {
-            title: "Pending Payouts",
-            value: "$2,140",
-            growth: "+4%",
-            icon: Clock3,
-            color: "text-orange-500",
-            bg: "bg-orange-500/10",
-          },
-          {
-            title: "Transactions",
-            value: "148",
-            growth: "+8%",
-            icon: Receipt,
-            color: "text-violet-500",
-            bg: "bg-violet-500/10",
-          },
-        ].map((card, i) => {
-          const Icon = card.icon;
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  {[
+    {
+      title: "Available Balance",
+      value: "$4,250",
+      growth: "+12%",
+      icon: Wallet,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+      line: "bg-blue-500/20",
+      hover: "hover:border-blue-500/20",
+    },
+    {
+      title: "Lifetime Earnings",
+      value: "$42.8k",
+      growth: "+24%",
+      icon: TrendingUp,
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+      line: "bg-emerald-500/20",
+      hover: "hover:border-emerald-500/20",
+    },
+    {
+      title: "Pending Payouts",
+      value: "$2,140",
+      growth: "+4%",
+      icon: Clock3,
+      color: "text-orange-500",
+      bg: "bg-orange-500/10",
+      line: "bg-orange-500/20",
+      hover: "hover:border-orange-500/20",
+    },
+    {
+      title: "Transactions",
+      value: "148",
+      growth: "+8%",
+      icon: Receipt,
+      color: "text-violet-500",
+      bg: "bg-violet-500/10",
+      line: "bg-violet-500/20",
+      hover: "hover:border-violet-500/20",
+    },
+  ].map((card, i) => {
+    const Icon = card.icon;
 
-          return (
+    return (
+      <div
+        key={i}
+        className={`
+          group
+          relative overflow-hidden
+
+          rounded-[5px]
+
+          border border-gray-200
+          dark:border-border
+
+          bg-white
+          dark:bg-elevated/80
+
+          px-5 py-4
+
+          shadow-sm
+
+          transition-all duration-300
+
+          hover:-translate-y-1
+
+          ${card.hover}
+
+          hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+        `}
+      >
+        
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            {/* ICON */}
             <div
-              key={i}
-              className="
-                group relative overflow-hidden
-                rounded-[5px]
-                border border-gray-200 dark:border-border
-                bg-white dark:bg-elevated/80
-                p-6
+              className={`
+                flex h-11 w-11 items-center justify-center
+                rounded-[10px]
+
+                ${card.bg}
+                ${card.color}
+
                 shadow-sm
-                transition-all duration-300
-                hover:-translate-y-1
+              `}
+            >
+              <Icon className="h-5 w-5" />
+            </div>
+
+            {/* VALUE + TITLE */}
+            <div>
+              <h3 className="text-[22px] font-black leading-none text-text">
+                {card.value}
+              </h3>
+
+              <p
+                className="
+                  mt-1
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.18em]
+                  text-muted
+                "
+              >
+                {card.title}
+              </p>
+            </div>
+
+            {/* GROWTH */}
+            <div
+              className="
+                ml-auto
+                flex items-center gap-1
+
+                rounded-[5px]
+
+                bg-emerald-500/10
+
+                px-2 py-1
+
+                text-[10px]
+                font-black
+
+                text-emerald-500
               "
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <div className="relative z-10">
-                <div className="flex items-start justify-between">
-                  <div
-                    className={`
-                      flex h-14 w-14 items-center justify-center rounded-[5px]
-                      ${card.bg}
-                      ${card.color}
-                    `}
-                  >
-                    <Icon className="h-7 w-7" />
-                  </div>
-
-                  <div className="rounded-[5px] bg-emerald-500/10 px-3 py-1 text-xs font-black text-emerald-500">
-                    {card.growth}
-                  </div>
-                </div>
-
-                <p className="mt-6 text-xs font-black uppercase tracking-[0.15em] text-muted">
-                  {card.title}
-                </p>
-
-                <h3 className="mt-2 text-4xl font-black text-text">
-                  {card.value}
-                </h3>
-              </div>
+              <ArrowUpRight className="h-3 w-3" />
+              {card.growth}
             </div>
-          );
-        })}
+          </div>
+        </div>
       </div>
+    );
+  })}
+</div>
 
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

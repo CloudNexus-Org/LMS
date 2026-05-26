@@ -70,7 +70,7 @@ export default function UploadCoursePage() {
 
       {/* ── HEADER ── */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-text font-display tracking-tight">Create New Course</h1>
+        <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Create New Course</h1>
         <p className="text-muted mt-2 font-medium">Follow the wizard to launch your next hit course on Cloud Nexus.</p>
       </div>
 
@@ -111,7 +111,7 @@ export default function UploadCoursePage() {
       </div>
 
       {/* ── FORM CARD ── */}
-      <div className="bg-surface border border-border rounded-2xl shadow-card overflow-hidden">
+      <div className="bg-surface border border-border rounded-[5px] shadow-card overflow-hidden">
 
         {/* Progress bar */}
         <div className="h-1 bg-border">
@@ -139,7 +139,7 @@ export default function UploadCoursePage() {
                   <select
                     value={selectedCategory}
                     onChange={e => setSelectedCategory(e.target.value)}
-                    className="w-full bg-bg border border-border rounded-xl px-4 py-3 text-sm focus:border-primary outline-none text-text transition-all font-medium appearance-none"
+                    className="w-full bg-bg border border-border rounded-[5px] px-4 py-3 text-sm focus:border-primary outline-none text-text transition-all font-medium appearance-none"
                   >
                     <option value="">Select category...</option>
                     {CATEGORIES.map(c => <option key={c}>{c}</option>)}
@@ -153,7 +153,7 @@ export default function UploadCoursePage() {
                       <button
                         key={l}
                         onClick={() => setSelectedLevel(l)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${selectedLevel === l ? 'bg-primary border-primary text-white' : 'bg-bg border-border text-muted hover:border-primary/40 hover:text-text'}`}
+                        className={`px-3 py-1.5 rounded-[5px] text-xs font-bold border transition-all ${selectedLevel === l ? 'bg-primary border-primary text-white' : 'bg-bg border-border text-muted hover:border-primary/40 hover:text-text'}`}
                       >
                         {l}
                       </button>
@@ -166,15 +166,15 @@ export default function UploadCoursePage() {
                   <textarea
                     rows="3"
                     placeholder="Briefly describe what students will learn and why this course is valuable..."
-                    className="w-full bg-bg border border-border rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-text transition-all resize-none font-medium"
+                    className="w-full bg-bg border border-border rounded-[5px]` px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-text transition-all resize-none font-medium"
                   />
                 </div>
 
                 {/* Thumbnail Upload */}
                 <div className="sm:col-span-2 space-y-2">
                   <label className="text-sm font-bold text-text">Course Thumbnail</label>
-                  <div className="border-2 border-dashed border-border hover:border-primary/50 transition-colors rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer bg-bg/50 group">
-                    <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <div className="border-2 border-dashed border-border hover:border-primary/50 transition-colors rounded-[5px] p-8 flex flex-col items-center justify-center text-center cursor-pointer bg-bg/50 group">
+                    <div className="h-12 w-12 rounded-[5px] bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <Image className="h-6 w-6" />
                     </div>
                     <p className="font-bold text-text text-sm">Click to upload or drag and drop</p>
@@ -185,9 +185,9 @@ export default function UploadCoursePage() {
                 {/* Tags */}
                 <div className="sm:col-span-2 space-y-2">
                   <label className="text-sm font-bold text-text">Tags</label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-bg border border-border rounded-xl min-h-[48px]">
+                  <div className="flex flex-wrap gap-2 p-3 bg-bg border border-border rounded-[5px] min-h-[48px]">
                     {['React', 'TypeScript', 'State Management'].map(tag => (
-                      <span key={tag} className="flex items-center gap-1.5 bg-primary/10 text-primary text-xs font-bold px-2.5 py-1 rounded-lg">
+                      <span key={tag} className="flex items-center gap-1.5 bg-primary/10 text-primary text-xs font-bold px-2.5 py-1 rounded-[5px]">
                         <Tag className="h-3 w-3" /> {tag}
                         <button className="text-primary/60 hover:text-primary"><X className="h-3 w-3" /></button>
                       </span>
@@ -209,22 +209,22 @@ export default function UploadCoursePage() {
                 </div>
                 <button
                   onClick={addLesson}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary-hover transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover transition-all"
                 >
                   <Plus className="h-4 w-4" /> Add Lesson
                 </button>
               </div>
 
               {/* Video upload area */}
-              <div className="border-2 border-dashed border-border hover:border-primary/50 rounded-xl p-6 bg-bg/50 flex items-center gap-5 cursor-pointer group transition-colors">
-                <div className="h-12 w-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <div className="border-2 border-dashed border-border hover:border-primary/50 rounded-[5px] p-6 bg-bg/50 flex items-center gap-5 cursor-pointer group transition-colors">
+                <div className="h-12 w-12 rounded-[5px] bg-accent/10 text-accent flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <Video className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="font-bold text-text text-sm">Drag video files here to upload</p>
                   <p className="text-xs text-muted font-medium mt-0.5">MP4, MOV or AVI · Auto-compressed & transcribed</p>
                 </div>
-                <button className="ml-auto px-4 py-2 border border-border rounded-xl text-xs font-bold text-muted hover:text-text hover:border-primary/40 transition-all flex-shrink-0">
+                <button className="ml-auto px-4 py-2 border border-border rounded-[5px] text-xs font-bold text-muted hover:text-text hover:border-primary/40 transition-all flex-shrink-0">
                   Browse Files
                 </button>
               </div>
@@ -232,11 +232,11 @@ export default function UploadCoursePage() {
               {/* Lesson list */}
               <div className="space-y-2">
                 {lessons.map((lesson, idx) => (
-                  <div key={lesson.id} className="flex items-center gap-3 bg-bg border border-border rounded-xl px-4 py-3 hover:border-primary/30 transition-colors group">
+                  <div key={lesson.id} className="flex items-center gap-3 bg-bg border border-border rounded-[5px] px-4 py-3 hover:border-primary/30 transition-colors group">
                     <GripVertical className="h-4 w-4 text-border group-hover:text-muted cursor-grab flex-shrink-0" />
                     <span className="text-xs font-bold text-muted w-5 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
 
-                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 ${lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'}`}>
+                    <div className={`h-8 w-8 rounded-[5px] flex items-center justify-center flex-shrink-0 ${lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'}`}>
                       {lesson.type === 'quiz' ? <FileText className="h-4 w-4" /> : <Video className="h-4 w-4" />}
                     </div>
 
@@ -248,7 +248,7 @@ export default function UploadCoursePage() {
 
                     <button
                       onClick={() => setLessons(prev => prev.map(l => l.id === lesson.id ? { ...l, free: !l.free } : l))}
-                      className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg transition-all flex-shrink-0 ${lesson.free ? 'bg-success/10 text-success' : 'bg-border text-muted hover:bg-primary/10 hover:text-primary'}`}
+                      className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-[5px] transition-all flex-shrink-0 ${lesson.free ? 'bg-success/10 text-success' : 'bg-border text-muted hover:bg-primary/10 hover:text-primary'}`}
                     >
                       {lesson.free ? <><Globe className="h-3 w-3" /> Free</> : <><Lock className="h-3 w-3" /> Paid</>}
                     </button>
@@ -286,14 +286,14 @@ export default function UploadCoursePage() {
                     <button
                       key={plan.id}
                       onClick={() => setPricingModel(plan.id)}
-                      className={`relative text-left p-5 rounded-2xl border-2 transition-all duration-200 hover:-translate-y-0.5 ${isSelected ? plan.color + ' ' + (plan.id === 'paid' ? 'border-primary' : plan.id === 'free' ? 'border-success' : 'border-accent') : 'border-border bg-bg hover:border-primary/30'}`}
+                      className={`relative text-left p-5 rounded-[5px] border-2 transition-all duration-200 hover:-translate-y-0.5 ${isSelected ? plan.color + ' ' + (plan.id === 'paid' ? 'border-primary' : plan.id === 'free' ? 'border-success' : 'border-accent') : 'border-border bg-bg hover:border-primary/30'}`}
                     >
                       {plan.badge && (
                         <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-primary text-white px-3 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
                           {plan.badge}
                         </span>
                       )}
-                      <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-3 ${
+                      <div className={`h-10 w-10 rounded-[5px] flex items-center justify-center mb-3 ${
                         plan.id === 'free' ? 'bg-success/10 text-success' :
                         plan.id === 'paid' ? 'bg-primary/10 text-primary' :
                         'bg-accent/10 text-accent'
@@ -324,7 +324,7 @@ export default function UploadCoursePage() {
                         type="number"
                         value={customPrice}
                         onChange={e => setCustomPrice(e.target.value)}
-                        className="w-full bg-bg border border-border rounded-xl pl-12 pr-4 py-3 text-xl font-display font-bold focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-text transition-all"
+                        className="w-full bg-bg border border-border rounded-[5px] pl-12 pr-4 py-3 text-xl font-display font-bold focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none text-text transition-all"
                       />
                     </div>
                   </div>
@@ -337,7 +337,7 @@ export default function UploadCoursePage() {
                         <button
                           key={p}
                           onClick={() => setCustomPrice(p)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${customPrice === p ? 'bg-primary/10 text-primary border-primary/30' : 'bg-bg border-border text-muted hover:border-primary/30 hover:text-text'}`}
+                          className={`px-3 py-1.5 rounded-[5px] text-xs font-bold border transition-all ${customPrice === p ? 'bg-primary/10 text-primary border-primary/30' : 'bg-bg border-border text-muted hover:border-primary/30 hover:text-text'}`}
                         >
                           ${p}
                         </button>
@@ -346,7 +346,7 @@ export default function UploadCoursePage() {
                   </div>
 
                   {/* Revenue breakdown */}
-                  <div className="bg-bg border border-border rounded-xl p-4">
+                  <div className="bg-bg border border-border rounded-[5px] p-4">
                     <p className="text-xs font-bold text-muted uppercase tracking-wider mb-3">Revenue Estimate</p>
                     <div className="space-y-2">
                       {[
@@ -368,7 +368,7 @@ export default function UploadCoursePage() {
           {/* ── STEP 4: PUBLISH ── */}
           {step === 4 && (
             <div className="flex flex-col items-center text-center py-6 animate-in fade-in duration-300">
-              <div className="h-24 w-24 rounded-2xl bg-success/10 text-success flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(5,150,105,0.2)]">
+              <div className="h-24 w-24 rounded-[5px] bg-success/10 text-success flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(5,150,105,0.2)]">
                 <CheckCircle2 className="h-12 w-12" />
               </div>
               <h2 className="text-3xl font-bold text-text font-display">Ready to Launch! 🚀</h2>
@@ -384,8 +384,8 @@ export default function UploadCoursePage() {
                 ].map(item => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.label} className="bg-bg border border-border rounded-xl p-4">
-                      <div className={`h-9 w-9 rounded-lg ${item.color} flex items-center justify-center mx-auto mb-2`}>
+                    <div key={item.label} className="bg-bg border border-border rounded-[5px] p-4">
+                      <div className={`h-9 w-9 rounded-[5px] ${item.color} flex items-center justify-center mx-auto mb-2`}>
                         <Icon className="h-4.5 w-4.5" />
                       </div>
                       <p className="text-xs font-bold text-muted">{item.label}</p>
@@ -406,7 +406,7 @@ export default function UploadCoursePage() {
         <div className="px-8 sm:px-10 py-5 border-t border-border bg-bg/30 flex items-center justify-between">
           <button
             onClick={() => setStep(s => Math.max(1, s - 1))}
-            className={`flex items-center gap-2 px-5 py-2.5 border border-border rounded-xl text-sm font-bold text-muted hover:text-text hover:border-primary/40 transition-all ${step === 1 ? 'opacity-0 pointer-events-none' : ''}`}
+            className={`flex items-center gap-2 px-5 py-2.5 border border-border rounded-[5px] text-sm font-bold text-muted hover:text-text hover:border-primary/40 transition-all ${step === 1 ? 'opacity-0 pointer-events-none' : ''}`}
           >
             <ArrowLeft className="h-4 w-4" /> Back
           </button>
@@ -419,7 +419,7 @@ export default function UploadCoursePage() {
 
           <button
             onClick={() => setStep(s => Math.min(STEPS.length, s + 1))}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary-hover hover:-translate-y-0.5 shadow-sm transition-all duration-200"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover hover:-translate-y-0.5 shadow-sm transition-all duration-200"
           >
             {step === STEPS.length ? (
               <><Zap className="h-4 w-4" /> Submit for Review</>
