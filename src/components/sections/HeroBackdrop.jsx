@@ -76,7 +76,7 @@ export default function HeroBackdrop({
         <img
           src={imageSrc}
           alt=""
-          className="hero-bg-img absolute inset-0 w-full h-full object-cover transition-colors duration-300"
+          className="hero-bg-img hidden sm:block absolute inset-0 w-full h-full object-cover transition-colors duration-300"
           aria-hidden
         />
       </div>
