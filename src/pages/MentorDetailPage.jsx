@@ -198,7 +198,7 @@ export default function MentorDetailPage() {
                     </div>
                   </div>
 
-                  {/* Info strip below photo — proper card footer (no overlap) */}
+                  {/* Info strip below photo — proper card  (no overlap) */}
                   <figcaption className="border-t border-border px-4 py-3">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0">
@@ -223,33 +223,7 @@ export default function MentorDetailPage() {
           </Container>
         </section>
 
-        {/* =========================================================
-            QUOTE
-        ========================================================== */}
-        {/* <section className="relative pb-6 md:pb-10">
-          <Container size="lg">
-            <motion.figure
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.55, ease: EASE }}
-              className="relative rounded-2xl border border-border bg-elevated/40 px-6 py-8 backdrop-blur md:px-12 md:py-12"
-            >
-              <Quote
-                size={32}
-                aria-hidden
-                className="absolute left-5 top-5 text-primary/35 md:left-8 md:top-7"
-              />
-              <blockquote className="pl-9 font-display text-[20px] leading-snug tracking-[-0.01em] text-text md:text-[28px] md:leading-[1.25]">
-                &ldquo;{mentor.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-4 pl-9 text-[12px] font-semibold uppercase tracking-[0.22em] text-subtle">
-                — {firstName} · {mentor.role}
-              </figcaption>
-            </motion.figure>
-          </Container>
-        </section> */}
-
+        
         {/* =========================================================
             ABOUT + SPECIALTIES + QUICK FACTS
         ========================================================== */}
@@ -741,8 +715,6 @@ export default function MentorDetailPage() {
           </section>
         )}
       </main>
-
-
     </div>
   );
 }

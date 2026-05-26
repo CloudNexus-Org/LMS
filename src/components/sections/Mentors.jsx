@@ -21,7 +21,7 @@ function MentorCard({ mentor, index }) {
       <Link
         to={`/mentors/${mentor.slug}`}
         aria-label={`View profile for ${mentor.name}`}
-        className="group relative flex h-full flex-col overflow-hidden rounded-[24px] border border-border bg-elevated/40 p-7 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:bg-elevated hover:shadow-xl hover:shadow-primary/[0.08]"
+        className="group relative flex h-full flex-col overflow-hidden rounded-[5px] border border-border bg-elevated/40 p-7 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:bg-elevated hover:shadow-xl hover:shadow-primary/[0.08]"
       >
         {/* Soft background glow on hover */}
         <div className="pointer-events-none absolute -inset-px bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -65,7 +65,7 @@ function MentorCard({ mentor, index }) {
           {mentor.specialties.slice(0, 3).map((spec) => (
             <span
               key={spec}
-              className="inline-flex items-center rounded-full border border-border/80 bg-bg/50 px-3 py-1 text-[11.5px] font-medium text-muted transition-colors group-hover:border-primary/20 group-hover:text-text"
+              className="inline-flex items-center rounded-fu border border-border/80 bg-bg/50 px-3 py-1 text-[11.5px] font-medium text-muted transition-colors group-hover:border-primary/20 group-hover:text-text"
             >
               {spec}
             </span>
@@ -96,7 +96,7 @@ function MentorCard({ mentor, index }) {
             </div>
           </div>
 
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-primary group-hover:text-white group-hover:shadow-md group-hover:shadow-primary/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-primary/10 text-primary opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-primary group-hover:text-white group-hover:shadow-md group-hover:shadow-primary/20">
             <ArrowUpRight size={18} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </div>
         </div>

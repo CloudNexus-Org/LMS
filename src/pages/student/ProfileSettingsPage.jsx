@@ -50,7 +50,7 @@ export default function ProfileSettingsPage() {
         <h1
           className={`
             text-[42px]
-            sm:text-[52px]
+            sm:text-[42px]
             font-black
             leading-[0.95]
             tracking-[-0.05em]
@@ -63,7 +63,7 @@ export default function ProfileSettingsPage() {
         <p
           className={`
             mt-3
-            text-[15px]
+            text-[20px]
             font-medium
             leading-7
             ${textSecondary}
@@ -354,7 +354,7 @@ export default function ProfileSettingsPage() {
               className="space-y-8 p-6 sm:p-8"
             >
 
-              {/* PROFILE */}
+              {/* PROFILE */} 
               <div
                 className={`
                   flex
@@ -678,7 +678,7 @@ export default function ProfileSettingsPage() {
                     overflow-hidden
                     rounded-none
 
-                    bg-[#0a66c2]
+                    bg-primary
 
                     px-8
 

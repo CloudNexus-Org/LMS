@@ -69,10 +69,6 @@ export default function NotificationsPage() {
     ? "text-white/60"
     : "text-slate-500";
 
-  const glassGlow = isDark
-    ? "shadow-[0_20px_60px_rgba(37,99,235,0.18)]"
-    : "shadow-[0_20px_60px_rgba(37,99,235,0.08)]";
-
   const markAllRead = () => {
     setNotifications(
       notifications.map((n) => ({
@@ -102,8 +98,9 @@ export default function NotificationsPage() {
             border
             ${cardBorder}
             ${cardBg}
-            ${glassGlow}
             px-6 py-7
+            transition-all duration-500
+            hover:shadow-[0_30px_70px_rgba(37,99,235,0.14)]
           `}
         >
           {/* GLOW */}
@@ -120,7 +117,7 @@ export default function NotificationsPage() {
                 className={`
                   mt-4
                   text-[42px]
-                  sm:text-[52px]
+                  sm:text-[42px]
                   font-black
                   leading-[0.95]
                   tracking-[-0.05em]
@@ -167,7 +164,7 @@ export default function NotificationsPage() {
                 duration-300
                 hover:-translate-y-[2px]
                 hover:bg-blue-600
-                shadow-[0_15px_35px_rgba(37,99,235,0.25)]
+                hover:shadow-[0_20px_45px_rgba(37,99,235,0.30)]
                 [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]
               "
             >
@@ -178,62 +175,117 @@ export default function NotificationsPage() {
         </div>
 
         {/* STATS */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {[
-            [
-              "Unread Alerts",
-              notifications.filter((n) => n.unread).length,
-              Bell,
-            ],
-            [
-              "Mentor Messages",
-              notifications.filter(
-                (n) => n.type === "mentorship"
-              ).length,
-              MessageSquare,
-            ],
-            [
-              "Achievements",
-              notifications.filter(
-                (n) => n.type === "system"
-              ).length,
-              Award,
-            ],
-          ].map(([title, value, Icon], i) => (
-            <div
-              key={i}
-              className={`
-                relative overflow-hidden rounded-[6px]
-                border
-                ${cardBorder}
-                ${cardBg}
-                ${glassGlow}
-                group p-6
-                transition-all duration-300
-                hover:-translate-y-1
-                hover:scale-[1.01]
-              `}
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+  {[
+    {
+      title: "Unread Alerts",
+      value: notifications.filter((n) => n.unread).length,
+      Icon: Bell,
+      iconColor: "text-blue-500",
+      line: "bg-blue-500/20",
+      iconBg: "bg-blue-500/10",
+      hover: "hover:border-blue-500/20",
+      glow:
+        "hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]",
+    },
+    {
+      title: "Mentor Messages",
+      value: notifications.filter(
+        (n) => n.type === "mentorship"
+      ).length,
+      Icon: MessageSquare,
+      iconColor: "text-emerald-500",
+      line: "bg-emerald-500/20",
+      iconBg: "bg-emerald-500/10",
+      hover: "hover:border-emerald-500/20",
+      glow:
+        "hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)]",
+    },
+    {
+      title: "Achievements",
+      value: notifications.filter(
+        (n) => n.type === "system"
+      ).length,
+      Icon: Award,
+      iconColor: "text-orange-500",
+      line: "bg-orange-500/20",
+      iconBg: "bg-orange-500/10",
+      hover: "hover:border-orange-500/20",
+      glow:
+        "hover:shadow-[0_20px_50px_rgba(249,115,22,0.10)]",
+    },
+  ].map((item, i) => (
+    <div
+      key={i}
+      className={`
+        group
+        relative overflow-hidden
+
+        rounded-[5px]
+
+        border border-gray-200
+        dark:border-border
+
+        bg-white
+        dark:bg-elevated/80
+
+        px-5 py-4
+
+        shadow-sm
+
+        transition-all duration-300
+
+        hover:-translate-y-1
+
+        ${item.hover}
+        ${item.glow}
+      `}
+    >
+      
+
+      {/* CONTENT */}
+      <div className="relative z-10">
+        <div className="flex items-center gap-3">
+          {/* ICON */}
+          <div
+            className={`
+              flex h-11 w-11 items-center justify-center
+              rounded-[10px]
+
+              ${item.iconBg}
+
+              shadow-sm
+
+              ${item.iconColor}
+            `}
+          >
+            <item.Icon className="h-5 w-5" />
+          </div>
+
+          {/* VALUE + TITLE */}
+          <div>
+            <h3 className="text-[30px] font-black leading-none">
+              {item.value}
+            </h3>
+
+            <p
+              className="
+                mt-1
+                text-[10px]
+                font-black
+                uppercase
+                tracking-[0.18em]
+                text-muted
+              "
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] via-transparent to-cyan-400/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <div className="relative z-10 flex items-center justify-between">
-                <div>
-                  <p className={`text-sm font-semibold ${textSecondary}`}>
-                    {title}
-                  </p>
-
-                  <h3 className="mt-3 text-4xl font-black">
-                    {value}
-                  </h3>
-                </div>
-
-                <div className="flex h-14 w-14 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500 shadow-[0_0_25px_rgba(59,130,246,0.18)] transition-all duration-300 group-hover:scale-110">
-                  <Icon className="h-7 w-7" />
-                </div>
-              </div>
-            </div>
-          ))}
+              {item.title}
+            </p>
+          </div>
         </div>
+      </div>
+    </div>
+  ))}
+</div>
 
         {/* MAIN CARD */}
         <div
@@ -242,7 +294,8 @@ export default function NotificationsPage() {
             border
             ${cardBorder}
             ${cardBg}
-            ${glassGlow}
+            transition-all duration-500
+            hover:shadow-[0_30px_70px_rgba(37,99,235,0.12)]
           `}
         >
           {/* FILTERS */}
@@ -264,6 +317,7 @@ export default function NotificationsPage() {
                   className={`
                     relative py-4 text-sm font-black uppercase tracking-[0.15em]
                     transition-all duration-300 whitespace-nowrap
+
                     ${
                       filter === f
                         ? "text-blue-500"
@@ -281,7 +335,7 @@ export default function NotificationsPage() {
             )}
           </div>
 
-          {/* NOTIFICATION LIST */}
+          {/* NOTIFICATIONS */}
           <div className="divide-y divide-border">
             {filtered.length === 0 ? (
               <div className="py-20 text-center">
@@ -301,8 +355,8 @@ export default function NotificationsPage() {
                     className={`
                       group relative overflow-hidden
                       px-6 py-6
-                      transition-all duration-300
-                      hover:bg-blue-500/[0.03]
+                      transition-all duration-500
+                      hover:-translate-y-[2px]
 
                       ${
                         note.unread
@@ -311,6 +365,8 @@ export default function NotificationsPage() {
                             : "bg-blue-500/[0.02]"
                           : ""
                       }
+
+                      hover:shadow-[0_18px_45px_rgba(37,99,235,0.10)]
                     `}
                   >
                     {/* HOVER GLOW */}
@@ -320,23 +376,57 @@ export default function NotificationsPage() {
                       {/* ICON */}
                       <div
                         className={`
-                          relative flex h-14 w-14 shrink-0 items-center justify-center rounded-[6px]
-                          transition-all duration-300
+                          relative flex h-14 w-14 shrink-0
+                          items-center justify-center
+                          rounded-[16px]
+                          transition-all duration-500
+                          overflow-hidden
                           group-hover:scale-110
 
                           ${
-                            note.unread
-                              ? "bg-blue-500 text-white shadow-[0_0_30px_rgba(59,130,246,0.35)]"
-                              : isDark
-                              ? "bg-[#111827] border border-white/10 text-white/60"
-                              : "bg-[#f3f7ff] border border-blue-100 text-slate-500"
+                            note.type === "mentorship"
+                              ? "bg-gradient-to-br from-blue-500/30 via-blue-500/10 to-cyan-400/20"
+                              : note.type === "system"
+                              ? "bg-gradient-to-br from-orange-500/30 via-orange-500/10 to-yellow-400/20"
+                              : "bg-gradient-to-br from-emerald-500/30 via-emerald-500/10 to-lime-400/20"
                           }
+
+                          shadow-[0_10px_30px_rgba(0,0,0,0.08)]
                         `}
                       >
-                        <Icon className="h-6 w-6" />
+                        {/* GLOSS */}
+                        <div
+                          className="
+                            absolute inset-0
+                            bg-gradient-to-br
+                            from-white/40
+                            to-transparent
+                          "
+                        />
+
+                        <Icon
+                          className={`
+                            relative z-10 h-6 w-6
+
+                            ${
+                              note.type === "mentorship"
+                                ? "text-blue-500"
+                                : note.type === "system"
+                                ? "text-orange-500"
+                                : "text-emerald-500"
+                            }
+                          `}
+                        />
 
                         {note.unread && (
-                          <div className="absolute right-[-2px] top-[-2px] h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.9)]" />
+                          <div
+                            className="
+                              absolute right-[-2px] top-[-2px]
+                              h-3 w-3 rounded-full
+                              bg-cyan-400
+                              shadow-[0_0_15px_rgba(34,211,238,0.9)]
+                            "
+                          />
                         )}
                       </div>
 
@@ -387,7 +477,7 @@ export default function NotificationsPage() {
                           </div>
                         </div>
 
-                        {/* ACTION */}
+                        {/* ACTIONS */}
                         <div className="mt-5 flex items-center gap-4">
                           {note.type === "mentorship" && (
                             <button
@@ -395,7 +485,9 @@ export default function NotificationsPage() {
                                 inline-flex items-center gap-2
                                 text-sm font-black text-blue-500
                                 transition-all duration-300
+
                                 hover:gap-3
+                                hover:text-cyan-400
                               "
                             >
                               Reply to Mentor
@@ -407,9 +499,11 @@ export default function NotificationsPage() {
                             <button
                               className="
                                 inline-flex items-center gap-2
-                                text-sm font-black text-cyan-400
+                                text-sm font-black text-orange-500
                                 transition-all duration-300
+
                                 hover:gap-3
+                                hover:text-yellow-400
                               "
                             >
                               View Certificate

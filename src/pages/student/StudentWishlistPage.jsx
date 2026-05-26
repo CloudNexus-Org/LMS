@@ -40,8 +40,8 @@ export default function StudentWishlistPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold text-text font-display tracking-tight">Wishlist</h1>
-        <p className="text-muted mt-1 font-medium">Courses you've saved for later.</p>
+        <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Wishlist</h1>
+        <p className="text-[20px] mt-1 font-medium">Courses you've saved for later.</p>
       </div>
 
       {isLoading ? (

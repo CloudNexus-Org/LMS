@@ -46,13 +46,13 @@ function Plan({ tier }) {
       <Button
         to={tier.ctaTo}
         size="md"
-        fullWidth
+        
         variant={isHighlight ? "primary" : "outline"}
                          className="
     relative
     inline-flex
     h-[40px]
-    min-w-[90px]
+    
     items-center
     justify-center
 
@@ -62,9 +62,9 @@ rounded-none
     dark:border-white/10
 
     bg-white
-    dark:bg-[#2563ff]
+    dark:bg-primary
 
-    px-6
+    
 
     text-[14px]
     font-semibold
