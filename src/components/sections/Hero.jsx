@@ -44,10 +44,10 @@ export default function Hero() {
     transition: shouldReduceMotion
       ? { duration: 0 }
       : {
-          duration,
-          ease: EASE,
-          delay,
-        },
+        duration,
+        ease: EASE,
+        delay,
+      },
   });
 
   return (
@@ -64,20 +64,21 @@ export default function Hero() {
         {/* HERO SECTION */}
         <div
           className="
-            grid
-            min-h-screen
-            items-center
+    grid
+    sm:min-h-screen
+    items-center
 
-            pt-28
-            pb-16
+    pt-32
+    pb-10
 
-            sm:pt-32
-            sm:pb-20
+    sm:pt-32
+    sm:pb-20
 
-            md:py-24
-            lg:py-28
-          "
+    md:py-24
+    lg:py-28
+  "
         >
+
           {/* LEFT CONTENT */}
           <div
             className="
@@ -85,7 +86,8 @@ export default function Hero() {
               z-10
 
               w-full
-              max-w-[760px]
+              max-w-[620px]
+              xl:max-w-[700px]
 
               px-1
               sm:px-4
@@ -95,27 +97,58 @@ export default function Hero() {
             {/* BADGE */}
             <motion.div
               {...fadeUp(10, 0.05)}
-              className={`
-                ${badgeClass}
+              className="
+    inline-flex
+    items-center
+    gap-3.5
 
-                inline-flex
-                items-center
-                gap-2
+    rounded-full
+    border
+    border-slate-200/60
+    dark:border-white/10
 
-                rounded-[5px]
+    bg-white/90
+dark:bg-[#0f172a]/80
+    backdrop-blur-md
 
-                px-3
-                py-2
+    pl-2
+    pr-5
+    py-1.5
 
-                text-[10px]
-                sm:text-[12px]
-
-                font-bold
-
-                backdrop-blur-md
-              `}
+    text-[14px]
+    sm:text-[15px]
+    font-semibold
+    tracking-wide
+    
+    shadow-[0_4px_12px_rgba(0,0,0,0.03)]
+  "
             >
-              Trusted by 12,000+ learners worldwide
+              {/* OVERLAPPING AVATARS CONTAINER */}
+              <div className="flex flex-row-reverse justify-end -space-x-3 space-x-reverse shrink-0">
+                <img
+                  className="h-8 w-8 rounded-full border-2 border-white dark:border-[#0f172a] object-cover bg-slate-100 ring-1 ring-black/5"
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&h=120&q=80"
+                  alt="User 4"
+                />
+                <img
+                  className="h-8 w-8 rounded-full border-2 border-white dark:border-[#0f172a] object-cover bg-slate-100 ring-1 ring-black/5"
+                  src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&h=120&q=80"
+                  alt="User 3"
+                />
+                <img
+                  className="h-8 w-8 rounded-full border-2 border-white dark:border-[#0f172a] object-cover bg-slate-100 ring-1 ring-black/5"
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80"
+                  alt="User 2"
+                />
+                <img
+                  className="h-8 w-8 rounded-full border-2 border-white dark:border-[#0f172a] object-cover bg-slate-100 ring-1 ring-black/5"
+                  src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=120&h=120&q=80"
+                  alt="User 1"
+                />
+              </div>
+              <span className="text-slate-900 dark:text-white font-semibold whitespace-nowrap">
+                Trusted by <span className="text-blue-600 dark:text-[#7fb0ff] font-bold">12,000+</span> learners
+              </span>
             </motion.div>
 
             {/* HEADING */}
@@ -123,8 +156,12 @@ export default function Hero() {
               {...fadeUp(2, 0.12, 0.6)}
               className={`
                 hero-title
-                mt-6
-                sm:mt-8
+                mt-12
+                sm:mt-12
+
+                
+                  mb-12
+                  sm:mb-12
 
                 max-w-[720px]
 
@@ -158,19 +195,22 @@ export default function Hero() {
             <motion.p
               {...fadeUp(10, 0.22)}
               className={`
-                mt-5
-                sm:mt-7
-
-                max-w-[580px]
-
-                text-[15px]
-                leading-7
-
-                sm:text-[23px]
-                sm:leading-8
-
-                ${bodyColor}
-              `}
+                  mt-12
+                  sm:mt-12
+                
+                  mb-12
+                  sm:mb-12
+                
+                  max-w-[580px]
+                
+                  text-[18px]
+                  leading-7
+                
+                  sm:text-[23px]
+                  sm:leading-8
+                
+                  ${bodyColor}
+                `}
             >
               Cloud Nexus offers career-focused learning in
               cloud, AI, devops, and full-stack development
@@ -217,7 +257,7 @@ export default function Hero() {
 
                   px-6
 
-                  text-[14px]
+                  text-[18px]
                   font-semibold
 
                   text-black

@@ -103,10 +103,17 @@ export default function Contact() {
                 src={photo}
                 alt="contact"
                 className="
-                  absolute bottom-0 right-0
-                  h-[180px] object-contain
-                  md:h-[240px]
-                "
+                            absolute bottom-0
+                            right-[-18px]
+                            h-[150px]
+                            object-contain
+                          
+                            sm:right-0
+                            sm:h-[180px]
+                          
+                            md:right-[-16%]
+                            md:h-[290px]
+                          "
               />
             </div>
 

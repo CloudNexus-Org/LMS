@@ -126,28 +126,6 @@ function MentorListCard({ mentor, index }) {
             </span>
           ))}
         </div>
-
-        {/* Footer stats */}
-        <div className="mt-auto flex items-center justify-between border-t border-border pt-2 text-[12px] text-muted">
-          <div className="flex items-center gap-x-3 gap-y-1">
-            <span className="inline-flex items-center gap-1">
-              <Star
-                size={13}
-                className="fill-current text-primary"
-                aria-hidden
-              />
-              <span className="font-semibold text-text">{mentor.rating}</span>
-            </span>
-            <span aria-hidden>·</span>
-            <span className="inline-flex items-center gap-1">
-              <Users size={12} aria-hidden />
-              <span className="font-semibold text-text">{mentor.learners}</span>
-            </span>
-          </div>
-          <span className="text-[13px] font-semibold text-muted transition-colors duration-200 group-hover/mentor:text-primary">
-            View →
-          </span>
-        </div>
       </Link>
     </motion.div>
   );
