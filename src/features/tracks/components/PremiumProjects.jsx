@@ -357,7 +357,8 @@ function CtaCard({ totalCount }) {
           zIndex: 10,
           width: '100%',
           padding: '16px 24px',
-          borderRadius: 14,
+          borderRadius: 0,
+          clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)',
           background: hovered
             ? `linear-gradient(135deg, ${BRAND_BLUE_LIGHT}, ${BRAND_BLUE})`
             : `linear-gradient(135deg, ${BRAND_BLUE}, ${BRAND_BLUE_DARK})`,
@@ -591,7 +592,8 @@ export default function PremiumProjects({ track }) {
               alignItems: 'center',
               gap: 8,
               padding: '14px 32px',
-              borderRadius: 100,
+              borderRadius: 0,
+              clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)',
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.1)',
               color: '#fff',

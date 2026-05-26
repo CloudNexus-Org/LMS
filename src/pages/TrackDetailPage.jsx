@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -14,6 +14,11 @@ import {
   ClipboardCheck,
   Link2,
   ChevronDown,
+  Database,
+  Boxes,
+  Plug,
+  Activity,
+  Cpu,
 } from "lucide-react";
 import { tracks, getTrackById } from '@/data/tracks';
 import { getMentorBySlug } from '@/data/mentors';
@@ -31,40 +36,52 @@ import PremiumProjects from "@/features/tracks/components/PremiumProjects";
 
 
 
-function FaqItem({ q, a, isOpen, onToggle }) {
+function FaqItem({ q, a, isOpen, onToggle, index }) {
   return (
-    <li className={`group/faq relative overflow-hidden rounded-2xl border border-border bg-elevated/20 transition-all duration-300 ${isOpen ? "bg-elevated/35 border-primary/30 shadow-md shadow-primary/[0.03]" : "hover:bg-elevated/30 hover:border-primary/10"} card-shimmer`}>
-      {/* Left indicator active line */}
-      <div aria-hidden className={`absolute inset-y-0 left-0 w-[3px] bg-primary/20 transition-all duration-300 ${isOpen ? "bg-primary shadow-[0_0_12px_var(--primary)]" : "group-hover/faq:bg-primary/20"}`} />
-
+    <motion.li
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className={`group relative overflow-hidden rounded-[10px] border border-border bg-elevated transition-colors duration-300 hover:border-primary/50`}
+    >
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="flex w-full items-start justify-between gap-6 p-6 text-left"
+        className="flex w-full items-center justify-between gap-5 p-5 text-left outline-none sm:px-6 sm:py-5"
       >
-        <span className={`font-display text-[16px] font-bold tracking-tight transition-colors duration-300 sm:text-[17px] ${isOpen ? "text-primary" : "text-text group-hover/faq:text-primary/95"}`}>
+        <span
+          className={`font-sans text-[15.5px] sm:text-[16px] font-medium tracking-wide transition-colors ${
+            isOpen ? "text-text" : "text-muted group-hover:text-text"
+          }`}
+        >
           {q}
         </span>
-        <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${isOpen ? "border-primary/20 bg-primary/10 text-primary" : "border-border bg-bg/50 text-muted group-hover/faq:border-primary/20 group-hover/faq:text-primary"}`}>
-          <ChevronDown
-            size={16}
-            aria-hidden
-            className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-          />
-        </div>
+        
+        <ChevronDown
+          size={20}
+          strokeWidth={2}
+          aria-hidden
+          className={`shrink-0 text-muted transition-transform duration-300 ${isOpen ? "rotate-180 text-text" : ""}`}
+        />
       </button>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          transition={{ duration: 0.35, ease: EASE }}
-          className="border-t border-border/40 bg-bg/25 px-6 pb-6 pt-5 text-[15px] leading-relaxed text-muted"
-        >
-          {a}
-        </motion.div>
-      )}
-    </li>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="px-5 pb-6 pt-1 text-[15px] leading-relaxed text-muted sm:px-6">
+              {a}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.li>
   );
 }
 
@@ -221,29 +238,104 @@ export default function TrackDetailPage() {
               </p>
             </div>
 
-            {/* Glowing Holographic Skill Tags */}
-            <div className="mx-auto mt-14 flex max-w-[950px] flex-wrap justify-center gap-4">
-              {track.skills.map((s, i) => (
-                <motion.div
-                  key={s}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.4, ease: EASE, delay: i * 0.04 }}
-                  className="group relative overflow-hidden rounded-[1.25rem] border border-border bg-elevated/20 px-6 py-4.5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/45 hover:bg-elevated/35 hover:shadow-xl hover:shadow-primary/[0.05] card-shimmer"
-                >
-                  <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                  
-                  <div className="relative z-10 flex items-center gap-3">
-                    {/* Pulsing micro-service status node */}
-                    <div className="h-2 w-2 rounded-full bg-primary/40 transition-all duration-300 group-hover:bg-primary group-hover:scale-125 group-hover:shadow-[0_0_8px_var(--primary)]" />
-                    <span className="font-display text-[15px] font-bold text-text transition-colors duration-300 group-hover:text-primary">
-                      {s}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            {/* Colorful Brand-Logo Skill Chips */}
+            {(() => {
+              // Brand color + logo mapping
+              const SKILL_META = {
+                'AWS':            { color: '#FF9900', bg: 'rgba(255,153,0,0.12)',  logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg' },
+                'Azure':          { color: '#0078D4', bg: 'rgba(0,120,212,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg' },
+                'GCP':            { color: '#34A853', bg: 'rgba(52,168,83,0.12)',  logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg' },
+                'Terraform':      { color: '#7B42BC', bg: 'rgba(123,66,188,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg' },
+                'Kubernetes':     { color: '#326CE5', bg: 'rgba(50,108,229,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg' },
+                'Linux':          { color: '#FCC624', bg: 'rgba(252,198,36,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg' },
+                'IAM':            { color: '#FF4F00', bg: 'rgba(255,79,0,0.12)',   logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg' },
+                'Docker':         { color: '#2496ED', bg: 'rgba(36,150,237,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
+                'Python':         { color: '#3776AB', bg: 'rgba(55,118,171,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+                'React':          { color: '#61DAFB', bg: 'rgba(97,218,251,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+                'Next.js':        { color: '#ffffff', bg: 'rgba(255,255,255,0.08)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+                'TypeScript':     { color: '#3178C6', bg: 'rgba(49,120,198,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
+                'Node.js':        { color: '#339933', bg: 'rgba(51,153,51,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+                'PostgreSQL':     { color: '#4169E1', bg: 'rgba(65,105,225,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg' },
+                'MongoDB':        { color: '#47A248', bg: 'rgba(71,162,72,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg' },
+                'Redis':          { color: '#DC382D', bg: 'rgba(220,56,45,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg' },
+                'GraphQL':        { color: '#E10098', bg: 'rgba(225,0,152,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg' },
+                'TensorFlow':     { color: '#FF6F00', bg: 'rgba(255,111,0,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg' },
+                'GitHub':         { color: '#ffffff', bg: 'rgba(255,255,255,0.08)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg' },
+                'Jenkins':        { color: '#D33833', bg: 'rgba(211,56,51,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg' },
+                'Go (Golang)':    { color: '#00ADD8', bg: 'rgba(0,173,216,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg' },
+                'Java':           { color: '#ED8B00', bg: 'rgba(237,139,0,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
+                'MySQL':          { color: '#4479A1', bg: 'rgba(68,121,161,0.12)',logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg' },
+                'VPC Networking': { color: '#FF9900', bg: 'rgba(255,153,0,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg' },
+                'Cost Optimization': { color: '#34A853', bg: 'rgba(52,168,83,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg' },
+                'System Design':  { color: '#7B42BC', bg: 'rgba(123,66,188,0.12)',logo: null, icon: Cpu },
+                'LangChain':      { color: '#1DB954', bg: 'rgba(29,185,84,0.12)', logo: null, icon: Link2 },
+                'RAG':            { color: '#E10098', bg: 'rgba(225,0,152,0.12)', logo: null, icon: Database },
+                'Azure ML':       { color: '#0078D4', bg: 'rgba(0,120,212,0.12)', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg' },
+                'Microservices':  { color: '#FF6F00', bg: 'rgba(255,111,0,0.12)', logo: null, icon: Boxes },
+                'REST APIs':      { color: '#61DAFB', bg: 'rgba(97,218,251,0.12)', logo: null, icon: Plug },
+                'WebSockets':     { color: '#4B0082', bg: 'rgba(75,0,130,0.12)',   logo: null, icon: Activity },
+              };
+
+              return (
+                <div className="mx-auto mt-14 flex max-w-[1000px] flex-wrap justify-center gap-3">
+                  {track.skills.map((skill, i) => {
+                    const meta = SKILL_META[skill] || { color: '#215cff', bg: 'rgba(33,92,255,0.1)', logo: null };
+                    return (
+                      <motion.div
+                        key={skill}
+                        initial={{ opacity: 0, scale: 0.8, y: 15 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.45, ease: EASE, delay: i * 0.05 }}
+                        whileHover={{ scale: 1.08, y: -4 }}
+                        className="group relative flex items-center gap-2.5 rounded-2xl border px-4 py-3 cursor-default transition-all duration-300"
+                        style={{
+                          backgroundColor: meta.bg,
+                          borderColor: `${meta.color}40`,
+                          boxShadow: `0 2px 16px ${meta.color}10`,
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.boxShadow = `0 8px 30px ${meta.color}35`;
+                          e.currentTarget.style.borderColor = `${meta.color}80`;
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.boxShadow = `0 2px 16px ${meta.color}10`;
+                          e.currentTarget.style.borderColor = `${meta.color}40`;
+                        }}
+                      >
+                        {/* Logo, Lucide Icon, or colored dot */}
+                        {meta.logo ? (
+                          <img
+                            src={meta.logo}
+                            alt={skill}
+                            className="w-5 h-5 object-contain shrink-0"
+                            draggable={false}
+                          />
+                        ) : meta.icon ? (
+                          <meta.icon
+                            size={18}
+                            className="shrink-0"
+                            style={{ color: meta.color }}
+                            aria-hidden
+                          />
+                        ) : (
+                          <div
+                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            style={{ backgroundColor: meta.color, boxShadow: `0 0 8px ${meta.color}` }}
+                          />
+                        )}
+                        <span
+                          className="font-display text-[14px] font-bold whitespace-nowrap"
+                          style={{ color: meta.color }}
+                        >
+                          {skill}
+                        </span>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </Container>
         </section>
 
@@ -306,7 +398,7 @@ export default function TrackDetailPage() {
                 {mentor ? (
                   <Link
                     to={`/mentors/${mentor.slug}`}
-                    className="inline-flex items-center gap-2 self-center rounded-2xl bg-primary/10 border border-primary/20 px-6 py-3.5 text-[13.5px] font-bold text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/20"
+                    className="inline-flex items-center gap-2 self-center bg-primary/10 border border-primary/20 px-6 py-3.5 text-[13.5px] font-bold text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/20 [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]"
                   >
                     Full profile
                     <ArrowUpRight size={14} aria-hidden />
@@ -317,64 +409,7 @@ export default function TrackDetailPage() {
           </Container>
         </RevealSection>
 
-        {/* ================= PROJECTS ================= */}
-        {track.projects?.length > 0 && (
-          <RevealSection className="relative py-24 md:py-32">
-            {/* Ambient Backlighting */}
-            <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.03] blur-[160px]" />
 
-            <Container size="lg">
-              <div className="mb-20 flex flex-col items-center text-center">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary">
-                  <Briefcase size={14} className="text-primary" />
-                  Capstone
-                </span>
-                <h2 className="mt-6 font-display text-[32px] font-black tracking-tight text-text sm:text-[40px] md:text-[48px] headline-gradient">
-                  Projects you'll ship
-                </h2>
-                <p className="mt-4 max-w-[620px] text-[15.5px] leading-relaxed text-muted">
-                  Portfolio-grade deliverables you can confidently present in senior-level engineering interviews.
-                </p>
-              </div>
-
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {track.projects.map((p, i) => (
-                  <motion.article
-                    key={p.title}
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-[2.25rem] border border-border bg-elevated/20 p-8 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/45 hover:bg-elevated/30 hover:shadow-2xl hover:shadow-primary/[0.05] card-shimmer"
-                  >
-                    {/* Futuristic Grid Outline Background */}
-                    <div aria-hidden className="blueprint-grid absolute inset-0 opacity-[0.03] transition-opacity duration-300 group-hover:opacity-[0.06]" />
-
-                    {/* Glowing Accent Gradient Tag */}
-                    <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-primary/[0.05] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                    <div className="mb-8 flex items-center justify-between relative z-10">
-                      <span className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${accent.bg} ${accent.text} border border-primary/20 shadow-md shadow-primary/[0.04] transition-all duration-300 group-hover:scale-110`}>
-                        <Briefcase size={22} aria-hidden />
-                      </span>
-                      <span className="font-display text-[48px] font-black leading-none text-border/20 transition-colors duration-300 group-hover:text-primary/10 select-none">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-
-                    <h3 className="font-display text-[19px] font-bold tracking-tight text-text relative z-10 transition-colors duration-300 group-hover:text-primary">
-                      {p.title}
-                    </h3>
-
-                    <p className="mt-4 flex-1 text-[14.5px] leading-relaxed text-muted relative z-10 pr-2">
-                      {p.description}
-                    </p>
-                  </motion.article>
-                ))}
-              </div>
-            </Container>
-          </RevealSection>
-        )}
 
 
 
@@ -384,19 +419,24 @@ export default function TrackDetailPage() {
         {track.faq?.length > 0 && (
           <RevealSection className="py-24 md:py-36">
             <Container size="lg">
-              <div className="mb-20 text-center">
+              <div className="mb-20 text-center flex flex-col items-center">
                 <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary">
-                  FAQ
+                  <Sparkles size={14} />
+                  Clear Your Doubts
                 </span>
-                <h2 className="mt-6 font-display text-[32px] font-black tracking-tight text-text sm:text-[40px] md:text-[48px] headline-gradient">
-                  Common questions
+                <h2 className="mt-6 font-display text-[32px] font-black tracking-tight text-text sm:text-[40px] md:text-[52px] headline-gradient">
+                  Everything you need to know.
                 </h2>
+                <p className="mt-5 max-w-[600px] text-[16px] leading-relaxed text-zinc-400">
+                  Find answers to common questions about prerequisites, the curriculum, and how this track can accelerate your engineering career.
+                </p>
               </div>
               <div className="mx-auto max-w-[850px]">
-                <ul className="space-y-4">
+                <ul className="space-y-3">
                   {track.faq.map((f, i) => (
                     <FaqItem
                       key={f.q}
+                      index={i}
                       q={f.q}
                       a={f.a}
                       isOpen={openFaq === i}
@@ -411,91 +451,7 @@ export default function TrackDetailPage() {
 
     
 
-        {/* ================= MORE TRACKS ================= */}
-        {others.length > 0 && (
-          <RevealSection className="pb-16 pt-4 md:pb-20">
-            <Container size="lg">
-              <div className="flex flex-wrap items-end justify-between gap-3">
-                <SectionTitle
-                  eyebrow="Keep exploring"
-                  title="Other career tracks"
-                />
-                <Link
-                  to="/tracks"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:text-primary-hover"
-                >
-                  All tracks
-                  <ArrowRight size={13} aria-hidden />
-                </Link>
-              </div>
 
-              <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {others.map((t, i) => {
-                  const A = COLOR_TINT[t.color] || COLOR_TINT.primary;
-                  const TIcon = t.icon;
-                  return (
-                    <motion.div
-                      key={t.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
-                      transition={{
-                        duration: 0.4,
-                        ease: EASE,
-                        delay: i * 0.04,
-                      }}
-                    >
-                      <Link
-                        to={`/tracks/${t.id}`}
-                        className="group glass-card hover-glow flex h-full flex-col rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${A.bg} ${A.text}`}
-                          >
-                            <TIcon size={16} aria-hidden />
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <h3 className="truncate font-display text-[15px] font-semibold tracking-tight text-text">
-                              {t.name}
-                            </h3>
-                            <p className="mt-0.5 truncate text-[12px] text-muted">
-                              {t.durationWeeks} wks · {t.curriculum.length}{" "}
-                              courses
-                            </p>
-                          </div>
-                          <ArrowUpRight
-                            size={13}
-                            aria-hidden
-                            className="shrink-0 text-muted transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text"
-                          />
-                        </div>
-                        <p className="mt-3 line-clamp-2 text-[13px] leading-6 text-muted">
-                          {t.tagline}
-                        </p>
-                        <div className="mt-auto flex items-center gap-x-3 gap-y-1.5 pt-4 text-[12px] text-subtle">
-                          <span className="inline-flex items-center gap-1">
-                            <Star
-                              size={11}
-                              className="fill-current text-primary"
-                              aria-hidden
-                            />
-                            <span className="text-text">{t.rating}</span>
-                          </span>
-                          <span aria-hidden>·</span>
-                          <span>
-                            <span className="text-text">{t.enrolled}</span>{" "}
-                            enrolled
-                          </span>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </Container>
-          </RevealSection>
-        )}
       </main>
 
 

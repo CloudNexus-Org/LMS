@@ -5,20 +5,13 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  MapPin,
   Star,
-  Users,
   GraduationCap,
   Clock,
   Calendar,
   Award,
   CheckCircle2,
-  Briefcase,
-  Globe,
-  Quote,
-  Sparkles,
 } from "lucide-react";
-import { FaLinkedinIn, FaGithub, FaTwitter } from "react-icons/fa";
 import { mentors, getMentorBySlug } from '@/data/mentors';
 
 
@@ -48,41 +41,10 @@ function Eyebrow({ children, className = "" }) {
   );
 }
 
-function KpiTile({ value, label, sub }) {
-  return (
-    <div className="rounded-xl border border-border bg-elevated/70 px-4 py-3.5 backdrop-blur">
-      <div className="font-display text-[22px] font-bold leading-none tracking-tight text-text sm:text-[24px]">
-        {value}
-      </div>
-      <div className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
-        {label}
-      </div>
-      {sub ? (
-        <div className="mt-0.5 text-[11px] text-muted">{sub}</div>
-      ) : null}
-    </div>
-  );
-}
-
-function SocialChip({ href, icon: Icon, label }) {
-  if (!href) return null;
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-elevated text-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:text-primary"
-    >
-      <Icon size={14} aria-hidden />
-    </a>
-  );
-}
-
-function SectionTitle({ eyebrow, title, sub }) {
+function SectionTitle({ eyebrow, title, sub, eyebrowClassName }) {
   return (
     <div>
-      {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
+      {eyebrow ? <Eyebrow className={eyebrowClassName}>{eyebrow}</Eyebrow> : null}
       <h2 className="mt-2 font-display text-[24px] font-bold tracking-[-0.01em] text-text md:text-[30px]">
         {title}
       </h2>
@@ -161,28 +123,6 @@ export default function MentorDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: EASE }}
               >
-                {/* Eyebrow row: track + availability */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary-soft px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
-                    <Sparkles size={11} aria-hidden />
-                    {mentor.trackLabel}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-elevated/70 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted backdrop-blur">
-                    <span
-                      aria-hidden
-                      className={`h-1.5 w-1.5 rounded-full ${mentor.available
-                        ? "bg-success animate-pulse"
-                        : "bg-warning"
-                        }`}
-                    />
-                    {mentor.available ? "Open to new mentees" : "Waitlist only"}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-elevated/70 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted backdrop-blur">
-                    <CheckCircle2 size={11} className="text-primary" aria-hidden />
-                    Verified
-                  </span>
-                </div>
-
                 {/* Name */}
                 <h1 className="mt-6 font-display text-[36px] font-bold leading-[1.05] tracking-[-0.025em] text-text sm:text-[44px] md:text-[56px]">
                   {mentor.name}
@@ -196,24 +136,6 @@ export default function MentorDetailPage() {
                     {mentor.company.replace(/^Ex-/, "Previously at ")}
                   </span>
                 </p>
-
-                {/* Location + meta */}
-                <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[13px] text-subtle">
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin size={13} aria-hidden />
-                    {mentor.location}
-                  </span>
-                  <span aria-hidden>·</span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Briefcase size={13} aria-hidden />
-                    {mentor.yearsExp}+ years in industry
-                  </span>
-                  <span aria-hidden>·</span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Calendar size={13} aria-hidden />
-                    Responds within 24h
-                  </span>
-                </div>
 
                 {/* Bio — editorial style */}
                 <p className="mt-7 max-w-[600px] text-[15.5px] leading-[1.75] text-muted md:text-[16.5px]">
@@ -239,31 +161,6 @@ export default function MentorDetailPage() {
                   </Button>
                 </div>
 
-                {/* Socials */}
-                <div className="mt-7 flex items-center gap-2.5">
-                  <SocialChip
-                    href={mentor.linkedin}
-                    icon={FaLinkedinIn}
-                    label={`${mentor.name} on LinkedIn`}
-                  />
-                  <SocialChip
-                    href={mentor.twitter}
-                    icon={FaTwitter}
-                    label={`${mentor.name} on Twitter`}
-                  />
-                  <SocialChip
-                    href={mentor.github}
-                    icon={FaGithub}
-                    label={`${mentor.name} on GitHub`}
-                  />
-                  {mentor.website ? (
-                    <SocialChip
-                      href={mentor.website}
-                      icon={Globe}
-                      label={`${mentor.name}'s website`}
-                    />
-                  ) : null}
-                </div>
               </motion.div>
 
               {/* ---------- RIGHT: refined portrait card ---------- */}
@@ -322,34 +219,7 @@ export default function MentorDetailPage() {
               </motion.aside>
             </div>
 
-            {/* ---------- KPI BAR (full width, anchors the hero) ---------- */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: EASE, delay: 0.18 }}
-              className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
-            >
-              <KpiTile
-                value={mentor.rating}
-                label="Avg. rating"
-                sub={`${mentor.reviews?.toLocaleString()} reviews`}
-              />
-              <KpiTile
-                value={mentor.learners}
-                label="Learners taught"
-                sub="all-time"
-              />
-              <KpiTile
-                value={`${mentor.sessions}+`}
-                label="1:1 Sessions led"
-                sub="last 24 months"
-              />
-              <KpiTile
-                value={mentor.courses}
-                label="Courses authored"
-                sub={`${mentor.yearsExp}+ yrs experience`}
-              />
-            </motion.div>
+
           </Container>
         </section>
 
@@ -412,7 +282,7 @@ export default function MentorDetailPage() {
                     {mentor.specialties.map((s) => (
                       <span
                         key={s}
-                        className="inline-flex items-center rounded-full border border-border bg-elevated px-3 py-1.5 text-[12.5px] font-medium text-text"
+                        className="inline-flex items-center rounded-full border border-border/60 bg-elevated/50 px-3 py-1.5 text-[12.5px] font-medium text-muted transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
                       >
                         {s}
                       </span>
@@ -428,14 +298,14 @@ export default function MentorDetailPage() {
                       {mentor.achievements.map((a) => (
                         <li
                           key={a}
-                          className="flex items-start gap-3 rounded-xl border border-border bg-elevated/50 px-4 py-3 text-[13.5px] leading-6 text-muted"
+                          className="group flex items-start gap-3 rounded-xl border border-border/60 bg-elevated/40 px-4 py-3 text-[13.5px] leading-6 text-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-elevated hover:shadow-[0_8px_24px_-8px_rgba(var(--primary-rgb),0.15)]"
                         >
                           <Award
                             size={14}
-                            className="mt-0.5 shrink-0 text-primary"
+                            className="mt-0.5 shrink-0 text-primary/70 transition-colors group-hover:text-primary"
                             aria-hidden
                           />
-                          {a}
+                          <span className="transition-colors group-hover:text-text">{a}</span>
                         </li>
                       ))}
                     </ul>
@@ -471,15 +341,21 @@ export default function MentorDetailPage() {
                     ))}
                   </dl>
 
-                  <Button
-                    href="#contact-mentor"
-                    size="md"
-                    fullWidth
-                    className="mt-5"
-                    rightIcon={<ArrowRight size={14} />}
-                  >
-                    Request a session
-                  </Button>
+                  <div className="group relative mt-5 w-full">
+                    <div
+                      aria-hidden
+                      className="absolute -inset-1 rounded-xl bg-primary/40 opacity-70 blur-xl transition-all duration-300 group-hover:bg-primary/50 group-hover:opacity-100"
+                    />
+                    <Button
+                      href="#contact-mentor"
+                      size="md"
+                      fullWidth
+                      className="relative w-full shadow-lg"
+                      rightIcon={<ArrowRight size={14} />}
+                    >
+                      Request a session
+                    </Button>
+                  </div>
                   <p className="mt-2.5 text-center text-[11.5px] text-subtle">
                     Cancel anytime · no card required
                   </p>
@@ -497,46 +373,93 @@ export default function MentorDetailPage() {
             <Container size="lg">
               <SectionTitle
                 eyebrow="Career"
+                eyebrowClassName="!text-primary"
                 title="A decade of production scars"
                 sub="The roles, the rooms, the systems that shaped how they teach."
               />
 
-              <ol className="relative mt-10 space-y-7 border-l border-border pl-7 md:pl-9">
-                {mentor.experience.map((e, i) => (
-                  <motion.li
-                    key={`${e.org}-${i}`}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, amount: 0.4 }}
-                    transition={{ duration: 0.45, ease: EASE, delay: i * 0.05 }}
-                    className="relative"
-                  >
-                    {/* Dot + ring */}
-                    <span
-                      aria-hidden
-                      className="absolute -left-[34px] top-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full border border-border bg-bg md:-left-[40px]"
+              <div className="relative mt-10">
+                {/* Animated Timeline Line */}
+                <motion.div
+                  initial={{ scaleY: 0 }}
+                  whileInView={{ scaleY: 1 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 1.5, ease: EASE }}
+                  className="absolute left-[11.5px] top-0 h-full w-[1px] origin-top bg-border"
+                />
+
+                <motion.ol
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, amount: 0.2 }}
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.15,
+                        delayChildren: 0.1,
+                      },
+                    },
+                  }}
+                  className="relative space-y-7 pl-10 sm:pl-12"
+                >
+                  {mentor.experience.map((e, i) => (
+                    <motion.li
+                      key={`${e.org}-${i}`}
+                      variants={{
+                        hidden: { opacity: 0, x: -20, filter: "blur(4px)" },
+                        show: {
+                          opacity: 1,
+                          x: 0,
+                          filter: "blur(0px)",
+                          transition: { duration: 0.5, ease: EASE },
+                        },
+                      }}
+                      className="relative"
                     >
-                      <span className="h-2 w-2 rounded-full bg-primary" />
-                    </span>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <h3 className="font-display text-[17px] font-semibold tracking-tight text-text">
-                        {e.title}
-                        <span className="mx-2 text-subtle" aria-hidden>
-                          ·
+                      {/* Dot + ring */}
+                      <motion.span
+                        aria-hidden
+                        variants={{
+                          hidden: { scale: 0, opacity: 0 },
+                          show: {
+                            scale: 1,
+                            opacity: 1,
+                            transition: {
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 25,
+                              delay: 0.15,
+                            },
+                          },
+                        }}
+                        className="absolute -left-[40px] top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/30 bg-primary/10 sm:-left-[48px]"
+                      >
+                        <span className="h-2.5 w-2.5 rounded-full bg-primary" />
+                      </motion.span>
+                      <div className="flex flex-wrap items-baseline justify-between gap-2">
+                        <h3 className="font-display text-[17px] font-semibold tracking-tight text-text">
+                          {e.title}
+                          <span className="mx-2 text-subtle" aria-hidden>
+                            ·
+                          </span>
+                          <span className="text-primary">{e.org}</span>
+                        </h3>
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-elevated/60 px-2.5 py-1 text-[11.5px] font-medium text-muted">
+                          <Calendar size={11} aria-hidden />
+                          {e.period}
                         </span>
-                        <span className="text-muted">{e.org}</span>
-                      </h3>
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-elevated/60 px-2.5 py-1 text-[11.5px] font-medium text-muted">
-                        <Calendar size={11} aria-hidden />
-                        {e.period}
-                      </span>
-                    </div>
-                    <p className="mt-1.5 text-[14px] leading-7 text-muted">
-                      {e.text}
-                    </p>
-                  </motion.li>
-                ))}
-              </ol>
+                      </div>
+                      <div className="mt-3 rounded-lg border border-border/40 bg-elevated/30 px-4 py-3 shadow-sm">
+                        <p className="text-[14px] leading-relaxed text-muted">
+                          {e.text}
+                        </p>
+                      </div>
+                    </motion.li>
+                  ))}
+                </motion.ol>
+              </div>
             </Container>
           </section>
         )}
@@ -616,76 +539,121 @@ export default function MentorDetailPage() {
         ========================================================== */}
         <section
           id="contact-mentor"
-          className="relative py-12 md:py-16"
+          className="relative py-12 md:py-20"
           aria-labelledby="contact-mentor-title"
         >
           <Container size="lg">
-            <div className="relative overflow-hidden rounded-3xl border border-border bg-elevated px-6 py-10 shadow-[var(--shadow-card)] md:px-12 md:py-14">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: EASE }}
+              className="group relative overflow-hidden rounded-[2rem] border border-gray-200 bg-white px-6 py-12 shadow-2xl md:px-14 md:py-16"
+            >
+              {/* Ambient premium glows */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 transition-opacity duration-500 group-hover:opacity-100" aria-hidden />
+              
               <div
                 aria-hidden
-                className="pointer-events-none absolute -left-20 -top-20 h-[320px] w-[320px] rounded-full bg-primary-soft opacity-60 blur-[110px]"
+                className="pointer-events-none absolute -left-20 -top-20 h-[400px] w-[400px] rounded-full bg-primary/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-primary/30 group-hover:opacity-70"
               />
               <div
                 aria-hidden
-                className="pointer-events-none absolute -bottom-24 -right-16 h-[280px] w-[280px] rounded-full bg-accent-soft opacity-50 blur-[110px]"
+                className="pointer-events-none absolute -bottom-24 -right-16 h-[350px] w-[350px] rounded-full bg-accent/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-accent/30 group-hover:opacity-70"
               />
-              <div className="relative grid items-center gap-8 md:grid-cols-[1fr_auto]">
-                <div>
-                  <Eyebrow>1:1 mentorship</Eyebrow>
-                  <h2
+
+              <div className="relative z-10 grid items-center gap-10 md:grid-cols-[1fr_auto]">
+                <div className="max-w-2xl">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                  >
+                    <Eyebrow className="!text-indigo-600 font-bold">1:1 Mentorship</Eyebrow>
+                  </motion.div>
+                  
+                  <motion.h2
                     id="contact-mentor-title"
-                    className="mt-2 font-display text-[26px] font-bold tracking-[-0.01em] text-text md:text-[34px]"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="mt-3 font-display text-[32px] font-bold leading-tight tracking-tight text-gray-900 sm:text-[36px] md:text-[42px]"
                   >
-                    Ready to learn with {firstName}?
-                  </h2>
-                  <p className="mt-3 max-w-[560px] text-[14.5px] leading-7 text-muted md:text-[16px]">
-                    Book a 1:1 session, ask a question, or join one of their
-                    live cohorts. We&rsquo;ll match you to the right format.
-                  </p>
+                    Ready to level up with{" "}
+                    <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                      {firstName}
+                    </span>
+                    ?
+                  </motion.h2>
+                  
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="mt-4 max-w-[500px] text-[15.5px] leading-relaxed text-gray-600 md:text-[17px]"
+                  >
+                    Book a 1:1 session, ask a technical question, or join one of their
+                    live cohorts. We&rsquo;ll match you to the format that fits your goals.
+                  </motion.p>
+
                   {/* trust line */}
-                  <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12.5px] text-subtle">
-                    <span className="inline-flex items-center gap-1.5">
-                      <CheckCircle2
-                        size={12}
-                        className="text-success"
-                        aria-hidden
-                      />
-                      7-day free trial
-                    </span>
-                    <span aria-hidden>·</span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <CheckCircle2
-                        size={12}
-                        className="text-success"
-                        aria-hidden
-                      />
-                      No credit card
-                    </span>
-                    <span aria-hidden>·</span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <CheckCircle2
-                        size={12}
-                        className="text-success"
-                        aria-hidden
-                      />
-                      Cancel anytime
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    to="/signup"
-                    size="lg"
-                    rightIcon={<ArrowRight size={16} />}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] font-medium text-gray-700"
                   >
-                    Start free trial
-                  </Button>
-                  <Button to="/#contact" variant="outline" size="lg">
+                    {[
+                      "7-day free trial",
+                      "No credit card required",
+                      "Cancel anytime",
+                    ].map((text) => (
+                      <div key={text} className="flex items-center gap-2.5">
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                          <CheckCircle2 size={13} strokeWidth={2.5} aria-hidden />
+                        </div>
+                        {text}
+                      </div>
+                    ))}
+                  </motion.div>
+                </div>
+                
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="flex flex-col gap-4 sm:flex-row md:flex-col lg:flex-row"
+                >
+                  <div className="group/btn relative">
+                    <div
+                      className="absolute -inset-1.5 rounded-xl bg-gradient-to-r from-primary to-accent opacity-40 blur-lg transition-all duration-300 group-hover/btn:opacity-80 group-hover/btn:blur-xl"
+                      aria-hidden
+                    />
+                    <Button
+                      to="/signup"
+                      size="lg"
+                      className="relative w-full shadow-xl sm:w-auto md:w-full lg:w-auto"
+                      rightIcon={<ArrowRight size={16} className="transition-transform group-hover/btn:translate-x-1" />}
+                    >
+                      Start free trial
+                    </Button>
+                  </div>
+                  <Button
+                    to="/#contact"
+                    variant="outline"
+                    size="lg"
+                    className="w-full border-gray-300 bg-white !text-gray-900 transition-all hover:border-gray-400 hover:bg-gray-50 sm:w-auto md:w-full lg:w-auto"
+                  >
                     Send a message
                   </Button>
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </Container>
         </section>
 
