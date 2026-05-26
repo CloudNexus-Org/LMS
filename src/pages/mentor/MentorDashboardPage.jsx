@@ -450,61 +450,140 @@ export default function MentorDashboardPage() {
           </div>
 
           {/* COURSE PERFORMANCE */}
-          <div className="rounded-[5px] border border-border bg-surface p-13 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-4xl font-black text-text">
-                  Course Performance
-                </h3>
+<div
+  className="
+    rounded-[5px]
+    border border-border
+    bg-surface
+    p-8
+    shadow-sm
+    transition-all duration-300
+    hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+  "
+>
+  {/* HEADER */}
+  <div className="flex items-center justify-between">
+    <div>
+      <h3 className="text-2xl font-black text-text">
+        Course Performance
+      </h3>
 
-                <p className="mt-1 text- text-muted">
-                  Student engagement analytics overview.
-                </p>
-              </div>
+      <p className="mt-2 text-sm text-muted">
+        Student engagement analytics overview.
+      </p>
+    </div>
 
-              <div className="rounded-[5px] bg-blue-500/10 px-4 py-2 text-xs font-black uppercase tracking-[0.15em] text-blue-500">
-                Live Data
-              </div>
-            </div>
+    <div
+      className="
+        rounded-[5px]
+        bg-gradient-to-br
+        from-blue-500/20
+        via-blue-500/10
+        to-cyan-400/10
 
-            <div className="mt-8 space-y-6">
-              {[
-                {
-                  title: "React Architecture Masterclass",
-                  progress: "92%",
-                },
-                {
-                  title: "Cloud Architecture Patterns",
-                  progress: "78%",
-                },
-                {
-                  title: "System Design for Scale",
-                  progress: "65%",
-                },
-              ].map((course, i) => (
-                <div key={i}>
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="font-bold text-text">
-                      {course.title}
-                    </p>
+        px-4 py-2
 
-                    <span className="text-sm font-black text-blue-500">
-                      {course.progress}
-                    </span>
-                  </div>
+        text-xs
+        font-black
+        uppercase
+        tracking-[0.15em]
+        text-blue-500
+      "
+    >
+      Live Data
+    </div>
+  </div>
 
-                  <div className="h-3 overflow-hidden rounded-[5px] bg-bg">
-                    <div
-                      className="h-full rounded-[5px] bg-blue-500"
-                      style={{
-                        width: course.progress,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+  {/* CHART */}
+  <div className="mt-10 flex items-end gap-3">
+    {[
+      {
+        h: 80,
+        color:
+          "from-blue-600 via-blue-500 to-cyan-400",
+      },
+      {
+        h: 120,
+        color:
+          "from-emerald-600 via-emerald-500 to-lime-400",
+      },
+      {
+        h: 95,
+        color:
+          "from-orange-600 via-orange-500 to-yellow-400",
+      },
+      {
+        h: 150,
+        color:
+          "from-violet-600 via-violet-500 to-fuchsia-400",
+      },
+      {
+        h: 130,
+        color:
+          "from-cyan-600 via-cyan-500 to-blue-400",
+      },
+      {
+        h: 180,
+        color:
+          "from-pink-600 via-fuchsia-500 to-violet-400",
+      },
+      {
+        h: 160,
+        color:
+          "from-blue-600 via-indigo-500 to-cyan-400",
+      },
+    ].map((bar, i) => (
+      <div
+        key={i}
+        className="group flex-1"
+      >
+        <div
+          className={`
+            relative overflow-hidden
+            rounded-t-[5px]
+            bg-gradient-to-t
+            ${bar.color}
+
+            transition-all duration-500
+            group-hover:-translate-y-2
+            group-hover:shadow-[0_15px_30px_rgba(37,99,235,0.18)]
+          `}
+          style={{
+            height: `${bar.h}px`,
+          }}
+        >
+          {/* SHINE */}
+          <div
+            className="
+              absolute inset-0
+              bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.3)_50%,transparent_80%)]
+              animate-[shine_2.5s_linear_infinite]
+            "
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* LABELS */}
+  <div className="mt-4 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em] text-muted">
+    <span>Mon</span>
+    <span>Tue</span>
+    <span>Wed</span>
+    <span>Thu</span>
+    <span>Fri</span>
+    <span>Sat</span>
+    <span>Sun</span>
+  </div>
+
+  {/* PERFORMANCE LINES */}
+  
+       
+    
+  
+
+
+</div>
         </div>
 
         {/* RIGHT SIDE */}
