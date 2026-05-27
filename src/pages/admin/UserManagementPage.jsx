@@ -75,7 +75,7 @@ export default function UserManagementPage() {
                   h-[48px]
                   w-full
                   sm:w-auto
-                  min-w-[180px]
+                  min-w-[80px]
 
                   items-center
                   justify-center
@@ -119,7 +119,7 @@ export default function UserManagementPage() {
                   h-[48px]
                   w-full
                   sm:w-auto
-                  min-w-[180px]
+                  min-w-[80px]
 
                   items-center
                   justify-center

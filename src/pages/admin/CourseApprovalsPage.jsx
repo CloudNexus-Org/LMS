@@ -74,9 +74,9 @@ const INITIAL_APPROVALS = [
 ];
 
 const STATUS_CONFIG = {
-  Pending:  { color: 'text-warning', bg: 'bg-warning/10', border: 'border-warning/20', dot: 'bg-warning animate-pulse' },
+  Pending: { color: 'text-warning', bg: 'bg-warning/10', border: 'border-warning/20', dot: 'bg-warning animate-pulse' },
   Approved: { color: 'text-success', bg: 'bg-success/10', border: 'border-success/20', dot: 'bg-success' },
-  Rejected: { color: 'text-danger',  bg: 'bg-danger/10',  border: 'border-danger/20',  dot: 'bg-danger'  },
+  Rejected: { color: 'text-danger', bg: 'bg-danger/10', border: 'border-danger/20', dot: 'bg-danger' },
 };
 
 export default function CourseApprovalsPage() {
@@ -85,11 +85,11 @@ export default function CourseApprovalsPage() {
   const [selected, setSelected] = useState(null);
 
   const approve = id => setApprovals(prev => prev.map(c => c.id === id ? { ...c, status: 'Approved' } : c));
-  const reject  = id => setApprovals(prev => prev.map(c => c.id === id ? { ...c, status: 'Rejected' } : c));
+  const reject = id => setApprovals(prev => prev.map(c => c.id === id ? { ...c, status: 'Rejected' } : c));
 
   const filtered = filter === 'All' ? approvals : approvals.filter(c => c.status === filter);
 
-  const pending  = approvals.filter(c => c.status === 'Pending').length;
+  const pending = approvals.filter(c => c.status === 'Pending').length;
   const approved = approvals.filter(c => c.status === 'Approved').length;
   const rejected = approvals.filter(c => c.status === 'Rejected').length;
 
@@ -100,20 +100,19 @@ export default function CourseApprovalsPage() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-[5px] border border-warning/20 bg-warning/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-warning mb-3">
-            <Sparkles className="h-3 w-3" /> QA Review Queue
+            QA Review Queue
           </div>
-          <h1 className="text-3xl font-bold text-text font-display tracking-tight">Course Approvals</h1>
+          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Course Approvals</h1>
           <p className="text-muted mt-1 font-medium">Review and quality-check mentor-submitted curriculum before publishing.</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="
                   relative
                   inline-flex
-
-                  h-[48px]
+                  h-[2px]
                   w-full
                   sm:w-auto
-                  min-w-[180px]
+                  min-w-[10px]
 
                   items-center
                   justify-center
@@ -162,7 +161,7 @@ export default function CourseApprovalsPage() {
         ].map(kpi => {
           const Icon = kpi.icon;
           return (
-            <div key={kpi.label} className={`bg-surface border ${kpi.border} rounded-[5px] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300`}>
+            <div key={kpi.label} className={`bg-surface border ${kpi.border} rounded-[5px] p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300`}>
               <div className={`h-10 w-10 rounded-[5px] ${kpi.bg} ${kpi.color} flex items-center justify-center mb-3`}>
                 <Icon className="h-5 w-5" />
               </div>
@@ -195,11 +194,25 @@ export default function CourseApprovalsPage() {
           {filtered.map(course => {
             const sc = STATUS_CONFIG[course.status];
             return (
-              <div key={course.id} className="bg-surface border border-border rounded-[5px] shadow-sm hover:border-primary/30 hover:shadow-md transition-all duration-300 overflow-hidden">
+             <div
+  key={course.id}
+  className="
+    bg-surface
+    border
+    border-border
+    rounded-[5px]
+    shadow-sm
+    hover:shadow-xl
+    transition-all
+    duration-300
+    overflow-hidden
+    group
+  "
+>
                 <div className="flex flex-col lg:flex-row gap-0">
 
                   {/* Left thumbnail strip */}
-                  <div className={`bg-gradient-to-br ${course.thumbnail} w-full lg:w-2 flex-shrink-0`} />
+                  <div className="w-[4px] bg-emerald-400 rounded-full " />
 
                   <div className="flex-1 p-6">
                     <div className="flex flex-col md:flex-row gap-5 justify-between">
