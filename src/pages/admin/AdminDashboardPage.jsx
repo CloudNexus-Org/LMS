@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  Users, Activity, DollarSign, ShieldAlert, CheckSquare,
-  TrendingUp, AlertTriangle, BookOpen, Star, ArrowUpRight,
-  ArrowDownRight, Zap, Globe, Award, Clock, BarChart2,
-  UserCheck, UserX, RefreshCw, Download, Eye, ChevronRight,
+  Users, DollarSign, CheckSquare,
+  AlertTriangle, BookOpen, Star, ArrowUpRight,
+  ArrowDownRight, Globe, Award, BarChart2,
+  UserCheck, RefreshCw, Download, ChevronRight,
   Server, Cpu, HardDrive, Wifi
 } from 'lucide-react';
 import { Link } from 'react-router-dom';

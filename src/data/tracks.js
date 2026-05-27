@@ -965,8 +965,3 @@ export function getLessonsByTrack(trackId) {
   return lessons;
 }
 
-export function getLessonById(trackId, lessonId) {
-  const lessons = getLessonsByTrack(trackId);
-  return lessons.find((l) => l.id === lessonId) || lessons[0] || null;
-}
-

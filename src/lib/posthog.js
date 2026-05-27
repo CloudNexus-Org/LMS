@@ -22,22 +22,4 @@ export const initTelemetry = () => {
   }
 };
 
-export const captureEvent = (eventName, properties = {}) => {
-  if (typeof window !== 'undefined') {
-    posthog.capture(eventName, properties);
-  }
-};
-
-export const identifyUser = (userId, properties = {}) => {
-  if (typeof window !== 'undefined') {
-    posthog.identify(userId, properties);
-  }
-};
-
-export const resetUser = () => {
-  if (typeof window !== 'undefined') {
-    posthog.reset();
-  }
-};
-
 export default posthog;

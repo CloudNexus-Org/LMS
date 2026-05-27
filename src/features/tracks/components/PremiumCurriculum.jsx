@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, CheckCircle2, BarChart3, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import useIsDarkTheme from '@/hooks/useIsDarkTheme';
 
 export default function PremiumCurriculum({ track }) {
@@ -13,9 +12,7 @@ export default function PremiumCurriculum({ track }) {
   const sectionBgClass = isDarkTheme ? "bg-black" : "bg-slate-50";
   const headingTextClass = isDarkTheme ? "text-white" : "text-slate-950";
   const badgeBgClass = isDarkTheme ? "border-primary/20 bg-primary/10 text-primary" : "border-primary/30 bg-primary/15 text-primary";
-  const cardBgClass = isDarkTheme ? "bg-elevated border-border" : "bg-white border-slate-200";
   const textMutedClass = isDarkTheme ? "text-white/70" : "text-slate-600";
-  const accentIconClass = "text-primary";
 
   const modules = track.curriculum;
   const displayModules = showAll ? modules : modules.slice(0, 5);

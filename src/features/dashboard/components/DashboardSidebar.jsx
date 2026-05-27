@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Heart, Award, Settings, CreditCard, Bell, PlaySquare, X, BarChart, Users, UploadCloud, ShieldAlert, DollarSign, FileText } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Heart, Award, Settings, CreditCard, X, BarChart, Users, UploadCloud, ShieldAlert, DollarSign, FileText } from 'lucide-react';
 
 const navConfig = {
   student: [

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
-  UploadCloud, CheckCircle2, Video, DollarSign, Settings, ArrowRight,
-  ArrowLeft, Globe, Tag, BookOpen, Users, Plus, Trash2, GripVertical,
+  CheckCircle2, Video, DollarSign, Settings, ArrowRight,
+  ArrowLeft, Globe, Tag, Users, Plus, Trash2, GripVertical,
   Lock, Star, Zap, Award, Clock, Image, X, FileText
 } from 'lucide-react';
 

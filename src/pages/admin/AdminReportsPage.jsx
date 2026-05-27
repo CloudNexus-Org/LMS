@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  BarChart2, Download, Calendar, PieChart, TrendingUp,
+  Download, PieChart,
   Users, DollarSign, BookOpen, Star, ArrowUpRight,
-  ArrowDownRight, Globe, Sparkles, Award, Activity,
-  Filter, RefreshCw, ChevronRight
+  ArrowDownRight, Globe, Sparkles, Award,
+  ChevronRight
 } from 'lucide-react';
 
 function Sparkline({ data, color = 'var(--primary)', height = 40 }) {
@@ -305,7 +305,7 @@ export default function AdminReportsPage() {
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {TOP_MENTORS.map((mentor, i) => (
+          {TOP_MENTORS.map((mentor) => (
             <div key={mentor.name} className="bg-bg border border-border rounded-[5px] p-4 hover:border-primary/30 hover:-translate-y-0.5 transition-all duration-200">
               <div className="flex items-center gap-3 mb-4">
                 <div className={`h-11 w-11 rounded-full bg-gradient-to-br ${mentor.grad} flex items-center justify-center text-white text-sm font-bold shadow-sm overflow-hidden relative`}>

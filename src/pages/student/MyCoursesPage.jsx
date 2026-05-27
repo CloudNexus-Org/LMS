@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import {
   BookOpen,
   CheckCircle,
-  Users,
   Star,
   Clock3,
   Layers3,

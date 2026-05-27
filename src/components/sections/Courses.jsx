@@ -242,8 +242,8 @@ export default function Courses() {
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [, setScrollProgress] = useState(0);
+  const [, setSelectedIndex] = useState(0);
 
   const onScroll = useCallback(() => {
     if (!emblaApi) return;

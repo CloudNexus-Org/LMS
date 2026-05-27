@@ -20,9 +20,9 @@ export default function ScrollToTop() {
     
     // Use a small timeout to allow Suspense/lazy routes to render their content first
     const timeoutId = setTimeout(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-      document.documentElement.scrollTo({ top: 0, left: 0, behavior: "instant" });
-      document.body.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      document.documentElement.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      document.body.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }, 50);
     
     return () => clearTimeout(timeoutId);

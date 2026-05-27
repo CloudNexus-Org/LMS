@@ -1,6 +1,5 @@
 import {
   CreditCard,
-  Download,
   Zap,
   Crown,
   ShieldCheck,

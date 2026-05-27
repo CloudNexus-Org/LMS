@@ -3,27 +3,6 @@ import { ShoppingCart, HeartOff, Star, Heart } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import { DashboardGridSkeleton } from '@/components/ui/Skeletons';
 
-const MOCK_WISHLIST = [
-  {
-    id: 'w1',
-    title: 'Fullstack Rust Web Development',
-    instructor: 'Jane Doe',
-    rating: 4.8,
-    reviews: 1240,
-    price: 89.99,
-    image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bfce8?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 'w2',
-    title: 'Advanced Framer Motion Animations',
-    instructor: 'John Smith',
-    rating: 4.9,
-    reviews: 3200,
-    price: 49.99,
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop'
-  }
-];
-
 export default function StudentWishlistPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);

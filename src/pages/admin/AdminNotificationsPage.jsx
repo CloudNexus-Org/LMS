@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import {
-  Bell, Check, ShieldAlert, Activity, UserPlus, Server,
+  Bell, Check, Activity, UserPlus, Server,
   CheckCheck, Trash2, ChevronRight, Sparkles, AlertTriangle,
-  DollarSign, BookOpen, Shield, Zap, RefreshCw, Globe,
-  MessageSquare, TrendingUp, X, Clock
+  DollarSign, BookOpen, Shield, Zap, RefreshCw,
+  Clock
 } from 'lucide-react';
 
 const INITIAL_NOTIFICATIONS = [
