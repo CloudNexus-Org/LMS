@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Users,
   DollarSign,
@@ -15,6 +16,7 @@ import {
   ChevronRight,
   Flame,
 } from "lucide-react";
+import { useTheme } from "@/app/providers/ThemeProvider";
 
 const STATS = [
   {
@@ -97,6 +99,14 @@ const ACTIVITIES = [
 ];
 
 export default function MentorDashboardPage() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const heroGlowClasses = useMemo(() => ({
+    primary: isDark ? "bg-blue-500/8 blur-[120px]" : "bg-blue-500/10 blur-[100px]",
+    secondary: isDark ? "bg-indigo-500/6 blur-[100px]" : "bg-cyan-500/10 blur-[100px]",
+  }), [isDark]);
+
   return (
     <div className="mx-auto max-w-7xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* HERO */}
@@ -104,15 +114,15 @@ export default function MentorDashboardPage() {
         className="
           relative overflow-hidden
           rounded-[5px]
-          border border-border
-          bg-surface
+          border border-gray-200 dark:border-border
+          bg-white/90 dark:bg-elevated/80
           p-8
           shadow-[0_20px_80px_rgba(0,0,0,0.08)]
         "
       >
-        {/* GLOW */}
-        <div className="absolute right-[-120px] top-[-120px] h-[300px] w-[300px] rounded-full bg-blue-500/10 blur-[100px]" />
-        <div className="absolute bottom-[-100px] left-[-100px] h-[240px] w-[240px] rounded-full bg-cyan-500/10 blur-[100px]" />
+      {/* GLOW */}
+        <div className={`absolute right-[-120px] top-[-120px] h-[300px] w-[300px] rounded-full ${heroGlowClasses.primary}`} />
+        <div className={`absolute bottom-[-100px] left-[-100px] h-[240px] w-[240px] rounded-full ${heroGlowClasses.secondary}`} />
 
         <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
@@ -156,11 +166,11 @@ export default function MentorDashboardPage() {
                   justify-center
 
                   border
-                  border-[#d9e2ff]
-                  dark:border-white/10
+                  border-border
+                  dark:border-border
 
                   bg-white
-                  dark:bg-[#2563ff]
+                  dark:bg-primary
 
                   px-6
 
@@ -180,7 +190,8 @@ export default function MentorDashboardPage() {
                   duration-300
 
                   hover:-translate-y-[2px]
-                  hover:border-[#2563ff]/40
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
 
                   [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
@@ -206,11 +217,11 @@ export default function MentorDashboardPage() {
                   rounded-none
 
                   border
-                  border-[#d9e2ff]
-                  dark:border-white/10
+                  border-border
+                  dark:border-border
 
                   bg-white
-                  dark:bg-[#030303]
+                  dark:bg-surface
 
                   px-6
 
@@ -218,7 +229,7 @@ export default function MentorDashboardPage() {
                   font-semibold
 
                   text-black
-                  dark:text-white
+                  dark:text-text
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -227,7 +238,8 @@ export default function MentorDashboardPage() {
                   duration-300
 
                   hover:-translate-y-[2px]
-                  hover:border-[#2563ff]/40
+                  hover:border-primary/40
+                  dark:hover:border-primary/40
 
                   [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
@@ -277,8 +289,8 @@ export default function MentorDashboardPage() {
                   key={i}
                   className="
                     rounded-[5px]
-                    border border-border
-                    bg-bg/70
+                    border border-gray-200 dark:border-border
+                    bg-white dark:bg-elevated/80
                     p-5
                     backdrop-blur-xl
                   "
@@ -308,63 +320,111 @@ export default function MentorDashboardPage() {
       </div>
 
       {/* KPI GRID */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {STATS.map((stat) => {
-          const Icon = stat.icon;
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  {STATS.map((stat) => {
+    const Icon = stat.icon;
 
-          return (
+    return (
+      <div
+        key={stat.label}
+        className={`
+          group
+          relative overflow-hidden
+
+          rounded-[5px]
+
+          border border-gray-200
+          dark:border-border
+
+          bg-white
+          dark:bg-elevated/80
+
+          px-5 py-4
+
+          shadow-sm
+
+          transition-all duration-300
+
+          hover:-translate-y-1
+          hover:border-primary/20
+
+          hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+        `}
+      >
+        
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            {/* ICON */}
             <div
-              key={stat.label}
+              className={`
+                flex h-11 w-11 items-center justify-center
+                rounded-[10px]
+
+                ${stat.bg}
+                ${stat.color}
+
+                shadow-sm
+              `}
+            >
+              <Icon className="h-5 w-5" />
+            </div>
+
+            {/* VALUE + TITLE */}
+            <div>
+              <h3 className="text-[25px] font-black leading-none text-text">
+                {stat.value}
+              </h3>
+
+              <p
+                className="
+                  mt-1
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.18em]
+                  text-muted
+                "
+              >
+                {stat.label}
+              </p>
+            </div>
+
+            {/* TREND */}
+            <div
               className="
-                group relative overflow-hidden
+                ml-auto
+                flex items-center gap-1
+
                 rounded-[5px]
-                border border-border
-                bg-surface
-                p-6
-                transition-all duration-300
-                hover:-translate-y-1
-                hover:shadow-[0_20px_50px_rgba(37,99,235,0.08)]
+
+                bg-emerald-500/10
+
+                px-2 py-1
+
+                text-[10px]
+                font-black
+
+                text-emerald-500
               "
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.04] via-transparent to-cyan-400/[0.04] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <div className="relative z-10">
-                <div className="flex items-start justify-between">
-                  <div
-                    className={`
-                      flex h-14 w-14 items-center justify-center rounded-[5px]
-                      ${stat.bg}
-                      ${stat.color}
-                    `}
-                  >
-                    <Icon className="h-7 w-7" />
-                  </div>
-
-                  <div className="flex items-center gap-1 rounded-[5px] bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-500">
-                    <TrendingUp className="h-3 w-3" />
-                    {stat.trend}
-                  </div>
-                </div>
-
-                <p className="mt-6 text-sm font-bold uppercase tracking-wide text-muted">
-                  {stat.label}
-                </p>
-
-                <h3 className="mt-2 text-4xl font-black tracking-tight text-text">
-                  {stat.value}
-                </h3>
-              </div>
+              <TrendingUp className="h-3 w-3" />
+              {stat.trend}
             </div>
-          );
-        })}
+          </div>
+        </div>
       </div>
+    );
+  })}
+</div>
 
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
         {/* LEFT SIDE */}
         <div className="space-y-8 xl:col-span-2">
           {/* RECENT ENROLLMENTS */}
-          <div className="rounded-[5px] border border-border bg-surface shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 shadow-sm">
             <div className="flex items-center justify-between border-b border-border px-7 py-6">
               <div>
                 <h3 className="text-2xl font-black text-text">
@@ -384,7 +444,7 @@ export default function MentorDashboardPage() {
 
             <div className="overflow-x-auto">
               <table className="w-full min-w-[700px] text-left">
-                <thead className="border-b border-border bg-bg/50">
+                <thead className="border-b border-gray-200 dark:border-border bg-gray-50 dark:bg-elevated/80">
                   <tr>
                     <th className="px-7 py-4 text-xs font-black uppercase tracking-[0.15em] text-muted">
                       Student
@@ -408,7 +468,7 @@ export default function MentorDashboardPage() {
                   {RECENT_ENROLLMENTS.map((req, i) => (
                     <tr
                       key={i}
-                      className="transition-all hover:bg-bg/50"
+                      className="transition-all hover:bg-elevated/60 dark:hover:bg-elevated/80"
                     >
                       <td className="px-7 py-5">
                         <div className="flex items-center gap-4">
@@ -450,67 +510,146 @@ export default function MentorDashboardPage() {
           </div>
 
           {/* COURSE PERFORMANCE */}
-          <div className="rounded-[5px] border border-border bg-surface p-13 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-4xl font-black text-text">
-                  Course Performance
-                </h3>
+<div
+  className="
+    rounded-[5px]
+    border border-gray-200 dark:border-border
+    bg-white dark:bg-elevated/80
+    p-8
+    shadow-sm
+    transition-all duration-300
+    hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]
+  "
+>
+  {/* HEADER */}
+  <div className="flex items-center p-3 justify-between">
+    <div>
+      <h3 className="text-2xl font-black text-text">
+        Course Performance
+      </h3>
 
-                <p className="mt-1 text- text-muted">
-                  Student engagement analytics overview.
-                </p>
-              </div>
+      <p className="mt-2 text-sm text-muted">
+        Student engagement analytics overview.
+      </p>
+    </div>
 
-              <div className="rounded-[5px] bg-blue-500/10 px-4 py-2 text-xs font-black uppercase tracking-[0.15em] text-blue-500">
-                Live Data
-              </div>
-            </div>
+    <div
+      className="
+        rounded-[5px]
+        bg-gradient-to-br
+        from-blue-500/20
+        via-blue-500/10
+        to-cyan-400/10
 
-            <div className="mt-8 space-y-6">
-              {[
-                {
-                  title: "React Architecture Masterclass",
-                  progress: "92%",
-                },
-                {
-                  title: "Cloud Architecture Patterns",
-                  progress: "78%",
-                },
-                {
-                  title: "System Design for Scale",
-                  progress: "65%",
-                },
-              ].map((course, i) => (
-                <div key={i}>
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="font-bold text-text">
-                      {course.title}
-                    </p>
+        px-4 py-2
 
-                    <span className="text-sm font-black text-blue-500">
-                      {course.progress}
-                    </span>
-                  </div>
+        text-xs
+        font-black
+        uppercase
+        tracking-[0.15em]
+        text-blue-500
+      "
+    >
+      Live Data
+    </div>
+  </div>
 
-                  <div className="h-3 overflow-hidden rounded-[5px] bg-bg">
-                    <div
-                      className="h-full rounded-[5px] bg-blue-500"
-                      style={{
-                        width: course.progress,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+  {/* CHART */}
+  <div className="mt-10 flex items-end gap-3">
+    {[
+      {
+        h: 80,
+        color:
+          "from-blue-600 via-blue-500 to-cyan-400",
+      },
+      {
+        h: 120,
+        color:
+          "from-emerald-600 via-emerald-500 to-lime-400",
+      },
+      {
+        h: 95,
+        color:
+          "from-orange-600 via-orange-500 to-yellow-400",
+      },
+      {
+        h: 150,
+        color:
+          "from-violet-600 via-violet-500 to-fuchsia-400",
+      },
+      {
+        h: 130,
+        color:
+          "from-cyan-600 via-cyan-500 to-blue-400",
+      },
+      {
+        h: 180,
+        color:
+          "from-pink-600 via-fuchsia-500 to-violet-400",
+      },
+      {
+        h: 160,
+        color:
+          "from-blue-600 via-indigo-500 to-cyan-400",
+      },
+    ].map((bar, i) => (
+      <div
+        key={i}
+        className="group flex-1"
+      >
+        <div
+          className={`
+            relative overflow-hidden
+            rounded-t-[5px]
+            bg-gradient-to-t
+            ${bar.color}
+
+            transition-all duration-500
+            group-hover:-translate-y-2
+            group-hover:shadow-[0_15px_30px_rgba(37,99,235,0.18)]
+          `}
+          style={{
+            height: `${bar.h}px`,
+          }}
+        >
+          {/* SHINE */}
+          <div
+            className="
+              absolute inset-0
+              bg-[linear-gradient(120deg,transparent_20%,rgba(255,255,255,0.3)_50%,transparent_80%)]
+              animate-[shine_2.5s_linear_infinite]
+            "
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* LABELS */}
+  <div className="mt-4 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em] text-muted">
+    <span>Mon</span>
+    <span>Tue</span>
+    <span>Wed</span>
+    <span>Thu</span>
+    <span>Fri</span>
+    <span>Sat</span>
+    <span>Sun</span>
+  </div>
+
+  {/* PERFORMANCE LINES */}
+  
+       
+    
+  
+
+
+</div>
         </div>
 
         {/* RIGHT SIDE */}
         <div className="space-y-8">
           {/* PENDING Q&A */}
-          <div className="rounded-[5px] border border-border bg-surface p-10 shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-10 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-text">
                 Q&A Pending
@@ -522,7 +661,7 @@ export default function MentorDashboardPage() {
             </div>
 
             <div className="mt-6 space-y-5">
-              <div className="rounded-[5px] border border-border bg-bg/60 p-5">
+              <div className="rounded-[5px] border border-gray-200 dark:border-border bg-gray-50 dark:bg-elevated/90 p-5">
                 <div className="flex gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[5px] bg-blue-500/10 font-black text-blue-500">
                     JD
@@ -543,7 +682,7 @@ export default function MentorDashboardPage() {
                       Cloud Architecture · Lesson 3
                     </p>
 
-                    <p className="mt-4 rounded-[5px] border border-border bg-surface p-4 text-sm leading-7 text-text">
+                    <p className="mt-4 rounded-[5px] border border-gray-200 dark:border-border bg-gray-50/80 dark:bg-black/30 p-4 text-sm leading-7 text-text">
                       “Could you clarify the difference between
                       standard and FIFO queues here?”
                     </p>
@@ -559,7 +698,7 @@ export default function MentorDashboardPage() {
           </div>
 
           {/* RECENT ACTIVITY */}
-          <div className="rounded-[5px] border border-border bg-surface p-3 shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-3 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-text">
                 Recent Activity
@@ -575,7 +714,7 @@ export default function MentorDashboardPage() {
                 return (
                   <div
                     key={i}
-                    className="flex gap-4 rounded-[5px] border border-border bg-bg/50 p-4 transition-all hover:bg-bg"
+                    className="flex gap-4 rounded-[5px] border border-gray-200 dark:border-border bg-gray-50 dark:bg-elevated/90 p-4 transition-all hover:bg-gray-100 dark:hover:bg-elevated"
                   >
                     <div
                       className={`

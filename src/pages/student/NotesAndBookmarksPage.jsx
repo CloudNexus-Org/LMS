@@ -63,13 +63,13 @@ export default function NotesAndBookmarksPage() {
               Smart Learning Notes
             </div>
 
-            <h1 className="text-[36px] font-black tracking-tight text-text">
+            <h1 className="text-[42px] font-black tracking-tight text-text">
               Notes & Bookmarks
             </h1>
 
-            <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted">
-              Save important concepts, bookmark video timestamps,
-              and build your own learning knowledge base.
+            <p className="mt-2 max-w-2xl text-[20px] leading-relaxed text-muted">
+              Save important concepts,  video timestamps,
+              and build your own learning.
             </p>
           </div>
 

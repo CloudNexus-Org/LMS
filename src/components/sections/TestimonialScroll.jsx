@@ -6,9 +6,9 @@ import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Avatar from "@/components/ui/Avatar";
 
-import Testimonialbg1 from "@/assets/Testimonialbg1.png";
-import Testimonialbg2 from "@/assets/Testimonialbg2 (2).png";
-import Testimonialbg3 from "@/assets/Testimonialbg4.png";
+import Testimonialbg1 from "@/assets/testimonial/Testimonialbg1.png";
+import Testimonialbg2 from "@/assets/testimonial/Testimonialbg2 (2).png";
+import Testimonialbg3 from "@/assets/testimonial/Testimonialbg4.png";
 
 const bgImages = [
   Testimonialbg1,

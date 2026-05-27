@@ -129,7 +129,7 @@ export default function BillingSubscriptionPage() {
                 className={`
                   mt-5
                   max-w-2xl
-                  text-[15px]
+                  text-[20px]
                   leading-8
                   ${textSecondary}
                 `}
