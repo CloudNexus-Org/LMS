@@ -74,12 +74,8 @@ const ALL_PROJECTS = [
 
 const CARD_WIDTH = 290;   // px
 const CARD_GAP   = 20;    // px — matches gap-5
-const SCROLL_STEP = CARD_WIDTH + CARD_GAP;
-
 // Brand Colors
-const BRAND_BLUE = '#215cff';
 const BRAND_BLUE_LIGHT = '#4b79ff';
-const BRAND_BLUE_DARK = '#1d4ed8';
 
 /* ─── Individual Card ─── */
 function ProjectCard({ project, index }) {
@@ -249,7 +245,7 @@ function ProjectCard({ project, index }) {
 }
 
 /* ─── CTA Card ─── */
-function CtaCard({ totalCount }) {
+function CtaCard() {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -306,8 +302,6 @@ export default function PremiumProjects({ track }) {
       }))
     : ALL_PROJECTS;
 
-  const totalCount = Math.max(rawProjects.length * 4 + 12, 44);
-
   /* Dynamically center if all cards fit in the viewport */
   const [isCentered, setIsCentered] = useState(false);
   useEffect(() => {
@@ -320,21 +314,6 @@ export default function PremiumProjects({ track }) {
     window.addEventListener('resize', checkWidth);
     return () => window.removeEventListener('resize', checkWidth);
   }, [rawProjects.length]);
-
-  /* Click-to-scroll with wrap-around */
-  const handleMore = useCallback(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (el.scrollLeft >= maxScroll - 10) {
-      el.scrollTo({ left: 0, behavior: 'smooth' });
-      setGlowX(50);
-    } else {
-      el.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' });
-      const progress = Math.min((el.scrollLeft + SCROLL_STEP) / maxScroll, 1);
-      setGlowX(20 + progress * 60);
-    }
-  }, []);
 
   /* Update ambient glow position on manual scroll too */
   const handleScroll = useCallback(() => {
@@ -481,7 +460,7 @@ export default function PremiumProjects({ track }) {
             </div>
           ))}
           <div style={{ scrollSnapAlign: 'start' }}>
-            <CtaCard totalCount={totalCount} />
+            <CtaCard />
           </div>
         </div>
       </div>

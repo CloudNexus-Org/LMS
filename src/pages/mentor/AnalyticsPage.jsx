@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import {
-  BarChart as BarChartIcon,
   TrendingUp,
   Users,
   Activity,

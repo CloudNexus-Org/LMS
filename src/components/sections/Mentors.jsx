@@ -18,10 +18,9 @@ const PAGES = [
   ALL_MENTORS_DATA.slice(4, 8),
 ];
 
-const TOTAL_PAGES = PAGES.length;
 const COMPANIES = ["Google", "Meta", "AWS", "Netflix", "Stripe", "GitHub"];
 
-function MentorCard({ mentor, index }) {
+function MentorCard({ mentor }) {
   const mentorSlug = mentor.slug || mentor.name.toLowerCase().replace(/\s+/g, "-");
 
   return (
@@ -277,7 +276,7 @@ export default function Mentors() {
           >
             {[...PAGES.flat(), ...PAGES.flat()].map((mentor, index) => (
               <div key={index} style={{ width: 280, flexShrink: 0 }}>
-                <MentorCard mentor={mentor} index={index} />
+                <MentorCard mentor={mentor} />
               </div>
             ))}
           </div>

@@ -27,10 +27,6 @@ export default function Hero() {
     ? "text-white/78"
     : "text-slate-700";
 
-  const badgeClass = isDarkTheme
-    ? "border border-white/10 bg-[#0f172a] text-white"
-    : "border border-slate-200 bg-white text-slate-900";
-
   const fadeUp = (y = 10, delay = 0, duration = 0.55) => ({
     initial: shouldReduceMotion
       ? { opacity: 1, y: 0 }

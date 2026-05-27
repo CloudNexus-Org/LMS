@@ -32,7 +32,7 @@ export const SidebarOutline = memo(function SidebarOutline({
       m.get(key).push(l);
     }
     return Array.from(m.entries()).map(([key, items]) => {
-      const [_idx, title] = key.split("::");
+      const [, title] = key.split("::");
       return { title, items };
     });
   }, [lessons]);

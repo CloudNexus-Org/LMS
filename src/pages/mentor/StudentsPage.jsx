@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
-  Users, Search, Filter, Mail, MoreVertical, ShieldCheck,
-  ChevronDown, Sparkles, TrendingUp, Activity, UserCheck,
-  MessageSquare, BookOpen, Clock, Star, Download, X,
+  Users, Search, Mail, MoreVertical,
+  Sparkles, TrendingUp, Activity,
+  BookOpen, Clock, Download, X,
   ArrowUpRight, Award, BarChart2, ChevronRight
 } from 'lucide-react';
 

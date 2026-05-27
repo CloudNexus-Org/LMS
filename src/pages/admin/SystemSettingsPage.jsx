@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
   Settings, Shield, Globe, CreditCard, Bell, Save, Sparkles,
-  Server, Mail, Zap, Lock, Eye, EyeOff, ChevronRight,
-  RefreshCw, Trash2, Database, AlertTriangle, Check,
-  ToggleLeft, ToggleRight, Cpu, HardDrive
+  Server, Mail, Zap, Lock, ChevronRight,
+  Database, AlertTriangle, Check,
+  HardDrive
 } from 'lucide-react';
 
 const NAV_ITEMS = [

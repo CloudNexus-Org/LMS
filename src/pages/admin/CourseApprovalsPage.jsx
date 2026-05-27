@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  CheckSquare, XSquare, PlayCircle, BookOpen, Users, Clock,
-  Star, MessageSquare, ChevronRight, Sparkles, AlertTriangle,
-  Eye, Download, Filter, ArrowUpRight, Award, CheckCircle2,
-  X, FileText, Video, BarChart2
+  CheckSquare, XSquare, BookOpen, Clock,
+  Star, Sparkles, AlertTriangle,
+  Eye, Download, CheckCircle2,
+  X
 } from 'lucide-react';
 
 const INITIAL_APPROVALS = [

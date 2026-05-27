@@ -19,19 +19,17 @@ import {
   Activity,
   Cpu,
 } from "lucide-react";
-import { tracks, getTrackById } from '@/data/tracks';
+import { getTrackById } from '@/data/tracks';
 import { getMentorBySlug } from '@/data/mentors';
 import Container from '@/components/ui/Container';
 import {
   EASE,
-  COLOR_TINT,
   SectionTitle,
   RevealSection,
   SectionDivider,
 } from '@/components/ui/PremiumUI';
 import TrackHero from "@/features/tracks/components/TrackHero";
 import PremiumCurriculum from "@/features/tracks/components/PremiumCurriculum";
-import PremiumProjects from "@/features/tracks/components/PremiumProjects";
 
 
 
@@ -93,11 +91,9 @@ export default function TrackDetailPage() {
     return <Navigate to="/" replace />;
   }
 
-  const accent = COLOR_TINT[track.color] || COLOR_TINT.primary;
   const mentor = track.leadMentorSlug
     ? getMentorBySlug(track.leadMentorSlug)
     : null;
-  const others = tracks.filter((t) => t.id !== track.id).slice(0, 3);
 
 
 

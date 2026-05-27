@@ -23,10 +23,6 @@ import {
 import { getMentorBySlug } from '@/data/mentors';
 import Container from '@/components/ui/Container';
 import ThemeToggle from '@/components/ui/ThemeToggle';
-import {
-  getStoredJSON,
-  setStoredJSON,
-} from "@/utils/storage";
 
 // Extracted Domain Components
 import { VideoPlayer } from "@/features/learn/components/player/VideoPlayer";

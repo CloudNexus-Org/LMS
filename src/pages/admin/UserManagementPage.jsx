@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import {
-  Search, Filter, Shield, MoreVertical, Edit3, Ban, ShieldCheck,
-  UserPlus, Users, X, Mail, ChevronRight, Sparkles, ArrowUpRight,
-  Activity, UserCheck, UserX, Download, Clock, ChevronDown,
-  Eye, RefreshCw, BarChart2
+  Search, Shield, Edit3, Ban, ShieldCheck,
+  UserPlus, Users, X, Mail, Sparkles, ArrowUpRight,
+  UserCheck, UserX, Download, Clock,
+  Eye, BarChart2
 } from 'lucide-react';
 
 const USERS = [

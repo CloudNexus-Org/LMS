@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  Edit3, EyeOff, Plus, Users, Star, BarChart, Play, Clock,
-  ChevronDown, ChevronRight, GripVertical, CheckCircle2,
-  Video, FileText, Lock, MoreVertical, Eye, Trash2,
-  TrendingUp, ArrowUpRight, Sparkles, BookOpen, Globe,
+  Edit3, EyeOff, Plus, Users, Star, BarChart, Clock,
+  ChevronDown, GripVertical, CheckCircle2,
+  Video, FileText, Lock, Eye, Trash2,
+  TrendingUp, ArrowUpRight, BookOpen, Globe,
   AlertCircle, Download
 } from 'lucide-react';
 import { Link } from 'react-router-dom';

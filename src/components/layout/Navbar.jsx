@@ -39,7 +39,6 @@ const DEFAULT_LINKS = [
 const NAV_HEIGHT = 82;
 
 export default function Navbar({
-  logoText = "CLOUD NEXUS",
   navLinks = DEFAULT_LINKS,
   showAuthButtons = true,
 }) {
