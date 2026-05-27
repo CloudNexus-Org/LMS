@@ -1,103 +1,90 @@
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, ArrowRight } from "lucide-react";
-import { mentors } from '@/data/mentors';
-import SectionShell from "@/app/layouts/SectionShell";
-import SectionHeading from "@/app/layouts/SectionHeading";
-import Container from '@/components/ui/Container';
-import Button from '@/components/ui/Button';
+import {
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+  Users,
+  BookOpen,
+} from "lucide-react";
+import useIsDarkTheme from "@/hooks/useIsDarkTheme";
+import { mentors as ALL_MENTORS_DATA } from "@/data/mentors";
 
-const EASE = [0.16, 1, 0.3, 1];
+/* ─────────────────────────────────────────
+   Mentor data
+───────────────────────────────────────── */
+const PAGES = [
+  ALL_MENTORS_DATA.slice(0, 4),
+  ALL_MENTORS_DATA.slice(4, 8),
+];
+
+const TOTAL_PAGES = PAGES.length;
+const COMPANIES = ["Google", "Meta", "AWS", "Netflix", "Stripe", "GitHub"];
 
 function MentorCard({ mentor, index }) {
+  const mentorSlug = mentor.slug || mentor.name.toLowerCase().replace(/\s+/g, "-");
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.55, ease: EASE, delay: index * 0.06 }}
-      className="h-full"
+      whileHover={{ y: -10 }}
+      className="group relative rounded-[22px] shadow-lg hover:shadow-2xl cursor-pointer transition-shadow duration-500 w-full"
+      style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.10)" }}
     >
+      {/* Inner wrapper enforcing border radius clip */}
       <Link
-        to={`/mentors/${mentor.slug}`}
-        aria-label={`View profile for ${mentor.name}`}
-        className="group relative flex h-full flex-col overflow-hidden rounded-[5px] border border-border bg-elevated/40 p-7 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:bg-elevated hover:shadow-xl hover:shadow-primary/[0.08]"
+        to={`/mentors/${mentorSlug}`}
+        className="block relative w-full h-full overflow-hidden rounded-[22px]"
+        style={{ transform: "translateZ(0)" }}
       >
-        {/* Soft background glow on hover */}
-        <div className="pointer-events-none absolute -inset-px bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        {/* Portrait */}
+        <div className="h-[360px] overflow-hidden bg-gray-200">
+          <img
+            src={mentor.avatar}
+            alt={mentor.name}
+            loading="lazy"
+            className="w-full h-full object-cover object-top transition-transform duration-700 will-change-transform group-hover:scale-[1.07]"
+          />
+        </div>
 
-        {/* Identity Row */}
-        <div className="relative z-10 flex items-start gap-4">
-          <div className="relative shrink-0">
-            {/* Glowing avatar ring */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary to-accent opacity-40 blur-[8px] transition-opacity duration-300 group-hover:opacity-80" />
-            <img
-              src={mentor.avatar}
-              alt={mentor.name}
-              loading="lazy"
-              className="relative h-16 w-16 rounded-full object-cover ring-2 ring-elevated transition-transform duration-300 group-hover:scale-105"
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* Shine sweep */}
+        <div className="absolute inset-0 overflow-hidden rounded-[22px] pointer-events-none">
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-in-out bg-gradient-to-r from-transparent via-white/8 to-transparent -skew-x-12" />
+        </div>
+
+        {/* Text content slides up on hover */}
+        <div className="absolute bottom-0 left-0 w-full p-5 z-10 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+          <span
+            className="block text-[10.5px] font-bold tracking-[0.18em] uppercase mb-1.5"
+            style={{ color: "rgba(100,160,255,0.85)" }}
+          >
+            {mentor.company}
+          </span>
+          <h3 className="text-white text-[19px] font-bold tracking-tight leading-snug">
+            {mentor.name}
+          </h3>
+          <div className="flex items-center gap-2 mt-1.5">
+            <div
+              className="w-1.5 h-1.5 rounded-full shrink-0"
+              style={{ background: "var(--primary)", boxShadow: "0 0 8px var(--primary)" }}
             />
+            <p className="text-gray-300 text-[13px] font-medium">{mentor.role}</p>
           </div>
 
-          <div className="min-w-0 flex-1 pt-1">
-            <h3 className="truncate font-display text-[17px] font-semibold tracking-tight text-text transition-colors group-hover:text-primary">
-              {mentor.name}
-            </h3>
-            <div className="mt-1 flex items-center gap-1.5">
-              <span className="truncate text-[13.5px] text-muted">
-                {mentor.role}
-              </span>
-              <span className="h-1 w-1 shrink-0 rounded-full bg-border-strong" aria-hidden />
-              <span className="truncate text-[13.5px] font-medium text-text">
-                {mentor.company.replace(/^Ex-/, "")}
-              </span>
+          {/* Stats strip slides up on hover */}
+          <div className="mt-3 flex items-center gap-5 border-t border-white/10 pt-3 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+            <div className="flex items-center gap-1.5 text-white/60 text-[12px]">
+              <BookOpen size={11} style={{ color: "var(--primary)" }} />
+              <span className="font-bold text-white">{mentor.courses}</span>&nbsp;Courses
             </div>
-          </div>
-        </div>
-
-        {/* Bio */}
-        <p className="relative z-10 mt-6 text-[14.5px] leading-relaxed text-subtle line-clamp-2">
-          {mentor.bio}
-        </p>
-
-        {/* Specialties Tags */}
-        <div className="relative z-10 mt-1 flex flex-wrap gap-2">
-          {mentor.specialties.slice(0, 3).map((spec) => (
-            <span
-              key={spec}
-              className="inline-flex items-center rounded-fu border border-border/80 bg-bg/50 px-3 py-1 text-[11.5px] font-medium text-muted transition-colors group-hover:border-primary/20 group-hover:text-text"
-            >
-              {spec}
-            </span>
-          ))}
-        </div>
-
-        {/* Footer Stats & Action */}
-        <div className="relative z-10 flex items-end justify-between border-t border-border/60 mt-1">
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2">
-              <span className="font-display text-[16px] font-semibold leading-none text-text">
-                {mentor.courses}
-              </span>
-              <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                Courses
-              </span>
+            <div className="flex items-center gap-1.5 text-white/60 text-[12px]">
+              <Users size={11} style={{ color: "var(--primary)" }} />
+              <span className="font-bold text-white">{mentor.learners}</span>&nbsp;Learners
             </div>
-
-            <div className="h-7 w-px bg-border/80" aria-hidden />
-
-            <div className="flex items-center gap-2">
-              <span className="font-display text-[16px] font-semibold leading-none text-text">
-                {mentor.learners}
-              </span>
-              <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                Learners
-              </span>
-            </div>
-          </div>
-
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[5px] bg-primary/10 text-primary opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-primary group-hover:text-white group-hover:shadow-md group-hover:shadow-primary/20">
-            <ArrowUpRight size={18} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </div>
         </div>
       </Link>
@@ -105,34 +92,242 @@ function MentorCard({ mentor, index }) {
   );
 }
 
+/* ─────────────────────────────────────────
+   Main exported section
+───────────────────────────────────────── */
 export default function Mentors() {
+  const isDark = useIsDarkTheme();
+  const [paused, setPaused] = useState(false);
+
+  /* ── Theme tokens ── */
+  const sectionBg = isDark ? "#0a0a0a" : "#ffffff";
+  const headingColor = isDark ? "#ffffff" : "#0f172a";   // slate-950 in light
+  const subTextColor = isDark ? "#94a3b8" : "#475569";   // slate-600 in light
+  const strongColor = isDark ? "#f1f5f9" : "#0f172a";
+  const badgeBg = isDark ? "rgba(33,92,255,0.12)" : "rgba(33,92,255,0.08)";
+  const badgeBorder = isDark ? "rgba(33,92,255,0.25)" : "rgba(33,92,255,0.20)";
+  const pillBg = isDark ? "rgba(255,255,255,0.05)" : "#f1f5f9";
+  const pillBorder = isDark ? "rgba(255,255,255,0.10)" : "#e2e8f0";
+  const pillText = isDark ? "#64748b" : "#64748b";
+  const dividerColor = isDark ? "rgba(255,255,255,0.10)" : "#e2e8f0";
+  const ctaBg = isDark ? "#ffffff" : "#0f172a";
+  const ctaText = isDark ? "#0f172a" : "#ffffff";
+  const ctaHoverBg = isDark ? "#f1f5f9" : "#1e293b";
+  const blobColor = isDark ? "rgba(33,92,255,0.06)" : "rgba(33,92,255,0.04)";
+
   return (
-    <SectionShell id="mentors">
-      <Container>
-        <SectionHeading
-          eyebrow="Meet the team"
-          title="Learn from"
-          highlight="industry mentors"
-          description="Every track is built and taught by ex-FAANG engineers and senior practitioners shipping at scale."
-        />
+    <section
+      id="mentors"
+      style={{ background: sectionBg, position: "relative", overflow: "hidden" }}
+      className="py-24 px-6"
+    >
+      {/* Ambient blobs */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute", top: "-10%", left: "30%",
+          width: 600, height: 600, borderRadius: "50%",
+          background: `radial-gradient(circle, ${blobColor} 0%, transparent 70%)`,
+          filter: "blur(80px)", pointerEvents: "none", zIndex: 0,
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: "absolute", bottom: "-10%", right: "20%",
+          width: 500, height: 500, borderRadius: "50%",
+          background: `radial-gradient(circle, ${blobColor} 0%, transparent 70%)`,
+          filter: "blur(80px)", pointerEvents: "none", zIndex: 0,
+        }}
+      />
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-          {mentors.slice(0, 6).map((mentor, i) => (
-            <MentorCard key={mentor.name} mentor={mentor} index={i} />
-          ))}
-        </div>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 1280, margin: "0 auto" }}>
 
-        <div className="mt-10 flex justify-center">
-          <Button
-            to="/mentors"
-            variant="outline"
-            size="md"
-            rightIcon={<ArrowRight size={16} />}
+        {/* ══════════════ HEADING ══════════════ */}
+        <div style={{ textAlign: "center", marginBottom: 64, maxWidth: 720, margin: "0 auto 64px" }}>
+          {/* Eyebrow badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45 }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              padding: "6px 18px", borderRadius: 999,
+              background: badgeBg, border: `1px solid ${badgeBorder}`,
+              color: "var(--primary)", fontSize: 11, fontWeight: 700,
+              textTransform: "uppercase", letterSpacing: "0.2em",
+              marginBottom: 24,
+            }}
           >
-            See all {mentors.length}+ mentors
-          </Button>
+            <Sparkles size={12} />
+            World-Class Mentorship
+          </motion.div>
+
+          {/* Main heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.1 }}
+            style={{
+              fontSize: "clamp(36px, 5vw, 56px)",
+              fontWeight: 800,
+              color: headingColor,
+              lineHeight: 1.08,
+              letterSpacing: "-0.02em",
+              margin: 0,
+            }}
+          >
+            Meet the{" "}
+            <span
+              style={{
+                display: "inline-block",
+                position: "relative",
+                background: "linear-gradient(135deg, #215cff 0%, #4b79ff 50%, #7c3aed 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Expert Creators
+              {/* Decorative wavy underline */}
+              <svg
+                viewBox="0 0 320 12"
+                fill="none"
+                style={{
+                  position: "absolute", bottom: -6, left: 0, width: "100%",
+                  opacity: 0.55,
+                }}
+                aria-hidden
+              >
+                <path
+                  d="M0 9 Q40 3 80 9 Q120 15 160 9 Q200 3 240 9 Q280 15 320 9"
+                  stroke="url(#wave)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <defs>
+                  <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#215cff" />
+                    <stop offset="100%" stopColor="#7c3aed" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </span>
+          </motion.h2>
+
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.22 }}
+            style={{
+              marginTop: 24, fontSize: 17, lineHeight: 1.75,
+              color: subTextColor, maxWidth: 600, marginLeft: "auto", marginRight: "auto",
+            }}
+          >
+            Learn directly from{" "}
+            <strong style={{ color: strongColor, fontWeight: 700 }}>
+              ex-FAANG engineers
+            </strong>
+            , industry leaders, and open-source contributors who have shipped at
+            global scale.
+          </motion.p>
+
+          {/* Company trust pills */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.35 }}
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              gap: 8, marginTop: 28, flexWrap: "wrap",
+            }}
+          >
+            {COMPANIES.map((co) => (
+              <span
+                key={co}
+                style={{
+                  fontSize: 12, fontWeight: 600, color: pillText,
+                  background: pillBg, border: `1px solid ${pillBorder}`,
+                  padding: "4px 14px", borderRadius: 999,
+                }}
+              >
+                {co}
+              </span>
+            ))}
+          </motion.div>
         </div>
-      </Container>
-    </SectionShell>
+
+        {/* ══════════════ MARQUEE ══════════════ */}
+        <div
+          style={{ width: "100%", overflow: "hidden", position: "relative", padding: "20px 0", margin: "-20px 0" }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: 24,
+              width: "max-content",
+              animation: `mentorMarquee 30s linear infinite`,
+              animationPlayState: paused ? "paused" : "running",
+            }}
+          >
+            {[...PAGES.flat(), ...PAGES.flat()].map((mentor, index) => (
+              <div key={index} style={{ width: 280, flexShrink: 0 }}>
+                <MentorCard mentor={mentor} index={index} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <style>{`
+          @keyframes mentorMarquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 12px)); }
+          }
+        `}</style>
+
+        {/* ══════════════ CTA ══════════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 56,
+            paddingTop: 32,
+            borderTop: `1px solid ${dividerColor}`,
+          }}
+        >
+          {/* View All CTA */}
+          <Link
+            to="/mentors"
+            className="group"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              height: 48, padding: "0 28px",
+              background: ctaBg, color: ctaText,
+              fontWeight: 700, fontSize: 15,
+              textDecoration: "none",
+              clipPath: "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
+              transition: "all 0.25s ease",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = ctaHoverBg; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.2)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = ctaBg; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            View All Mentors
+            <ArrowRight size={16} />
+          </Link>
+        </motion.div>
+      </div>
+    </section>
   );
 }
