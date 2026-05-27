@@ -4,7 +4,7 @@ export default function FinancialsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold text-text font-display tracking-tight">Platform Financials</h1>
+        <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Platform Financials</h1>
         <p className="text-muted mt-1 font-medium">Track global revenue, platform cut, and mentor payouts.</p>
       </div>
 
@@ -43,7 +43,36 @@ export default function FinancialsPage() {
       <div className="bg-surface border border-border rounded-[5px] overflow-hidden shadow-sm">
         <div className="p-6 sm:p-8 border-b border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <h3 className="font-bold text-xl text-text">Recent Transactions</h3>
-          <button className="flex items-center justify-center gap-2 px-4 py-2 bg-bg border border-border rounded-[5px] text-xs font-bold text-text hover:border-primary transition-colors shadow-sm">
+          <button className="
+                  relative
+                  inline-flex
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[180px]
+                  items-center
+                  justify-center
+                  border
+                  border-border
+                  dark:border-border
+                  bg-white
+                  dark:bg-primary
+                  px-6
+                  text-[14px]
+                  font-semibold
+                  text-black
+                  dark:text-white
+                  overflow-hidden
+                  rounded-none
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                  transition-all
+                  duration-300
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                ">
             <Download className="h-4 w-4" /> Export CSV
           </button>
         </div>

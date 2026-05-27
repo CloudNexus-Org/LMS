@@ -9,8 +9,8 @@ import {
 
 import ThemeToggle from "../ui/ThemeToggle";
 
-import cnlg from "../../assets/white.png";
-import cnlg1 from "../../assets/Blac.png";
+import cnlg from "../../assets/navbar/white.png";
+import cnlg1 from "../../assets/navbar/bika.png";
 
 import useSmartNavbar from "../../hooks/useSmartNavbar";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";

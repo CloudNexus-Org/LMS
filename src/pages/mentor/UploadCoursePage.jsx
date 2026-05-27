@@ -419,7 +419,48 @@ export default function UploadCoursePage() {
 
           <button
             onClick={() => setStep(s => Math.min(STEPS.length, s + 1))}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover hover:-translate-y-0.5 shadow-sm transition-all duration-200"
+            className="
+                  relative
+                  inline-flex
+
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[180px]
+
+                  items-center
+                  justify-center
+
+                  border
+                  border-border
+                  dark:border-border
+
+                  bg-white
+                  dark:bg-primary
+
+                  px-6
+
+                  text-[14px]
+                  font-semibold
+
+                  text-black
+                  dark:text-white
+
+                  overflow-hidden
+                  rounded-none
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+                  transition-all
+                  duration-300
+
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                "
           >
             {step === STEPS.length ? (
               <><Zap className="h-4 w-4" /> Submit for Review</>

@@ -15,8 +15,8 @@ import {
 import Button from '@/components/ui/Button';
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 
-import cnlg from "../../assets/Cnlogo.png";
-import cnlg1 from "../../assets/cnlogo1.png";
+import cnlg from "../../assets/navbar/white.png";
+import cnlg1 from "../../assets/navbar/Blac.png";
 
 const TECH_COLUMNS = [
   {

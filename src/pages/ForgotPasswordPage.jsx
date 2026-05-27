@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
         >
 
           {/* ANIMATED BORDER */}
-          <div className="absolute inset-[3px] rounded-[5px] p-[50px] overflow-hidden">
+          <div className="absolute inset-[3px] rounded-[5px] p-[80px] overflow-hidden">
 
             {/* rotating border glow */}
             <div
@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
             {/* INNER BOX */}
             <div
               className="
-                absolute inset-[1px]
+                absolute inset-[3px]
                 rounded-[5px]
                 bg-elevated/95
                 backdrop-blur-xl

@@ -95,7 +95,7 @@ export default function SystemSettingsPage() {
           <div className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
             <Sparkles className="h-3 w-3" /> Platform Configuration
           </div>
-          <h1 className="text-3xl font-bold text-text font-display tracking-tight">System Settings</h1>
+          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">System Settings</h1>
           <p className="text-muted mt-1 font-medium">Configure global platform behavior, security, and integrations.</p>
         </div>
         <button

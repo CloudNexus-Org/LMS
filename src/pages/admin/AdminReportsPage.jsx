@@ -69,7 +69,7 @@ export default function AdminReportsPage() {
           <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
             <Sparkles className="h-3 w-3" /> Analytics & Reports
           </div>
-          <h1 className="text-3xl font-bold text-text font-display tracking-tight">Platform Reports</h1>
+          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Platform Reports</h1>
           <p className="text-muted mt-1 font-medium">Detailed insights into platform growth, user engagement, and revenue.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -82,7 +82,48 @@ export default function AdminReportsPage() {
               </button>
             ))}
           </div>
-          <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-[5px] text-sm font-bold shadow-sm hover:bg-primary-hover hover:-translate-y-0.5 transition-all">
+          <button className="
+                  relative
+                  inline-flex
+
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[90px]
+
+                  items-center
+                  justify-center
+
+                  border
+                  border-border
+                  dark:border-border
+
+                  bg-white
+                  dark:bg-primary
+
+                  px-6
+
+                  text-[14px]
+                  font-semibold
+
+                  text-black
+                  dark:text-white
+
+                  overflow-hidden
+                  rounded-none
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+                  transition-all
+                  duration-300
+
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                ">
             <Download className="h-4 w-4" /> Export
           </button>
         </div>
