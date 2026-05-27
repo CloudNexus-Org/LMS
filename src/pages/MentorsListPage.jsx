@@ -5,17 +5,13 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Search,
-  Star,
-  Users,
   Sparkles,
   X,
-  ArrowRight,
 } from "lucide-react";
 import { mentors } from '@/data/mentors';
 
 
 import Container from '@/components/ui/Container';
-import Button from '@/components/ui/Button';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -28,7 +24,7 @@ const SORT_OPTIONS = [
 
 const AVAILABILITY = [
   { value: "all", label: "All" },
-  { value: "available", label: "Open this week" },
+  { value: "available", label: "Available" },
   { value: "waitlist", label: "Waitlist" },
 ];
 
@@ -213,7 +209,7 @@ export default function MentorsListPage() {
 
       <main id="main" className="relative">
         {/* ================= HERO ================= */}
-        <section className="relative overflow-hidden pt-[88px] pb-10 md:pt-[112px] md:pb-12">
+        <section className="relative overflow-hidden pt-[78px] pb-10 md:pt-[92px] md:pb-12">
           <div
             aria-hidden
             className="pointer-events-none absolute -top-32 left-1/2 -z-10 h-[480px] w-[680px] -translate-x-1/2 rounded-full bg-primary-soft opacity-60 blur-[160px]"
@@ -238,12 +234,12 @@ export default function MentorsListPage() {
                   <Sparkles size={11} aria-hidden />
                   All mentors
                 </div>
-                <h1 className="mt-4 font-display text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-text sm:text-[44px] md:text-[52px]">
+                <h1 className="mt-4 font-display text-[34px] font-bold leading-[1.05] tracking-[-0.02em] text-text sm:text-[38px] md:text-[48px]">
                   Learn from people who&rsquo;ve{" "}
                   <span className="text-primary">shipped at scale</span>
                 </h1>
                 <p className="mt-4 max-w-[640px] text-[15px] leading-7 text-muted md:text-[16.5px]">
-                  Browse {mentors.length} ex-FAANG and senior practitioners. Filter by track, search by specialty, book a 1:1 session in minutes.
+                  Browse {mentors.length} ex-FAANG and senior practitioners. Filter by track, search by specialty,<br/> book a 1:1 session in minutes.
                 </p>
               </div>
 
@@ -279,7 +275,7 @@ export default function MentorsListPage() {
         </section>
 
         {/* ================= TOOLBAR (sticky) ================= */}
-        <div className="border-y border-border bg-bg/80">
+        <div className="border-y border-border bg-bg/80 -mt-7">
           <Container size="lg">
             <div className="flex flex-col gap-3 py-3 md:flex-row md:items-center md:gap-4">
               {/* Search */}
@@ -381,26 +377,7 @@ export default function MentorsListPage() {
         <section className="relative py-8 md:py-10">
           <Container size="lg">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-[13px] text-muted">
-                Showing{" "}
-                <span className="font-semibold text-text">
-                  {filtered.length}
-                </span>{" "}
-                of{" "}
-                <span className="font-semibold text-text">
-                  {mentors.length}
-                </span>{" "}
-                mentors
-                {activeTrack !== "All" && (
-                  <>
-                    {" "}
-                    in{" "}
-                    <span className="font-semibold text-text">
-                      {activeTrack}
-                    </span>
-                  </>
-                )}
-              </p>
+              
               {isFiltered && (
                 <button
                   type="button"
@@ -440,48 +417,6 @@ export default function MentorsListPage() {
                 ))}
               </div>
             )}
-          </Container>
-        </section>
-
-        {/* ================= CTA ================= */}
-        <section className="relative py-10 md:py-14">
-          <Container size="lg">
-            <div className="relative overflow-hidden rounded-3xl border border-border bg-elevated px-6 py-10 shadow-[var(--shadow-card)] md:px-12 md:py-12">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -left-20 -top-20 h-[300px] w-[300px] rounded-full bg-primary-soft opacity-60 blur-[110px]"
-              />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -bottom-24 -right-16 h-[260px] w-[260px] rounded-full bg-accent-soft opacity-50 blur-[110px]"
-              />
-              <div className="relative grid items-center gap-8 md:grid-cols-[1fr_auto]">
-                <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-subtle">
-                    Can&rsquo;t decide?
-                  </div>
-                  <h2 className="mt-2 font-display text-[24px] font-bold tracking-[-0.01em] text-text md:text-[30px]">
-                    Tell us your goal — we&rsquo;ll match you to a mentor.
-                  </h2>
-                  <p className="mt-3 max-w-[560px] text-[14.5px] leading-7 text-muted">
-                    Answer 3 quick questions and we&rsquo;ll suggest the right
-                    mentor based on your level, goal, and timezone.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    to="/signup"
-                    size="lg"
-                    rightIcon={<ArrowRight size={16} />}
-                  >
-                    Get matched
-                  </Button>
-                  <Button to="/#contact" variant="outline" size="lg">
-                    Talk to us
-                  </Button>
-                </div>
-              </div>
-            </div>
           </Container>
         </section>
       </main>

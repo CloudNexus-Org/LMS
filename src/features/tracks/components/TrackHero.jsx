@@ -118,7 +118,18 @@ export default function TrackHero({ track }) {
 
   return (
     <section className={`relative overflow-hidden min-h-screen ${isDarkTheme ? "bg-black" : "bg-white"} ${textClass}`}>
-      <Container size="lg" className="relative z-20 pt-12 md:pt-16">
+      <Container
+  size="xl"
+  className="
+    relative
+    z-20
+
+    pt-28
+    sm:pt-32
+    md:pt-20
+    lg:pt-20
+  "
+>
         <div className="grid lg:grid-cols-2 items-center min-h-[620px] gap-12">
           {/* LEFT */}
           <motion.div

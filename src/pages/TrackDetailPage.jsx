@@ -5,7 +5,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Star,
-  Briefcase,
   Sparkles,
   BookOpen,
   Network,
@@ -113,8 +112,6 @@ export default function TrackDetailPage() {
         {/* ================= CURRICULUM ================= */}
         <PremiumCurriculum track={track} />
 
-        {/* ================= PROJECTS SHOWCASE ================= */}
-        <PremiumProjects track={track} />
 
         {/* ================= WHAT YOU'LL LEARN ================= */}
         <section className="relative overflow-hidden py-20 md:py-32">
@@ -339,7 +336,6 @@ export default function TrackDetailPage() {
           </Container>
         </section>
 
-
         <RevealSection className="py-16 md:py-24">
           <SectionDivider />
           <Container size="lg" className="mt-14">
@@ -394,7 +390,6 @@ export default function TrackDetailPage() {
                     </div>
                   ) : null}
                 </div>
-
                 {mentor ? (
                   <Link
                     to={`/mentors/${mentor.slug}`}
@@ -409,11 +404,6 @@ export default function TrackDetailPage() {
           </Container>
         </RevealSection>
 
-
-
-
-
-    
 
         {/* ================= FAQ ================= */}
         {track.faq?.length > 0 && (
@@ -448,13 +438,7 @@ export default function TrackDetailPage() {
             </Container>
           </RevealSection>
         )}
-
-    
-
-
       </main>
-
-
     </div>
   );
 }

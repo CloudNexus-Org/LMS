@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Bot, Code2, HeartPulse, ShoppingCart, Brain, BarChart3, Users, Layers, Rocket, Globe, Database, Sparkles } from 'lucide-react';
+import { Bot, Code2, HeartPulse, ShoppingCart, Brain, BarChart3, Users, Layers, Rocket, Globe, Database, Sparkles } from 'lucide-react';
 
 /* ─── 12 Real-world projects ─── */
 const ALL_PROJECTS = [
@@ -282,106 +282,11 @@ function CtaCard({ totalCount }) {
         justifyContent: 'space-between',
       }}
     >
-      {/* Grid overlay */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `
-            linear-gradient(rgba(75, 121, 255, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(75, 121, 255, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '28px 28px',
-          pointerEvents: 'none',
-        }}
-      />
+      
 
-      {/* Strong center glow */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: `radial-gradient(circle at 50% 40%, rgba(33, 92, 255, 0.2) 0%, transparent 70%)`,
-          pointerEvents: 'none',
-        }}
-      />
 
-      <div style={{ position: 'relative', zIndex: 10 }}>
-        <span style={{
-          fontFamily: 'monospace',
-          fontSize: 12,
-          color: 'rgba(75, 121, 255, 0.6)',
-          letterSpacing: '0.15em',
-        }}>
-          (+more)
-        </span>
-        <div style={{ marginTop: 12 }}>
-          <div style={{
-            fontSize: 56,
-            fontWeight: 900,
-            lineHeight: 1,
-            color: BRAND_BLUE_LIGHT,
-            letterSpacing: '-0.04em',
-          }}>
-            {totalCount}+
-          </div>
-          <div style={{
-            fontSize: 28,
-            fontWeight: 900,
-            color: BRAND_BLUE_LIGHT,
-            letterSpacing: '-0.02em',
-            marginTop: 4,
-            opacity: 0.85,
-          }}>
-            PROJECTS
-          </div>
-        </div>
 
-        <p style={{
-          fontSize: 13,
-          color: 'rgba(255,255,255,0.4)',
-          marginTop: 16,
-          lineHeight: 1.5,
-          maxWidth: 240,
-        }}>
-          Build a portfolio that speaks louder than any resume.
-        </p>
-      </div>
-
-      {/* CTA button */}
-      <button
-        style={{
-          position: 'relative',
-          zIndex: 10,
-          width: '100%',
-          padding: '16px 24px',
-          borderRadius: 0,
-          clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)',
-          background: hovered
-            ? `linear-gradient(135deg, ${BRAND_BLUE_LIGHT}, ${BRAND_BLUE})`
-            : `linear-gradient(135deg, ${BRAND_BLUE}, ${BRAND_BLUE_DARK})`,
-          color: '#fff',
-          fontWeight: 700,
-          fontSize: 15,
-          letterSpacing: '-0.01em',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-          boxShadow: hovered
-            ? `0 0 40px rgba(33, 92, 255, 0.6), 0 8px 24px rgba(33, 92, 255, 0.4)`
-            : `0 0 20px rgba(33, 92, 255, 0.3)`,
-          transition: 'all 0.3s ease',
-          transform: hovered ? 'scale(1.02)' : 'scale(1)',
-        }}
-      >
-        View All Projects
-        <ArrowRight size={16} />
-      </button>
+      
     </motion.div>
   );
 }
@@ -578,46 +483,6 @@ export default function PremiumProjects({ track }) {
           <div style={{ scrollSnapAlign: 'start' }}>
             <CtaCard totalCount={totalCount} />
           </div>
-        </div>
-
-        {/* ─── More pill ─── */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginTop: 32 }}>
-          <motion.button
-            onClick={handleMore}
-            animate={{ y: [0, -5, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            whileHover={{ scale: 1.06 }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '14px 32px',
-              borderRadius: 0,
-              clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: 15,
-              cursor: 'pointer',
-              backdropFilter: 'blur(12px)',
-              transition: 'border-color 0.3s, box-shadow 0.3s',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = `rgba(75, 121, 255, 0.5)`;
-              e.currentTarget.style.boxShadow = `0 0 30px rgba(33, 92, 255, 0.25)`;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            More
-            <ArrowRight size={16} color={BRAND_BLUE_LIGHT} />
-          </motion.button>
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.1em' }}>
-            Swipe or scroll horizontally to explore
-          </span>
         </div>
       </div>
 

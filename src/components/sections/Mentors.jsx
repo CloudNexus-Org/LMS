@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
-  ChevronLeft,
-  ChevronRight,
   ArrowRight,
   Users,
   BookOpen,
@@ -110,7 +108,7 @@ export default function Mentors() {
   const pillBorder = isDark ? "rgba(255,255,255,0.10)" : "#e2e8f0";
   const pillText = isDark ? "#64748b" : "#64748b";
   const dividerColor = isDark ? "rgba(255,255,255,0.10)" : "#e2e8f0";
-  const ctaBg = isDark ? "#ffffff" : "#0f172a";
+  const ctaBg = isDark ? "#ffffff" : "#2c5bff"; 
   const ctaText = isDark ? "#0f172a" : "#ffffff";
   const ctaHoverBg = isDark ? "#f1f5f9" : "#1e293b";
   const blobColor = isDark ? "rgba(33,92,255,0.06)" : "rgba(33,92,255,0.04)";

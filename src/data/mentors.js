@@ -1,9 +1,3 @@
-/* ──────────────────────────────────────────────────────────────
-   Mentor data
-   All pages import from here:
-     import { mentors, getMentorBySlug } from '@/data/mentors';
-────────────────────────────────────────────────────────────── */
-
 export const mentors = [
   {
     slug: "arjan-singh",
@@ -11,7 +5,7 @@ export const mentors = [
     role: "Staff Software Engineer",
     company: "Ex-Google",
     trackLabel: "Full-Stack Web",
-    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=faces&auto=format",
+    avatar: "https://i.pravatar.cc/200?u=aaaa",
     bio: "10+ years building distributed systems at Google and Stripe. Loves turning complex backend architecture into crystal-clear mental models.",
     longBio:
       "Arjan spent a decade at Google's Core Infrastructure team before joining Stripe to lead their payments reliability org. He has designed systems that handle billions of requests per day and now channels that hard-won expertise into hands-on mentorship sessions focused on systems design, backend engineering, and career growth for senior ICs.",
@@ -183,7 +177,7 @@ export const mentors = [
     role: "Security Engineer",
     company: "Ex-Stripe",
     trackLabel: "Cybersecurity",
-    avatar: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&h=400&fit=crop&crop=faces&auto=format",
+    avatar: "https://i.pravatar.cc/200?u=ravan",
     bio: "Built Stripe's bug-bounty programme and payment security framework. Zero-day researcher and hands-on pentesting coach.",
     longBio:
       "Marcus spent six years at Stripe building their Application Security practice, including the external bug-bounty programme that has paid out over $3M to researchers. He's a recognised CVE author and conference speaker at DEF CON and Black Hat. His sessions cut through security theory and focus on the practical skills teams need to ship securely.",
@@ -226,7 +220,7 @@ export const mentors = [
     role: "Data Engineering Lead",
     company: "Ex-GitHub",
     trackLabel: "Data Engineering",
-    avatar: "https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces&auto=format",
+    avatar: "https://i.pravatar.cc/200?u=johnson",
     bio: "Scaled GitHub's data platform to petabyte-scale. Expert in Spark, dbt, and building data teams from the ground up.",
     longBio:
       "Aisha led data platform engineering at GitHub for four years, scaling their internal analytics stack from terabytes to petabytes. She's a core contributor to dbt and an advocate for data observability and governance as first-class engineering concerns. She now mentors data engineers and analytics engineers on building reliable, scalable pipelines.",
@@ -312,7 +306,7 @@ export const mentors = [
     role: "Blockchain Engineer",
     company: "Ex-Coinbase",
     trackLabel: "Web3 & Blockchain",
-    avatar: "https://images.unsplash.com/photo-1598550874175-4d0ef436c909?w=400&h=400&fit=crop&crop=faces&auto=format",
+    avatar: "https://i.pravatar.cc/200?u=bhumi",
     bio: "Core engineer on Coinbase's L2 scaling solution. Solidity expert and DeFi protocol designer with 5+ years in production Web3.",
     longBio:
       "Emily was a core blockchain engineer at Coinbase, working on their Base L2 network and internal smart contract security framework. She has audited over 30 DeFi protocols and written Solidity that has secured $500M+ in TVL. She teaches Web3 development with a strong emphasis on security, gas optimisation, and protocol design.",
