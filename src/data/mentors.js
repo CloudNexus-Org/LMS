@@ -11,7 +11,7 @@ export const mentors = [
     role: "Staff Software Engineer",
     company: "Ex-Google",
     trackLabel: "Full-Stack Web",
-    avatar: "https://i.pravatar.cc/200?u=arjan-singh",
+    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "10+ years building distributed systems at Google and Stripe. Loves turning complex backend architecture into crystal-clear mental models.",
     longBio:
       "Arjan spent a decade at Google's Core Infrastructure team before joining Stripe to lead their payments reliability org. He has designed systems that handle billions of requests per day and now channels that hard-won expertise into hands-on mentorship sessions focused on systems design, backend engineering, and career growth for senior ICs.",
@@ -54,7 +54,7 @@ export const mentors = [
     role: "Principal ML Engineer",
     company: "Ex-Meta",
     trackLabel: "AI / ML",
-    avatar: "https://i.pravatar.cc/200?u=priya-mehta",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "Led ML platform teams at Meta and Netflix. Passionate about making machine learning accessible and production-ready for every developer.",
     longBio:
       "Priya has spent over 8 years at the intersection of ML research and production engineering. At Meta she owned the recommendation ranking infra powering Reels; at Netflix she built the real-time feature store now used by 200+ models. She mentors engineers on everything from PyTorch fundamentals to deploying LLM-powered products.",
@@ -97,7 +97,7 @@ export const mentors = [
     role: "Cloud Architect",
     company: "Ex-AWS",
     trackLabel: "Cloud & DevOps",
-    avatar: "https://i.pravatar.cc/200?u=david-kim",
+    avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "Architected multi-billion dollar AWS services. Specialises in cost-optimised, resilient cloud infra for startups and enterprises alike.",
     longBio:
       "David was a Principal Solutions Architect at AWS for seven years, working directly with Fortune 500 customers on migrations, cost optimisation, and disaster recovery design. He holds all major AWS certifications and is a regular contributor to the AWS Architecture Blog. He now teaches cloud-native architecture with an emphasis on real-world trade-offs.",
@@ -140,7 +140,7 @@ export const mentors = [
     role: "Senior Frontend Engineer",
     company: "Ex-Netflix",
     trackLabel: "Full-Stack Web",
-    avatar: "https://i.pravatar.cc/200?u=sarah-chen",
+    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "Crafted Netflix's design system used by 400+ engineers. Expert in React performance, accessibility, and component architecture at scale.",
     longBio:
       "Sarah led the React platform team at Netflix for five years, building the internal design system adopted by 400+ engineers globally. She has a deep passion for accessible-by-default UIs and micro-animation excellence. Her courses blend visual design theory with hardcore frontend engineering, making her one of the most-booked mentors on the platform.",
@@ -183,7 +183,7 @@ export const mentors = [
     role: "Security Engineer",
     company: "Ex-Stripe",
     trackLabel: "Cybersecurity",
-    avatar: "https://i.pravatar.cc/200?u=marcus-rodriguez",
+    avatar: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "Built Stripe's bug-bounty programme and payment security framework. Zero-day researcher and hands-on pentesting coach.",
     longBio:
       "Marcus spent six years at Stripe building their Application Security practice, including the external bug-bounty programme that has paid out over $3M to researchers. He's a recognised CVE author and conference speaker at DEF CON and Black Hat. His sessions cut through security theory and focus on the practical skills teams need to ship securely.",
@@ -226,7 +226,7 @@ export const mentors = [
     role: "Data Engineering Lead",
     company: "Ex-GitHub",
     trackLabel: "Data Engineering",
-    avatar: "https://i.pravatar.cc/200?u=aisha-johnson",
+    avatar: "https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "Scaled GitHub's data platform to petabyte-scale. Expert in Spark, dbt, and building data teams from the ground up.",
     longBio:
       "Aisha led data platform engineering at GitHub for four years, scaling their internal analytics stack from terabytes to petabytes. She's a core contributor to dbt and an advocate for data observability and governance as first-class engineering concerns. She now mentors data engineers and analytics engineers on building reliable, scalable pipelines.",
@@ -269,7 +269,7 @@ export const mentors = [
     role: "Mobile Engineering Manager",
     company: "Ex-Uber",
     trackLabel: "Mobile Development",
-    avatar: "https://i.pravatar.cc/200?u=raj-patel",
+    avatar: "https://images.unsplash.com/photo-1557862921-37829c790f19?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "Managed Uber's 50-person iOS team across 3 continents. Deep expertise in Swift, architecture patterns, and mobile CI/CD.",
     longBio:
       "Raj led Uber's iOS platform engineering team, overseeing a 50-person globally distributed team that shipped the Uber Rider and Eats apps to 600M+ users. He is a Swift Evolution contributor and a regular speaker at iOS conferences. He mentors both IC engineers and aspiring engineering managers on technical excellence and leadership.",
@@ -312,7 +312,7 @@ export const mentors = [
     role: "Blockchain Engineer",
     company: "Ex-Coinbase",
     trackLabel: "Web3 & Blockchain",
-    avatar: "https://i.pravatar.cc/200?u=emily-watson",
+    avatar: "https://images.unsplash.com/photo-1598550874175-4d0ef436c909?w=400&h=400&fit=crop&crop=faces&auto=format",
     bio: "Core engineer on Coinbase's L2 scaling solution. Solidity expert and DeFi protocol designer with 5+ years in production Web3.",
     longBio:
       "Emily was a core blockchain engineer at Coinbase, working on their Base L2 network and internal smart contract security framework. She has audited over 30 DeFi protocols and written Solidity that has secured $500M+ in TVL. She teaches Web3 development with a strong emphasis on security, gas optimisation, and protocol design.",

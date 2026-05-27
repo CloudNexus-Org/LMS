@@ -32,7 +32,7 @@ const COMPLETION_DATA = [42, 45, 38, 52, 58, 62, 55, 68, 65, 72, 70, 75];
 const KPI_CARDS = [
   { label: 'Total Revenue (YTD)', value: '$428.5k', trend: '+24%', positive: true, spark: REVENUE_DATA, sparkColor: 'var(--success)', icon: DollarSign, color: 'text-success', bg: 'bg-success/10' },
   { label: 'New Users (YTD)', value: '12,482', trend: '+18%', positive: true, spark: GROWTH_DATA.map(v => v / 10), sparkColor: 'var(--primary)', icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
-  { label: 'Courses Published', value: '284', trend: '+42', positive: true, spark: [8,10,7,12,14,18,15,20,22,25,23,28], sparkColor: 'var(--accent)', icon: BookOpen, color: 'text-accent', bg: 'bg-accent/10' },
+  { label: 'Courses Published', value: '284', trend: '+42', positive: true, spark: [8, 10, 7, 12, 14, 18, 15, 20, 22, 25, 23, 28], sparkColor: 'var(--accent)', icon: BookOpen, color: 'text-accent', bg: 'bg-accent/10' },
   { label: 'Avg Completion Rate', value: '63%', trend: '+5%', positive: true, spark: COMPLETION_DATA, sparkColor: 'var(--warning)', icon: Award, color: 'text-warning', bg: 'bg-warning/10' },
 ];
 
@@ -171,19 +171,19 @@ export default function AdminReportsPage() {
           {/* Bar Chart */}
           <div className="relative mt-6">
             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-15 pb-8">
-              {[0,1,2,3].map(i => <div key={i} className="w-full h-px bg-muted" />)}
+              {[0, 1, 2, 3].map(i => <div key={i} className="w-full h-px bg-muted" />)}
             </div>
             <div className="flex items-end gap-1.5 h-48 pt-2 border-b border-border">
               {MONTHS.map((month, i) => {
                 const students = Math.round((GROWTH_DATA[i] / 1420) * 100);
-                const mentors  = Math.round(students * 0.35);
+                const mentors = Math.round(students * 0.35);
                 return (
                   <div key={month} className="flex-1 flex flex-col items-center gap-0.5 h-full justify-end group">
                     <div className="w-full flex items-end gap-0.5 h-40">
                       <div className="flex-1 bg-primary/80 rounded-[5px] transition-all duration-700 group-hover:bg-primary" style={{ height: `${students}%` }} />
                       <div className="flex-1 bg-success/70 rounded-[5px] transition-all duration-700 group-hover:bg-success" style={{ height: `${mentors}%` }} />
                     </div>
-                    <span className="text-[9px] font-bold text-muted mt-1">{month.slice(0,3)}</span>
+                    <span className="text-[9px] font-bold text-muted mt-1">{month.slice(0, 3)}</span>
                   </div>
                 );
               })}
