@@ -70,16 +70,3 @@ export function setStoredJSON(key, value) {
   }
 }
 
-/**
- * Remove a key from localStorage.
- *
- * @param {string} key
- */
-export function removeStored(key) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.removeItem(key);
-  } catch {
-    /* swallow */
-  }
-}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  CheckSquare, XSquare, PlayCircle, BookOpen, Users, Clock,
-  Star, MessageSquare, ChevronRight, Sparkles, AlertTriangle,
-  Eye, Download, Filter, ArrowUpRight, Award, CheckCircle2,
-  X, FileText, Video, BarChart2
+  CheckSquare, XSquare, BookOpen, Clock,
+  Star, Sparkles, AlertTriangle,
+  Eye, Download, CheckCircle2,
+  X
 } from 'lucide-react';
 
 const INITIAL_APPROVALS = [
@@ -121,7 +121,7 @@ export default function CourseApprovalsPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -129,7 +129,7 @@ export default function CourseApprovalsPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden

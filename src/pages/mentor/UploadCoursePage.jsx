@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
-  UploadCloud, CheckCircle2, Video, DollarSign, Settings, ArrowRight,
-  ArrowLeft, Globe, Tag, BookOpen, Users, Plus, Trash2, GripVertical,
+  CheckCircle2, Video, DollarSign, Settings, ArrowRight,
+  ArrowLeft, Globe, Tag, Users, Plus, Trash2, GripVertical,
   Lock, Star, Zap, Award, Clock, Image, X, FileText
 } from 'lucide-react';
 
@@ -435,7 +435,7 @@ export default function UploadCoursePage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -443,7 +443,7 @@ export default function UploadCoursePage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden

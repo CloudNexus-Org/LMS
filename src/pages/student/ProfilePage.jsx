@@ -4,7 +4,6 @@ import {
   CheckCircle,
   Shield,
   Camera,
-  Sparkles,
 } from "lucide-react";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 

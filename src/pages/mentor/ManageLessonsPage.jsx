@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  Edit3, EyeOff, Plus, Users, Star, BarChart, Play, Clock,
-  ChevronDown, ChevronRight, GripVertical, CheckCircle2,
-  Video, FileText, Lock, MoreVertical, Eye, Trash2,
-  TrendingUp, ArrowUpRight, Sparkles, BookOpen, Globe,
+  Edit3, EyeOff, Plus, Users, Star, BarChart, Clock,
+  ChevronDown, GripVertical, CheckCircle2,
+  Video, FileText, Lock, Eye, Trash2,
+  TrendingUp, ArrowUpRight, BookOpen, Globe,
   AlertCircle, Download
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -112,7 +112,7 @@ export default function ManageLessonsPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -120,7 +120,7 @@ export default function ManageLessonsPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden

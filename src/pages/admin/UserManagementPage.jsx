@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import {
-  Search, Filter, Shield, MoreVertical, Edit3, Ban, ShieldCheck,
-  UserPlus, Users, X, Mail, ChevronRight, Sparkles, ArrowUpRight,
-  Activity, UserCheck, UserX, Download, Clock, ChevronDown,
-  Eye, RefreshCw, BarChart2
+  Search, Shield, Edit3, Ban, ShieldCheck,
+  UserPlus, Users, X, Mail, Sparkles, ArrowUpRight,
+  UserCheck, UserX, Download, Clock,
+  Eye, BarChart2
 } from 'lucide-react';
 
 const USERS = [
@@ -128,7 +128,7 @@ export default function UserManagementPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -136,7 +136,7 @@ export default function UserManagementPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden

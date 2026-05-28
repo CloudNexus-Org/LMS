@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
-  Users, Search, Filter, Mail, MoreVertical, ShieldCheck,
-  ChevronDown, Sparkles, TrendingUp, Activity, UserCheck,
-  MessageSquare, BookOpen, Clock, Star, Download, X,
+  Users, Search, Mail, MoreVertical,
+  Sparkles, TrendingUp, Activity,
+  BookOpen, Clock, Download, X,
   ArrowUpRight, Award, BarChart2, ChevronRight
 } from 'lucide-react';
 
@@ -76,7 +76,7 @@ export default function StudentsPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -84,7 +84,7 @@ export default function StudentsPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden

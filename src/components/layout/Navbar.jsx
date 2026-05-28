@@ -10,7 +10,7 @@ import {
 import ThemeToggle from "../ui/ThemeToggle";
 
 import cnlg from "../../assets/navbar/white.png";
-import cnlg1 from "../../assets/navbar/bika.png";
+import cnlg1 from "../../assets/navbar/Blac.png";
 
 import useSmartNavbar from "../../hooks/useSmartNavbar";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";
@@ -39,7 +39,6 @@ const DEFAULT_LINKS = [
 const NAV_HEIGHT = 82;
 
 export default function Navbar({
-  logoText = "CLOUD NEXUS",
   navLinks = DEFAULT_LINKS,
   showAuthButtons = true,
 }) {

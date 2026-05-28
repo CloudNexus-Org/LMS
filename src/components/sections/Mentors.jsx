@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
-  ChevronLeft,
-  ChevronRight,
   ArrowRight,
   Users,
   BookOpen,
@@ -20,10 +18,9 @@ const PAGES = [
   ALL_MENTORS_DATA.slice(4, 8),
 ];
 
-const TOTAL_PAGES = PAGES.length;
 const COMPANIES = ["Google", "Meta", "AWS", "Netflix", "Stripe", "GitHub"];
 
-function MentorCard({ mentor, index }) {
+function MentorCard({ mentor }) {
   const mentorSlug = mentor.slug || mentor.name.toLowerCase().replace(/\s+/g, "-");
 
   return (
@@ -110,7 +107,7 @@ export default function Mentors() {
   const pillBorder = isDark ? "rgba(255,255,255,0.10)" : "#e2e8f0";
   const pillText = isDark ? "#64748b" : "#64748b";
   const dividerColor = isDark ? "rgba(255,255,255,0.10)" : "#e2e8f0";
-  const ctaBg = isDark ? "#ffffff" : "#0f172a";
+  const ctaBg = isDark ? "#ffffff" : "#2c5bff"; 
   const ctaText = isDark ? "#0f172a" : "#ffffff";
   const ctaHoverBg = isDark ? "#f1f5f9" : "#1e293b";
   const blobColor = isDark ? "rgba(33,92,255,0.06)" : "rgba(33,92,255,0.04)";
@@ -279,7 +276,7 @@ export default function Mentors() {
           >
             {[...PAGES.flat(), ...PAGES.flat()].map((mentor, index) => (
               <div key={index} style={{ width: 280, flexShrink: 0 }}>
-                <MentorCard mentor={mentor} index={index} />
+                <MentorCard mentor={mentor} />
               </div>
             ))}
           </div>

@@ -27,5 +27,3 @@ export const faqs = [{
         answer: "Yes. Our Teams plan adds an admin dashboard, SSO + SCIM, custom learning paths, skill analytics, and a dedicated success manager. Talk to sales for volume pricing.",
     },
 ];
-
-export const faqData = faqs.map((f) => [f.question, f.answer]);

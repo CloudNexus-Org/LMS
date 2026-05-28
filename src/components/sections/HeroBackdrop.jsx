@@ -46,9 +46,6 @@ export default function HeroBackdrop({
   const shouldReduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
 
-  // Premium, stable parallax: smooth 150px movement
-  const imageY = useTransform(scrollY, [0, 1000], [0, 150]);
-
   // Content Parallax transformations (applied to content layer only, NOT the image)
   const contentY = useTransform(scrollY, [0, 800], [0, 120]);
   const contentOpacity = useTransform(scrollY, [0, 800], [1, 0.85]);

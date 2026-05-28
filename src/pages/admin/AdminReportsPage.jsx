@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  BarChart2, Download, Calendar, PieChart, TrendingUp,
+  Download, PieChart,
   Users, DollarSign, BookOpen, Star, ArrowUpRight,
-  ArrowDownRight, Globe, Sparkles, Award, Activity,
-  Filter, RefreshCw, ChevronRight
+  ArrowDownRight, Globe, Sparkles, Award,
+  ChevronRight
 } from 'lucide-react';
 
 function Sparkline({ data, color = 'var(--primary)', height = 40 }) {
@@ -32,7 +32,7 @@ const COMPLETION_DATA = [42, 45, 38, 52, 58, 62, 55, 68, 65, 72, 70, 75];
 const KPI_CARDS = [
   { label: 'Total Revenue (YTD)', value: '$428.5k', trend: '+24%', positive: true, spark: REVENUE_DATA, sparkColor: 'var(--success)', icon: DollarSign, color: 'text-success', bg: 'bg-success/10' },
   { label: 'New Users (YTD)', value: '12,482', trend: '+18%', positive: true, spark: GROWTH_DATA.map(v => v / 10), sparkColor: 'var(--primary)', icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
-  { label: 'Courses Published', value: '284', trend: '+42', positive: true, spark: [8,10,7,12,14,18,15,20,22,25,23,28], sparkColor: 'var(--accent)', icon: BookOpen, color: 'text-accent', bg: 'bg-accent/10' },
+  { label: 'Courses Published', value: '284', trend: '+42', positive: true, spark: [8, 10, 7, 12, 14, 18, 15, 20, 22, 25, 23, 28], sparkColor: 'var(--accent)', icon: BookOpen, color: 'text-accent', bg: 'bg-accent/10' },
   { label: 'Avg Completion Rate', value: '63%', trend: '+5%', positive: true, spark: COMPLETION_DATA, sparkColor: 'var(--warning)', icon: Award, color: 'text-warning', bg: 'bg-warning/10' },
 ];
 
@@ -98,7 +98,7 @@ export default function AdminReportsPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -106,7 +106,7 @@ export default function AdminReportsPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden
@@ -269,7 +269,7 @@ export default function AdminReportsPage() {
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {TOP_MENTORS.map((mentor, i) => (
+          {TOP_MENTORS.map((mentor) => (
             <div key={mentor.name} className="bg-bg border border-border rounded-[5px] p-4 hover:border-primary/30 hover:-translate-y-0.5 transition-all duration-200">
               <div className="flex items-center gap-3 mb-4">
                 <div className={`h-11 w-11 rounded-full bg-gradient-to-br ${mentor.grad} flex items-center justify-center text-white text-sm font-bold shadow-sm overflow-hidden relative`}>

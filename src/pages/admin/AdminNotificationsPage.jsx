@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import {
-  Bell, Check, ShieldAlert, Activity, UserPlus, Server,
+  Bell, Check, Activity, UserPlus, Server,
   CheckCheck, Trash2, ChevronRight, Sparkles, AlertTriangle,
-  DollarSign, BookOpen, Shield, Zap, RefreshCw, Globe,
-  MessageSquare, TrendingUp, X, Clock
+  DollarSign, BookOpen, Shield, Zap, RefreshCw,
+  Clock
 } from 'lucide-react';
 
 const INITIAL_NOTIFICATIONS = [
@@ -142,20 +142,20 @@ export default function AdminNotificationsPage() {
                   h-[48px]
                   w-full
                   sm:w-auto
-                  min-w-[180px]
+                  min-w-[80px]
                   items-center
                   justify-center
                   border
                   border-border
                   dark:border-border
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden
@@ -173,7 +173,40 @@ export default function AdminNotificationsPage() {
             >
               <CheckCheck className="h-4 w-4" /> Mark All Read
             </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-surface border border-border rounded-[5px] text-sm font-bold text-muted hover:text-text hover:border-primary/40 transition-all">
+            <button className="
+                  relative
+                  inline-flex
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[180px]
+                  items-center
+                  justify-center
+                  border
+                  border-border
+                  dark:border-border
+                  bg-white
+                  dark:bg-white
+
+                  px-6
+                  text-[14px]
+                  font-semibold
+
+                  text-black
+                  dark:text-black
+
+                  overflow-hidden
+                  rounded-none
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                  transition-all
+                  duration-300
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                ">
               <RefreshCw className="h-4 w-4" /> Refresh
             </button>
           </div>

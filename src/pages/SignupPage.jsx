@@ -4,7 +4,6 @@ import {
   X,
   Eye,
   EyeOff,
-  AlertCircle,
   Loader2
 } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";

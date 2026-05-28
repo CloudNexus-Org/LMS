@@ -1,4 +1,3 @@
-import React from "react";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 
 const Analytics = () => {

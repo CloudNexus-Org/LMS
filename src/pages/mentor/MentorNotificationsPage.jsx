@@ -282,10 +282,10 @@ export default function MentorNotificationsPage() {
                   items-center justify-center gap-2
                   overflow-hidden rounded-none
                   border border-border dark:border-border
-                  bg-white dark:bg-primary
+                  bg-primary dark:bg-primary
                   px-7
                   text-sm font-black uppercase tracking-[0.12em]
-                  text-black dark:text-white
+                  text-white dark:text-white
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
                   transition-all duration-300

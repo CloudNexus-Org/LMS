@@ -32,7 +32,6 @@ const MentorCoverflow = ({ mentors, isDarkTheme }) => {
 
             const isCenter = normalizedOffset === 0;
             const isLeft = normalizedOffset === -1;
-            const isRight = normalizedOffset === 1;
 
             return (
               <motion.div
@@ -108,17 +107,25 @@ export default function TrackHero({ track }) {
   ];
 
   // Theme-aware colors
-  const bgClass = isDarkTheme ? "bg-black" : "bg-white";
   const textClass = isDarkTheme ? "text-white" : "text-black";
   const mutedTextClass = isDarkTheme ? "text-white/75" : "text-black/75";
-  const borderClass = isDarkTheme ? "border-white/10 bg-[#071017]" : "border-black/10 bg-white";
-  const glowColorClass = "bg-primary/12";
   const buttonPrimaryClass = "bg-gradient-to-r from-[#215cff] to-[#4b79ff] hover:from-[#4b79ff] hover:to-[#215cff] text-white shadow-[0_12px_28px_rgba(33,92,255,0.30)]";
   const buttonSecondaryClass = isDarkTheme ? "border-white/10 bg-white/5 hover:bg-white/10 text-white/80" : "border-black/10 bg-black/5 hover:bg-black/10 text-black/80";
 
   return (
     <section className={`relative overflow-hidden min-h-screen ${isDarkTheme ? "bg-black" : "bg-white"} ${textClass}`}>
-      <Container size="lg" className="relative z-20 pt-12 md:pt-16">
+      <Container
+  size="xl"
+  className="
+    relative
+    z-20
+
+    pt-28
+    sm:pt-32
+    md:pt-20
+    lg:pt-20
+  "
+>
         <div className="grid lg:grid-cols-2 items-center min-h-[620px] gap-12">
           {/* LEFT */}
           <motion.div

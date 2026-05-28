@@ -5,7 +5,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Star,
-  Briefcase,
   Sparkles,
   BookOpen,
   Network,
@@ -20,19 +19,17 @@ import {
   Activity,
   Cpu,
 } from "lucide-react";
-import { tracks, getTrackById } from '@/data/tracks';
+import { getTrackById } from '@/data/tracks';
 import { getMentorBySlug } from '@/data/mentors';
 import Container from '@/components/ui/Container';
 import {
   EASE,
-  COLOR_TINT,
   SectionTitle,
   RevealSection,
   SectionDivider,
 } from '@/components/ui/PremiumUI';
 import TrackHero from "@/features/tracks/components/TrackHero";
 import PremiumCurriculum from "@/features/tracks/components/PremiumCurriculum";
-import PremiumProjects from "@/features/tracks/components/PremiumProjects";
 
 
 
@@ -94,11 +91,9 @@ export default function TrackDetailPage() {
     return <Navigate to="/" replace />;
   }
 
-  const accent = COLOR_TINT[track.color] || COLOR_TINT.primary;
   const mentor = track.leadMentorSlug
     ? getMentorBySlug(track.leadMentorSlug)
     : null;
-  const others = tracks.filter((t) => t.id !== track.id).slice(0, 3);
 
 
 
@@ -113,8 +108,6 @@ export default function TrackDetailPage() {
         {/* ================= CURRICULUM ================= */}
         <PremiumCurriculum track={track} />
 
-        {/* ================= PROJECTS SHOWCASE ================= */}
-        <PremiumProjects track={track} />
 
         {/* ================= WHAT YOU'LL LEARN ================= */}
         <section className="relative overflow-hidden py-20 md:py-32">
@@ -339,7 +332,6 @@ export default function TrackDetailPage() {
           </Container>
         </section>
 
-
         <RevealSection className="py-16 md:py-24">
           <SectionDivider />
           <Container size="lg" className="mt-14">
@@ -394,7 +386,6 @@ export default function TrackDetailPage() {
                     </div>
                   ) : null}
                 </div>
-
                 {mentor ? (
                   <Link
                     to={`/mentors/${mentor.slug}`}
@@ -409,11 +400,6 @@ export default function TrackDetailPage() {
           </Container>
         </RevealSection>
 
-
-
-
-
-    
 
         {/* ================= FAQ ================= */}
         {track.faq?.length > 0 && (
@@ -448,13 +434,7 @@ export default function TrackDetailPage() {
             </Container>
           </RevealSection>
         )}
-
-    
-
-
       </main>
-
-
     </div>
   );
 }

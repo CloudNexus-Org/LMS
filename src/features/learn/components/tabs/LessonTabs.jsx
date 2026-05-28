@@ -1,10 +1,6 @@
-import { useState, useEffect, memo } from "react";
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Download, MessagesSquare, ArrowRight, ArrowUpRight } from "lucide-react";
-import { getStored, setStored } from "@/utils/storage";
-
-/* --- HELPERS --- */
-const noteKey = (trackId, lessonId) => `cn:notes:${trackId}:${lessonId}`;
 
 /* --- TAB COMPONENTS --- */
 
