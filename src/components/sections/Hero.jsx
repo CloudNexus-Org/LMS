@@ -199,10 +199,10 @@ dark:bg-[#0f172a]/80
                 
                   max-w-[580px]
                 
-                  text-[18px]
+                  text-[17px]
                   leading-7
                 
-                  sm:text-[23px]
+                  sm:text-[21px]
                   sm:leading-8
                 
                   ${bodyColor}

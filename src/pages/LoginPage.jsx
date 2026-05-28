@@ -279,7 +279,7 @@ export default function LoginPage() {
                       placeholder="your_username"
                       className="
                         w-full bg-transparent
-                        text-[15px] text-text
+                        text-[17px] text-text
                         outline-none
                         placeholder:text-subtle
                       "
@@ -302,7 +302,7 @@ export default function LoginPage() {
                     <Link
                       to="/forgot-password"
                       className="
-                        text-[12px]
+                        text-[17px]
                         font-medium
                         text-primary
                         transition
