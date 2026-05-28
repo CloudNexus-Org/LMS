@@ -109,10 +109,10 @@ export default function CourseApprovalsPage() {
           <button className="
                   relative
                   inline-flex
-                  h-[2px]
+                  h-[40px]
                   w-full
                   sm:w-auto
-                  min-w-[10px]
+                  min-w-[120px]
 
                   items-center
                   justify-center

@@ -1,8 +1,9 @@
     @import "tailwindcss";
+    @variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
     @theme inline {
-        --font-sans: "Times New Roman", serif;
-        --font-display: "Times New Roman", serif;
-        --font-mono: "Times New Roman ", serif;
+        --font-sans: "Russo one", sans-serif;
+        --font-display: "Russo one", sans-serif;
+        --font-mono: "Russo one", sans-serif;
         --color-bg: var(--bg);
         --color-surface: var(--surface);
         --color-elevated: var(--elevated);

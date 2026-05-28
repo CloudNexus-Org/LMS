@@ -260,12 +260,12 @@ export default function AdminDashboardPage() {
                   border
                   border-border
                   dark:border-border
-                  bg-white
+                  bg-primary
                   dark:bg-primary
                   px-6
                   text-[14px]
                   font-semibold
-                  text-black
+                  text-white
                   dark:text-white
                   overflow-hidden
                   rounded-none
@@ -283,43 +283,165 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ── KPI CARDS ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {kpis.map((kpi) => {
-          const Icon = kpi.icon;
-          return (
+     {/* ── KPI CARDS ── */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+  {kpis.map((kpi) => {
+    const Icon = kpi.icon;
+
+    return (
+      <div
+        key={kpi.label}
+        className="
+          group
+          relative
+          overflow-hidden
+          bg-surface
+          border
+          border-border
+          p-5
+          rounded-[5px]
+          shadow-sm
+          hover:-translate-y-1
+          hover:border-primary/50
+          hover:bg-primary/[0.03]
+          dark:hover:bg-primary/[0.06]
+          hover:shadow-[0_10px_40px_rgba(0,0,0,0.10)]
+          dark:hover:shadow-[0_10px_40px_rgba(0,0,0,0.45)]
+          transition-all
+          duration-500
+        "
+      >
+
+        {/* LARGE BACKGROUND ICON */}
+        <div
+          className="
+            absolute
+            bottom-0
+            right-0
+            translate-y-6
+            translate-x-6
+            opacity-0
+            group-hover:opacity-100
+            transition-all
+            duration-500
+            pointer-events-none
+            z-0
+          "
+        >
+          <Icon
+            className={`
+              w-[170px]
+              h-[170px]
+              ${kpi.color}
+              opacity-10
+              dark:opacity-[0.06]
+            `}
+            strokeWidth={0.9}
+          />
+        </div>
+
+        {/* GRADIENT OVERLAY */}
+        <div
+          className="
+            absolute
+            inset-0
+            opacity-0
+            group-hover:opacity-100
+            transition-all
+            duration-500
+          "
+          style={{
+            background: `
+              linear-gradient(
+                135deg,
+                rgba(99,102,241,0.10),
+                transparent 45%
+              )
+            `,
+          }}
+        />
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+
+          {/* TOP */}
+          <div className="flex items-start justify-between mb-4">
+
+            {/* SMALL ICON */}
             <div
-              key={kpi.label}
-              className="bg-surface border border-border p-5 rounded-[5px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group relative overflow-hidden"
+              className={`
+                h-10
+                w-10
+                rounded-[5px]
+                ${kpi.iconBg}
+                flex
+                items-center
+                justify-center
+                ${kpi.color}
+                transition-all
+                duration-300
+                group-hover:scale-110
+              `}
             >
-              {/* subtle bg glow */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: `radial-gradient(circle at top right, ${kpi.iconBg.replace('bg-', '').replace('/10','')}, transparent 70%)` }} />
-
-              <div className="relative">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`h-10 w-10 rounded-[5px] ${kpi.iconBg} flex items-center justify-center ${kpi.color}`}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-[5px] ${kpi.positive ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
-                    {kpi.positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                    {kpi.trend}
-                  </div>
-                </div>
-
-                <p className="text-2xl font-display font-bold text-text">{kpi.value}</p>
-                <p className="text-xs font-bold text-muted mt-0.5 mb-3">{kpi.label}</p>
-
-                <div className="flex items-end justify-between">
-                  <p className="text-[11px] text-subtle font-medium">{kpi.sub}</p>
-                  <Sparkline data={kpi.spark} color={kpi.sparkColor} />
-                </div>
-              </div>
+              <Icon className="h-5 w-5" />
             </div>
-          );
-        })}
-      </div>
 
+            {/* TREND */}
+            <div
+              className={`
+                flex
+                items-center
+                gap-1
+                text-xs
+                font-bold
+                px-2
+                py-1
+                rounded-[5px]
+                ${
+                  kpi.positive
+                    ? 'bg-success/10 text-success'
+                    : 'bg-warning/10 text-warning'
+                }
+              `}
+            >
+              {kpi.positive ? (
+                <ArrowUpRight className="h-3 w-3" />
+              ) : (
+                <ArrowDownRight className="h-3 w-3" />
+              )}
+
+              {kpi.trend}
+            </div>
+          </div>
+
+          {/* VALUE */}
+          <p className="text-2xl font-display font-bold text-text">
+            {kpi.value}
+          </p>
+
+          {/* LABEL */}
+          <p className="text-xs font-bold text-muted mt-0.5 mb-3">
+            {kpi.label}
+          </p>
+
+          {/* BOTTOM */}
+          <div className="flex items-end justify-between">
+            <p className="text-[11px] text-subtle font-medium">
+              {kpi.sub}
+            </p>
+
+            <div className="transition-transform duration-300 group-hover:scale-105">
+              <Sparkline
+                data={kpi.spark}
+                color={kpi.sparkColor}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
       {/* ── REVENUE CHART + QUICK ACTIONS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
