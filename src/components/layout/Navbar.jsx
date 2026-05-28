@@ -361,7 +361,7 @@ export default function Navbar({
   items-center
   gap-2
   sm:gap-3
-  mr-1
+  mr-2
   sm:mr-2
   lg:mr-0
 "
@@ -376,6 +376,7 @@ export default function Navbar({
                   lg:flex
                   items-center
                   gap-3
+                  -mr-10
                 "
               >
                 {/* LOGIN */}

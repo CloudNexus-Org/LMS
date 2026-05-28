@@ -29,10 +29,10 @@ export default function StudentDashboardPage() {
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.08),transparent_28%)]" />
 
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div className="relative flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
             {/* LEFT */}
             <div>
-              <div className="mb-3 flex flex-wrap items-center gap-3">
+              <div className="mb-3 flex flex-wrap items-center gap-10">
                 <div
                   className="
                     inline-flex items-center gap-2
@@ -111,7 +111,7 @@ export default function StudentDashboardPage() {
         </section>
 
 {/* STATS */}
-<section className="grid grid-cols-2 gap-3 xl:grid-cols-4 -ml-5">
+<section className="grid grid-cols-2 gap-5 xl:grid-cols-4 -ml-5">
   {[
     {
       title: "Courses",
@@ -265,7 +265,7 @@ export default function StudentDashboardPage() {
 </section>
 
         {/* LOWER GRID */}
-        <section className="grid grid-cols-1 gap-4 xl:grid-cols-12 -ml-5">
+        <section className="grid grid-cols-1 gap-6 xl:grid-cols-12 -ml-5">
           {/* LEARNING ACTIONS */}
           <div className="xl:col-span-4">
             <div
@@ -372,19 +372,19 @@ export default function StudentDashboardPage() {
                     title: "UI/UX Design",
                     width: "85%",
                     value: "85%",
-                    color: "bg-blue-500",
+                    color: "bg-blue-300",
                   },
                   {
                     title: "React Development",
                     width: "64%",
                     value: "64%",
-                    color: "bg-emerald-500",
+                    color: "bg-emerald-300",
                   },
                   {
                     title: "System Design",
                     width: "28%",
                     value: "28%",
-                    color: "bg-orange-500",
+                    color: "bg-orange-300",
                   },
                 ].map((item, index) => (
                   <div key={index}>
@@ -526,7 +526,7 @@ export default function StudentDashboardPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             {[
               {
                 date: "Tomorrow",
