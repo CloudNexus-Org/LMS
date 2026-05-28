@@ -26,13 +26,13 @@ function MentorCard({ mentor }) {
   return (
     <motion.div
       whileHover={{ y: -10 }}
-      className="group relative rounded-[22px] shadow-lg hover:shadow-2xl cursor-pointer transition-shadow duration-500 w-full"
+      className="group relative rounded-[5px] shadow-lg hover:shadow-2xl cursor-pointer transition-shadow duration-500 w-full"
       style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.10)" }}
     >
       {/* Inner wrapper enforcing border radius clip */}
       <Link
         to={`/mentors/${mentorSlug}`}
-        className="block relative w-full h-full overflow-hidden rounded-[22px]"
+        className="block relative w-full h-full overflow-hidden rounded-[5px]"
         style={{ transform: "translateZ(0)" }}
       >
         {/* Portrait */}
@@ -49,7 +49,7 @@ function MentorCard({ mentor }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Shine sweep */}
-        <div className="absolute inset-0 overflow-hidden rounded-[22px] pointer-events-none">
+        <div className="absolute inset-0 overflow-hidden rounded-[5px] pointer-events-none">
           <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-in-out bg-gradient-to-r from-transparent via-white/8 to-transparent -skew-x-12" />
         </div>
 
