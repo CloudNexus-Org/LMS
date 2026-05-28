@@ -169,7 +169,7 @@ export default function MentorDashboardPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -177,7 +177,7 @@ export default function MentorDashboardPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden
@@ -220,7 +220,7 @@ export default function MentorDashboardPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-black
                   dark:bg-surface
 
                   px-6
@@ -228,7 +228,7 @@ export default function MentorDashboardPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-text
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]

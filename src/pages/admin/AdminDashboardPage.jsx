@@ -173,7 +173,7 @@ export default function AdminDashboardPage() {
     { name: 'Sophie Laurent', role: 'mentor', action: 'Submitted new course for review', time: '15m ago', avatar: 'SL' },
     { name: 'Ethan Brooks', role: 'student', action: 'Completed Kubernetes module', time: '32m ago', avatar: 'EB' },
     { name: 'Mia Johansson', role: 'student', action: 'Purchased React & Next.js', time: '1h ago', avatar: 'MJ' },
-    { name: 'Raj Patel', role: 'mentor', action: 'Updated lesson content', time: '2h ago', avatar: 'RP' },
+    
   ];
 
   const systemHealth = [
@@ -216,52 +216,232 @@ export default function AdminDashboardPage() {
           <p className="text-muted mt-1 font-medium">Global metrics, system health & insights for Cloud Nexus.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-[5px] text-xs font-bold text-muted hover:text-text hover:border-primary/40 transition-all shadow-sm">
+          <button className="
+                  relative
+                  inline-flex
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[100px]
+                  items-center
+                  justify-center
+                  border
+                  border-border
+                  dark:border-border
+                  bg-white
+                  dark:bg-white
+                  px-6
+                  text-[14px]
+                  font-semibold
+                  text-black
+                  dark:text-black
+                  overflow-hidden
+                  rounded-none
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                  transition-all
+                  duration-300
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                ">
             <RefreshCw className="h-3.5 w-3.5" /> Refresh
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[5px] text-xs font-bold shadow-sm hover:bg-primary-hover transition-all">
+          <button className="
+                  relative
+                  inline-flex
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[100px]
+                  items-center
+                  justify-center
+                  border
+                  border-border
+                  dark:border-border
+                  bg-primary
+                  dark:bg-primary
+                  px-6
+                  text-[14px]
+                  font-semibold
+                  text-white
+                  dark:text-white
+                  overflow-hidden
+                  rounded-none
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                  transition-all
+                  duration-300
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                ">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
         </div>
       </div>
 
-      {/* ── KPI CARDS ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {kpis.map((kpi) => {
-          const Icon = kpi.icon;
-          return (
+     {/* ── KPI CARDS ── */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+  {kpis.map((kpi) => {
+    const Icon = kpi.icon;
+
+    return (
+      <div
+        key={kpi.label}
+        className="
+          group
+          relative
+          overflow-hidden
+          bg-surface
+          border
+          border-border
+          p-5
+          rounded-[5px]
+          shadow-sm
+          hover:-translate-y-1
+          hover:border-primary/50
+          hover:bg-primary/[0.03]
+          dark:hover:bg-primary/[0.06]
+          hover:shadow-[0_10px_40px_rgba(0,0,0,0.10)]
+          dark:hover:shadow-[0_10px_40px_rgba(0,0,0,0.45)]
+          transition-all
+          duration-500
+        "
+      >
+
+        {/* LARGE BACKGROUND ICON */}
+        <div
+          className="
+            absolute
+            bottom-0
+            right-0
+            translate-y-6
+            translate-x-6
+            opacity-0
+            group-hover:opacity-100
+            transition-all
+            duration-500
+            pointer-events-none
+            z-0
+          "
+        >
+          <Icon
+            className={`
+              w-[170px]
+              h-[170px]
+              ${kpi.color}
+              opacity-10
+              dark:opacity-[0.06]
+            `}
+            strokeWidth={0.9}
+          />
+        </div>
+
+        {/* GRADIENT OVERLAY */}
+        <div
+          className="
+            absolute
+            inset-0
+            opacity-0
+            group-hover:opacity-100
+            transition-all
+            duration-500
+          "
+          style={{
+            background: `
+              linear-gradient(
+                135deg,
+                rgba(99,102,241,0.10),
+                transparent 45%
+              )
+            `,
+          }}
+        />
+
+        {/* CONTENT */}
+        <div className="relative z-10">
+
+          {/* TOP */}
+          <div className="flex items-start justify-between mb-4">
+
+            {/* SMALL ICON */}
             <div
-              key={kpi.label}
-              className="bg-surface border border-border p-5 rounded-[5px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group relative overflow-hidden"
+              className={`
+                h-10
+                w-10
+                rounded-[5px]
+                ${kpi.iconBg}
+                flex
+                items-center
+                justify-center
+                ${kpi.color}
+                transition-all
+                duration-300
+                group-hover:scale-110
+              `}
             >
-              {/* subtle bg glow */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: `radial-gradient(circle at top right, ${kpi.iconBg.replace('bg-', '').replace('/10','')}, transparent 70%)` }} />
-
-              <div className="relative">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`h-10 w-10 rounded-[5px] ${kpi.iconBg} flex items-center justify-center ${kpi.color}`}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-[5px] ${kpi.positive ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}`}>
-                    {kpi.positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                    {kpi.trend}
-                  </div>
-                </div>
-
-                <p className="text-2xl font-display font-bold text-text">{kpi.value}</p>
-                <p className="text-xs font-bold text-muted mt-0.5 mb-3">{kpi.label}</p>
-
-                <div className="flex items-end justify-between">
-                  <p className="text-[11px] text-subtle font-medium">{kpi.sub}</p>
-                  <Sparkline data={kpi.spark} color={kpi.sparkColor} />
-                </div>
-              </div>
+              <Icon className="h-5 w-5" />
             </div>
-          );
-        })}
-      </div>
 
+            {/* TREND */}
+            <div
+              className={`
+                flex
+                items-center
+                gap-1
+                text-xs
+                font-bold
+                px-2
+                py-1
+                rounded-[5px]
+                ${
+                  kpi.positive
+                    ? 'bg-success/10 text-success'
+                    : 'bg-warning/10 text-warning'
+                }
+              `}
+            >
+              {kpi.positive ? (
+                <ArrowUpRight className="h-3 w-3" />
+              ) : (
+                <ArrowDownRight className="h-3 w-3" />
+              )}
+
+              {kpi.trend}
+            </div>
+          </div>
+
+          {/* VALUE */}
+          <p className="text-2xl font-display font-bold text-text">
+            {kpi.value}
+          </p>
+
+          {/* LABEL */}
+          <p className="text-xs font-bold text-muted mt-0.5 mb-3">
+            {kpi.label}
+          </p>
+
+          {/* BOTTOM */}
+          <div className="flex items-end justify-between">
+            <p className="text-[11px] text-subtle font-medium">
+              {kpi.sub}
+            </p>
+
+            <div className="transition-transform duration-300 group-hover:scale-105">
+              <Sparkline
+                data={kpi.spark}
+                color={kpi.sparkColor}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
       {/* ── REVENUE CHART + QUICK ACTIONS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
@@ -349,7 +529,7 @@ export default function AdminDashboardPage() {
                 <p className="font-bold text-text text-sm">High Server Load Detected</p>
                 <p className="text-xs text-muted font-medium mt-0.5">DB CPU hit 85% in us-east-1. Auto-scaling initiated.</p>
               </div>
-              <button className="ml-auto flex-shrink-0 text-xs font-bold text-warning hover:text-text border border-warning/30 px-3 py-1.5 rounded-lg transition-colors">
+              <button className="ml-auto flex-shrink-0 text-xs font-bold text-warning hover:text-text border border-warning/30 px-3 py-1.5 rounded-[5px] transition-colors">
                 Acknowledge
               </button>
             </div>
@@ -419,7 +599,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
         {/* Top Performing Courses */}
-        <div className="lg:col-span-2 bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden">
+        <div className="lg:col-span-4 bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden mr-">
           <div className="flex items-center justify-between p-6 border-b border-border">
             <div>
               <h3 className="font-bold text-lg text-text">Top Performing Courses</h3>
@@ -479,7 +659,7 @@ export default function AdminDashboardPage() {
         <div className="flex flex-col gap-5">
 
           {/* Recent User Activity */}
-          <div className="bg-surface border border-border rounded-[5px] shadow-sm p-5 flex-1">
+          {/* <div className="bg-surface border border-border rounded-[5px] shadow-sm p-5 flex-1">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-base text-text">Recent Activity</h3>
               <Link to="/admin/users" className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5">
@@ -505,10 +685,10 @@ export default function AdminDashboardPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Geographic Distribution */}
-          <div className="bg-surface border border-border rounded-[5px] shadow-sm p-5">
+          {/* <div className="bg-surface border border-border rounded-[5px] shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-base text-text">User Geography</h3>
               <Globe className="h-4 w-4 text-muted" />
@@ -529,7 +709,7 @@ export default function AdminDashboardPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 

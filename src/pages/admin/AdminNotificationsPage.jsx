@@ -116,7 +116,7 @@ export default function AdminNotificationsPage() {
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto -ml-2 -mt-2">
 
       {/* ── HERO ── */}
       <div className="relative overflow-hidden bg-surface border border-border rounded-[5px] px-6 py-7 shadow-sm">
@@ -136,11 +136,77 @@ export default function AdminNotificationsPage() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={markAllRead}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover transition-all shadow-sm hover:-translate-y-0.5"
+              className="
+                  relative
+                  inline-flex
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[80px]
+                  items-center
+                  justify-center
+                  border
+                  border-border
+                  dark:border-border
+                  bg-primary
+                  dark:bg-primary
+
+                  px-6
+                  text-[14px]
+                  font-semibold
+
+                  text-white
+                  dark:text-white
+
+                  overflow-hidden
+                  rounded-none
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                  transition-all
+                  duration-300
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                "
             >
               <CheckCheck className="h-4 w-4" /> Mark All Read
             </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-surface border border-border rounded-[5px] text-sm font-bold text-muted hover:text-text hover:border-primary/40 transition-all">
+            <button className="
+                  relative
+                  inline-flex
+                  h-[48px]
+                  w-full
+                  sm:w-auto
+                  min-w-[180px]
+                  items-center
+                  justify-center
+                  border
+                  border-border
+                  dark:border-border
+                  bg-white
+                  dark:bg-white
+
+                  px-6
+                  text-[14px]
+                  font-semibold
+
+                  text-black
+                  dark:text-black
+
+                  overflow-hidden
+                  rounded-none
+
+                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+                  transition-all
+                  duration-300
+                  hover:-translate-y-[2px]
+                  hover:border-primary/40
+                  dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+                ">
               <RefreshCw className="h-4 w-4" /> Refresh
             </button>
           </div>

@@ -343,7 +343,7 @@ export default function Footer() {
                 border-[#d9e2ff]
                 dark:border-white/10
 
-                bg-white
+                bg-primary
                 dark:bg-[#2563ff]
 
                 px-6
@@ -351,7 +351,7 @@ export default function Footer() {
                 text-[14px]
                 font-semibold
 
-                text-black
+                text-white
                 dark:text-white
 
                 shadow-[0_10px_30px_rgba(37,99,235,0.08)]

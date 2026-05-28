@@ -8,12 +8,12 @@ export default function FinancialsPage() {
         <p className="text-muted mt-1 font-medium">Track global revenue, platform cut, and mentor payouts.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-text text-bg rounded-[5px] p-8 sm:p-10 shadow-card relative overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="md:col-span-2 bg-surface text-text rounded-[5px] p-8 sm:p-10 shadow-card relative overflow-hidden">
           <div className="relative z-10 flex flex-col h-full justify-center">
-            <p className="text-bg/80 font-bold uppercase tracking-widest text-sm mb-2">Net Platform Revenue (YTD)</p>
+            <p className="text-text/80 font-bold uppercase tracking-widest text-sm mb-2">Net Platform Revenue (YTD)</p>
             <h2 className="text-5xl sm:text-6xl font-display font-bold mb-4">$428,500.00</h2>
-            <div className="flex items-center gap-2 text-success bg-[color:color-mix(in_oklab,var(--success)_20%,transparent)] px-3 py-1.5 rounded-lg w-max font-bold text-sm">
+            <div className="flex items-center gap-1 text-success bg-[color:color-mix(in_oklab,var(--success)_20%,transparent)] px-3 py-1.5 rounded-lg w-max font-bold text-sm">
               <TrendingUp className="h-4 w-4" /> +24% vs Last Year
             </div>
           </div>
@@ -22,7 +22,7 @@ export default function FinancialsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
           <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm flex-1 flex flex-col justify-center">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-bold text-muted uppercase tracking-wider">Total Sales</p>
@@ -41,7 +41,7 @@ export default function FinancialsPage() {
       </div>
 
       <div className="bg-surface border border-border rounded-[5px] overflow-hidden shadow-sm">
-        <div className="p-6 sm:p-8 border-b border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-6 sm:p-8 border-b border-border flex flex-col sm:flex-row items-center justify-between gap-2">
           <h3 className="font-bold text-xl text-text">Recent Transactions</h3>
           <button className="
                   relative
@@ -55,15 +55,19 @@ export default function FinancialsPage() {
                   border
                   border-border
                   dark:border-border
-                  bg-white
+                  bg-primary
                   dark:bg-primary
+
                   px-6
                   text-[14px]
                   font-semibold
-                  text-black
+
+                  text-white
                   dark:text-white
+
                   overflow-hidden
                   rounded-none
+
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
                   transition-all

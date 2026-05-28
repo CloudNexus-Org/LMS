@@ -610,10 +610,8 @@ export default function BillingSubscriptionPage() {
                 <button
                   className={`
           mt-5
-
           relative
           inline-flex
-
           h-[48px]
           w-full
 
@@ -628,7 +626,7 @@ export default function BillingSubscriptionPage() {
 
           ${cardBorder}
 
-          ${surfaceBg}
+          bg-primary
 
           px-6
 

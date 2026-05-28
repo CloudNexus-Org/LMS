@@ -207,7 +207,7 @@ rounded-none
     border border-[#d9e2ff]
     dark:border-white/10
 
-    bg-white
+    bg-primary
     dark:bg-primary
 
     px-6
@@ -215,7 +215,7 @@ rounded-none
     text-[12px]
     font-semibold
 
-    text-black
+    text-white
     dark:text-white
 
     shadow-[0_10px_30px_rgba(37,99,235,0.08)]

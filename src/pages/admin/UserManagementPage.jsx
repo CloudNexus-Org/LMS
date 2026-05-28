@@ -75,7 +75,7 @@ export default function UserManagementPage() {
                   h-[48px]
                   w-full
                   sm:w-auto
-                  min-w-[180px]
+                  min-w-[80px]
 
                   items-center
                   justify-center
@@ -119,7 +119,7 @@ export default function UserManagementPage() {
                   h-[48px]
                   w-full
                   sm:w-auto
-                  min-w-[180px]
+                  min-w-[80px]
 
                   items-center
                   justify-center
@@ -128,7 +128,7 @@ export default function UserManagementPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -136,7 +136,7 @@ export default function UserManagementPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden

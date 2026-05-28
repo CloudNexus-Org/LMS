@@ -98,7 +98,7 @@ export default function AdminReportsPage() {
                   border-border
                   dark:border-border
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -106,7 +106,7 @@ export default function AdminReportsPage() {
                   text-[14px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden
@@ -153,44 +153,7 @@ export default function AdminReportsPage() {
       </div>
 
       {/* ── ENROLLMENT CHART + CATEGORY BREAKDOWN ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-        {/* User Growth Chart */}
-        <div className="lg:col-span-2 bg-surface border border-border rounded-[5px] p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h3 className="font-bold text-lg text-text">User Growth</h3>
-              <p className="text-xs text-muted font-medium mt-0.5">Monthly new student enrollments</p>
-            </div>
-            <div className="flex items-center gap-4 text-xs font-bold">
-              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[5px] bg-primary/80" /> Students</span>
-              <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-[5px] bg-success/70" /> Mentors</span>
-            </div>
-          </div>
-
-          {/* Bar Chart */}
-          <div className="relative mt-6">
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-15 pb-8">
-              {[0, 1, 2, 3].map(i => <div key={i} className="w-full h-px bg-muted" />)}
-            </div>
-            <div className="flex items-end gap-1.5 h-48 pt-2 border-b border-border">
-              {MONTHS.map((month, i) => {
-                const students = Math.round((GROWTH_DATA[i] / 1420) * 100);
-                const mentors = Math.round(students * 0.35);
-                return (
-                  <div key={month} className="flex-1 flex flex-col items-center gap-0.5 h-full justify-end group">
-                    <div className="w-full flex items-end gap-0.5 h-40">
-                      <div className="flex-1 bg-primary/80 rounded-[5px] transition-all duration-700 group-hover:bg-primary" style={{ height: `${students}%` }} />
-                      <div className="flex-1 bg-success/70 rounded-[5px] transition-all duration-700 group-hover:bg-success" style={{ height: `${mentors}%` }} />
-                    </div>
-                    <span className="text-[9px] font-bold text-muted mt-1">{month.slice(0, 3)}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Category Breakdown */}
         <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm">
           <div className="flex items-center justify-between mb-5">
@@ -216,8 +179,10 @@ export default function AdminReportsPage() {
             ))}
           </div>
 
-          {/* Geo distribution */}
-          <div className="mt-6 pt-5 border-t border-border">
+          
+        </div>
+        {/* Geo distribution */}
+          <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <Globe className="h-4 w-4 text-muted" />
               <h4 className="font-bold text-sm text-text">User Geography</h4>
@@ -236,7 +201,6 @@ export default function AdminReportsPage() {
               ))}
             </div>
           </div>
-        </div>
       </div>
 
       {/* ── TOP COURSES TABLE ── */}
@@ -338,7 +302,6 @@ export default function AdminReportsPage() {
           ))}
         </div>
       </div>
-
     </div>
   );
 }

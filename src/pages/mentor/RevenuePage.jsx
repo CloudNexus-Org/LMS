@@ -384,12 +384,12 @@ export default function RevenuePage() {
                   gap-2
                   border border-border
                   dark:border-border
-                  bg-white
+                  bg-primary
                   dark:bg-primary
                   px-6
                   text-[14px]
                   font-semibold
-                  text-black
+                  text-white
                   dark:text-white
                   overflow-hidden
                   rounded-none
@@ -555,10 +555,10 @@ export default function RevenuePage() {
               mt-6 relative inline-flex h-[44px] min-w-[200px]
               items-center justify-center gap-2
               border border-border dark:border-border
-              bg-white dark:bg-elevated/80
+              bg-primary dark:bg-elevated/80
               px-6
               text-[13px] font-semibold
-              text-black dark:text-text
+              text-white dark:text-text
               overflow-hidden rounded-none
               shadow-[0_8px_24px_rgba(37,99,235,0.06)]
               dark:shadow-[0_8px_24px_rgba(0,0,0,0.3)]
@@ -601,10 +601,10 @@ export default function RevenuePage() {
               relative inline-flex h-[44px] min-w-[160px]
               items-center justify-center gap-2
               border border-border dark:border-border
-              bg-white dark:bg-primary
+              bg-primary dark:bg-primary
               px-6
               text-[13px] font-semibold
-              text-black dark:text-white
+              text-white dark:text-white
               overflow-hidden rounded-none
               shadow-[0_8px_24px_rgba(37,99,235,0.08)]
               dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]
@@ -689,10 +689,10 @@ export default function RevenuePage() {
                         relative inline-flex h-[36px] min-w-[80px]
                         items-center justify-center gap-1.5
                         border border-border dark:border-border
-                        bg-white dark:bg-elevated/80
+                        bg-primary dark:bg-elevated/80
                         px-4
                         text-[12px] font-semibold
-                        text-black dark:text-text
+                        text-white dark:text-text
                         overflow-hidden rounded-none
                         transition-all duration-300
                         hover:-translate-y-[2px] hover:border-primary/40

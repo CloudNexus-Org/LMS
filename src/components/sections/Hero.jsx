@@ -199,10 +199,10 @@ dark:bg-[#0f172a]/80
                 
                   max-w-[580px]
                 
-                  text-[18px]
+                  text-[17px]
                   leading-7
                 
-                  sm:text-[23px]
+                  sm:text-[21px]
                   sm:leading-8
                 
                   ${bodyColor}
@@ -248,7 +248,7 @@ dark:bg-[#0f172a]/80
                   border-[#d9e2ff]
                   dark:border-white/10
 
-                  bg-white
+                  bg-primary
                   dark:bg-primary
 
                   px-6
@@ -256,7 +256,7 @@ dark:bg-[#0f172a]/80
                   text-[18px]
                   font-semibold
 
-                  text-black
+                  text-white
                   dark:text-white
 
                   overflow-hidden
@@ -279,54 +279,59 @@ dark:bg-[#0f172a]/80
               </Button>
 
               {/* DEMO BUTTON */}
-              <Button
-                to="/demo"
-                size="lg"
-                className="
-                  relative
-                  inline-flex
+              
+<Button
+  to="/demo"
+  size="lg"
+  className="
+    !bg-black
+    dark:!bg-[#030303]
 
-                  h-[48px]
-                  w-full
-                  sm:w-auto
-                  min-w-[180px]
+    !text-white
+    dark:!text-white
 
-                  items-center
-                  justify-center
+    !border-black
+    dark:!border-white/10
 
-                  overflow-hidden
-                  rounded-none
+    relative
+    inline-flex
 
-                  border
-                  border-[#d9e2ff]
-                  dark:border-white/10
+    h-[48px]
+    w-full
+    sm:w-auto
+    min-w-[180px]
 
-                  bg-white
-                  dark:bg-[#030303]
+    items-center
+    justify-center
 
-                  px-6
+    overflow-hidden
+    rounded-none
 
-                  text-[14px]
-                  font-semibold
+    border
 
-                  text-black
-                  dark:text-white
+    px-6
 
-                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
-                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+    text-[14px]
+    font-semibold
 
-                  transition-all
-                  duration-300
+    shadow-[0_10px_30px_rgba(0,0,0,0.25)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]
 
-                  hover:-translate-y-[2px]
-                  
+    transition-all
+    duration-300
 
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
-                "
-                leftIcon={<PlayCircle size={18} />}
-              >
-                Watch demo
-              </Button>
+    hover:-translate-y-[2px]
+    hover:!bg-[#111111]
+    dark:hover:!bg-[#0a0a0a]
+
+    hover:border-white/20
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
+  leftIcon={<PlayCircle size={18} />}
+>
+  Watch demo
+</Button>
             </motion.div>
           </div>
         </div>
