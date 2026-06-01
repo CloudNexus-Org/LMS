@@ -1,104 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Code2, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 import Container from "@/components/ui/Container";
 
-const MentorCoverflow = ({ mentors, isDarkTheme }) => {
-  const [activeIndex, setActiveIndex] = useState(1);
-
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % mentors.length);
-  };
-
-  const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + mentors.length) % mentors.length);
-  };
-
-  if (!mentors || mentors.length === 0) return null;
-
-  return (
-    <div className="relative w-full h-[550px] flex flex-col items-center justify-center" style={{ perspective: '1200px' }}>
-      {/* 3D Container */}
-      <div className="relative w-full max-w-[400px] h-[400px] flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
-        <AnimatePresence initial={false}>
-          {mentors.map((mentor, index) => {
-            const offset = index - activeIndex;
-            // Handle wrap around for exactly 3 items
-            let normalizedOffset = offset;
-            if (offset === 2) normalizedOffset = -1;
-            if (offset === -2) normalizedOffset = 1;
-
-            const isCenter = normalizedOffset === 0;
-            const isLeft = normalizedOffset === -1;
-
-            return (
-              <motion.div
-                key={mentor.name}
-                initial={false}
-                animate={{
-                  x: isCenter ? '0%' : isLeft ? '-65%' : '65%',
-                  scale: isCenter ? 1 : 0.8,
-                  zIndex: isCenter ? 50 : 40,
-                  opacity: isCenter ? 1 : 0.4, // Fades perfectly into solid background
-                  rotateY: isCenter ? 0 : isLeft ? 25 : -25,
-                }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className={`absolute w-[280px] h-[380px] rounded-3xl overflow-hidden shadow-2xl cursor-pointer bg-slate-900 transition-colors duration-500 ${
-                  isCenter 
-                    ? 'border-2 border-[#215cff] shadow-[0_0_40px_rgba(33,92,255,0.3)]' 
-                    : `border ${isDarkTheme ? 'border-white/10' : 'border-black/10'}`
-                }`}
-                onClick={() => setActiveIndex(index)}
-              >
-                {/* Brand Color Glow for Active Card */}
-                {isCenter && (
-                  <div className="absolute inset-0 bg-[#215cff]/20 mix-blend-overlay z-10 pointer-events-none" />
-                )}
-
-                {/* Card Image */}
-                <img src={mentor.photo} alt={mentor.name} className="w-full h-full object-cover opacity-90" draggable={false} />
-                
-                {/* Gradient Overlay for Text */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 pointer-events-none" />
-                
-                {/* Text Content */}
-                <div className="absolute bottom-0 left-0 w-full p-8 text-center z-20 pointer-events-none">
-                  <h3 className="text-[24px] font-black text-white leading-none mb-2 tracking-wide uppercase">
-                    {mentor.name.split(' ').pop()}
-                  </h3>
-                  <p className="text-[10px] text-white/70 font-semibold tracking-[0.3em] uppercase">
-                    {mentor.company}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-
-      {/* Navigation Arrows */}
-      <div className="flex gap-6 mt-12 z-50">
-        <button onClick={handlePrev} className={`w-12 h-12 rounded-full border-2 border-[#215cff] backdrop-blur-xl flex items-center justify-center hover:bg-[#215cff]/20 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(33,92,255,0.3)] ${isDarkTheme ? 'bg-black/40 text-white' : 'bg-white text-[#215cff]'}`}>
-          <ChevronLeft size={24} />
-        </button>
-        <button onClick={handleNext} className={`w-12 h-12 rounded-full border-2 border-[#215cff] backdrop-blur-xl flex items-center justify-center hover:bg-[#215cff]/20 hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(33,92,255,0.3)] ${isDarkTheme ? 'bg-black/40 text-white' : 'bg-white text-[#215cff]'}`}>
-          <ChevronRight size={24} />
-        </button>
-      </div>
-    </div>
-  );
-};
-
 export default function TrackHero({ track }) {
   const isDarkTheme = useIsDarkTheme();
-  
+
   // Use track data falling back to default values from the design if they don't exist
   const subtitle = "CODE. CREATE. CONQUER.";
   const title = track.name || "Data Science And Analytics\nWith GenAI";
   const desc = track.longDescription || "Gain hands-on experience in data analysis, visualization, and AI integration.";
-  
+
   // Fallback heroMentors if they don't exist
   const heroMentors = track.heroMentors || [
     { name: "Rohit Sharma", company: "Ex-AWS", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop&q=80" },
@@ -113,10 +27,10 @@ export default function TrackHero({ track }) {
   const buttonSecondaryClass = isDarkTheme ? "border-white/10 bg-white/5 hover:bg-white/10 text-white/80" : "border-black/10 bg-black/5 hover:bg-black/10 text-black/80";
 
   return (
-    <section className={`relative overflow-hidden min-h-screen ${isDarkTheme ? "bg-black" : "bg-white"} ${textClass}`}>
+    <section className={`relative overflow-hidden min-h-screen bg-transparent ${textClass}`}>
       <Container
-  size="xl"
-  className="
+        size="xl"
+        className="
     relative
     z-20
 
@@ -125,7 +39,7 @@ export default function TrackHero({ track }) {
     md:pt-20
     lg:pt-20
   "
->
+      >
         <div className="grid lg:grid-cols-2 items-center min-h-[620px] gap-12">
           {/* LEFT */}
           <motion.div
@@ -133,9 +47,20 @@ export default function TrackHero({ track }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className={`uppercase tracking-[0.25em] text-primary mb-5 text-[12px] font-bold`}>
-              {subtitle}
-            </p>
+            <div 
+              className={`inline-flex items-center gap-2.5 rounded-full border backdrop-blur-md px-4 py-1.5 mb-6 transition-all duration-500 shadow-[0_0_20px_rgba(33,92,255,0.15)] ${
+                isDarkTheme 
+                  ? "bg-[#0B1121]/90 border-blue-500/30" 
+                  : "bg-white/90 border-[#215cff]/20"
+              }`}
+            >
+              <Code2 size={16} strokeWidth={2.5} className={isDarkTheme ? "text-[#4b79ff]" : "text-[#215cff]"} />
+              <p className={`text-[12px] sm:text-[12.5px] font-bold tracking-[0.15em] uppercase mt-0.5 ${
+                isDarkTheme ? "text-[#4b79ff]" : "text-[#215cff]"
+              }`}>
+                CODE. CREATE. CONQUER.
+              </p>
+            </div>
 
             <h1 className={`text-4xl lg:text-[56px] font-display font-medium leading-[1.05] tracking-tight max-w-[700px] whitespace-pre-line ${textClass}`}>
               {title}
@@ -146,7 +71,7 @@ export default function TrackHero({ track }) {
             </p>
 
             {/* pricing */}
-              <div className="mt-8 flex flex-col">
+            <div className="mt-8 flex flex-col">
               <span className={`text-[11px] font-semibold ${isDarkTheme ? "text-zinc-500" : "text-slate-600"} uppercase tracking-widest mb-2`}>
                 Course Investment
               </span>
@@ -169,23 +94,76 @@ export default function TrackHero({ track }) {
                 Buy Now
                 <ArrowRight size={18} />
               </Link>
-              <a href="#curriculum" className={`px-8 py-4 border ${buttonSecondaryClass} transition-all flex items-center gap-2 text-[15px] font-semibold [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]`}>
+              <Link to={`/learn/${track?.id || 'cloud'}`} className={`px-8 py-4 border ${buttonSecondaryClass} transition-all flex items-center gap-2 text-[15px] font-semibold [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]`}>
                 Learn More
                 <ArrowRight size={18} />
-              </a>
+              </Link>
             </div>
           </motion.div>
 
           {/* RIGHT: 3D Mentor Coverflow Carousel */}
           <motion.div
-            initial={{opacity:0,x:100}}
-            animate={{opacity:1,x:0}}
-            transition={{duration:.8}}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: .8 }}
             className="relative block"
           >
-            {/* Render the new Coverflow component */}
-            <MentorCoverflow mentors={heroMentors} isDarkTheme={isDarkTheme} />
-            
+            {/* Render the actual UI for the Video Card mockup */}
+            <div className="relative w-full max-w-[540px] mx-auto xl:ml-auto">
+              
+              {/* Ambient Glow */}
+              <div className="absolute inset-0 -z-10 bg-[#215cff]/15 blur-[100px] rounded-full scale-90" />
+
+              {/* The Glassmorphic Window Component */}
+              <div className={`rounded-[2rem] border backdrop-blur-2xl p-4 md:p-5 shadow-[0_30px_60px_rgba(0,0,0,0.15)] relative group overflow-hidden ${
+                isDarkTheme 
+                  ? 'bg-[#0b1121]/50 border-white/10 shadow-black/60' 
+                  : 'bg-white/30 border-white/50 shadow-[#215cff]/10'
+              }`}>
+                
+                {/* Mac OS Window Controls */}
+                <div className="flex gap-2 mb-4 px-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] shadow-sm" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] shadow-sm" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F] shadow-sm" />
+                </div>
+
+                {/* Video Thumbnail Area */}
+                <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-slate-800 shadow-inner">
+                  <img 
+                    src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800&h=500&fit=crop&q=80" 
+                    alt="Course Preview"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  
+                  {/* Subtle Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
+
+                  {/* Play Button - Ultra Glass */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors duration-500">
+                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.25)] group-hover:scale-110 group-hover:bg-white/30 transition-all cursor-pointer">
+                      <Play size={28} className="text-white fill-white ml-1.5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tags Row */}
+                <div className="flex flex-wrap gap-2.5 mt-5 px-1 justify-center sm:justify-start">
+                  {["Machine Learning", "Deep Learning", "Gen-AI", "Python"].map((tag) => (
+                    <span 
+                      key={tag} 
+                      className={`rounded-full border px-4 py-1.5 text-[11.5px] font-semibold transition-all cursor-default ${
+                        isDarkTheme 
+                          ? 'border-white/10 text-white/80 bg-white/5 hover:bg-white/10 hover:text-white' 
+                          : 'border-black/10 text-black/70 bg-black/5 hover:bg-black/10 hover:text-black'
+                      }`}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </Container>

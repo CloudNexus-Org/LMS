@@ -22,6 +22,9 @@ import {
 import { getTrackById } from '@/data/tracks';
 import { getMentorBySlug } from '@/data/mentors';
 import Container from '@/components/ui/Container';
+import useIsDarkTheme from '@/hooks/useIsDarkTheme';
+import bgDark from '@/assets/hero-section/custom_dark_bg.png';
+import bgLight from '@/assets/hero-section/custom_light_bg.png';
 import {
   EASE,
   SectionTitle,
@@ -97,8 +100,19 @@ export default function TrackDetailPage() {
 
 
 
+  const isDarkTheme = useIsDarkTheme();
+
   return (
-    <div className="min-h-screen bg-bg text-text">
+    <div 
+      className="min-h-screen text-text"
+      style={{
+        backgroundImage: `url(${isDarkTheme ? bgDark : bgLight})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
 
 
       <main id="main" className="relative">

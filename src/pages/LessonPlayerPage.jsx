@@ -130,11 +130,15 @@ export default function LessonPlayerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-text">
+    <div className="min-h-screen bg-bg text-text relative">
+      {/* Ambient Background Glow for Cinematic Feel */}
+      <div className="pointer-events-none absolute left-0 top-0 -z-10 h-[500px] w-[800px] opacity-20 dark:opacity-30 mix-blend-screen blur-[120px]" 
+           style={{ background: 'radial-gradient(circle, var(--color-primary) 0%, transparent 70%)' }} />
+
       {/* ============= MINIMAL TOP BAR ============= */}
-      <header className="sticky top-0 z-40 border-b border-border bg-bg/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-border/40 bg-bg/60 backdrop-blur-2xl shadow-sm">
         <Container size="xl">
-          <div className="flex h-14 items-center gap-3">
+          <div className="flex h-[60px] items-center gap-3">
             <Link
               to={`/tracks/${track.id}`}
               className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-primary"
@@ -205,11 +209,13 @@ export default function LessonPlayerPage() {
           <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
             {/* ===== LEFT: player + content ===== */}
             <div className="min-w-0">
-              <VideoPlayer
-                src={VIDEO_SRC}
-                lesson={initialLesson}
-                onEnded={onCompleteAndNext}
-              />
+              <div className="relative rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] ring-1 ring-border/50 bg-black">
+                <VideoPlayer
+                  src={VIDEO_SRC}
+                  lesson={initialLesson}
+                  onEnded={onCompleteAndNext}
+                />
+              </div>
 
               {/* Lesson title + actions */}
               <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -257,9 +263,9 @@ export default function LessonPlayerPage() {
                 </div>
               </div>
 
-              {/* ===== TABS ===== */}
-              <div className="mt-6 border-b border-border">
-                <div className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {/* ===== PREMIUM TABS ===== */}
+              <div className="mt-8 mb-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {TABS.map((t) => {
                     const Icon = t.icon;
                     const isActive = activeTab === t.id;
@@ -269,20 +275,14 @@ export default function LessonPlayerPage() {
                         type="button"
                         onClick={() => setActiveTab(t.id)}
                         aria-current={isActive ? "page" : undefined}
-                        className={`relative inline-flex h-11 shrink-0 items-center gap-1.5 px-3 text-[13px] font-semibold transition-colors ${
+                        className={`relative flex h-10 items-center gap-2 rounded-full px-5 text-[13px] font-bold transition-all duration-300 ${
                           isActive
-                            ? "text-primary"
-                            : "text-muted hover:text-text"
+                            ? "bg-primary text-white shadow-[0_4px_15px_rgba(33,92,255,0.4)] scale-105"
+                            : "bg-elevated/50 text-muted hover:bg-elevated hover:text-text border border-border/50"
                         }`}
                       >
-                        <Icon size={13} aria-hidden />
+                        <Icon size={14} className={isActive ? "text-white" : ""} aria-hidden />
                         {t.label}
-                        {isActive ? (
-                          <span
-                            aria-hidden
-                            className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-primary"
-                          />
-                        ) : null}
                       </button>
                     );
                   })}
@@ -377,7 +377,7 @@ export default function LessonPlayerPage() {
 
             {/* ===== RIGHT: sidebar (desktop) ===== */}
             <aside className="hidden lg:block">
-              <div className="sticky top-[72px] flex h-[calc(100vh-92px)] flex-col overflow-hidden rounded-2xl border border-border bg-elevated">
+              <div className="sticky top-[84px] flex h-[calc(100vh-104px)] flex-col overflow-hidden rounded-[1.5rem] border border-border/60 bg-elevated/40 backdrop-blur-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]">
                 <SidebarOutline
                   track={track}
                   lessons={lessons}

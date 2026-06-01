@@ -454,7 +454,7 @@ export default function Navbar({
                 w-10
                 items-center
                 justify-center
-                rounded-[10px]
+                rounded-[5px]
                 border
                 border-border
                 transition-all
