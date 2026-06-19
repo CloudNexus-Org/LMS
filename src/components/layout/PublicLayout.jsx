@@ -4,6 +4,7 @@ import Footer from './Footer';
 
 export default function PublicLayout() {
   const location = useLocation();
+  const isLanding = location.pathname === '/';
   
   // Hide footer on specific pages
   const isTrackDetailPage = location.pathname.match(/^\/tracks\/[^/]+$/);
@@ -11,7 +12,7 @@ export default function PublicLayout() {
   const hideFooter = isTrackDetailPage || isMentorDetailPage;
 
   return (
-    <div className="flex min-h-screen flex-col bg-bg">
+    <div className="flex min-h-screen flex-col bg-bg" {...(isLanding ? { 'data-landing': '' } : {})}>
       <Navbar />
       <main className="flex-1">
         <Outlet />

@@ -5,8 +5,8 @@ import { MapPin, Phone, Mail } from "lucide-react";
 import Button from "@/components/ui/Button";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 
-import cnlg from "../../assets/navbar/white.png";
-import cnlg1 from "../../assets/navbar/Blac.png";
+import cnlg from "@/assets/navbar/white.png";
+import cnlg1 from "@/assets/navbar/Blac.png";
 
 const TECH_COLUMNS = [
   {

@@ -19,6 +19,7 @@ import { tracks } from '@/data/tracks';
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Container from '@/components/ui/Container';
+import Button from '@/components/ui/Button';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -36,7 +37,7 @@ const CARD_VARIANTS = [
   },
   {
     accent: "from-accent/25",
-    glow: "group-hover:shadow-[0_28px_60px_rgba(124,58,237,0.16)]",
+    glow: "group-hover:shadow-[0_28px_60px_rgba(139,97,210,0.16)]",
     ring: "group-hover:ring-accent/20",
   },
   {
@@ -213,23 +214,15 @@ function CourseCard({ course, index }) {
               </span>
             </div>
 
-            <span
-              className="
-                relative inline-flex h-[34px] min-w-[100px] items-center justify-center gap-1.5
-                overflow-hidden rounded-none border border-primary/20 bg-primary px-4
-                text-[13px] font-semibold text-white
-                shadow-[0_8px_24px_rgba(44,91,255,0.2)]
-                transition-all duration-300
-                group-hover:-translate-y-0.5 group-hover:bg-primary-hover
-                [clip-path:polygon(10px_0,100%_0,100%_calc(100%-10px),calc(100%-10px)_100%,0_100%,0_10px)]
-              "
+            <Button
+              as="span"
+              variant="primary"
+              size="md"
+              rightIcon={<ArrowRight size={14} />}
+              className="pointer-events-none shrink-0"
             >
               Explore
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-0.5"
-              />
-            </span>
+            </Button>
           </div>
         </div>
       </Link>

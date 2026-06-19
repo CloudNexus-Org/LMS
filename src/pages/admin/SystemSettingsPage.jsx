@@ -89,7 +89,7 @@ export default function SystemSettingsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
 
-      {/* ── HEADER ── */}
+      {/* â”€â”€ HEADER â”€â”€ */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
@@ -110,7 +110,7 @@ export default function SystemSettingsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6">
 
-        {/* ── SIDEBAR NAV ── */}
+        {/* â”€â”€ SIDEBAR NAV â”€â”€ */}
         <div className="space-y-1">
           {NAV_ITEMS.map(item => {
             const Icon = item.icon;
@@ -139,10 +139,10 @@ export default function SystemSettingsPage() {
           </div>
         </div>
 
-        {/* ── CONTENT PANE ── */}
+        {/* â”€â”€ CONTENT PANE â”€â”€ */}
         <div className="bg-surface border border-border rounded-2xl p-6 sm:p-8 shadow-sm space-y-8 min-h-[500px]">
 
-          {/* ── GENERAL ── */}
+          {/* â”€â”€ GENERAL â”€â”€ */}
           {activeTab === 'general' && (
             <div className="space-y-8 animate-in fade-in duration-200">
               <Section title="Platform Identity" desc="Basic platform configuration" icon={Globe}>
@@ -191,7 +191,7 @@ export default function SystemSettingsPage() {
             </div>
           )}
 
-          {/* ── SECURITY ── */}
+          {/* â”€â”€ SECURITY â”€â”€ */}
           {activeTab === 'security' && (
             <div className="space-y-8 animate-in fade-in duration-200">
               <Section title="Authentication" desc="Control login and session security" icon={Shield}>
@@ -234,7 +234,7 @@ export default function SystemSettingsPage() {
             </div>
           )}
 
-          {/* ── FINANCIAL ── */}
+          {/* â”€â”€ FINANCIAL â”€â”€ */}
           {activeTab === 'financial' && (
             <div className="space-y-8 animate-in fade-in duration-200">
               <Section title="Revenue Configuration" desc="Platform commission and payout thresholds" icon={CreditCard}>
@@ -264,7 +264,7 @@ export default function SystemSettingsPage() {
                   <div className="flex items-center justify-between p-4 bg-bg border border-border rounded-[5px]">
                     <div>
                       <p className="font-bold text-text text-sm">Stripe Integration</p>
-                      <p className="text-xs text-success font-medium mt-0.5 flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-success" /> Connected · sk_live_****4821</p>
+                      <p className="text-xs text-success font-medium mt-0.5 flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-success" /> Connected Â· sk_live_****4821</p>
                     </div>
                     <button className="text-xs font-bold text-primary hover:underline">Reconfigure</button>
                   </div>
@@ -273,7 +273,7 @@ export default function SystemSettingsPage() {
             </div>
           )}
 
-          {/* ── NOTIFICATIONS ── */}
+          {/* â”€â”€ NOTIFICATIONS â”€â”€ */}
           {activeTab === 'notifications' && (
             <div className="space-y-8 animate-in fade-in duration-200">
               <Section title="System Alert Thresholds" desc="Configure when to trigger critical alerts" icon={Bell}>
@@ -305,7 +305,7 @@ export default function SystemSettingsPage() {
             </div>
           )}
 
-          {/* ── MAINTENANCE ── */}
+          {/* â”€â”€ MAINTENANCE â”€â”€ */}
           {activeTab === 'maintenance' && (
             <div className="space-y-8 animate-in fade-in duration-200">
               <Section title="Platform Status" desc="Control platform-wide access and availability" icon={Server}>
@@ -331,7 +331,7 @@ export default function SystemSettingsPage() {
                         <p className="font-bold text-text text-sm">{item.label}</p>
                         <p className="text-xs text-muted mt-0.5 font-medium">{item.desc}</p>
                       </div>
-                      <button className={`text-xs font-bold px-3 py-1.5 border border-border rounded-[5px] hover:border-primary/40 transition-all ${item.color}`}>
+                      <button className={`text-xs font-bold px-3 py-1.5 border border-border rounded-full hover:border-primary/40 transition-all ${item.color}`}>
                         {item.btn}
                       </button>
                     </div>
@@ -345,7 +345,7 @@ export default function SystemSettingsPage() {
                   <p className="font-bold text-sm">Danger Zone</p>
                 </div>
                 <SettingRow title="Reset All Platform Settings" desc="Revert all settings to factory defaults. This cannot be undone." danger>
-                  <button className="text-xs font-bold bg-danger/10 text-danger border border-danger/20 px-3 py-1.5 rounded-[5px] hover:bg-danger hover:text-white transition-all">
+                  <button className="text-xs font-bold bg-danger/10 text-danger border border-danger/20 px-3 py-1.5 rounded-full hover:bg-danger hover:text-white transition-all">
                     Reset
                   </button>
                 </SettingRow>
@@ -353,7 +353,7 @@ export default function SystemSettingsPage() {
             </div>
           )}
 
-          {/* ── INTEGRATIONS ── */}
+          {/* â”€â”€ INTEGRATIONS â”€â”€ */}
           {activeTab === 'integrations' && (
             <div className="space-y-8 animate-in fade-in duration-200">
               <Section title="Third-Party Services" desc="Connected platform integrations" icon={Zap}>
@@ -366,7 +366,7 @@ export default function SystemSettingsPage() {
                     { name: 'Intercom', desc: 'Customer support chat', connected: false, color: 'text-muted', bg: 'bg-border' },
                   ].map(item => (
                     <div key={item.name} className="flex items-center gap-4 p-4 bg-bg border border-border rounded-[5px] hover:border-primary/20 transition-colors">
-                      <div className={`h-10 w-10 rounded-[5px] ${item.bg} ${item.color} flex items-center justify-center font-bold text-xs flex-shrink-0`}>
+                      <div className={`h-10 w-10 rounded-full ${item.bg} ${item.color} flex items-center justify-center font-bold text-xs flex-shrink-0`}>
                         {item.name[0]}
                       </div>
                       <div className="flex-1">
@@ -378,7 +378,7 @@ export default function SystemSettingsPage() {
                           <span className="h-1.5 w-1.5 rounded-full bg-success" /> Connected
                         </span>
                       ) : (
-                        <button className="text-xs font-bold text-primary border border-primary/20 bg-primary/5 px-3 py-1.5 rounded-[5px] hover:bg-primary hover:text-white transition-all">
+                        <button className="text-xs font-bold text-primary border border-primary/20 bg-primary/5 px-3 py-1.5 rounded-full hover:bg-primary hover:text-white transition-all">
                           Connect
                         </button>
                       )}

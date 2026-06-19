@@ -115,7 +115,7 @@ export default function HeroLmsVisual() {
   const NotifIcon = Notif.icon;
 
   return (
-    <div className="relative mx-auto w-full max-w-[480px] xl:max-w-[520px]">
+    <div className="relative mx-auto w-full max-w-[520px] md:max-w-[560px] lg:mx-0 lg:max-w-none lg:w-full xl:max-w-[700px] 2xl:max-w-[740px]">
       {/* Ambient glow */}
       <div
         className="absolute -inset-8 rounded-full bg-primary/10 blur-[80px]"
@@ -313,21 +313,23 @@ export default function HeroLmsVisual() {
                       )}
                     </motion.div>
 
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0">
                       <p className="truncate text-[12px] font-semibold text-text">
                         {lesson.title}
                       </p>
                       <p className="text-[10px] text-muted">{lesson.duration}</p>
                     </div>
 
-                    {isActive && !isDone && !shouldReduceMotion && (
-                      <Equalizer />
-                    )}
-                    {isDone && (
-                      <span className="text-[10px] font-semibold text-success">
-                        Done
-                      </span>
-                    )}
+                    <div className="flex shrink-0 items-center gap-2">
+                      {isActive && !isDone && !shouldReduceMotion && (
+                        <Equalizer />
+                      )}
+                      {isDone && (
+                        <span className="text-[10px] font-semibold text-success">
+                          Done
+                        </span>
+                      )}
+                    </div>
                   </motion.li>
                 );
               })}

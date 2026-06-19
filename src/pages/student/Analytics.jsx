@@ -311,13 +311,12 @@ const Analytics = () => {
           <button
             className="
               relative inline-flex h-[44px] w-full items-center justify-center overflow-hidden
-              rounded-none border border-primary/20 bg-primary px-6
+              rounded-full border border-primary/20 bg-primary px-6
               text-white
               transition-all duration-300
               hover:-translate-y-[2px]
               hover:scale-[1.02]
               hover:shadow-[0_25px_60px_rgba(139,92,246,0.18)]
-              [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
             "
           >
             Optimize CV

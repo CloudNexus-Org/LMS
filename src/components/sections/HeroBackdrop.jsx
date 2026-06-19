@@ -53,40 +53,42 @@ export default function HeroBackdrop({
       id={id}
       ref={ref}
       data-hero-uid={safeUid}
-      className={`relative overflow-hidden isolate ${className}`}
+      className={`relative isolate overflow-hidden bg-bg ${className}`}
     >
       <style>{css}</style>
 
       <div
         className={
           imageLayerClassName ||
-          "absolute inset-x-0 top-[58px] bottom-0 -z-10 pointer-events-none"
+          "pointer-events-none absolute inset-0 -z-10"
         }
         style={{ clipPath: "inset(0)" }}
       >
-        <img
-          src={imageSrc}
-          alt=""
-          className="hero-bg-img absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-          aria-hidden
-        />
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt=""
+            className="hero-bg-img absolute inset-0 h-full w-full object-cover opacity-35 transition-opacity duration-300 dark:opacity-25"
+            aria-hidden
+          />
+        ) : null}
       </div>
 
       {!shouldReduceMotion ? (
         <motion.div
           style={{ y: overlayY }}
-          className="absolute inset-0 pointer-events-none -z-10 bg-gradient-to-b from-transparent via-bg/5 to-bg/20"
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-bg via-transparent to-bg/20"
           aria-hidden
         />
       ) : (
         <div
-          className="absolute inset-0 pointer-events-none -z-10 bg-gradient-to-b from-transparent to-bg/15"
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-bg to-bg/15"
           aria-hidden
         />
       )}
 
       <div
-        className="absolute inset-x-0 bottom-0 h-24 -z-10 pointer-events-none bg-gradient-to-t from-bg to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 -z-10 bg-gradient-to-t from-bg to-transparent"
         aria-hidden
       />
 

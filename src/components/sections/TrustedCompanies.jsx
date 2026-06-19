@@ -109,7 +109,7 @@ export default function TrustedCompanies() {
       {/* Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--grid-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid-line)_1px,transparent_1px)] bg-[size:120px_120px] opacity-20" />
 
-      <div className="relative z-10 mx-auto max-w-[1400px] px-6">
+      <div className="relative z-10 mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-10 xl:px-12">
 
         {/* Heading */}
         <div className="mb-12 text-center">

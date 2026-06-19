@@ -4,9 +4,9 @@ import Stats from '@/components/sections/Stats';
 import HowItWorks from '@/components/sections/HowItWorks';
 import Courses from '@/components/sections/Courses';
 import DashboardPreview from '@/components/sections/DashboardPreview';
-import Mentors from '@/components/sections/Mentors';
+// import Mentors from '@/components/sections/Mentors';
 import CertificateShowcase from '@/components/sections/CertificateShowcase';
-import Pricing from '@/components/sections/Pricing';
+// import Pricing from '@/components/sections/Pricing';
 import TestimonialScroll from '@/components/sections/TestimonialScroll';
 import FAQ from '@/components/sections/FAQ';
 import Contact from '@/components/sections/Contact';
@@ -22,9 +22,9 @@ export default function LandingPage() {
           <HowItWorks />
           <Courses />
           <DashboardPreview />
-          <Mentors />
+          {/* <Mentors /> */}
           <CertificateShowcase />
-          <Pricing />
+          {/* <Pricing /> */}
           <TestimonialScroll />
           <FAQ />
           <Contact />

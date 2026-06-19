@@ -84,10 +84,10 @@ export default function ManageLessonsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
 
-      {/* ── HEADER ── */}
+      {/* â”€â”€ HEADER â”€â”€ */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
           
             Course Manager
           </div>
@@ -124,7 +124,7 @@ export default function ManageLessonsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-full
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -135,15 +135,13 @@ export default function ManageLessonsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
         >
           <Plus className="h-4 w-4" /> New Course
         </Link>
       </div>
 
-      {/* ── KPI STRIP ── */}
+      {/* â”€â”€ KPI STRIP â”€â”€ */}
 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
   {[
     {
@@ -287,7 +285,7 @@ export default function ManageLessonsPage() {
   })}
 </div>
 
-      {/* ── FILTER TABS ── */}
+      {/* â”€â”€ FILTER TABS â”€â”€ */}
       <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1 w-fit">
         {[
           { key: 'all', label: `All Courses (${COURSES.length})` },
@@ -297,14 +295,14 @@ export default function ManageLessonsPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 rounded-[5px] text-xs font-bold transition-all capitalize ${activeTab === tab.key ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all capitalize ${activeTab === tab.key ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
           >
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* ── COURSE CARDS ── */}
+      {/* â”€â”€ COURSE CARDS â”€â”€ */}
       <div className="space-y-4">
         {filtered.map((course) => {
           const isExpanded = expandedCourse === course.id;
@@ -314,7 +312,7 @@ export default function ManageLessonsPage() {
               {/* Course Header Row */}
               <div className="flex items-center gap-5 p-5">
                 {/* Thumbnail */}
-                <div className={`h-16 w-20 rounded-[5px] ${course.thumbnail} flex-shrink-0 flex items-center justify-center shadow-sm`}>
+                <div className={`h-16 w-20 rounded-full ${course.thumbnail} flex-shrink-0 flex items-center justify-center shadow-sm`}>
                   <BookOpen className="h-7 w-7 text-white/80" />
                 </div>
 
@@ -378,15 +376,15 @@ export default function ManageLessonsPage() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all">
+                  <button className="h-9 w-9 flex items-center justify-center rounded-full border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all">
                     <Edit3 className="h-4 w-4" />
                   </button>
-                  <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all">
+                  <button className="h-9 w-9 flex items-center justify-center rounded-full border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all">
                     <EyeOff className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setExpandedCourse(isExpanded ? null : course.id)}
-                    className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-text hover:bg-bg transition-all"
+                    className="h-9 w-9 flex items-center justify-center rounded-full border border-border text-muted hover:text-text hover:bg-bg transition-all"
                   >
                     <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                   </button>
@@ -410,7 +408,7 @@ export default function ManageLessonsPage() {
 
                         <span className="text-xs font-bold text-muted w-5 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
 
-                        <div className={`h-7 w-7 rounded-[5px] flex items-center justify-center flex-shrink-0 ${
+                        <div className={`h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 ${
                           lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
                         }`}>
                           <LessonTypeIcon type={lesson.type} />
@@ -435,10 +433,10 @@ export default function ManageLessonsPage() {
                           }`}>{lesson.published ? 'Live' : 'Draft'}</span>
 
                           <div className="hidden group-hover:flex items-center gap-1">
-                            <button className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 transition-all">
+                            <button className="h-7 w-7 flex items-center justify-center rounded-full border border-border text-muted hover:text-primary hover:border-primary/40 transition-all">
                               <Edit3 className="h-3.5 w-3.5" />
                             </button>
-                            <button className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 transition-all">
+                            <button className="h-7 w-7 flex items-center justify-center rounded-full border border-border text-muted hover:text-danger hover:border-danger/40 transition-all">
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           </div>
@@ -450,18 +448,18 @@ export default function ManageLessonsPage() {
                   {/* Course Footer */}
                   <div className="px-5 py-4 bg-bg/30 border-t border-border flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-[5px] hover:border-primary/40 transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-full hover:border-primary/40 transition-all">
                         <BarChart className="h-3.5 w-3.5" /> Analytics
                       </button>
-                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-[5px] hover:border-primary/40 transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-full hover:border-primary/40 transition-all">
                         <Eye className="h-3.5 w-3.5" /> Preview
                       </button>
-                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-[5px] hover:border-primary/40 transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text border border-border px-3 py-1.5 rounded-full hover:border-primary/40 transition-all">
                         <Download className="h-3.5 w-3.5" /> Export
                       </button>
                     </div>
                     {course.status === 'Draft' && (
-                      <button className="flex items-center gap-1.5 text-xs font-bold bg-primary text-white px-4 py-1.5 rounded-[5px] hover:bg-primary-hover transition-all">
+                      <button className="flex items-center gap-1.5 text-xs font-bold bg-primary text-white px-4 py-1.5 rounded-full hover:bg-primary-hover transition-all">
                         <Globe className="h-3.5 w-3.5" /> Submit for Review
                       </button>
                     )}
@@ -473,13 +471,13 @@ export default function ManageLessonsPage() {
         })}
       </div>
 
-      {/* ── EMPTY STATE for filtered ── */}
+      {/* â”€â”€ EMPTY STATE for filtered â”€â”€ */}
       {filtered.length === 0 && (
         <div className="text-center py-20 bg-surface border border-border rounded-[5px]">
           <BookOpen className="h-14 w-14 mx-auto text-muted opacity-30 mb-4" />
           <p className="font-bold text-text">No courses in this category</p>
           <p className="text-sm text-muted mt-1">Create your first course to get started.</p>
-          <Link to="/mentor/upload" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-[5px] font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
+          <Link to="/mentor/upload" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-full font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
             <Plus className="h-4 w-4" /> Create Course
           </Link>
         </div>

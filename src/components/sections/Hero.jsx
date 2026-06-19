@@ -35,25 +35,28 @@ export default function Hero() {
     <HeroBackdrop
       id="home"
       imageSrc={heroBackground}
+      className="bg-bg"
       positions={{
         desktop: "center center",
         tablet: "center center",
         mobile: "center center",
       }}
     >
-      <Container>
+      <Container size="shell">
         <div
           className="
             grid sm:min-h-screen items-center
             pt-32 pb-10 sm:pt-32 sm:pb-20
             md:py-24 lg:py-28
-            lg:grid-cols-2 lg:gap-12 xl:gap-16
+            lg:grid-cols-2
+            lg:gap-6 xl:gap-8
           "
         >
           <div
             className="
               relative z-10 w-full max-w-[620px] xl:max-w-[700px]
               px-1 sm:px-4 md:px-0
+              lg:max-w-[600px] lg:justify-self-start xl:max-w-[640px]
             "
           >
             {/* Badge */}
@@ -115,40 +118,24 @@ export default function Hero() {
             {/* Buttons */}
             <motion.div
               {...fadeUp(10, 0.38)}
-              className="mt-8 sm:mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
+              className="mt-8 sm:mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
             >
               <Button
                 to="/signup"
+                variant="primary"
                 size="lg"
-                className="
-                  relative inline-flex h-[48px] w-full sm:w-auto min-w-[180px]
-                  items-center justify-center overflow-hidden rounded-none
-                  border border-primary/20 bg-primary px-6
-                  text-[18px] font-semibold text-white
-                  shadow-[0_10px_30px_rgba(44,91,255,0.15)]
-                  transition-all duration-300
-                  hover:-translate-y-[2px] hover:bg-primary-hover
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
-                "
                 rightIcon={<ArrowRight size={18} />}
+                className="w-full sm:w-auto"
               >
                 Start free trial
               </Button>
 
               <Button
                 to="/demo"
+                variant="secondary"
                 size="lg"
-                className="
-                  relative inline-flex h-[48px] w-full sm:w-auto min-w-[180px]
-                  items-center justify-center overflow-hidden rounded-none
-                  border border-border bg-elevated px-6
-                  text-[14px] font-semibold text-text
-                  shadow-[var(--shadow-card-value)]
-                  transition-all duration-300
-                  hover:-translate-y-[2px] hover:border-primary/30 hover:bg-surface
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
-                "
                 leftIcon={<PlayCircle size={18} />}
+                className="w-full sm:w-auto"
               >
                 Watch demo
               </Button>
@@ -217,7 +204,7 @@ export default function Hero() {
           {/* LMS dashboard animation — desktop */}
           <motion.div
             {...fadeUp(24, 0.5, 0.8)}
-            className="relative z-10 hidden md:block"
+            className="relative z-10 hidden w-full min-w-0 md:block"
           >
             <HeroLmsVisual />
           </motion.div>

@@ -23,14 +23,14 @@ export default function FinancialsPage() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm flex-1 flex flex-col justify-center">
+          <div className="bg-surface border border-border rounded-full p-6 shadow-sm flex-1 flex flex-col justify-center">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-bold text-muted uppercase tracking-wider">Total Sales</p>
               <ArrowUpRight className="h-4 w-4 text-success" />
             </div>
             <p className="text-2xl font-bold text-text font-display">$1,248,000</p>
           </div>
-          <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm flex-1 flex flex-col justify-center">
+          <div className="bg-surface border border-border rounded-full p-6 shadow-sm flex-1 flex flex-col justify-center">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-bold text-muted uppercase tracking-wider">Mentor Payouts</p>
               <ArrowDownRight className="h-4 w-4 text-danger" />
@@ -66,7 +66,7 @@ export default function FinancialsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-full
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -75,7 +75,6 @@ export default function FinancialsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export CSV
           </button>
