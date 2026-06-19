@@ -45,9 +45,12 @@ export default function Hero() {
       <Container size="shell">
         <div
           className="
-            grid sm:min-h-screen items-center
-            pt-32 pb-10 sm:pt-32 sm:pb-20
-            md:py-24 lg:py-28
+            grid items-start
+            pt-20 pb-10
+            sm:pt-24 sm:pb-16
+            md:pt-24 md:pb-20
+            lg:min-h-screen lg:items-center lg:py-24
+            xl:py-28
             lg:grid-cols-2
             lg:gap-6 xl:gap-8
           "
