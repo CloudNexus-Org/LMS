@@ -4,7 +4,6 @@ import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
-import Container from "@/components/ui/Container";
 import Avatar from "@/components/ui/Avatar";
 
 import Testimonialbg1 from "@/assets/testimonial/Testimonialbg1.png";
@@ -48,11 +47,11 @@ function ReviewCard({ item, index }) {
 
         hover:-translate-y-2
 
-        hover:border-primary/30
+        hover:border-[#2563ff]/30
 
-        hover:shadow-[0_0_70px_rgba(139,97,210,0.18)]
+        hover:shadow-[0_0_70px_rgba(37,99,235,0.18)]
 
-        dark:hover:shadow-[0_0_90px_rgba(139,97,210,0.22)]
+        dark:hover:shadow-[0_0_90px_rgba(37,99,235,0.22)]
       "
       style={{
         backgroundColor: isDarkTheme ? "#06070b" : "#ffffff",
@@ -86,7 +85,7 @@ function ReviewCard({ item, index }) {
         "
         style={{
           background:
-            "radial-gradient(circle, rgba(139,97,210,0.65) 0%, rgba(139,97,210,0.35) 42%, transparent 74%)",
+            "radial-gradient(circle, rgba(37,99,255,0.65) 0%, rgba(37,99,255,0.35) 42%, transparent 74%)",
         }}
       />
 
@@ -116,7 +115,7 @@ function ReviewCard({ item, index }) {
         "
         style={{
           background:
-            "radial-gradient(circle, rgba(180,150,235,0.55) 0%, rgba(139,97,210,0.25) 45%, transparent 72%)",
+            "radial-gradient(circle, rgba(96,165,250,0.55) 0%, rgba(37,99,255,0.25) 45%, transparent 72%)",
         }}
       />
 
@@ -153,7 +152,7 @@ function ReviewCard({ item, index }) {
           "
           style={{
             background:
-              "conic-gradient(from 0deg, transparent 0deg, rgba(139,97,210,0.95) 55deg, transparent 110deg)",
+              "conic-gradient(from 0deg, transparent 0deg, rgba(37,99,255,0.95) 55deg, transparent 110deg)",
           }}
         />
 
@@ -308,7 +307,7 @@ function ReviewCard({ item, index }) {
                   transition-all
                   duration-300
 
-                  group-hover:text-primary
+                  group-hover:text-[#2563ff]
                   dark:group-hover:text-white/80
                 "
                 style={{
@@ -327,13 +326,13 @@ function ReviewCard({ item, index }) {
             className="
               rotate-180
 
-              text-primary/40
+              text-[#2563ff]/40
 
               transition-all
               duration-500
 
               group-hover:scale-110
-              group-hover:text-primary
+              group-hover:text-[#2563ff]
             "
           />
 
@@ -350,7 +349,7 @@ function ReviewCard({ item, index }) {
             transition-all
             duration-700
 
-            group-hover:bg-primary/35
+            group-hover:bg-[#2563ff]/35
           "
           style={{
             backgroundColor: isDarkTheme ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)",
@@ -368,7 +367,7 @@ function ReviewCard({ item, index }) {
               transition-all
               duration-300
 
-              group-hover:text-primary
+              group-hover:text-[#2563ff]
               dark:group-hover:text-white
             "
             style={{
@@ -386,8 +385,8 @@ function ReviewCard({ item, index }) {
                 key={i}
                 size={14}
                 className="
-                  fill-primary
-                  text-primary
+                  fill-[#2563ff]
+                  text-[#2563ff]
                 "
               />
 

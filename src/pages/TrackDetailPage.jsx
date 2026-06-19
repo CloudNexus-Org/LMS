@@ -132,7 +132,7 @@ export default function TrackDetailPage() {
           </div>
 
           <Container size="lg" className="relative">
-            {/* â”€â”€â”€ HEADER â”€â”€â”€ */}
+            {/* ─── HEADER ─── */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -150,7 +150,7 @@ export default function TrackDetailPage() {
               </p>
             </motion.div>
 
-            {/* â”€â”€â”€ FEATURE CARDS â”€â”€â”€ */}
+            {/* ─── FEATURE CARDS ─── */}
             <div className="mt-10 max-w-[900px] mx-auto grid gap-6 sm:grid-cols-2">
               {track.outcomes.map((outcome, i) => {
                 const ICONS = [
@@ -403,7 +403,7 @@ export default function TrackDetailPage() {
                 {mentor ? (
                   <Link
                     to={`/mentors/${mentor.slug}`}
-                    className="inline-flex items-center gap-2 self-center bg-primary/10 border border-primary/20 px-6 py-3.5 text-[13.5px] font-bold text-primary transition-all duration-300  hover:bg-primary hover:text-white  hover:shadow-primary/20"
+                    className="inline-flex items-center gap-2 self-center bg-primary/10 border border-primary/20 px-6 py-3.5 text-[13.5px] font-bold text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/20 [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]"
                   >
                     Full profile
                     <ArrowUpRight size={14} aria-hidden />

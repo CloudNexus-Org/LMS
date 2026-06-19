@@ -58,10 +58,10 @@ export default function UserManagementPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
 
-      {/* â”€â”€ HEADER â”€â”€ */}
+      {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
+          <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
             <Sparkles className="h-3 w-3" /> User Management
           </div>
           <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Platform Users</h1>
@@ -96,7 +96,7 @@ export default function UserManagementPage() {
                   dark:text-black
 
                   overflow-hidden
-                  rounded-full
+                  rounded-none
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -107,6 +107,8 @@ export default function UserManagementPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export
           </button>
@@ -138,7 +140,7 @@ export default function UserManagementPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-full
+                  rounded-none
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -149,13 +151,15 @@ export default function UserManagementPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <UserPlus className="h-4 w-4" /> Add User
           </button>
         </div>
       </div>
 
-      {/* â”€â”€ KPI STRIP â”€â”€ */}
+      {/* ── KPI STRIP ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Total Users', value: total, icon: Users, color: 'text-primary', bg: 'bg-primary/10', trend: '+284 this month' },
@@ -167,7 +171,7 @@ export default function UserManagementPage() {
           return (
             <div key={kpi.label} className="bg-surface border border-border rounded-[5px] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
-                <div className={`h-9 w-9 rounded-full ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
+                <div className={`h-9 w-9 rounded-[5px] ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
                   <Icon className="h-4 w-4" />
                 </div>
                 {kpi.trend && (
@@ -184,7 +188,7 @@ export default function UserManagementPage() {
       </div>
       
 
-      {/* â”€â”€ TABLE CARD â”€â”€ */}
+      {/* ── TABLE CARD ── */}
       <div className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden">
 
         {/* Toolbar */}
@@ -209,7 +213,7 @@ export default function UserManagementPage() {
           <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1">
             {['All', 'Student', 'Mentor', 'Admin'].map(r => (
               <button key={r} onClick={() => setRoleFilter(r)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${roleFilter === r ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
+                className={`px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all ${roleFilter === r ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
                 {r}
               </button>
             ))}
@@ -219,7 +223,7 @@ export default function UserManagementPage() {
           <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1">
             {['All', 'Active', 'Inactive', 'Banned'].map(s => (
               <button key={s} onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${statusFilter === s ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
+                className={`px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all ${statusFilter === s ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
                 {s}
               </button>
             ))}
@@ -268,7 +272,7 @@ export default function UserManagementPage() {
 
                     {/* Courses */}
                     <td className="px-5 py-4">
-                      <span className="text-sm font-bold text-text">{user.courses > 0 ? user.courses : 'â€”'}</span>
+                      <span className="text-sm font-bold text-text">{user.courses > 0 ? user.courses : '—'}</span>
                     </td>
 
                     {/* Last Active */}
@@ -295,13 +299,13 @@ export default function UserManagementPage() {
                     {/* Actions */}
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => setSelectedUser(user)} className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all" title="View">
+                        <button onClick={() => setSelectedUser(user)} className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all" title="View">
                           <Eye className="h-3.5 w-3.5" />
                         </button>
-                        <button className="h-8 w-8 flex items-center justify-center rounded-full  border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all" title="Edit">
+                        <button className="h-8 w-8 flex items-center justify-center rounded-[5px]  border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all" title="Edit">
                           <Edit3 className="h-3.5 w-3.5" />
                         </button>
-                        <button className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all" title={user.status === 'Banned' ? 'Unban' : 'Ban'}>
+                        <button className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all" title={user.status === 'Banned' ? 'Unban' : 'Ban'}>
                           <Ban className="h-3.5 w-3.5" />
                         </button>
                       </div>
@@ -326,13 +330,13 @@ export default function UserManagementPage() {
           <p className="text-xs font-bold text-muted">Showing {filtered.length} of {USERS.length} users</p>
           <div className="flex items-center gap-1">
             {[1, 2, 3].map(p => (
-              <button key={p} className={`h-7 w-7 rounded-full text-xs font-bold transition-all ${p === 1 ? 'bg-primary text-white' : 'text-muted hover:bg-bg border border-border hover:text-text'}`}>{p}</button>
+              <button key={p} className={`h-7 w-7 rounded-[5px] text-xs font-bold transition-all ${p === 1 ? 'bg-primary text-white' : 'text-muted hover:bg-bg border border-border hover:text-text'}`}>{p}</button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* â”€â”€ USER DETAIL MODAL â”€â”€ */}
+      {/* ── USER DETAIL MODAL ── */}
       {selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedUser(null)}>
           <div className="bg-surface border border-border rounded-[5px] shadow-elevated w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
@@ -357,7 +361,7 @@ export default function UserManagementPage() {
                 { label: 'Status', value: selectedUser.status },
                 { label: 'Joined', value: selectedUser.joined },
                 { label: 'Last Active', value: selectedUser.lastActive },
-                { label: 'Courses', value: selectedUser.courses || 'â€”' },
+                { label: 'Courses', value: selectedUser.courses || '—' },
                 { label: 'Total Spend', value: selectedUser.spend },
               ].map(item => (
                 <div key={item.label} className="bg-bg border border-border rounded-xl p-3">
@@ -368,13 +372,13 @@ export default function UserManagementPage() {
             </div>
 
             <div className="flex gap-3">
-              <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-full text-sm font-bold hover:bg-primary-hover transition-all">
+              <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover transition-all">
                 <Mail className="h-4 w-4" /> Message
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-bg border border-border rounded-full   text-sm font-bold text-muted hover:text-text hover:border-primary/40 transition-all">
+              <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-bg border border-border rounded-[5px]   text-sm font-bold text-muted hover:text-text hover:border-primary/40 transition-all">
                 <BarChart2 className="h-4 w-4" /> Analytics
               </button>
-              <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-danger/10 border border-danger/20 rounded-full text-sm font-bold text-danger hover:bg-danger hover:text-white transition-all">
+              <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-danger/10 border border-danger/20 rounded-[5px] text-sm font-bold text-danger hover:bg-danger hover:text-white transition-all">
                 <Ban className="h-4 w-4" />
               </button>
             </div>

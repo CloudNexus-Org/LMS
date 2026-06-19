@@ -584,7 +584,7 @@ export default function AnalyticsPage() {
               </p>
             </div>
 
-            <div className="h-12 w-12 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-[5px] bg-blue-500/10 text-blue-500 flex items-center justify-center">
               <Users className="h-6 w-6" />
             </div>
           </div>
@@ -633,7 +633,7 @@ export default function AnalyticsPage() {
               </p>
             </div>
 
-            <div className="h-12 w-12 rounded-full bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-[5px] bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
               <Star className="h-6 w-6 fill-current" />
             </div>
           </div>
@@ -669,7 +669,7 @@ export default function AnalyticsPage() {
                   justify-center
 
                   overflow-hidden
-                  rounded-full
+                  rounded-none
 
                   border
                   border-[#d9e2ff]
@@ -693,6 +693,9 @@ export default function AnalyticsPage() {
                   duration-300
 
                   hover:-translate-y-[2px]
+                  
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
             >
               View Reviews

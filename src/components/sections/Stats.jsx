@@ -117,7 +117,7 @@ function StatItem({
 
 export default function Stats() {
   return (
-    <SectionShell id="stats" size="sm">
+    <SectionShell size="sm">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 16 }}

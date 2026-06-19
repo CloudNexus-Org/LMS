@@ -12,7 +12,7 @@ export default function ThemeToggle({ className = "" }) {
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       aria-pressed={isDark}
       title={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      className={`relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text transition hover:border-primary hover:text-primary ${className}`}
+      className={`relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-text transition hover:border-primary hover:text-primary ${className}`}
     >
       <Sun
         size={18}

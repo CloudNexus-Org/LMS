@@ -143,7 +143,7 @@ export default function MentorDashboardPage() {
                 sm:text-5xl
               "
             >
-              Welcome back, Mentor ðŸ‘‹
+              Welcome back, Mentor 👋
             </h1>
 
             <p className="mt-4 max-w-[680px] text-[15px] leading-7 text-muted">
@@ -181,7 +181,7 @@ export default function MentorDashboardPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-full
+                  rounded-none
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -192,6 +192,8 @@ export default function MentorDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
               >
                 Create Course
@@ -212,7 +214,7 @@ export default function MentorDashboardPage() {
                   justify-center
 
                   overflow-hidden
-                  rounded-full
+                  rounded-none
 
                   border
                   border-border
@@ -238,6 +240,8 @@ export default function MentorDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/40
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
               >
                 <PlayCircle className="h-4 w-4" />
@@ -293,7 +297,7 @@ export default function MentorDashboardPage() {
                 >
                   <div
                     className={`
-                      flex h-12 w-12 items-center justify-center rounded-full
+                      flex h-12 w-12 items-center justify-center rounded-[5px]
                       ${item.bg}
                       ${item.color}
                     `}
@@ -468,7 +472,7 @@ export default function MentorDashboardPage() {
                     >
                       <td className="px-7 py-5">
                         <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10 font-black text-blue-500">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 font-black text-blue-500">
                             {req.name
                               .split(" ")
                               .map((n) => n[0])
@@ -659,7 +663,7 @@ export default function MentorDashboardPage() {
             <div className="mt-6 space-y-5">
               <div className="rounded-[5px] border border-gray-200 dark:border-border bg-gray-50 dark:bg-elevated/90 p-5">
                 <div className="flex gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-500/10 font-black text-blue-500">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[5px] bg-blue-500/10 font-black text-blue-500">
                     JD
                   </div>
 
@@ -675,12 +679,12 @@ export default function MentorDashboardPage() {
                     </div>
 
                     <p className="mt-1 text-xs font-medium text-muted">
-                      Cloud Architecture Â· Lesson 3
+                      Cloud Architecture · Lesson 3
                     </p>
 
                     <p className="mt-4 rounded-[5px] border border-gray-200 dark:border-border bg-gray-50/80 dark:bg-black/30 p-4 text-sm leading-7 text-text">
-                      â€œCould you clarify the difference between
-                      standard and FIFO queues here?â€
+                      “Could you clarify the difference between
+                      standard and FIFO queues here?”
                     </p>
 
                     <button className="mt-4 inline-flex items-center gap-2 text-sm font-black text-blue-500 transition-all hover:gap-3">
@@ -714,7 +718,7 @@ export default function MentorDashboardPage() {
                   >
                     <div
                       className={`
-                        flex h-12 w-12 shrink-0 items-center justify-center rounded-full
+                        flex h-12 w-12 shrink-0 items-center justify-center rounded-[5px]
                         ${item.bg}
                         ${item.color}
                       `}

@@ -506,7 +506,7 @@ export default function NotesAndBookmarksPage() {
               </>
             ) : (
               <div className="flex flex-1 flex-col items-center justify-center text-muted">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-bg">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[5px] bg-bg">
                   <FileText className="h-8 w-8" />
                 </div>
 
