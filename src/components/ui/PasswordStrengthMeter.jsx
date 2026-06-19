@@ -1,6 +1,6 @@
 import { Check, X } from 'lucide-react';
 
-export default function PasswordStrengthMeter({ password }) {
+export default function PasswordStrengthMeter({ password, compact = false }) {
   // Strength calculation logic
   const getStrength = (pass) => {
     let score = 0;
@@ -27,6 +27,39 @@ export default function PasswordStrengthMeter({ password }) {
   ];
 
   if (!password) return null;
+
+  if (compact) {
+    return (
+      <div className="mt-1.5">
+        <div className="flex items-center gap-2">
+          <div className="flex h-1 flex-1 gap-1 overflow-hidden rounded-full bg-border">
+            {[1, 2, 3, 4].map((index) => (
+              <div
+                key={index}
+                className={`h-full w-1/4 transition-colors duration-300 ${
+                  index <= strength.score ? strength.color : "bg-transparent"
+                }`}
+              />
+            ))}
+          </div>
+          <span className={`shrink-0 text-[10px] font-medium ${strength.color.replace("bg-", "text-")}`}>
+            {strength.text}
+          </span>
+        </div>
+
+        <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
+          {criteria.map((c) => (
+            <span
+              key={c.label}
+              className={`text-[9px] ${c.met ? "text-success" : "text-subtle"}`}
+            >
+              {c.met ? "✓" : "○"} {c.label}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-3">
