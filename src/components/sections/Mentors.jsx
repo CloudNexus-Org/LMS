@@ -116,7 +116,7 @@ export default function Mentors() {
     <section
       id="mentors"
       style={{ background: sectionBg, position: "relative", overflow: "hidden" }}
-      className="py-24 px-6"
+      className="py-24"
     >
       {/* Ambient blobs */}
       <div
@@ -138,7 +138,7 @@ export default function Mentors() {
         }}
       />
 
-      <div style={{ position: "relative", zIndex: 1, maxWidth: 1280, margin: "0 auto" }}>
+      <div className="relative z-10 mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-10 xl:px-12">
 
         {/* ══════════════ HEADING ══════════════ */}
         <div style={{ textAlign: "center", marginBottom: 64, maxWidth: 720, margin: "0 auto 64px" }}>
@@ -307,18 +307,17 @@ export default function Mentors() {
           {/* View All CTA */}
           <Link
             to="/mentors"
-            className="group"
+            className="group inline-flex h-12 items-center gap-2 rounded-full px-7 text-[15px] font-semibold transition-colors"
             style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              height: 48, padding: "0 28px",
-              background: ctaBg, color: ctaText,
-              fontWeight: 700, fontSize: 15,
-              textDecoration: "none",
-              clipPath: "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
-              transition: "all 0.25s ease",
+              background: ctaBg,
+              color: ctaText,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = ctaHoverBg; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.2)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = ctaBg; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = ctaHoverBg;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = ctaBg;
+            }}
           >
             View All Mentors
             <ArrowRight size={16} />

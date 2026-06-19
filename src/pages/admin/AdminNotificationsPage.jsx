@@ -118,19 +118,19 @@ export default function AdminNotificationsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto -ml-2 -mt-2">
 
-      {/* ── HERO ── */}
+      {/* â”€â”€ HERO â”€â”€ */}
       <div className="relative overflow-hidden bg-surface border border-border rounded-[5px] px-6 py-7 shadow-sm">
         <div className="absolute right-[-80px] top-[-80px] h-[220px] w-[220px] rounded-full bg-primary/8 blur-[80px]" />
         <div className="absolute bottom-[-60px] left-[-60px] h-[180px] w-[180px] rounded-full bg-accent/6 blur-[70px]" />
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
               <Sparkles className="h-3 w-3" /> Admin Notification Center
             </div>
             <h1 className="text-3xl font-bold text-text font-display tracking-tight">System Alerts</h1>
             <p className="text-muted mt-1.5 font-medium max-w-lg">
-              Critical platform alerts, approval queues, security events, and system logs — all in one place.
+              Critical platform alerts, approval queues, security events, and system logs â€” all in one place.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -159,7 +159,7 @@ export default function AdminNotificationsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-full
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -168,7 +168,6 @@ export default function AdminNotificationsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
             >
               <CheckCheck className="h-4 w-4" /> Mark All Read
@@ -196,7 +195,7 @@ export default function AdminNotificationsPage() {
                   dark:text-black
 
                   overflow-hidden
-                  rounded-none
+                  rounded-full
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -205,7 +204,6 @@ export default function AdminNotificationsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
               <RefreshCw className="h-4 w-4" /> Refresh
             </button>
@@ -213,14 +211,14 @@ export default function AdminNotificationsPage() {
         </div>
       </div>
 
-      {/* ── STATS ── */}
+      {/* â”€â”€ STATS â”€â”€ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STATS.map((stat) => {
           const Icon = stat.icon;
           return (
             <div key={stat.title} className="bg-surface border border-border rounded-[5px] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
               <div className="flex items-center justify-between mb-3">
-                <div className={`h-9 w-9 rounded-[5px] ${stat.bg} ${stat.color} flex items-center justify-center`}>
+                <div className={`h-9 w-9 rounded-full ${stat.bg} ${stat.color} flex items-center justify-center`}>
                   <Icon className="h-4 w-4" />
                 </div>
               </div>
@@ -231,7 +229,7 @@ export default function AdminNotificationsPage() {
         })}
       </div>
 
-      {/* ── MAIN CARD ── */}
+      {/* â”€â”€ MAIN CARD â”€â”€ */}
       <div className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden">
 
         {/* Filter Tabs */}
@@ -255,7 +253,7 @@ export default function AdminNotificationsPage() {
           ))}
           <div className="ml-auto shrink-0 px-5">
             {unreadCount > 0 && (
-              <span className="inline-flex items-center gap-1 rounded-[5px] bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary">
                 {unreadCount} unread
               </span>
             )}
@@ -281,12 +279,12 @@ export default function AdminNotificationsPage() {
                 >
                   {/* Left unread bar */}
                   {note.unread && (
-                    <div className="absolute left-0 top-0 h-full w-[3px] bg-primary rounded-[5px]" />
+                    <div className="absolute left-0 top-0 h-full w-[3px] bg-primary rounded-full" />
                   )}
 
                   <div className="flex gap-4">
                     {/* Icon */}
-                    <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] border ${cfg.bg} ${cfg.border} ${cfg.iconColor} transition-transform duration-300 group-hover:scale-105`}>
+                    <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border ${cfg.bg} ${cfg.border} ${cfg.iconColor} transition-transform duration-300 group-hover:scale-105`}>
                       <Icon className="h-5 w-5" />
                       {note.unread && (
                         <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-primary ring-2 ring-surface" />

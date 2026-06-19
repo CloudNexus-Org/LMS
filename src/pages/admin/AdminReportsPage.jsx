@@ -63,10 +63,10 @@ export default function AdminReportsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
 
-      {/* ── HEADER ── */}
+      {/* â”€â”€ HEADER â”€â”€ */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
             <Sparkles className="h-3 w-3" /> Analytics & Reports
           </div>
           <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Platform Reports</h1>
@@ -77,7 +77,7 @@ export default function AdminReportsPage() {
           <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1">
             {['month', 'quarter', 'year'].map(p => (
               <button key={p} onClick={() => setPeriod(p)}
-                className={`px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all capitalize ${period === p ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all capitalize ${period === p ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
                 {p === 'month' ? 'Month' : p === 'quarter' ? 'Quarter' : 'Year'}
               </button>
             ))}
@@ -110,7 +110,7 @@ export default function AdminReportsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-full
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -121,22 +121,20 @@ export default function AdminReportsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export
           </button>
         </div>
       </div>
 
-      {/* ── KPI CARDS ── */}
+      {/* â”€â”€ KPI CARDS â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {KPI_CARDS.map(kpi => {
           const Icon = kpi.icon;
           return (
             <div key={kpi.label} className="bg-surface border border-border rounded-[5px] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
               <div className="flex items-center justify-between mb-4">
-                <div className={`h-9 w-9 rounded-[5px] ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
+                <div className={`h-9 w-9 rounded-full ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
                   <Icon className="h-4 w-4" />
                 </div>
                 <span className={`flex items-center gap-0.5 text-xs font-bold px-2 py-1 rounded-[5px] ${kpi.positive ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
@@ -152,7 +150,7 @@ export default function AdminReportsPage() {
         })}
       </div>
 
-      {/* ── ENROLLMENT CHART + CATEGORY BREAKDOWN ── */}
+      {/* â”€â”€ ENROLLMENT CHART + CATEGORY BREAKDOWN â”€â”€ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Category Breakdown */}
         <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm">
@@ -203,7 +201,7 @@ export default function AdminReportsPage() {
           </div>
       </div>
 
-      {/* ── TOP COURSES TABLE ── */}
+      {/* â”€â”€ TOP COURSES TABLE â”€â”€ */}
       <div className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
@@ -257,7 +255,7 @@ export default function AdminReportsPage() {
         </div>
       </div>
 
-      {/* ── TOP MENTORS ── */}
+      {/* â”€â”€ TOP MENTORS â”€â”€ */}
       <div className="bg-surface border border-border rounded-[5px] shadow-sm p-6">
         <div className="flex items-center justify-between mb-5">
           <div>

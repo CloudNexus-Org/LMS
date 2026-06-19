@@ -50,7 +50,7 @@ export default function StudentsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
 
-      {/* ── HEADER ── */}
+      {/* â”€â”€ HEADER â”€â”€ */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
@@ -88,7 +88,7 @@ export default function StudentsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-full
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -99,14 +99,12 @@ export default function StudentsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
           <Download className="h-4 w-4" /> Export CSV
         </button>
       </div>
 
-      {/* ── KPI STRIP ── */}
+      {/* â”€â”€ KPI STRIP â”€â”€ */}
 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
   {[
     {
@@ -252,7 +250,7 @@ export default function StudentsPage() {
 
 
 
-      {/* ── TABLE CARD ── */}
+      {/* â”€â”€ TABLE CARD â”€â”€ */}
       <div className="bg-surface border border-border rounded-2xl shadow-sm overflow-hidden">
 
         {/* Toolbar */}
@@ -412,7 +410,7 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      {/* ── STUDENT DETAIL MODAL ── */}
+      {/* â”€â”€ STUDENT DETAIL MODAL â”€â”€ */}
       {selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedStudent(null)}>
           <div className="bg-surface border border-border rounded-2xl shadow-elevated w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>

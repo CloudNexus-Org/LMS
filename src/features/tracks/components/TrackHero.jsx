@@ -23,8 +23,10 @@ export default function TrackHero({ track }) {
   // Theme-aware colors
   const textClass = isDarkTheme ? "text-white" : "text-black";
   const mutedTextClass = isDarkTheme ? "text-white/75" : "text-black/75";
-  const buttonPrimaryClass = "bg-gradient-to-r from-[#215cff] to-[#4b79ff] hover:from-[#4b79ff] hover:to-[#215cff] text-white shadow-[0_12px_28px_rgba(33,92,255,0.30)]";
-  const buttonSecondaryClass = isDarkTheme ? "border-white/10 bg-white/5 hover:bg-white/10 text-white/80" : "border-black/10 bg-black/5 hover:bg-black/10 text-black/80";
+  const buttonPrimaryClass = "rounded-full bg-primary hover:bg-primary-hover text-white px-8 py-3.5 font-semibold";
+  const buttonSecondaryClass = isDarkTheme
+    ? "rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 px-8 py-3.5 font-semibold"
+    : "rounded-full border border-black/10 bg-black/5 hover:bg-black/10 text-black/80 px-8 py-3.5 font-semibold";
 
   return (
     <section className={`relative overflow-hidden min-h-screen bg-transparent ${textClass}`}>
@@ -90,11 +92,11 @@ export default function TrackHero({ track }) {
 
             {/* buttons */}
             <div className="flex flex-wrap gap-4 mt-10">
-              <Link to="/signup" className={`px-8 py-4 ${buttonPrimaryClass} transition-all font-bold flex items-center gap-2 text-[15px] [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]`}>
+              <Link to="/signup" className={`${buttonPrimaryClass} transition-colors flex items-center gap-2 text-[15px]`}>
                 Buy Now
                 <ArrowRight size={18} />
               </Link>
-              <Link to={`/learn/${track?.id || 'cloud'}`} className={`px-8 py-4 border ${buttonSecondaryClass} transition-all flex items-center gap-2 text-[15px] font-semibold [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]`}>
+              <Link to={`/learn/${track?.id || 'cloud'}`} className={`${buttonSecondaryClass} transition-colors flex items-center gap-2 text-[15px]`}>
                 Learn More
                 <ArrowRight size={18} />
               </Link>

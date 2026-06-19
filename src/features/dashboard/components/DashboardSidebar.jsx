@@ -36,7 +36,7 @@ export default function DashboardSidebar({ role, onClose }) {
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between px-6 border-b border-border shrink-0">
         <Link to="/student/dashboard" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-[5px] bg-primary text-white flex items-center justify-center font-bold font-display shadow-sm">
+          <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center font-bold font-display shadow-sm">
             CN
           </div>
           <span className="font-semibold text-lg text-text">Cloud Nexus</span>

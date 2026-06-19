@@ -24,7 +24,7 @@ const INITIAL_NOTIFICATIONS = [
     icon: MessageSquare,
     title: "New Q&A Question",
     content:
-      'A student asked a question in "Advanced State Management" Lesson 3 — about Redux vs Zustand.',
+      'A student asked a question in "Advanced State Management" Lesson 3 â€” about Redux vs Zustand.',
     time: "2 hours ago",
     unread: true,
     actionLabel: "Reply Now",
@@ -35,7 +35,7 @@ const INITIAL_NOTIFICATIONS = [
     icon: Star,
     title: "5-Star Review Received",
     content:
-      'Sarah M. just left a 5-star review on your "Cloud Architecture Patterns" course — "Best course ever!"',
+      'Sarah M. just left a 5-star review on your "Cloud Architecture Patterns" course â€” "Best course ever!"',
     time: "5 hours ago",
     unread: true,
     actionLabel: "View Review",
@@ -57,7 +57,7 @@ const INITIAL_NOTIFICATIONS = [
     icon: DollarSign,
     title: "Payout Processed",
     content:
-      "Your monthly payout of $4,250 has been processed and will arrive in 1–2 business days.",
+      "Your monthly payout of $4,250 has been processed and will arrive in 1â€“2 business days.",
     time: "1 day ago",
     unread: false,
     actionLabel: "View Details",
@@ -77,9 +77,9 @@ const INITIAL_NOTIFICATIONS = [
     id: 6,
     type: "trending",
     icon: Flame,
-    title: "Course is Trending 🔥",
+    title: "Course is Trending ðŸ”¥",
     content:
-      '"Cloud Architecture Patterns" is trending in the top 5 today — 84 new enrollments in 24 hours!',
+      '"Cloud Architecture Patterns" is trending in the top 5 today â€” 84 new enrollments in 24 hours!',
     time: "3 days ago",
     unread: false,
     actionLabel: "See Analytics",
@@ -90,7 +90,7 @@ const INITIAL_NOTIFICATIONS = [
     icon: UploadCloud,
     title: "Course Under Review",
     content:
-      '"TypeScript Deep Dive" has been submitted and is currently under QA review. Expected: 24–48 hours.',
+      '"TypeScript Deep Dive" has been submitted and is currently under QA review. Expected: 24â€“48 hours.',
     time: "4 days ago",
     unread: false,
     actionLabel: null,
@@ -232,7 +232,7 @@ export default function MentorNotificationsPage() {
   return (
     <div className="min-h-screen bg-bg text-text -ml-11 -mt-5">
       <div className="mx-auto max-w-6xl space-y-6 px-1 py-4 sm:px-2">
-        {/* ── HERO ─────────────────────────────────── */}
+        {/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div
           className={`
             relative overflow-hidden rounded-[5px]
@@ -269,7 +269,7 @@ export default function MentorNotificationsPage() {
                 `}
               >
                 Stay on top of student Q&amp;A, new reviews, enrollments, payout
-                updates, and course approval statuses — all in one place.
+                updates, and course approval statuses â€” all in one place.
               </p>
             </div>
 
@@ -280,7 +280,7 @@ export default function MentorNotificationsPage() {
                 className="
                   relative inline-flex h-[52px] min-w-[180px]
                   items-center justify-center gap-2
-                  overflow-hidden rounded-none
+                  overflow-hidden rounded-full
                   border border-border dark:border-border
                   bg-primary dark:bg-primary
                   px-7
@@ -291,7 +291,6 @@ export default function MentorNotificationsPage() {
                   transition-all duration-300
                   hover:-translate-y-[2px]
                   hover:border-primary/40 dark:hover:border-primary/60
-                  [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]
                 "
               >
                 <CheckCheck className="h-4 w-4" />
@@ -301,7 +300,7 @@ export default function MentorNotificationsPage() {
           </div>
         </div>
 
-        {/* ── STATS GRID ────────────────────────────── */}
+        {/* â”€â”€ STATS GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="grid grid-cols-2 gap-5 xl:grid-cols-4">
           {STATS.map((item, i) => (
             <div
@@ -345,7 +344,7 @@ export default function MentorNotificationsPage() {
           ))}
         </div>
 
-        {/* ── MAIN CARD ─────────────────────────────── */}
+        {/* â”€â”€ MAIN CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div
           className={`
             overflow-hidden rounded-[5px]

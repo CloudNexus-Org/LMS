@@ -56,7 +56,7 @@ export default function StudentWishlistPage() {
                 </div>                
                 <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
                   <span className="font-display font-bold text-2xl text-text">${course.price}</span>
-                  <button className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-[5px] text-[13px] font-bold hover:bg-primary-hover shadow-sm transition-colors">
+                  <button className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-full text-[13px] font-bold hover:bg-primary-hover shadow-sm transition-colors">
                     <ShoppingCart className="h-4 w-4" /> Add to Cart
                   </button>
                 </div>
