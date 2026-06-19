@@ -152,7 +152,7 @@ export default function NotificationsPage() {
                 justify-center
                 gap-2
                 overflow-hidden
-                rounded-full
+                rounded-none
                 bg-blue-500
                 px-7
                 text-sm
@@ -165,6 +165,7 @@ export default function NotificationsPage() {
                 hover:-translate-y-[2px]
                 hover:bg-blue-600
                 hover:shadow-[0_20px_45px_rgba(37,99,235,0.30)]
+                [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]
               "
             >
               <Check className="h-4 w-4" />

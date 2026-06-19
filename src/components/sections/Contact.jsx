@@ -37,7 +37,7 @@ export default function Contact() {
       <div className="absolute left-[-120px] top-[50px] h-[300px] w-[300px] rounded-full border border-primary/20" />
       <div className="absolute right-[-80px] top-[-50px] h-[240px] w-[240px] rounded-full bg-primary-soft blur-3xl" />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1200px] px-5 sm:px-6 lg:px-10 xl:px-12">
+      <div className="relative z-10 mx-auto w-full max-w-[1280px]">
 
         {/* HEADING */}
         <div className="mb-8 text-center">
@@ -68,7 +68,7 @@ export default function Contact() {
               {/* CONTENT */}
               <div className="relative z-10">
                 <h3 className="text-[32px] font-black leading-tight text-text">
-                  Letâ€™s Work together!
+                  Let’s Work together!
                 </h3>
 
                 <p className="mt-4 max-w-[320px] text-[14px] leading-7 text-muted">
@@ -193,7 +193,42 @@ export default function Contact() {
 
                   <Button
                     type="submit"
-                    size="md"
+                    size="lg"
+                                     className="
+    relative
+    inline-flex
+    h-[35px]
+    min-w-[80px]
+    items-center
+    justify-center
+
+    overflow-hidden
+rounded-none
+    border border-[#d9e2ff]
+    dark:border-white/10
+
+    bg-primary
+    dark:bg-primary
+
+    px-6
+
+    text-[12px]
+    font-semibold
+
+    text-white
+    dark:text-white
+
+    shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+    dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+    transition-all
+    duration-300
+
+    hover:-translate-y-[2px]
+    hover:border-[#2563ff]/40
+
+    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+  "
                     rightIcon={<Send size={16} />}
                   >
                     {submitted

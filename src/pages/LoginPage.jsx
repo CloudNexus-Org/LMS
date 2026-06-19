@@ -381,7 +381,17 @@ export default function LoginPage() {
                 {/* SIGN IN BUTTON */}
                 <button
                   type="submit"
-                  className="btn btn-primary btn-lg flex w-full"
+                  className="
+                    flex h-[52px] w-full items-center justify-center
+                    rounded-[5px]
+                    bg-primary
+                    text-[14px] font-bold
+                    text-white
+                    shadow-[0_10px_40px_rgba(59,130,246,0.35)]
+                    transition duration-300
+                    hover:-translate-y-1
+                    hover:shadow-[0_20px_50px_rgba(59,130,246,0.45)]
+                  "
                 >
                   Sign In →
                 </button>
@@ -402,7 +412,16 @@ export default function LoginPage() {
                 {/* GOOGLE */}
                 <button
                   type="button"
-                  className="btn btn-secondary btn-lg flex w-full gap-3"
+                  className="
+                    flex h-[54px] w-full items-center justify-center gap-3
+                    rounded-[5px]
+                    border border-border
+                    bg-bg
+                    text-[14px] font-semibold text-text
+                    transition
+                    hover:border-primary/40
+                    hover:bg-primary/5
+                  "
                 >
 
                   <FaGoogle />
@@ -414,7 +433,16 @@ export default function LoginPage() {
                 {/* GITHUB */}
                 <button
                   type="button"
-                  className="btn btn-secondary btn-lg flex w-full gap-3"
+                  className="
+                    flex h-[54px] w-full items-center justify-center gap-3
+                    rounded-[5px]
+                    border border-border
+                    bg-bg
+                    text-[14px] font-semibold text-text
+                    transition
+                    hover:border-primary/40
+                    hover:bg-primary/5
+                  "
                 >
 
                   <FaGithub />

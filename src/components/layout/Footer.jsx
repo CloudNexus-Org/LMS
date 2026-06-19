@@ -1,12 +1,22 @@
 import { Link } from "react-router-dom";
-import { FaLinkedinIn, FaInstagram } from "react-icons/fa";
-import { MapPin, Phone, Mail } from "lucide-react";
+
+import {
+  FaLinkedinIn,
+  FaInstagram,
+} from "react-icons/fa";
+
+import {
+  ArrowRight,
+  MapPin,
+  Phone,
+  Mail,
+} from "lucide-react";
 
 import Button from "@/components/ui/Button";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 
-import cnlg from "@/assets/navbar/white.png";
-import cnlg1 from "@/assets/navbar/Blac.png";
+import cnlg from "../../assets/navbar/white.png";
+import cnlg1 from "../../assets/navbar/Blac.png";
 
 const TECH_COLUMNS = [
   {
@@ -14,80 +24,129 @@ const TECH_COLUMNS = [
     categories: [
       {
         title: "Frontend",
-        links: ["HTML", "CSS", "JavaScript", "React.js", "Angular", "Next.js"],
+        links: [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "React.js",
+          "Angular",
+          "Next.js",
+        ],
       },
       {
         title: "Backend",
-        links: ["Node.js", "Python", "Java", "Go (Golang)", "ASP.NET (C#, VB)"],
+        links: [
+          "Node.js",
+          "Python",
+          "Java",
+          "Go (Golang)",
+          "ASP.NET (C#, VB)",
+        ],
       },
     ],
   },
+
   {
     id: "col-2",
     categories: [
       {
         title: "Databases",
-        links: ["MySQL", "PostgreSQL", "Microsoft SQL Server", "MongoDB", "Redis"],
+        links: [
+          "MySQL",
+          "PostgreSQL",
+          "Microsoft SQL Server",
+          "MongoDB",
+          "Redis",
+        ],
       },
+
       {
         title: "Testing",
-        links: ["Jest / Mocha / Jasmine", "Cypress / Selenium", "Postman / Newman", "Playwright"],
+        links: [
+          "Jest / Mocha / Jasmine",
+          "Cypress / Selenium",
+          "Postman / Newman",
+          "Playwright",
+        ],
       },
+
       {
         title: "AI / ML",
-        links: ["Python Libraries", "TensorFlow", "Data & NLP"],
+        links: [
+          "Python Libraries",
+          "TensorFlow",
+          "Data & NLP",
+        ],
       },
     ],
   },
+
   {
     id: "col-3",
     categories: [
       {
         title: "Cloud Platforms & Services",
-        links: ["Amazon Web Services (AWS)", "Microsoft Azure", "Google Cloud Platform (GCP)"],
+        links: [
+          "Amazon Web Services (AWS)",
+          "Microsoft Azure",
+          "Google Cloud Platform (GCP)",
+        ],
       },
+
       {
         title: "Authentication & Authorization",
-        links: ["OAuth / JWT", "Firebase Auth", "Keycloak"],
+        links: [
+          "OAuth / JWT",
+          "Firebase Auth",
+          "Keycloak",
+        ],
       },
+
       {
         title: "Version Control",
-        links: ["Git", "GitHub", "Azure", "Microsoft Teams"],
+        links: [
+          "Git",
+          "GitHub",
+          "Azure",
+          "Microsoft Teams",
+        ],
       },
     ],
   },
+
   {
     id: "col-4",
     categories: [
       {
         title: "DevOps & CI/CD",
-        links: ["Docker", "Jenkins", "GitHub Actions"],
+        links: [
+          "Docker",
+          "Jenkins",
+          "GitHub Actions",
+        ],
       },
+
       {
         title: "APIs & Microservices",
-        links: ["REST APIs", "GraphQL", "WebSockets"],
+        links: [
+          "REST APIs",
+          "GraphQL",
+          "WebSockets",
+        ],
       },
+
       {
         title: "Analytics & Monitoring",
-        links: ["Google Analytics", "Matomo", "Datadog", "Grafana", "New Relic"],
+        links: [
+          "Google Analytics",
+          "Matomo",
+          "Datadog",
+          "Grafana",
+          "New Relic",
+        ],
       },
     ],
   },
-];
-
-const UTILITY_LINKS = [
-  { label: "Contact", href: "/#contact" },
-  { label: "Careers", href: "#" },
-  { label: "Support", href: "#" },
-  { label: "Partners", href: "#" },
-  { label: "Privacy & Security", href: "#" },
-  { label: "Sitemap", href: "#" },
-];
-
-const LEGAL_LINKS = [
-  { label: "Terms of Use", href: "#" },
-  { label: "Privacy Policy", href: "#" },
-  { label: "Cookie Preferences", href: "#" },
 ];
 
 const SOCIALS = [
@@ -96,97 +155,41 @@ const SOCIALS = [
     icon: FaLinkedinIn,
     href: "https://www.linkedin.com/company/cloudnexusorg/posts/?feedView=all",
   },
-  { label: "Instagram", icon: FaInstagram, href: "#" },
-];
 
-const CONTACT_ITEMS = [
   {
-    icon: MapPin,
-    label: "Cloud Nexus, Katara Hills (Bhopal)",
-    href: null,
-  },
-  {
-    icon: Phone,
-    label: "+1 (202) 555-0100",
-    href: "tel:+12025550100",
-  },
-  {
-    icon: Mail,
-    label: "hello@cloudnexus.io",
-    href: "mailto:hello@cloudnexus.io",
+    label: "Instagram",
+    icon: FaInstagram,
+    href: "#",
   },
 ];
 
-function CategoryBlock({ title, links, isFirst }) {
+function CategoryBlock({ title, links }) {
   return (
-    <div className={isFirst ? "" : "mt-3.5"}>
-      <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-text">
+    <div>
+      <h4 className="text-[12px] font-bold uppercase tracking-[0.18em] text-text">
         {title}
       </h4>
-      <ul className="mt-1.5 space-y-0">
+
+      <ul className="mt-1 space-y-0.5 text-[13px] leading-5">
         {links.map((link) => (
           <li key={link}>
             <a
               href="#"
-              className="block py-[2px] text-[12px] leading-snug text-muted transition-colors hover:text-text"
+              className="
+                group/link
+                inline-flex
+                items-center
+                gap-1
+                text-muted
+                transition-all
+                duration-200
+                hover:text-text
+              "
             >
-              {link}
+              <span className="transition-transform duration-200 group-hover/link:translate-x-0.5">
+                {link}
+              </span>
             </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function ContactCard() {
-  return (
-    <div
-      className="
-        w-full rounded-2xl border p-4
-        border-border/70 bg-elevated
-        shadow-[var(--shadow-card-value)]
-        dark:border-white/[0.08] dark:bg-[#111316]
-      "
-    >
-      <Link
-        to="/contact"
-        className="
-          flex h-9 w-full items-center justify-center rounded-full
-          bg-primary text-[13px] font-semibold text-white
-          transition-colors duration-200 hover:bg-primary-hover
-        "
-      >
-        Contact Us
-      </Link>
-
-      <div className="my-3 border-t border-border/50 dark:border-white/[0.06]" />
-
-      <ul className="space-y-2">
-        {CONTACT_ITEMS.map(({ icon: Icon, label, href }) => (
-          <li key={label}>
-            {href ? (
-              <a
-                href={href}
-                className="group flex items-center gap-2.5 transition-colors"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary dark:bg-primary/15">
-                  <Icon size={12} strokeWidth={2.2} />
-                </span>
-                <span className="text-[11.5px] leading-tight text-muted group-hover:text-text">
-                  {label}
-                </span>
-              </a>
-            ) : (
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary dark:bg-primary/15">
-                  <Icon size={12} strokeWidth={2.2} />
-                </span>
-                <span className="text-[11.5px] leading-tight text-muted">
-                  {label}
-                </span>
-              </div>
-            )}
           </li>
         ))}
       </ul>
@@ -199,102 +202,230 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-bg">
-      <div className="mx-auto w-full max-w-[1280px] px-6 py-5 sm:px-8">
-        {/* Top — logo + demo */}
-        <div className="flex items-center justify-between gap-4">
-          <Link to="/" className="inline-flex shrink-0 items-center">
-            <img
-              src={isDarkTheme ? cnlg : cnlg1}
-              alt="Cloud Nexus"
-              className="h-[52px] w-auto object-contain sm:h-[60px] lg:h-[68px]"
-            />
-          </Link>
-
-          <Button
-            to="/demo"
-            size="md"
+      <div
+        className="
+          mx-auto
+          w-full
+          max-w-[1320px]
+          px-5
+          pb-16
+          pt-15
+          sm:px-6
+          md:pt-14
+          lg:px-8
+        "
+      >
+        {/* top divider */}
+        <div className="mb-6 flex items-center gap-3">
+          <span
+            aria-hidden
             className="
-              h-9 shrink-0 rounded-full border-0 bg-primary px-5
-              text-[13px] font-semibold text-white shadow-none
-              transition-colors duration-200 hover:bg-primary-hover
+              h-px
+              flex-1
+              bg-gradient-to-r
+              from-transparent
+              to-border
             "
-          >
-            Request a Demo
-          </Button>
+          />
+
+          <span
+            aria-hidden
+            className="
+              h-px
+              flex-1
+              bg-gradient-to-l
+              from-transparent
+              to-border
+            "
+          />
         </div>
 
-        {/* Main — 4 link cols + contact box */}
-        <div className="mt-5 grid items-start gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_248px] lg:gap-x-8">
+        {/* main grid */}
+        <div className="grid gap-x-15 gap-y-8 lg:grid-cols-[1.1fr_1fr_1fr_1.15fr_1.15fr]">
+          {/* brand */}
+          <div>
+            <Link
+              to="/"
+              className="flex items-center gap-4"
+            >
+              <img
+                src={isDarkTheme ? cnlg : cnlg1}
+                alt="Cloud Nexus Logo"
+                className="
+                  h-[42px]
+                  w-auto
+                  object-contain
+                  sm:h-[52px]
+                  lg:h-[58px]
+                "
+              />
+            </Link>
+
+            {/* contact info */}
+            <div className="mt-5 space-y-3 text-[13px] leading-5 text-muted">
+              <div className="flex items-start gap-2.5">
+                <MapPin
+                  size={14}
+                  strokeWidth={2.2}
+                  aria-hidden
+                  className="mt-0.5 shrink-0 text-primary"
+                />
+
+                <span>
+                  Cloud Nexus, Katara Hills (Bhopal)
+                </span>
+              </div>
+
+              <a
+                href="tel:+15558675309"
+                className="
+                  flex
+                  items-start
+                  gap-2.5
+                  transition-colors
+                  duration-200
+                  hover:text-text
+                "
+              >
+                <Phone
+                  size={14}
+                  strokeWidth={2.2}
+                  aria-hidden
+                  className="mt-0.5 shrink-0 text-primary"
+                />
+
+                <span>
+                  +1 (555) 867-5309
+                </span>
+              </a>
+
+              <a
+                href="mailto:hello@cloudnexus.io"
+                className="
+                  flex
+                  items-center
+                  gap-2.5
+                  transition-colors
+                  duration-200
+                  hover:text-text
+                "
+              >
+                <Mail
+                  size={14}
+                  strokeWidth={2.2}
+                  aria-hidden
+                  className="shrink-0 text-primary"
+                />
+
+                <span>
+                  hello@cloudnexus.io
+                </span>
+              </a>
+            </div>
+
+            {/* button */}
+            <Button
+              to="/contact"
+              size="md"
+              rightIcon={<ArrowRight size={14} />}
+              className="
+                mt-5
+                relative
+                inline-flex
+                h-[40px]
+                min-w-[90px]
+                items-center
+                justify-center
+                overflow-hidden
+                rounded-none
+
+                border
+                border-[#d9e2ff]
+                dark:border-white/10
+
+                bg-primary
+                dark:bg-[#2563ff]
+
+                px-6
+
+                text-[14px]
+                font-semibold
+
+                text-white
+                dark:text-white
+
+                shadow-[0_10px_30px_rgba(37,99,235,0.08)]
+                dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
+
+                transition-all
+                duration-300
+
+                hover:-translate-y-[2px]
+                hover:border-[#2563ff]/40
+
+                [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
+              "
+            >
+              Contact us
+            </Button>
+
+            {/* socials */}
+            <div className="mt-5">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-subtle">
+                Follow along
+              </div>
+
+              <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                {SOCIALS.map(
+                  ({ label, icon: Icon, href }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={label}
+                      className="
+                        flex
+                        h-9
+                        w-9
+                        items-center
+                        justify-center
+                        rounded-lg
+                        border
+                        border-border
+                        text-muted
+                        transition-all
+                        duration-200
+
+                        hover:-translate-y-0.5
+                        hover:border-primary
+                        hover:text-primary
+                        hover:shadow-[0_6px_16px_-8px_var(--primary)]
+                      "
+                    >
+                      <Icon size={13} />
+                    </a>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* tech columns */}
           {TECH_COLUMNS.map((col) => (
-            <div key={col.id} className="min-w-0">
-              {col.categories.map((cat, i) => (
+            <div
+              key={col.id}
+              className="space-y-5"
+            >
+              {col.categories.map((cat) => (
                 <CategoryBlock
                   key={cat.title}
                   title={cat.title}
                   links={cat.links}
-                  isFirst={i === 0}
                 />
               ))}
             </div>
           ))}
-
-          <div className="sm:col-span-2 lg:col-span-1 lg:row-span-1">
-            <ContactCard />
-          </div>
-        </div>
-
-        {/* Bottom bar — compact, no huge gap */}
-        <div className="mt-5 border-t border-border/70 pt-4 dark:border-white/[0.06]">
-          <nav
-            aria-label="Footer utility links"
-            className="flex flex-wrap items-center gap-x-5 gap-y-1"
-          >
-            {UTILITY_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-[12px] text-muted transition-colors hover:text-text"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="text-[11px] text-muted">
-              © {new Date().getFullYear()} CloudNexus Learning, Inc.
-            </span>
-
-            {LEGAL_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-[11px] text-muted transition-colors hover:text-text"
-              >
-                {link.label}
-              </a>
-            ))}
-
-            <div className="flex items-center gap-2">
-              {SOCIALS.map(({ label, icon: Icon, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={label}
-                  className="
-                    flex h-7 w-7 items-center justify-center rounded-full
-                    border border-border text-muted
-                    transition-colors hover:border-primary hover:text-primary
-                    dark:border-white/15 dark:hover:border-primary
-                  "
-                >
-                  <Icon size={12} />
-                </a>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </footer>

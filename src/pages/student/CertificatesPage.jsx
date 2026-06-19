@@ -73,7 +73,7 @@ function Seal() {
         <circle cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" strokeWidth="1" opacity="0.35" />
         <circle cx="50" cy="50" r="40" fill="none" stroke="var(--primary)" strokeWidth="0.8" strokeDasharray="2 3" opacity="0.55" />
         <text fontSize="9" fontWeight="800" letterSpacing="2.4" fill="var(--primary)" fontFamily="var(--font-display, sans-serif)">
-          <textPath href="#seal-text-path">OFFICIAL Â· VERIFIED Â· CLOUD NEXUS Â· </textPath>
+          <textPath href="#seal-text-path">OFFICIAL · VERIFIED · CLOUD NEXUS · </textPath>
         </text>
       </svg>
       <div className="absolute inset-[8px] flex items-center justify-center rounded-full border border-primary/50 bg-primary-soft shadow-sm">
@@ -158,12 +158,12 @@ export default function CertificatesPage() {
 
                       <div className="mt-1.5 flex items-center gap-1.5">
                         <span className="block h-px w-6 bg-gradient-to-r from-transparent to-border sm:w-8" />
-                        <span className="text-[5px] text-primary">â—†</span>
+                        <span className="text-[5px] text-primary">◆</span>
                         <span className="block h-px w-6 bg-gradient-to-l from-transparent to-border sm:w-8" />
                       </div>
 
                       <span className="mt-1 text-[7px] font-semibold uppercase tracking-[0.28em] text-subtle sm:text-[8px]">
-                        Certificate of Completion Â· {cert.issueDate.split(' ')[1]}
+                        Certificate of Completion · {cert.issueDate.split(' ')[1]}
                       </span>
                     </div>
 
@@ -248,7 +248,7 @@ export default function CertificatesPage() {
                       gap-2
 
                       overflow-hidden
-                      rounded-full
+                      rounded-none
 
                       border border-white/10
 
@@ -266,6 +266,8 @@ bg-surface border border-border
                       duration-300
 
                       hover:-translate-y-[2px]
+
+                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     ">
                   <Download className="h-3.5 w-3.5" /> PDF
                 </button>
@@ -281,7 +283,7 @@ bg-surface border border-border
                       gap-2
 
                       overflow-hidden
-                      rounded-full
+                      rounded-none
 
                       border border-white/10
 bg-primary
@@ -299,6 +301,8 @@ bg-primary
                       duration-300
 
                       hover:-translate-y-[2px]
+
+                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     ">
                   <Share2 className="h-3.5 w-3.5" /> Share
                 </button>

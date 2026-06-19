@@ -392,7 +392,7 @@ export default function RevenuePage() {
                   text-white
                   dark:text-white
                   overflow-hidden
-                  rounded-full
+                  rounded-none
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
                   transition-all
@@ -400,6 +400,7 @@ export default function RevenuePage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
               >
                 Withdraw Funds
@@ -425,7 +426,7 @@ export default function RevenuePage() {
                   text-black
                   dark:text-text
                   overflow-hidden
-                  rounded-full
+                  rounded-none
                   shadow-[0_10px_30px_rgba(37,99,235,0.06)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)]
                   transition-all
@@ -433,6 +434,7 @@ export default function RevenuePage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/40
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
               >
                 Tax Documents
@@ -495,7 +497,7 @@ export default function RevenuePage() {
               </p>
             </div>
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
               <CreditCard className="h-6 w-6" />
             </div>
           </div>
@@ -521,7 +523,7 @@ export default function RevenuePage() {
               </p>
 
               <h3 className="mt-8 text-2xl font-black tracking-[0.3em]">
-                â€¢â€¢â€¢â€¢ 4582
+                •••• 4582
               </h3>
 
               <div className="mt-8 flex items-center justify-between">
@@ -557,12 +559,13 @@ export default function RevenuePage() {
               px-6
               text-[13px] font-semibold
               text-white dark:text-text
-              overflow-hidden rounded-full
+              overflow-hidden rounded-none
               shadow-[0_8px_24px_rgba(37,99,235,0.06)]
               dark:shadow-[0_8px_24px_rgba(0,0,0,0.3)]
               transition-all duration-300
               hover:-translate-y-[2px] hover:border-primary/40
               dark:hover:border-primary/40
+              [clip-path:polygon(10px_0,100%_0,100%_calc(100%-10px),calc(100%-10px)_100%,0_100%,0_10px)]
             "
           >
             Update Payment Method
@@ -602,12 +605,13 @@ export default function RevenuePage() {
               px-6
               text-[13px] font-semibold
               text-white dark:text-white
-              overflow-hidden rounded-full
+              overflow-hidden rounded-none
               shadow-[0_8px_24px_rgba(37,99,235,0.08)]
               dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]
               transition-all duration-300
               hover:-translate-y-[2px] hover:border-primary/40
               dark:hover:border-primary/60
+              [clip-path:polygon(10px_0,100%_0,100%_calc(100%-10px),calc(100%-10px)_100%,0_100%,0_10px)]
             "
           >
             Export Report
@@ -689,10 +693,11 @@ export default function RevenuePage() {
                         px-4
                         text-[12px] font-semibold
                         text-white dark:text-text
-                        overflow-hidden rounded-full
+                        overflow-hidden rounded-none
                         transition-all duration-300
                         hover:-translate-y-[2px] hover:border-primary/40
                         dark:hover:border-primary/40
+                        [clip-path:polygon(8px_0,100%_0,100%_calc(100%-8px),calc(100%-8px)_100%,0_100%,0_8px)]
                       "
                     >
                       <Download className="h-3.5 w-3.5" />
@@ -722,7 +727,7 @@ export default function RevenuePage() {
               </p>
             </div>
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-blue-500/10 text-blue-500">
               <BarChart3 className="h-6 w-6" />
             </div>
           </div>
@@ -784,7 +789,7 @@ export default function RevenuePage() {
               </p>
             </div>
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[5px] bg-emerald-500/10 text-emerald-500">
               <CalendarDays className="h-6 w-6" />
             </div>
           </div>

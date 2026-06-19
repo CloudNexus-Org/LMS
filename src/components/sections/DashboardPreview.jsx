@@ -204,7 +204,7 @@ export default function DashboardPreview() {
   const isPlaying = videoReady && !videoFailed && isInView;
 
   return (
-    <SectionShell id="dashboard">
+    <SectionShell>
       <Container>
         <SectionHeading
           eyebrow="The platform"
@@ -269,7 +269,7 @@ export default function DashboardPreview() {
               <aside className="hidden border-r border-border bg-bg/40 p-3 md:flex md:flex-col md:justify-between">
                 <div>
                   <div className="mb-4 flex items-center gap-2 px-2 py-1">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent shadow-[0_0_12px_var(--primary-soft)]">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-gradient-to-br from-primary to-accent shadow-[0_0_12px_var(--primary-soft)]">
                       <Award size={12} className="text-white" />
                     </span>
                     <span className="font-display text-[11px] font-bold tracking-[0.18em] text-text">
@@ -299,7 +299,7 @@ export default function DashboardPreview() {
                           {it.active ? (
                             <span
                               aria-hidden="true"
-                              className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-primary shadow-[0_0_10px_var(--primary)]"
+                              className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-[5px] bg-primary shadow-[0_0_10px_var(--primary)]"
                             />
                           ) : null}
                           <it.Icon size={14} />
@@ -319,7 +319,7 @@ export default function DashboardPreview() {
                       Aarav Sharma
                     </div>
                     <div className="text-[10px] text-subtle">
-                      Pro Â· Cloud track
+                      Pro · Cloud track
                     </div>
                   </div>
                 </div>
@@ -440,7 +440,7 @@ export default function DashboardPreview() {
                       </div>
                       <button
                         type="button"
-                        className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-bg/60 px-3 py-1.5 text-[12px] font-semibold text-primary transition hover:border-primary hover:bg-primary-soft"
+                        className="group inline-flex items-center gap-1.5 rounded-[5px] border border-border bg-bg/60 px-3 py-1.5 text-[12px] font-semibold text-primary transition hover:border-primary hover:bg-primary-soft"
                       >
                         Continue
                         <ArrowRight
@@ -489,7 +489,7 @@ export default function DashboardPreview() {
                               {isCurrent ? (
                                 <span
                                   aria-hidden="true"
-                                  className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-primary shadow-[0_0_10px_var(--primary)]"
+                                  className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-[5px] bg-primary shadow-[0_0_10px_var(--primary)]"
                                 />
                               ) : null}
                               <span className="flex items-center gap-2">

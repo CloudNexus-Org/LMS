@@ -188,7 +188,17 @@ export default function OtpVerificationPage() {
               {/* VERIFY BUTTON */}
               <button
                 type="submit"
-                className="btn btn-primary btn-lg flex w-full"
+                className="
+                  flex h-[56px] w-full items-center justify-center
+                  rounded-[5px]
+                  bg-primary
+                  text-[15px] font-bold
+                  text-white
+                  shadow-[0_10px_40px_rgba(59,130,246,0.35)]
+                  transition duration-300
+                  hover:-translate-y-1
+                  hover:shadow-[0_20px_50px_rgba(59,130,246,0.45)]
+                "
               >
                 Verify OTP →
               </button>

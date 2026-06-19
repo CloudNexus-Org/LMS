@@ -1,4 +1,4 @@
-import { useId, useRef } from "react";
+import  { useId, useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 export default function HeroBackdrop({
@@ -7,7 +7,8 @@ export default function HeroBackdrop({
   children,
   className = "",
   imageLayerClassName,
-  position = "center center",
+  // Set default position to center 15% to move the image downward
+  position = "center 15%",
   positions,
   fits,
 }) {
@@ -40,12 +41,16 @@ export default function HeroBackdrop({
     }
   `;
 
+  // Parallax setup
   const ref = useRef(null);
   const shouldReduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
 
+  // Content Parallax transformations (applied to content layer only, NOT the image)
   const contentY = useTransform(scrollY, [0, 800], [0, 120]);
   const contentOpacity = useTransform(scrollY, [0, 800], [1, 0.85]);
+
+  // Subtle atmospheric overlay motion
   const overlayY = useTransform(scrollY, [0, 800], [0, 50]);
 
   return (
@@ -53,45 +58,38 @@ export default function HeroBackdrop({
       id={id}
       ref={ref}
       data-hero-uid={safeUid}
-      className={`relative isolate overflow-hidden bg-bg ${className}`}
+      className={`relative overflow-hidden isolate ${className}`}
     >
       <style>{css}</style>
 
+      {/* fixed visual image - remains completely stationary relative to viewport, clipped strictly to parent */}
       <div
         className={
           imageLayerClassName ||
-          "pointer-events-none absolute inset-0 -z-10"
+          "absolute inset-x-0 top-[58px] bottom-0 -z-10 pointer-events-none"
         }
         style={{ clipPath: "inset(0)" }}
       >
-        {imageSrc ? (
-          <img
-            src={imageSrc}
-            alt=""
-            className="hero-bg-img absolute inset-0 h-full w-full object-cover opacity-35 transition-opacity duration-300 dark:opacity-25"
-            aria-hidden
-          />
-        ) : null}
+        <img
+          src={imageSrc}
+          alt=""
+          className="hero-bg-img hidden sm:block absolute inset-0 w-full h-full object-cover transition-colors duration-300"
+          aria-hidden
+        />
       </div>
 
+      {/* animated overlays/gradients */}
       {!shouldReduceMotion ? (
         <motion.div
           style={{ y: overlayY }}
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-bg via-transparent to-bg/20"
+          className="absolute inset-0 pointer-events-none -z-10 bg-gradient-to-b from-transparent via-bg/5 to-bg/20"
           aria-hidden
         />
       ) : (
-        <div
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-bg to-bg/15"
-          aria-hidden
-        />
+        <div className="absolute inset-0 pointer-events-none -z-10 bg-transparent" aria-hidden />
       )}
 
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 -z-10 bg-gradient-to-t from-bg to-transparent"
-        aria-hidden
-      />
-
+      {/* Hero content - receives parallax depth motion */}
       {!shouldReduceMotion ? (
         <motion.div
           style={{ y: contentY, opacity: contentOpacity }}
@@ -100,7 +98,9 @@ export default function HeroBackdrop({
           {children}
         </motion.div>
       ) : (
-        <div className="relative z-10">{children}</div>
+        <div className="relative z-10">
+          {children}
+        </div>
       )}
     </section>
   );

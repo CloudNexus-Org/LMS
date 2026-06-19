@@ -68,13 +68,13 @@ export default function UploadCoursePage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
 
-      {/* â”€â”€ HEADER â”€â”€ */}
+      {/* ── HEADER ── */}
       <div className="text-center">
         <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Create New Course</h1>
         <p className="text-muted mt-2 font-medium">Follow the wizard to launch your next hit course on Cloud Nexus.</p>
       </div>
 
-      {/* â”€â”€ STEPPER â”€â”€ */}
+      {/* ── STEPPER ── */}
       <div className="relative">
         {/* Track */}
         <div className="absolute top-6 left-0 w-full h-0.5 bg-border z-0" />
@@ -110,7 +110,7 @@ export default function UploadCoursePage() {
         </div>
       </div>
 
-      {/* â”€â”€ FORM CARD â”€â”€ */}
+      {/* ── FORM CARD ── */}
       <div className="bg-surface border border-border rounded-[5px] shadow-card overflow-hidden">
 
         {/* Progress bar */}
@@ -120,7 +120,7 @@ export default function UploadCoursePage() {
 
         <div className="p-8 sm:p-10 min-h-[440px]">
 
-          {/* â”€â”€ STEP 1: COURSE INFO â”€â”€ */}
+          {/* ── STEP 1: COURSE INFO ── */}
           {step === 1 && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
@@ -153,7 +153,7 @@ export default function UploadCoursePage() {
                       <button
                         key={l}
                         onClick={() => setSelectedLevel(l)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${selectedLevel === l ? 'bg-primary border-primary text-white' : 'bg-bg border-border text-muted hover:border-primary/40 hover:text-text'}`}
+                        className={`px-3 py-1.5 rounded-[5px] text-xs font-bold border transition-all ${selectedLevel === l ? 'bg-primary border-primary text-white' : 'bg-bg border-border text-muted hover:border-primary/40 hover:text-text'}`}
                       >
                         {l}
                       </button>
@@ -173,12 +173,12 @@ export default function UploadCoursePage() {
                 {/* Thumbnail Upload */}
                 <div className="sm:col-span-2 space-y-2">
                   <label className="text-sm font-bold text-text">Course Thumbnail</label>
-                  <div className="border-2 border-dashed border-border hover:border-primary/50 transition-colors rounded-full p-8 flex flex-col items-center justify-center text-center cursor-pointer bg-bg/50 group">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <div className="border-2 border-dashed border-border hover:border-primary/50 transition-colors rounded-[5px] p-8 flex flex-col items-center justify-center text-center cursor-pointer bg-bg/50 group">
+                    <div className="h-12 w-12 rounded-[5px] bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <Image className="h-6 w-6" />
                     </div>
                     <p className="font-bold text-text text-sm">Click to upload or drag and drop</p>
-                    <p className="text-xs text-muted font-medium mt-1">PNG, JPG or GIF Â· Max 2MB Â· 16:9 ratio recommended</p>
+                    <p className="text-xs text-muted font-medium mt-1">PNG, JPG or GIF · Max 2MB · 16:9 ratio recommended</p>
                   </div>
                 </div>
 
@@ -187,7 +187,7 @@ export default function UploadCoursePage() {
                   <label className="text-sm font-bold text-text">Tags</label>
                   <div className="flex flex-wrap gap-2 p-3 bg-bg border border-border rounded-[5px] min-h-[48px]">
                     {['React', 'TypeScript', 'State Management'].map(tag => (
-                      <span key={tag} className="flex items-center gap-1.5 bg-primary/10 text-primary text-xs font-bold px-2.5 py-1 rounded-full">
+                      <span key={tag} className="flex items-center gap-1.5 bg-primary/10 text-primary text-xs font-bold px-2.5 py-1 rounded-[5px]">
                         <Tag className="h-3 w-3" /> {tag}
                         <button className="text-primary/60 hover:text-primary"><X className="h-3 w-3" /></button>
                       </span>
@@ -199,7 +199,7 @@ export default function UploadCoursePage() {
             </div>
           )}
 
-          {/* â”€â”€ STEP 2: CURRICULUM â”€â”€ */}
+          {/* ── STEP 2: CURRICULUM ── */}
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="flex items-center justify-between">
@@ -209,7 +209,7 @@ export default function UploadCoursePage() {
                 </div>
                 <button
                   onClick={addLesson}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full text-sm font-bold hover:bg-primary-hover transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover transition-all"
                 >
                   <Plus className="h-4 w-4" /> Add Lesson
                 </button>
@@ -217,14 +217,14 @@ export default function UploadCoursePage() {
 
               {/* Video upload area */}
               <div className="border-2 border-dashed border-border hover:border-primary/50 rounded-[5px] p-6 bg-bg/50 flex items-center gap-5 cursor-pointer group transition-colors">
-                <div className="h-12 w-12 rounded-full bg-accent/10 text-accent flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <div className="h-12 w-12 rounded-[5px] bg-accent/10 text-accent flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <Video className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="font-bold text-text text-sm">Drag video files here to upload</p>
-                  <p className="text-xs text-muted font-medium mt-0.5">MP4, MOV or AVI Â· Auto-compressed & transcribed</p>
+                  <p className="text-xs text-muted font-medium mt-0.5">MP4, MOV or AVI · Auto-compressed & transcribed</p>
                 </div>
-                <button className="ml-auto px-4 py-2 border border-border rounded-full text-xs font-bold text-muted hover:text-text hover:border-primary/40 transition-all flex-shrink-0">
+                <button className="ml-auto px-4 py-2 border border-border rounded-[5px] text-xs font-bold text-muted hover:text-text hover:border-primary/40 transition-all flex-shrink-0">
                   Browse Files
                 </button>
               </div>
@@ -236,7 +236,7 @@ export default function UploadCoursePage() {
                     <GripVertical className="h-4 w-4 text-border group-hover:text-muted cursor-grab flex-shrink-0" />
                     <span className="text-xs font-bold text-muted w-5 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
 
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'}`}>
+                    <div className={`h-8 w-8 rounded-[5px] flex items-center justify-center flex-shrink-0 ${lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'}`}>
                       {lesson.type === 'quiz' ? <FileText className="h-4 w-4" /> : <Video className="h-4 w-4" />}
                     </div>
 
@@ -248,7 +248,7 @@ export default function UploadCoursePage() {
 
                     <button
                       onClick={() => setLessons(prev => prev.map(l => l.id === lesson.id ? { ...l, free: !l.free } : l))}
-                      className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full transition-all flex-shrink-0 ${lesson.free ? 'bg-success/10 text-success' : 'bg-border text-muted hover:bg-primary/10 hover:text-primary'}`}
+                      className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-[5px] transition-all flex-shrink-0 ${lesson.free ? 'bg-success/10 text-success' : 'bg-border text-muted hover:bg-primary/10 hover:text-primary'}`}
                     >
                       {lesson.free ? <><Globe className="h-3 w-3" /> Free</> : <><Lock className="h-3 w-3" /> Paid</>}
                     </button>
@@ -264,12 +264,12 @@ export default function UploadCoursePage() {
               </div>
 
               <p className="text-xs text-muted font-medium text-center pt-2">
-                ðŸ’¡ Tip: Mark at least 1 lesson as <strong>Free</strong> to attract more enrollments.
+                💡 Tip: Mark at least 1 lesson as <strong>Free</strong> to attract more enrollments.
               </p>
             </div>
           )}
 
-          {/* â”€â”€ STEP 3: PRICING â”€â”€ */}
+          {/* ── STEP 3: PRICING ── */}
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
@@ -293,7 +293,7 @@ export default function UploadCoursePage() {
                           {plan.badge}
                         </span>
                       )}
-                      <div className={`h-10 w-10 rounded-full flex items-center justify-center mb-3 ${
+                      <div className={`h-10 w-10 rounded-[5px] flex items-center justify-center mb-3 ${
                         plan.id === 'free' ? 'bg-success/10 text-success' :
                         plan.id === 'paid' ? 'bg-primary/10 text-primary' :
                         'bg-accent/10 text-accent'
@@ -337,7 +337,7 @@ export default function UploadCoursePage() {
                         <button
                           key={p}
                           onClick={() => setCustomPrice(p)}
-                          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${customPrice === p ? 'bg-primary/10 text-primary border-primary/30' : 'bg-bg border-border text-muted hover:border-primary/30 hover:text-text'}`}
+                          className={`px-3 py-1.5 rounded-[5px] text-xs font-bold border transition-all ${customPrice === p ? 'bg-primary/10 text-primary border-primary/30' : 'bg-bg border-border text-muted hover:border-primary/30 hover:text-text'}`}
                         >
                           ${p}
                         </button>
@@ -365,27 +365,27 @@ export default function UploadCoursePage() {
             </div>
           )}
 
-          {/* â”€â”€ STEP 4: PUBLISH â”€â”€ */}
+          {/* ── STEP 4: PUBLISH ── */}
           {step === 4 && (
             <div className="flex flex-col items-center text-center py-6 animate-in fade-in duration-300">
-              <div className="h-24 w-24 rounded-full bg-success/10 text-success flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(5,150,105,0.2)]">
+              <div className="h-24 w-24 rounded-[5px] bg-success/10 text-success flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(5,150,105,0.2)]">
                 <CheckCircle2 className="h-12 w-12" />
               </div>
-              <h2 className="text-3xl font-bold text-text font-display">Ready to Launch! ðŸš€</h2>
+              <h2 className="text-3xl font-bold text-text font-display">Ready to Launch! 🚀</h2>
               <p className="text-muted font-medium max-w-md mt-3 leading-relaxed">
-                Your course is fully configured. It will be submitted to the Cloud Nexus QA team for review before going live â€” typically within 24â€“48 hours.
+                Your course is fully configured. It will be submitted to the Cloud Nexus QA team for review before going live — typically within 24–48 hours.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 w-full max-w-lg">
                 {[
-                  { icon: Clock, label: 'Review Time', value: '24â€“48 hrs', color: 'text-warning bg-warning/10' },
+                  { icon: Clock, label: 'Review Time', value: '24–48 hrs', color: 'text-warning bg-warning/10' },
                   { icon: Users, label: 'Potential Reach', value: '12,000+', color: 'text-primary bg-primary/10' },
                   { icon: Star, label: 'Platform Rating', value: '4.8 avg', color: 'text-amber-500 bg-amber-500/10' },
                 ].map(item => {
                   const Icon = item.icon;
                   return (
                     <div key={item.label} className="bg-bg border border-border rounded-[5px] p-4">
-                      <div className={`h-9 w-9 rounded-full ${item.color} flex items-center justify-center mx-auto mb-2`}>
+                      <div className={`h-9 w-9 rounded-[5px] ${item.color} flex items-center justify-center mx-auto mb-2`}>
                         <Icon className="h-4.5 w-4.5" />
                       </div>
                       <p className="text-xs font-bold text-muted">{item.label}</p>
@@ -402,7 +402,7 @@ export default function UploadCoursePage() {
           )}
         </div>
 
-        {/* â”€â”€ FOOTER ACTIONS â”€â”€ */}
+        {/* ── FOOTER ACTIONS ── */}
         <div className="px-8 sm:px-10 py-5 border-t border-border bg-bg/30 flex items-center justify-between">
           <button
             onClick={() => setStep(s => Math.max(1, s - 1))}
@@ -447,7 +447,7 @@ export default function UploadCoursePage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-full
+                  rounded-none
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -458,6 +458,8 @@ export default function UploadCoursePage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
           >
             {step === STEPS.length ? (

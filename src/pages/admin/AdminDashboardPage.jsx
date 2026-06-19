@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-/* â”€â”€â”€ tiny inline sparkline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── tiny inline sparkline ──────────────────────────────────────── */
 function Sparkline({ data, color = 'var(--primary)', height = 36 }) {
   const max = Math.max(...data);
   const min = Math.min(...data);
@@ -37,7 +37,7 @@ function Sparkline({ data, color = 'var(--primary)', height = 36 }) {
   );
 }
 
-/* â”€â”€â”€ radial progress ring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── radial progress ring ───────────────────────────────────────── */
 function RadialProgress({ pct, color, size = 56 }) {
   const r = (size - 8) / 2;
   const circ = 2 * Math.PI * r;
@@ -58,7 +58,7 @@ function RadialProgress({ pct, color, size = 56 }) {
   );
 }
 
-/* â”€â”€â”€ bar chart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── bar chart ─────────────────────────────────────────────────── */
 function MiniBarChart({ data }) {
   const max = Math.max(...data.map(d => Math.max(d.s, d.m)));
   return (
@@ -205,7 +205,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
 
-      {/* â”€â”€ HEADER â”€â”€ */}
+      {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
                   text-black
                   dark:text-black
                   overflow-hidden
-                  rounded-full
+                  rounded-none
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
                   transition-all
@@ -244,6 +244,7 @@ export default function AdminDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <RefreshCw className="h-3.5 w-3.5" /> Refresh
           </button>
@@ -267,7 +268,7 @@ export default function AdminDashboardPage() {
                   text-white
                   dark:text-white
                   overflow-hidden
-                  rounded-full
+                  rounded-none
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
                   transition-all
@@ -275,13 +276,14 @@ export default function AdminDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
         </div>
       </div>
 
-     {/* â”€â”€ KPI CARDS â”€â”€ */}
+     {/* ── KPI CARDS ── */}
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
   {kpis.map((kpi) => {
     const Icon = kpi.icon;
@@ -440,7 +442,7 @@ export default function AdminDashboardPage() {
     );
   })}
 </div>
-      {/* â”€â”€ REVENUE CHART + QUICK ACTIONS â”€â”€ */}
+      {/* ── REVENUE CHART + QUICK ACTIONS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
         {/* Revenue Chart */}
@@ -455,7 +457,7 @@ export default function AdminDashboardPage() {
                 <button
                   key={t}
                   onClick={() => setActiveTab(t)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all capitalize ${activeTab === t ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
+                  className={`px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all capitalize ${activeTab === t ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
                 >
                   {t}
                 </button>
@@ -465,7 +467,7 @@ export default function AdminDashboardPage() {
 
           <div className="flex items-center gap-6 mb-4">
             <span className="flex items-center gap-1.5 text-xs font-bold text-muted">
-              <span className="h-2.5 w-2.5 rounded-full bg-primary/80" /> Sales
+              <span className="h-2.5 w-2.5 rounded-[5px] bg-primary/80" /> Sales
             </span>
             <span className="flex items-center gap-1.5 text-xs font-bold text-muted">
               <span className="h-2.5 w-2.5 rounded-[5px] bg-success/70" /> Payouts
@@ -487,7 +489,7 @@ export default function AdminDashboardPage() {
                 <Link
                   key={qa.label}
                   to={qa.to}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-full text-center transition-all duration-200 ${qa.color} group`}
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-[5px] text-center transition-all duration-200 ${qa.color} group`}
                 >
                   <Icon className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
                   <span className="text-xs font-bold leading-tight">{qa.label}</span>
@@ -502,14 +504,14 @@ export default function AdminDashboardPage() {
               <p className="text-xs font-bold text-muted uppercase tracking-wider">New Users Today</p>
               <p className="text-2xl font-display font-bold text-text mt-0.5">+284</p>
             </div>
-            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <div className="h-12 w-12 rounded-[5px] bg-primary/10 flex items-center justify-center text-primary">
               <UserCheck className="h-6 w-6" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* â”€â”€ ACTION ITEMS + SYSTEM HEALTH â”€â”€ */}
+      {/* ── ACTION ITEMS + SYSTEM HEALTH ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
         {/* Action Items */}
@@ -520,40 +522,40 @@ export default function AdminDashboardPage() {
           </div>
           <div className="space-y-3">
             <div className="flex items-start gap-4 p-4 rounded-[5px] border border-warning/30 bg-warning/5 hover:bg-warning/10 transition-colors">
-              <div className="mt-0.5 h-8 w-8 rounded-full bg-warning/15 flex items-center justify-center text-warning flex-shrink-0">
+              <div className="mt-0.5 h-8 w-8 rounded-[5px] bg-warning/15 flex items-center justify-center text-warning flex-shrink-0">
                 <AlertTriangle className="h-4 w-4" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-text text-sm">High Server Load Detected</p>
                 <p className="text-xs text-muted font-medium mt-0.5">DB CPU hit 85% in us-east-1. Auto-scaling initiated.</p>
               </div>
-              <button className="ml-auto flex-shrink-0 text-xs font-bold text-warning hover:text-text border border-warning/30 px-3 py-1.5 rounded-full transition-colors">
+              <button className="ml-auto flex-shrink-0 text-xs font-bold text-warning hover:text-text border border-warning/30 px-3 py-1.5 rounded-[5px] transition-colors">
                 Acknowledge
               </button>
             </div>
 
             <div className="flex items-start gap-4 p-4 rounded-[5px] border border-border bg-bg hover:border-primary/30 transition-colors group">
-              <div className="mt-0.5 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+              <div className="mt-0.5 h-8 w-8 rounded-[5px] bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                 <CheckSquare className="h-4 w-4" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-text text-sm">14 Courses Awaiting Review</p>
                 <p className="text-xs text-muted font-medium mt-0.5">Mentor submissions need QA approval before publishing.</p>
               </div>
-              <Link to="/admin/approvals" className="ml-auto flex-shrink-0 text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-full hover:bg-primary-hover transition-colors">
+              <Link to="/admin/approvals" className="ml-auto flex-shrink-0 text-xs font-bold bg-primary text-white px-3 py-1.5 rounded-[5px] hover:bg-primary-hover transition-colors">
                 Review Now
               </Link>
             </div>
 
             <div className="flex items-start gap-4 p-4 rounded-[5px] border border-border bg-bg hover:border-primary/30 transition-colors group">
-              <div className="mt-0.5 h-8 w-8 rounded-full bg-success/10 flex items-center justify-center text-success flex-shrink-0">
+              <div className="mt-0.5 h-8 w-8 rounded-[5px] bg-success/10 flex items-center justify-center text-success flex-shrink-0">
                 <DollarSign className="h-4 w-4" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-text text-sm">Monthly Mentor Payouts Pending</p>
                 <p className="text-xs text-muted font-medium mt-0.5">$42,500 across 18 mentors needs authorization.</p>
               </div>
-              <Link to="/admin/revenue" className="ml-auto flex-shrink-0 text-xs font-bold bg-surface border border-border px-3 py-1.5 rounded-full hover:bg-bg hover:border-primary/40 transition-colors">
+              <Link to="/admin/revenue" className="ml-auto flex-shrink-0 text-xs font-bold bg-surface border border-border px-3 py-1.5 rounded-[5px] hover:bg-bg hover:border-primary/40 transition-colors">
                 Authorize
               </Link>
             </div>
@@ -593,7 +595,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* â”€â”€ TOP COURSES + RECENT ACTIVITY â”€â”€ */}
+      {/* ── TOP COURSES + RECENT ACTIVITY ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
         {/* Top Performing Courses */}

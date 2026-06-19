@@ -160,7 +160,7 @@ function Seal() {
           fontFamily="var(--font-display, sans-serif)"
         >
           <textPath href="#seal-text-path">
-            OFFICIAL Â· VERIFIED Â· CLOUD NEXUS Â·{" "}
+            OFFICIAL · VERIFIED · CLOUD NEXUS ·{" "}
           </textPath>
         </text>
       </svg>
@@ -177,7 +177,7 @@ function Seal() {
 
 export default function CertificateShowcase() {
   return (
-    <SectionShell id="certificates">
+    <SectionShell>
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
           <SectionHeading
@@ -277,12 +277,12 @@ export default function CertificateShowcase() {
 
                   <div className="mt-2.5 flex items-center gap-2">
                     <span className="block h-px w-12 bg-gradient-to-r from-transparent to-border sm:w-16" />
-                    <span className="text-[8px] text-primary">â—†</span>
+                    <span className="text-[8px] text-primary">◆</span>
                     <span className="block h-px w-12 bg-gradient-to-l from-transparent to-border sm:w-16" />
                   </div>
 
                   <span className="mt-2 text-[9.5px] font-semibold uppercase tracking-[0.28em] text-subtle sm:text-[10px]">
-                    Certificate of Completion Â· 2026
+                    Certificate of Completion · 2026
                   </span>
                 </div>
 
@@ -369,7 +369,7 @@ export default function CertificateShowcase() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.5, delay: 0.85 }}
-                    className="flex h-16 w-16 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full border border-border bg-surface p-1.5 shadow-[var(--shadow-card)] sm:h-[72px] sm:w-[72px]"
+                    className="flex h-16 w-16 shrink-0 flex-col items-center justify-center gap-0.5 rounded-[5px] border border-border bg-surface p-1.5 shadow-[var(--shadow-card)] sm:h-[72px] sm:w-[72px]"
                   >
                     <div className="h-9 w-9 sm:h-10 sm:w-10">
                       <MiniQR />
@@ -388,7 +388,7 @@ export default function CertificateShowcase() {
                     cloudnexus.com/verify
                   </span>
                   <span className="font-mono text-subtle">
-                    Mar 2026 Â· 24h
+                    Mar 2026 · 24h
                   </span>
                 </div>
               </div>

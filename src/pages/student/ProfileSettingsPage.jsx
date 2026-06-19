@@ -225,7 +225,7 @@ export default function ProfileSettingsPage() {
                     duration-300
                     ${
                       activeTab === tab.id
-                        ? "bg-primary text-white "
+                        ? "bg-primary text-white shadow-[0_10px_30px_rgba(37,99,235,0.18)]"
                         : `border border-transparent ${textSecondary} ${isDark ? "hover:border-white/10 hover:bg-[#0f172a]" : "hover:border-slate-200 hover:bg-slate-50"}`
                     }
                   `}
@@ -463,7 +463,7 @@ export default function ProfileSettingsPage() {
                     justify-center
                     gap-2
                     overflow-hidden
-                    rounded-full
+                    rounded-none
                     border
                     ${cardBorder}
                     ${cardBg}
@@ -474,6 +474,7 @@ export default function ProfileSettingsPage() {
                     transition-all
                     duration-300
                     hover:-translate-y-[2px]
+                    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                   `}
                 >
                   Remove Photo
@@ -675,7 +676,7 @@ export default function ProfileSettingsPage() {
                     gap-2
 
                     overflow-hidden
-                    rounded-full
+                    rounded-none
 
                     bg-primary
 
@@ -691,6 +692,8 @@ export default function ProfileSettingsPage() {
 
                     hover:-translate-y-[2px]
                     hover:bg-[#004182]
+
+                    [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]
                   "
                 >
                   Save Changes
@@ -775,7 +778,7 @@ export default function ProfileSettingsPage() {
                     justify-center
 
                     overflow-hidden
-                    rounded-full
+                    rounded-none
 
                     bg-primary
 
@@ -790,6 +793,8 @@ export default function ProfileSettingsPage() {
                     duration-300
 
                     hover:-translate-y-[2px]
+
+                    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                   "
                 >
                   Enable 2FA
@@ -895,7 +900,7 @@ export default function ProfileSettingsPage() {
                         items-center
                         justify-center
                         overflow-hidden
-                        rounded-full
+                        rounded-none
                         border
                         ${cardBorder}
                         ${cardBg}
@@ -906,6 +911,7 @@ export default function ProfileSettingsPage() {
                         transition-all
                         duration-300
                         hover:-translate-y-[2px]
+                        [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                       `}
                     >
                       Configure

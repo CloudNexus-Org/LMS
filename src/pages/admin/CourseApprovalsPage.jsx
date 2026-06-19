@@ -96,7 +96,7 @@ export default function CourseApprovalsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
 
-      {/* â”€â”€ HEADER â”€â”€ */}
+      {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-[5px] border border-warning/20 bg-warning/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-warning mb-3">
@@ -133,7 +133,7 @@ export default function CourseApprovalsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-full
+                  rounded-none
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -144,13 +144,15 @@ export default function CourseApprovalsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
+
+                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export
           </button>
         </div>
       </div>
 
-      {/* â”€â”€ KPI STRIP â”€â”€ */}
+      {/* ── KPI STRIP ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'Pending Review', value: pending, icon: AlertTriangle, color: 'text-warning', bg: 'bg-warning/10', border: 'border-warning/20' },
@@ -160,7 +162,7 @@ export default function CourseApprovalsPage() {
           const Icon = kpi.icon;
           return (
             <div key={kpi.label} className={`bg-surface border ${kpi.border} rounded-[5px] p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300`}>
-              <div className={`h-10 w-10 rounded-full ${kpi.bg} ${kpi.color} flex items-center justify-center mb-3`}>
+              <div className={`h-10 w-10 rounded-[5px] ${kpi.bg} ${kpi.color} flex items-center justify-center mb-3`}>
                 <Icon className="h-5 w-5" />
               </div>
               <p className="text-3xl font-display font-bold text-text">{kpi.value}</p>
@@ -170,21 +172,21 @@ export default function CourseApprovalsPage() {
         })}
       </div>
 
-      {/* â”€â”€ FILTER TABS â”€â”€ */}
+      {/* ── FILTER TABS ── */}
       <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1 w-fit">
         {['All', 'Pending', 'Approved', 'Rejected'].map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${filter === f ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
+            className={`px-4 py-2 rounded-[5px] text-xs font-bold transition-all ${filter === f ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
             {f} {f === 'Pending' && pending > 0 ? `(${pending})` : ''}
           </button>
         ))}
       </div>
 
-      {/* â”€â”€ APPROVAL CARDS â”€â”€ */}
+      {/* ── APPROVAL CARDS ── */}
       {filtered.length === 0 ? (
         <div className="bg-surface border border-border rounded-[5px] p-16 text-center">
           <CheckSquare className="h-14 w-14 mx-auto text-muted opacity-25 mb-4" />
-          <h3 className="text-xl font-bold text-text">Inbox Zero ðŸŽ‰</h3>
+          <h3 className="text-xl font-bold text-text">Inbox Zero 🎉</h3>
           <p className="text-muted mt-1.5 font-medium">No courses in this category right now.</p>
         </div>
       ) : (
@@ -243,7 +245,7 @@ export default function CourseApprovalsPage() {
                             <span className="font-bold text-text">{course.mentor}</span>
                           </span>
                           <span className="flex items-center gap-1 text-xs">
-                            <BookOpen className="h-3.5 w-3.5" /> {course.modules} modules Â· {course.lessons} lessons
+                            <BookOpen className="h-3.5 w-3.5" /> {course.modules} modules · {course.lessons} lessons
                           </span>
                           <span className="flex items-center gap-1 text-xs">
                             <Clock className="h-3.5 w-3.5" /> {course.duration}
@@ -298,7 +300,7 @@ export default function CourseApprovalsPage() {
         </div>
       )}
 
-      {/* â”€â”€ COURSE PREVIEW MODAL â”€â”€ */}
+      {/* ── COURSE PREVIEW MODAL ── */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelected(null)}>
           <div className="bg-surface border border-border rounded-[5px] shadow-elevated w-full max-w-lg animate-in fade-in zoom-in-95 duration-200 overflow-hidden" onClick={e => e.stopPropagation()}>
@@ -323,7 +325,7 @@ export default function CourseApprovalsPage() {
                   { label: 'Duration', value: selected.duration },
                   { label: 'Modules', value: selected.modules },
                   { label: 'Lessons', value: selected.lessons },
-                  { label: 'Preview Rating', value: `${selected.previewRating} â­` },
+                  { label: 'Preview Rating', value: `${selected.previewRating} ⭐` },
                   { label: 'Submitted', value: selected.submitted },
                 ].map(item => (
                   <div key={item.label} className="bg-bg border border-border rounded-[5px] p-3">
@@ -336,11 +338,11 @@ export default function CourseApprovalsPage() {
               {selected.status === 'Pending' && (
                 <div className="flex gap-3">
                   <button onClick={() => { reject(selected.id); setSelected(null); }}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-danger/10 text-danger border border-danger/20 rounded-full text-sm font-bold hover:bg-danger hover:text-white transition-all">
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-danger/10 text-danger border border-danger/20 rounded-[5px] text-sm font-bold hover:bg-danger hover:text-white transition-all">
                     <XSquare className="h-4 w-4" /> Reject
                   </button>
                   <button onClick={() => { approve(selected.id); setSelected(null); }}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-success text-white rounded-full text-sm font-bold hover:opacity-90 transition-all">
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-success text-white rounded-[5px] text-sm font-bold hover:opacity-90 transition-all">
                     <CheckSquare className="h-4 w-4" /> Approve & Publish
                   </button>
                 </div>
