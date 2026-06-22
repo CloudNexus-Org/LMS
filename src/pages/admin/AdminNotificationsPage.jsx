@@ -120,8 +120,8 @@ export default function AdminNotificationsPage() {
 
       {/* ── HERO ── */}
       <div className="relative overflow-hidden bg-surface border border-border rounded-[5px] px-6 py-7 shadow-sm">
-        <div className="absolute right-[-80px] top-[-80px] h-[220px] w-[220px] rounded-full bg-primary/8 blur-[80px]" />
-        <div className="absolute bottom-[-60px] left-[-60px] h-[180px] w-[180px] rounded-full bg-accent/6 blur-[70px]" />
+        <div className="absolute right-[-80px] top-[-80px] h-[220px] w-[220px] rounded-lg bg-primary/8 blur-[80px]" />
+        <div className="absolute bottom-[-60px] left-[-60px] h-[180px] w-[180px] rounded-lg bg-accent/6 blur-[70px]" />
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div>
@@ -159,7 +159,7 @@ export default function AdminNotificationsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -168,7 +168,6 @@ export default function AdminNotificationsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
             >
               <CheckCheck className="h-4 w-4" /> Mark All Read
@@ -196,7 +195,7 @@ export default function AdminNotificationsPage() {
                   dark:text-black
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -205,7 +204,6 @@ export default function AdminNotificationsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
               <RefreshCw className="h-4 w-4" /> Refresh
             </button>
@@ -246,10 +244,10 @@ export default function AdminNotificationsPage() {
             >
               {tab.label}
               {filter === tab.key && (
-                <div className="absolute bottom-0 left-0 h-0.5 w-full rounded-full bg-primary" />
+                <div className="absolute bottom-0 left-0 h-0.5 w-full rounded-lg bg-primary" />
               )}
               {tab.key !== 'all' && notifications.some(n => n.type === tab.key && n.unread) && (
-                <span className="ml-1.5 inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                <span className="ml-1.5 inline-flex h-1.5 w-1.5 rounded-lg bg-primary" />
               )}
             </button>
           ))}
@@ -289,7 +287,7 @@ export default function AdminNotificationsPage() {
                     <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-[5px] border ${cfg.bg} ${cfg.border} ${cfg.iconColor} transition-transform duration-300 group-hover:scale-105`}>
                       <Icon className="h-5 w-5" />
                       {note.unread && (
-                        <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-primary ring-2 ring-surface" />
+                        <span className="absolute -right-1 -top-1 h-3 w-3 rounded-lg bg-primary ring-2 ring-surface" />
                       )}
                     </div>
 
@@ -301,7 +299,7 @@ export default function AdminNotificationsPage() {
                             <h3 className={`text-sm font-bold leading-tight ${note.unread ? 'text-text' : 'text-muted'}`}>
                               {note.title}
                             </h3>
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${PRIORITY_CONFIG[note.priority]}`}>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg border ${PRIORITY_CONFIG[note.priority]}`}>
                               {note.priority}
                             </span>
                           </div>

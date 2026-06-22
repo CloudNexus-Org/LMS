@@ -87,11 +87,11 @@ export default function MentorDetailPage() {
           {/* Subtle ambient halos */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-32 left-[15%] -z-10 h-[480px] w-[640px] -translate-x-1/2 rounded-full bg-primary-soft opacity-60 blur-[160px]"
+            className="pointer-events-none absolute -top-32 left-[15%] -z-10 h-[480px] w-[640px] -translate-x-1/2 rounded-lg bg-primary-soft opacity-60 blur-[160px]"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-20 right-[-5%] -z-10 h-[380px] w-[460px] rounded-full bg-accent-soft opacity-50 blur-[140px]"
+            className="pointer-events-none absolute -top-20 right-[-5%] -z-10 h-[380px] w-[460px] rounded-lg bg-accent-soft opacity-50 blur-[140px]"
           />
           {/* faint blueprint grid behind the hero only */}
           <div
@@ -185,7 +185,7 @@ export default function MentorDetailPage() {
                       className="h-full w-full object-cover"
                     />
                     {/* Top-left rating chip */}
-                    <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11.5px] font-semibold text-[#0b1020] shadow-sm">
+                    <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-lg bg-white/95 px-2.5 py-1 text-[11.5px] font-semibold text-[#0b1020] shadow-sm">
                       <Star
                         size={11}
                         className="fill-current text-[#f59e0b]"
@@ -210,7 +210,7 @@ export default function MentorDetailPage() {
                           {mentor.company.replace(/^Ex-/, "Ex ")}
                         </div>
                       </div>
-                      <span className="shrink-0 rounded-full border border-border bg-bg px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-muted">
+                      <span className="shrink-0 rounded-lg border border-border bg-bg px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-muted">
                         {mentor.sessions}+ sessions
                       </span>
                     </div>
@@ -256,7 +256,7 @@ export default function MentorDetailPage() {
                     {mentor.specialties.map((s) => (
                       <span
                         key={s}
-                        className="inline-flex items-center rounded-full border border-border/60 bg-elevated/50 px-3 py-1.5 text-[12.5px] font-medium text-muted transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+                        className="inline-flex items-center rounded-lg border border-border/60 bg-elevated/50 px-3 py-1.5 text-[12.5px] font-medium text-muted transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
                       >
                         {s}
                       </span>
@@ -408,9 +408,9 @@ export default function MentorDetailPage() {
                             },
                           },
                         }}
-                        className="absolute -left-[40px] top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/30 bg-primary/10 sm:-left-[48px]"
+                        className="absolute -left-[40px] top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 sm:-left-[48px]"
                       >
-                        <span className="h-2.5 w-2.5 rounded-full bg-primary" />
+                        <span className="h-2.5 w-2.5 rounded-lg bg-primary" />
                       </motion.span>
                       <div className="flex flex-wrap items-baseline justify-between gap-2">
                         <h3 className="font-display text-[17px] font-semibold tracking-tight text-text">
@@ -420,7 +420,7 @@ export default function MentorDetailPage() {
                           </span>
                           <span className="text-primary">{e.org}</span>
                         </h3>
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-elevated/60 px-2.5 py-1 text-[11.5px] font-medium text-muted">
+                        <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated/60 px-2.5 py-1 text-[11.5px] font-medium text-muted">
                           <Calendar size={11} aria-hidden />
                           {e.period}
                         </span>
@@ -475,7 +475,7 @@ export default function MentorDetailPage() {
                       className="pointer-events-none absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-gradient-to-r from-primary via-primary to-accent transition-transform duration-300 group-hover/course:scale-x-100"
                     />
                     <span
-                      className={`inline-flex w-fit items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${LEVEL_TONE[c.level] || LEVEL_TONE.Intermediate
+                      className={`inline-flex w-fit items-center rounded-lg px-2.5 py-1 text-[11px] font-semibold ${LEVEL_TONE[c.level] || LEVEL_TONE.Intermediate
                         }`}
                     >
                       {c.level}
@@ -529,11 +529,11 @@ export default function MentorDetailPage() {
               
               <div
                 aria-hidden
-                className="pointer-events-none absolute -left-20 -top-20 h-[400px] w-[400px] rounded-full bg-primary/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-primary/30 group-hover:opacity-70"
+                className="pointer-events-none absolute -left-20 -top-20 h-[400px] w-[400px] rounded-lg bg-primary/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-primary/30 group-hover:opacity-70"
               />
               <div
                 aria-hidden
-                className="pointer-events-none absolute -bottom-24 -right-16 h-[350px] w-[350px] rounded-full bg-accent/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-accent/30 group-hover:opacity-70"
+                className="pointer-events-none absolute -bottom-24 -right-16 h-[350px] w-[350px] rounded-lg bg-accent/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-accent/30 group-hover:opacity-70"
               />
 
               <div className="relative z-10 grid items-center gap-10 md:grid-cols-[1fr_auto]">
@@ -587,7 +587,7 @@ export default function MentorDetailPage() {
                       "Cancel anytime",
                     ].map((text) => (
                       <div key={text} className="flex items-center gap-2.5">
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                        <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
                           <CheckCircle2 size={13} strokeWidth={2.5} aria-hidden />
                         </div>
                         {text}
@@ -669,7 +669,7 @@ export default function MentorDetailPage() {
                           src={m.avatar}
                           alt={m.name}
                           loading="lazy"
-                          className="h-12 w-12 rounded-full object-cover"
+                          className="h-12 w-12 rounded-lg object-cover"
                         />
                         <div className="min-w-0 flex-1">
                           <div className="truncate font-display text-[15px] font-semibold tracking-tight text-text">

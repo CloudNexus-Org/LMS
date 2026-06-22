@@ -58,7 +58,7 @@ export default function ProfileSettingsPage() {
               h-[260px]
               w-[260px]
 
-              rounded-full
+              rounded-lg
 
               bg-primary/10
 
@@ -294,7 +294,7 @@ export default function ProfileSettingsPage() {
                         h-24
                         w-24
 
-                        rounded-full
+                        rounded-lg
                         object-cover
 
                         border-2 border-primary/20
@@ -310,7 +310,7 @@ export default function ProfileSettingsPage() {
                         items-center
                         justify-center
 
-                        rounded-full
+                        rounded-lg
 
                         bg-black/40
 
@@ -336,7 +336,7 @@ export default function ProfileSettingsPage() {
                         items-center
                         justify-center
 
-                        rounded-full
+                        rounded-lg
 
                         bg-primary
 
@@ -398,7 +398,7 @@ export default function ProfileSettingsPage() {
                     justify-center
 
                     overflow-hidden
-                    rounded-none
+                    rounded-lg
 
                     border
                     ${cardBorder}
@@ -416,8 +416,6 @@ export default function ProfileSettingsPage() {
                     duration-300
 
                     hover:-translate-y-[2px]
-
-                    [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                   `}
                 >
                   Remove Photo
@@ -647,7 +645,7 @@ export default function ProfileSettingsPage() {
                     gap-2
 
                     overflow-hidden
-                    rounded-none
+                    rounded-lg
 
                     bg-[#0a66c2]
 
@@ -663,8 +661,6 @@ export default function ProfileSettingsPage() {
 
                     hover:-translate-y-[2px]
                     hover:bg-[#004182]
-
-                    [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]
                   "
                 >
                   Save Changes

@@ -244,7 +244,7 @@ export default function MentorNotificationsPage() {
           `}
         >
           {/* GLOW */}
-          <div className="absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-full bg-blue-500/8 blur-[90px]" />
+          <div className="absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-lg bg-blue-500/8 blur-[90px]" />
 
           <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -280,7 +280,7 @@ export default function MentorNotificationsPage() {
                 className="
                   relative inline-flex h-[52px] min-w-[180px]
                   items-center justify-center gap-2
-                  overflow-hidden rounded-none
+                  overflow-hidden rounded-lg
                   border border-border dark:border-border
                   bg-primary dark:bg-primary
                   px-7
@@ -291,7 +291,6 @@ export default function MentorNotificationsPage() {
                   transition-all duration-300
                   hover:-translate-y-[2px]
                   hover:border-primary/40 dark:hover:border-primary/60
-                  [clip-path:polygon(14px_0,100%_0,100%_calc(100%-14px),calc(100%-14px)_100%,0_100%,0_14px)]
                 "
               >
                 <CheckCheck className="h-4 w-4" />
@@ -382,7 +381,7 @@ export default function MentorNotificationsPage() {
                 {tab.label}
 
                 {filter === tab.key && (
-                  <div className="absolute bottom-0 left-0 h-[3px] w-full rounded-full bg-blue-500" />
+                  <div className="absolute bottom-0 left-0 h-[3px] w-full rounded-lg bg-blue-500" />
                 )}
 
                 {/* unread dot on tab */}
@@ -390,7 +389,7 @@ export default function MentorNotificationsPage() {
                   notifications.some(
                     (n) => n.type === tab.key && n.unread
                   ) && (
-                    <span className="ml-1.5 inline-flex h-2 w-2 rounded-full bg-blue-500" />
+                    <span className="ml-1.5 inline-flex h-2 w-2 rounded-lg bg-blue-500" />
                   )}
               </button>
             ))}
@@ -464,7 +463,7 @@ export default function MentorNotificationsPage() {
 
                         {/* unread glowing dot */}
                         {note.unread && (
-                          <div className="absolute right-[-2px] top-[-2px] h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                          <div className="absolute right-[-2px] top-[-2px] h-3 w-3 rounded-lg bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
                         )}
                       </div>
 

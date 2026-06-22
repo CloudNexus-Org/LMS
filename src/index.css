@@ -20,11 +20,11 @@
         --color-success: var(--success);
         --color-warning: var(--warning);
         --color-danger: var(--danger);
-        --radius-sm: 8px;
-        --radius-md: 10px;
+        --radius-sm: 12px;
+        --radius-md: 12px;
         --radius-lg: 12px;
-        --radius-xl: 16px;
-        --radius-2xl: 20px;
+        --radius-xl: 12px;
+        --radius-2xl: 12px;
         --shadow-card: var(--shadow-card-value);
         --shadow-elevated: var(--shadow-elevated-value);
     }
@@ -42,9 +42,9 @@
         --text: #0b1020;
         --muted: #52607a;
         --subtle: #8b95a8;
-        --primary: #2c5bff;
-        --primary-hover: #1f46d9;
-        --primary-soft: rgba(44, 91, 255, 0.08);
+        --primary: #8b61d2;
+        --primary-hover: #7a52c0;
+        --primary-soft: rgba(139, 97, 210, 0.1);
         --accent: #7c3aed;
         --accent-soft: rgba(124, 58, 237, 0.08);
         --success: #059669;
@@ -55,20 +55,21 @@
         --grid-line: rgba(11, 16, 32, 0.06);
         --nav-fog: rgba(250, 251, 253, 0.85);
         --nav-fog-mobile: rgba(250, 251, 253, 0.95);
+        --hero-base: #f4f6fb;
     }
     
     [data-theme="dark"] {
-        --bg: #000000;
-        --surface: #0d0f12;
-        --elevated: #131416;
+        --bg: #050816;
+        --surface: #0d111c;
+        --elevated: #121828;
         --border: rgba(255, 255, 255, 0.08);
         --border-strong: rgba(255, 255, 255, 0.16);
         --text: #e5e7f0;
         --muted: #9ca3b5;
         --subtle: #6b7488;
-        --primary: #5b8cff;
-        --primary-hover: #7aa3ff;
-        --primary-soft: rgba(91, 140, 255, 0.12);
+        --primary: #8b61d2;
+        --primary-hover: #9b74db;
+        --primary-soft: rgba(139, 97, 210, 0.14);
         --accent: #a78bfa;
         --accent-soft: rgba(167, 139, 250, 0.12);
         --success: #34d399;
@@ -76,9 +77,10 @@
         --danger: #f87171;
         --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.35);
         --shadow-elevated-value: 0 24px 60px rgba(0, 0, 0, 0.5);
-        --grid-line: rgba(255, 255, 255, 0.05);
-        --nav-fog: rgba(11, 16, 32, 0.85);
-        --nav-fog-mobile: rgba(4, 4, 4, 0.95);
+        --grid-line: rgba(255, 255, 255, 0.04);
+        --nav-fog: rgba(5, 8, 22, 0.88);
+        --nav-fog-mobile: rgba(5, 8, 22, 0.96);
+        --hero-base: #050816;
     }
     /* ==========================================================================
    BASE STYLES

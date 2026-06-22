@@ -88,7 +88,7 @@ export default function StudentsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -99,8 +99,6 @@ export default function StudentsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
           <Download className="h-4 w-4" /> Export CSV
         </button>
@@ -308,11 +306,11 @@ export default function StudentsPage() {
                     {/* Student */}
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className={`relative h-10 w-10 rounded-full bg-gradient-to-br ${GRAD_COLORS[i % GRAD_COLORS.length]} flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0 overflow-hidden`}>
+                        <div className={`relative h-10 w-10 rounded-lg bg-gradient-to-br ${GRAD_COLORS[i % GRAD_COLORS.length]} flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0 overflow-hidden`}>
                           <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
                           <span className="relative z-10">{student.avatar}</span>
                           {student.messages > 0 && (
-                            <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-primary text-white text-[9px] font-bold flex items-center justify-center z-20">{student.messages}</span>
+                            <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-lg bg-primary text-white text-[9px] font-bold flex items-center justify-center z-20">{student.messages}</span>
                           )}
                         </div>
                         <div>
@@ -333,9 +331,9 @@ export default function StudentsPage() {
                     {/* Progress */}
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="relative h-1.5 w-20 rounded-full bg-border overflow-hidden">
+                        <div className="relative h-1.5 w-20 rounded-lg bg-border overflow-hidden">
                           <div
-                            className={`absolute left-0 top-0 h-full rounded-full transition-all duration-700 ${
+                            className={`absolute left-0 top-0 h-full rounded-lg transition-all duration-700 ${
                               student.progress >= 80 ? 'bg-gradient-to-r from-success to-lime-400' :
                               student.progress >= 40 ? 'bg-gradient-to-r from-primary to-cyan-400' :
                               'bg-gradient-to-r from-warning to-yellow-400'
@@ -354,8 +352,8 @@ export default function StudentsPage() {
 
                     {/* Status */}
                     <td className="px-5 py-4">
-                      <span className={`inline-flex items-center gap-1.5 ${sc.bg} ${sc.color} text-[11px] font-bold px-2.5 py-1 rounded-full`}>
-                        <span className={`h-1.5 w-1.5 rounded-full ${sc.dot}`} />
+                      <span className={`inline-flex items-center gap-1.5 ${sc.bg} ${sc.color} text-[11px] font-bold px-2.5 py-1 rounded-lg`}>
+                        <span className={`h-1.5 w-1.5 rounded-lg ${sc.dot}`} />
                         {student.status}
                       </span>
                     </td>
@@ -418,7 +416,7 @@ export default function StudentsPage() {
           <div className="bg-surface border border-border rounded-2xl shadow-elevated w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-5">
               <div className="flex items-center gap-4">
-                <div className={`h-14 w-14 rounded-full bg-gradient-to-br ${GRAD_COLORS[selectedStudent.id % GRAD_COLORS.length]} flex items-center justify-center text-white font-bold shadow-sm`}>
+                <div className={`h-14 w-14 rounded-lg bg-gradient-to-br ${GRAD_COLORS[selectedStudent.id % GRAD_COLORS.length]} flex items-center justify-center text-white font-bold shadow-sm`}>
                   {selectedStudent.avatar}
                 </div>
                 <div>
@@ -455,8 +453,8 @@ export default function StudentsPage() {
                 <div className="flex justify-between text-xs font-bold text-muted mb-1.5">
                   <span>Progress</span><span>{selectedStudent.progress}%</span>
                 </div>
-                <div className="h-2 rounded-full bg-border overflow-hidden">
-                  <div className="h-full rounded-full bg-gradient-to-r from-primary to-cyan-400" style={{ width: `${selectedStudent.progress}%` }} />
+                <div className="h-2 rounded-lg bg-border overflow-hidden">
+                  <div className="h-full rounded-lg bg-gradient-to-r from-primary to-cyan-400" style={{ width: `${selectedStudent.progress}%` }} />
                 </div>
               </div>
             </div>

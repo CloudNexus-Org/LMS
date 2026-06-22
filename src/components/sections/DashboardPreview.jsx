@@ -223,17 +223,17 @@ export default function DashboardPreview() {
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-8 -z-10 rounded-[5px] bg-gradient-to-br from-primary/20 via-primary-soft to-accent/15 blur-2xl"
+            className="pointer-events-none absolute -inset-8 -z-10 rounded-lg bg-gradient-to-br from-primary/20 via-primary-soft to-accent/15 blur-2xl"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-2 -z-10 rounded-[5px] bg-gradient-to-br from-primary/25 via-transparent to-accent/20 opacity-50 blur-xl"
+            className="pointer-events-none absolute -inset-2 -z-10 rounded-lg bg-gradient-to-br from-primary/25 via-transparent to-accent/20 opacity-50 blur-xl"
           />
 
           <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
-            className="overflow-hidden rounded-[5px] border border-border bg-elevated shadow-[var(--shadow-elevated)]"
+            className="overflow-hidden rounded-lg border border-border bg-elevated shadow-[var(--shadow-elevated)]"
           >
             <div className="flex items-center justify-between border-b border-border bg-bg/60 px-4 py-3">
               <div className="flex items-center gap-1.5">
@@ -242,7 +242,7 @@ export default function DashboardPreview() {
                 <span className="h-2.5 w-2.5 rounded-full bg-success/70 transition hover:bg-success" />
               </div>
 
-              <div className="flex items-center gap-2 rounded-[5px] border border-border bg-bg px-3 py-1 text-[11px] text-subtle">
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-bg px-3 py-1 text-[11px] text-subtle">
                 <Lock size={11} className="text-success" />
                 <span className="hidden sm:inline">
                   app.cloudnexus.io / dashboard
@@ -252,12 +252,12 @@ export default function DashboardPreview() {
 
               <div className="flex items-center gap-1.5">
                 {isPlaying ? (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
+                  <span className="inline-flex items-center gap-1 rounded-lg border border-success/30 bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
                     <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
                     Live
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border bg-bg px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-subtle">
+                  <span className="inline-flex items-center gap-1 rounded-lg border border-border bg-bg px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-subtle">
                     <span className="h-1.5 w-1.5 rounded-full bg-subtle" />
                     Idle
                   </span>
@@ -269,7 +269,7 @@ export default function DashboardPreview() {
               <aside className="hidden border-r border-border bg-bg/40 p-3 md:flex md:flex-col md:justify-between">
                 <div>
                   <div className="mb-4 flex items-center gap-2 px-2 py-1">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-[5px] bg-gradient-to-br from-primary to-accent shadow-[0_0_12px_var(--primary-soft)]">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-[0_0_12px_var(--primary-soft)]">
                       <Award size={12} className="text-white" />
                     </span>
                     <span className="font-display text-[11px] font-bold tracking-[0.18em] text-text">
@@ -291,7 +291,7 @@ export default function DashboardPreview() {
                       >
                         <button
                           type="button"
-                          className={`group relative flex w-full items-center gap-2.5 rounded-[5px] px-3 py-2 text-[12px] font-medium transition ${it.active
+                          className={`group relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[12px] font-medium transition ${it.active
                             ? "bg-primary-soft text-primary"
                             : "text-muted hover:bg-bg/60 hover:text-text"
                             }`}
@@ -299,7 +299,7 @@ export default function DashboardPreview() {
                           {it.active ? (
                             <span
                               aria-hidden="true"
-                              className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-[5px] bg-primary shadow-[0_0_10px_var(--primary)]"
+                              className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-lg bg-primary shadow-[0_0_10px_var(--primary)]"
                             />
                           ) : null}
                           <it.Icon size={14} />
@@ -310,7 +310,7 @@ export default function DashboardPreview() {
                   </ul>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 rounded-[5px] border border-border bg-bg/60 p-2">
+                <div className="mt-4 flex items-center gap-2 rounded-lg border border-border bg-bg/60 p-2">
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-[10px] font-bold text-white">
                     AS
                   </span>
@@ -339,7 +339,7 @@ export default function DashboardPreview() {
                   <h3 className="text-[18px] font-bold text-text md:text-[22px]">
                     AWS Solution Architect
                   </h3>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg/40 py-1 pl-1 pr-3">
+                  <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-bg/40 py-1 pl-1 pr-3">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-accent to-primary text-[10px] font-bold text-white">
                       AS
                     </span>
@@ -398,7 +398,7 @@ export default function DashboardPreview() {
                       />
 
                       {isPlaying ? (
-                        <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-[5px] bg-danger/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-[var(--shadow-card)]">
+                        <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-lg bg-danger/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-[var(--shadow-card)]">
                           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
                           Live
                         </div>
@@ -406,10 +406,10 @@ export default function DashboardPreview() {
 
                       <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 text-[11px] font-medium text-white">
                         <div className="flex items-center gap-2">
-                          <span className="rounded-[5px] bg-black/55 px-2 py-1 font-mono backdrop-blur">
+                          <span className="rounded-lg bg-black/55 px-2 py-1 font-mono backdrop-blur">
                             {lessonNumberLabel}
                           </span>
-                          <span className="rounded-[5px] bg-black/55 px-2 py-1 font-mono backdrop-blur tabular-nums">
+                          <span className="rounded-lg bg-black/55 px-2 py-1 font-mono backdrop-blur tabular-nums">
                             {formatTime(lessonElapsedSec)} /{" "}
                             {formatTime(lessonTotalSec)}
                           </span>
@@ -418,7 +418,7 @@ export default function DashboardPreview() {
                           type="button"
                           onClick={() => setMuted((m) => !m)}
                           aria-label={muted ? "Unmute video" : "Mute video"}
-                          className="rounded-[5px] bg-black/55 p-1.5 text-white backdrop-blur transition hover:bg-black/70"
+                          className="rounded-lg bg-black/55 p-1.5 text-white backdrop-blur transition hover:bg-black/70"
                         >
                           {muted ? (
                             <VolumeX size={12} />
@@ -440,7 +440,7 @@ export default function DashboardPreview() {
                       </div>
                       <button
                         type="button"
-                        className="group inline-flex items-center gap-1.5 rounded-[5px] border border-border bg-bg/60 px-3 py-1.5 text-[12px] font-semibold text-primary transition hover:border-primary hover:bg-primary-soft"
+                        className="group inline-flex items-center gap-1.5 rounded-lg border border-border bg-bg/60 px-3 py-1.5 text-[12px] font-semibold text-primary transition hover:border-primary hover:bg-primary-soft"
                       >
                         Continue
                         <ArrowRight
@@ -451,7 +451,7 @@ export default function DashboardPreview() {
                     </div>
                   </div>
 
-                  <div className="rounded-[5px] border border-border bg-bg/40 p-4">
+                  <div className="rounded-lg border border-border bg-bg/40 p-4">
                     <div className="mb-3 flex items-center justify-between text-[12px] font-semibold text-text">
                       <span className="inline-flex items-center gap-1.5">
                         <ChevronDown size={12} className="text-subtle" />
@@ -479,7 +479,7 @@ export default function DashboardPreview() {
                           >
                             <button
                               type="button"
-                              className={`relative flex w-full items-center justify-between rounded-[5px] border px-3 py-2 text-left text-[12px] transition ${isCurrent
+                              className={`relative flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-[12px] transition ${isCurrent
                                 ? "border-primary/40 bg-primary-soft text-text"
                                 : isDone
                                   ? "border-transparent text-muted/85 hover:bg-bg/60"
@@ -489,7 +489,7 @@ export default function DashboardPreview() {
                               {isCurrent ? (
                                 <span
                                   aria-hidden="true"
-                                  className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-[5px] bg-primary shadow-[0_0_10px_var(--primary)]"
+                                  className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-lg bg-primary shadow-[0_0_10px_var(--primary)]"
                                 />
                               ) : null}
                               <span className="flex items-center gap-2">

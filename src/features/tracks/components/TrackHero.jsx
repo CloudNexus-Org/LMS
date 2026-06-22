@@ -90,11 +90,11 @@ export default function TrackHero({ track }) {
 
             {/* buttons */}
             <div className="flex flex-wrap gap-4 mt-10">
-              <Link to="/signup" className={`px-8 py-4 ${buttonPrimaryClass} transition-all font-bold flex items-center gap-2 text-[15px] [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]`}>
+              <Link to="/signup" className={`rounded-full px-8 py-4 ${buttonPrimaryClass} transition-all font-bold flex items-center gap-2 text-[15px]`}>
                 Buy Now
                 <ArrowRight size={18} />
               </Link>
-              <Link to={`/learn/${track?.id || 'cloud'}`} className={`px-8 py-4 border ${buttonSecondaryClass} transition-all flex items-center gap-2 text-[15px] font-semibold [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]`}>
+              <Link to={`/learn/${track?.id || 'cloud'}`} className={`rounded-full px-8 py-4 border ${buttonSecondaryClass} transition-all flex items-center gap-2 text-[15px] font-semibold`}>
                 Learn More
                 <ArrowRight size={18} />
               </Link>

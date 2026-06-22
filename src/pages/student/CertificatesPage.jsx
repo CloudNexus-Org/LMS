@@ -76,10 +76,10 @@ function Seal() {
           <textPath href="#seal-text-path">OFFICIAL · VERIFIED · CLOUD NEXUS · </textPath>
         </text>
       </svg>
-      <div className="absolute inset-[8px] flex items-center justify-center rounded-full border border-primary/50 bg-primary-soft shadow-sm">
+      <div className="absolute inset-[8px] flex items-center justify-center rounded-lg border border-primary/50 bg-primary-soft shadow-sm">
         <ShieldCheck size={16} className="text-primary" strokeWidth={2} />
       </div>
-      <span aria-hidden="true" className="absolute inset-0 rounded-full bg-primary/10 blur-[4px]" />
+      <span aria-hidden="true" className="absolute inset-0 rounded-lg bg-primary/10 blur-[4px]" />
     </div>
   );
 }
@@ -139,7 +139,7 @@ export default function CertificatesPage() {
                     <Award size={180} className="text-primary" strokeWidth={1} />
                   </div>
 
-                  <div className="absolute -top-1.5 right-3 z-30 inline-flex items-center gap-1 rounded-full border border-success/30 bg-elevated px-2 py-0.5 shadow-sm">
+                  <div className="absolute -top-1.5 right-3 z-30 inline-flex items-center gap-1 rounded-lg border border-success/30 bg-elevated px-2 py-0.5 shadow-sm">
                     <BadgeCheck size={9} className="text-success" />
                     <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-success">
                       Verified
@@ -248,7 +248,7 @@ export default function CertificatesPage() {
                       gap-2
 
                       overflow-hidden
-                      rounded-none
+                      rounded-lg
 
                       border border-white/10
 
@@ -266,8 +266,6 @@ bg-surface border border-border
                       duration-300
 
                       hover:-translate-y-[2px]
-
-                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     ">
                   <Download className="h-3.5 w-3.5" /> PDF
                 </button>
@@ -283,7 +281,7 @@ bg-surface border border-border
                       gap-2
 
                       overflow-hidden
-                      rounded-none
+                      rounded-lg
 
                       border border-white/10
 bg-primary
@@ -301,8 +299,6 @@ bg-primary
                       duration-300
 
                       hover:-translate-y-[2px]
-
-                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     ">
                   <Share2 className="h-3.5 w-3.5" /> Share
                 </button>

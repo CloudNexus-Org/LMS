@@ -30,7 +30,6 @@ const Button = forwardRef(function Button(
     type = "button",
     variant = "primary",
     size = "md",
-    angular = false,
     fullWidth = false,
     leftIcon,
     rightIcon,
@@ -42,9 +41,7 @@ const Button = forwardRef(function Button(
 ) {
   const cls = `${BASE} ${VARIANTS[variant] || VARIANTS.primary} ${
     SIZES[size] || SIZES.md
-  } ${angular ? "clip-angular rounded-none" : ""} ${
-    fullWidth ? "w-full" : ""
-  } ${className}`;
+  } ${fullWidth ? "w-full" : ""} ${className}`;
 
   const content = (
     <>

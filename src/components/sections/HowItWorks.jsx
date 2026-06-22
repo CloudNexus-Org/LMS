@@ -26,7 +26,7 @@ function StepRow({ step, index, isActive, isCompleted, circleRef }) {
       <div className="relative z-20 shrink-0">
         <div
           ref={circleRef}
-          className={`relative flex h-14 w-14 items-center justify-center rounded-2xl border-2 transition-all duration-500 ${
+          className={`relative flex h-14 w-14 items-center justify-center rounded-lg border-2 transition-all duration-500 ${
             isActive
               ? "scale-110 border-primary bg-primary text-white shadow-[0_0_30px_var(--primary-soft)]"
               : isCompleted
@@ -43,7 +43,7 @@ function StepRow({ step, index, isActive, isCompleted, circleRef }) {
           {isActive ? (
             <span
               aria-hidden
-              className="absolute inset-0 rounded-2xl border-2 border-primary opacity-70"
+              className="absolute inset-0 rounded-lg border-2 border-primary opacity-70"
               style={{ animation: "ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite" }}
             />
           ) : null}
@@ -51,7 +51,7 @@ function StepRow({ step, index, isActive, isCompleted, circleRef }) {
       </div>
 
       <div
-        className={`relative flex-1 rounded-2xl border bg-elevated p-5 transition-all duration-500 ${
+        className={`relative flex-1 rounded-lg border bg-elevated p-5 transition-all duration-500 ${
           isActive
             ? "-translate-y-0.5 border-primary/40 shadow-[var(--shadow-elevated)]"
             : "border-border"
@@ -60,7 +60,7 @@ function StepRow({ step, index, isActive, isCompleted, circleRef }) {
         {isActive ? (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-[2px] rounded-t-2xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[2px] rounded-t-lg bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"
           />
         ) : null}
 
@@ -99,7 +99,7 @@ function VideoPlaceholder() {
       <div className="float-1 absolute -left-12 -top-12 h-44 w-44 rounded-full bg-primary/25 blur-3xl" />
       <div className="float-2 absolute -right-10 -bottom-10 h-44 w-44 rounded-full bg-accent/25 blur-3xl" />
 
-      <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-border bg-elevated/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted backdrop-blur-md">
+      <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-lg border border-border bg-elevated/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted backdrop-blur-md">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
         Demo Walkthrough
       </div>
@@ -330,15 +330,15 @@ export default function HowItWorks() {
           <div className="relative order-1 lg:order-2">
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-6 -z-10 rounded-[28px] bg-gradient-to-br from-primary/20 via-transparent to-accent/15 blur-2xl"
+              className="pointer-events-none absolute -inset-6 -z-10 rounded-lg bg-gradient-to-br from-primary/20 via-transparent to-accent/15 blur-2xl"
             />
 
             {/* TV bezel */}
-            <div className="relative rounded-[22px] bg-gradient-to-b from-[#1c2235] to-[#0a0e1c] p-2 shadow-[0_25px_50px_-12px_rgba(11,16,32,0.45)] md:rounded-[26px] md:p-3">
+            <div className="relative rounded-lg bg-gradient-to-b from-[#1c2235] to-[#0a0e1c] p-2 shadow-[0_25px_50px_-12px_rgba(11,16,32,0.45)] md:p-3">
               {/* Inner chrome ring */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-1 rounded-[20px] ring-1 ring-inset ring-white/[0.05] md:inset-1.5 md:rounded-[22px]"
+                className="pointer-events-none absolute inset-1 rounded-lg ring-1 ring-inset ring-white/[0.05] md:inset-1.5"
               />
 
               {/* Webcam dot (top center of bezel) */}
@@ -350,7 +350,7 @@ export default function HowItWorks() {
               </div>
 
               {/* Screen */}
-              <div className="relative aspect-video overflow-hidden rounded-[5px] bg-elevated md:rounded-[5px]">
+              <div className="relative aspect-video overflow-hidden rounded-lg bg-elevated">
                 <VideoFrame src={VIDEO_SRC} videoRef={videoRef} />
 
                 {/* Subtle screen glare */}

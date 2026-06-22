@@ -71,7 +71,7 @@ function CourseCard({ course, index }) {
         to={href}
         className={`
           relative flex h-full min-h-[420px] flex-col overflow-hidden
-          rounded-2xl border border-border/70 bg-surface/90
+          rounded-lg border border-border/70 bg-surface/90
           ring-1 ring-transparent backdrop-blur-xl
           shadow-[var(--shadow-card-value)]
           transition-all duration-500
@@ -101,7 +101,7 @@ function CourseCard({ course, index }) {
 
         {/* IMAGE */}
         <div className="relative p-4 pb-0">
-          <div className="relative h-[200px] overflow-hidden rounded-xl bg-elevated">
+          <div className="relative h-[200px] overflow-hidden rounded-lg bg-elevated">
             <img
               src={course.image}
               alt={course.title}
@@ -119,7 +119,7 @@ function CourseCard({ course, index }) {
             <div
               className={`
                 absolute right-3 top-3 inline-flex items-center gap-1.5
-                rounded-full border px-2.5 py-1
+                rounded-lg border px-2.5 py-1
                 text-[10px] font-bold uppercase tracking-[0.14em]
                 backdrop-blur-md
                 ${difficultyStyle}
@@ -158,7 +158,7 @@ function CourseCard({ course, index }) {
               <div
                 key={label}
                 className="
-                  flex flex-col items-center gap-1 rounded-xl
+                  flex flex-col items-center gap-1 rounded-lg
                   border border-border/50 bg-elevated/70 px-2 py-2.5
                   transition-colors duration-300 group-hover:border-primary/20 group-hover:bg-primary-soft/40
                 "
@@ -193,35 +193,31 @@ function CourseCard({ course, index }) {
           </p>
 
           {/* Footer */}
-          <div className="mt-5 flex items-center justify-between border-t border-border/40 pt-4">
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
+          <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/40 pt-4">
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="flex -space-x-2 shrink-0">
                 {[0, 1, 2].map((n) => (
-                  <div
+                  <img
                     key={n}
-                    className="h-6 w-6 rounded-full border-2 border-surface bg-primary-soft"
-                    style={{
-                      backgroundImage: `url(https://i.pravatar.cc/40?img=${(index * 3 + n + 10) % 70})`,
-                      backgroundSize: "cover",
-                    }}
+                    src={`https://i.pravatar.cc/40?img=${(index * 3 + n + 10) % 70}`}
+                    alt=""
+                    className="h-7 w-7 rounded-full border-2 border-surface object-cover"
                     aria-hidden
                   />
                 ))}
               </div>
-              <span className="text-[11px] text-muted">
-                <span className="font-bold text-text">{course.enrolled}</span> enrolled
+              <span className="truncate text-[12px] text-muted">
+                <span className="font-semibold text-text">{course.enrolled}</span> enrolled
               </span>
             </div>
 
             <span
               className="
-                relative inline-flex h-[34px] min-w-[100px] items-center justify-center gap-1.5
-                overflow-hidden rounded-none border border-primary/20 bg-primary px-4
+                inline-flex h-9 shrink-0 items-center justify-center gap-1.5
+                rounded-lg bg-primary px-5
                 text-[13px] font-semibold text-white
-                shadow-[0_8px_24px_rgba(44,91,255,0.2)]
                 transition-all duration-300
-                group-hover:-translate-y-0.5 group-hover:bg-primary-hover
-                [clip-path:polygon(10px_0,100%_0,100%_calc(100%-10px),calc(100%-10px)_100%,0_100%,0_10px)]
+                group-hover:bg-primary-hover group-hover:-translate-y-0.5
               "
             >
               Explore
@@ -338,7 +334,7 @@ export default function Courses() {
               absolute top-1/2 z-20 -translate-y-1/2
               left-0 md:-left-4 lg:-left-12
               flex h-10 w-10 items-center justify-center
-              rounded-full border border-border/80 bg-elevated/95 text-text backdrop-blur-xl
+              rounded-lg border border-border/80 bg-elevated/95 text-text backdrop-blur-xl
               shadow-md transition-all duration-300
               hover:border-primary/50 hover:bg-surface hover:text-primary hover:shadow-lg
               disabled:opacity-0 disabled:cursor-not-allowed
@@ -356,7 +352,7 @@ export default function Courses() {
               absolute top-1/2 z-20 -translate-y-1/2
               right-0 md:-right-4 lg:-right-12
               flex h-10 w-10 items-center justify-center
-              rounded-full border border-border/80 bg-elevated/95 text-text backdrop-blur-xl
+              rounded-lg border border-border/80 bg-elevated/95 text-text backdrop-blur-xl
               shadow-md transition-all duration-300
               hover:border-primary/50 hover:bg-surface hover:text-primary hover:shadow-lg
               disabled:opacity-0 disabled:cursor-not-allowed
@@ -396,7 +392,7 @@ export default function Courses() {
             to="/tracks"
             className="
               group inline-flex items-center gap-2
-              rounded-full
+              rounded-lg
               border border-border
               bg-elevated
               px-7 py-3

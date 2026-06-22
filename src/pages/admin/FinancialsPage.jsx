@@ -66,7 +66,7 @@ export default function FinancialsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -75,7 +75,6 @@ export default function FinancialsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export CSV
           </button>

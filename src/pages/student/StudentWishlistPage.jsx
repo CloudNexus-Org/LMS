@@ -40,7 +40,7 @@ export default function StudentWishlistPage() {
               <div className="relative aspect-video overflow-hidden bg-bg">
                 <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors" />
-                <button className="absolute top-3 right-3 h-9 w-9 rounded-full bg-surface/80 backdrop-blur-md flex items-center justify-center text-danger hover:bg-danger hover:text-white transition-colors shadow-sm">
+                <button className="absolute top-3 right-3 h-9 w-9 rounded-lg bg-surface/80 backdrop-blur-md flex items-center justify-center text-danger hover:bg-danger hover:text-white transition-colors shadow-sm">
                   <HeartOff className="h-4 w-4" />
                 </button>
               </div>

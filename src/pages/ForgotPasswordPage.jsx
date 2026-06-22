@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
           left-1/2 top-1/2
           h-[700px] w-[700px]
           -translate-x-1/2 -translate-y-1/2
-          rounded-full
+          rounded-lg
           bg-blue-500/10
           blur-[170px]
         "
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
                 className="
                   mb-6 flex h-[80px] w-[80px]
                   items-center justify-center
-                  rounded-full
+                  rounded-lg
                   bg-blue-500/10
                   shadow-[0_0_40px_rgba(59,130,246,0.25)]
                 "

@@ -118,7 +118,7 @@ export default function HeroLmsVisual() {
     <div className="relative mx-auto w-full max-w-[480px] xl:max-w-[520px]">
       {/* Ambient glow */}
       <div
-        className="absolute -inset-8 rounded-full bg-primary/10 blur-[80px]"
+        className="absolute -inset-8 rounded-full bg-primary/[0.07] blur-[80px]"
         aria-hidden
       />
 
@@ -132,7 +132,7 @@ export default function HeroLmsVisual() {
         className="
           absolute -right-2 -top-6 z-20
           flex items-center gap-2.5
-          rounded-xl border border-border
+          rounded-lg border border-border
           bg-surface/95 px-3.5 py-2.5
           shadow-[var(--shadow-elevated-value)]
           backdrop-blur-md
@@ -161,9 +161,9 @@ export default function HeroLmsVisual() {
       >
         <div
           className="
-            relative overflow-hidden rounded-2xl
-            border border-border bg-surface/80
-            shadow-[var(--shadow-elevated-value)]
+            relative overflow-hidden rounded-lg
+            border border-border bg-surface/85
+            shadow-[var(--shadow-elevated-value),0_0_48px_rgba(139,97,210,0.08)]
             backdrop-blur-xl
           "
         >
@@ -181,7 +181,7 @@ export default function HeroLmsVisual() {
             {/* Header row */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-soft text-primary">
                   <BookOpen size={18} strokeWidth={2.5} />
                 </div>
                 <div>
@@ -225,13 +225,13 @@ export default function HeroLmsVisual() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.9, ease: EASE }}
               className="
-                relative mt-4 overflow-hidden rounded-xl
+                relative mt-4 overflow-hidden rounded-lg
                 border border-border bg-elevated
                 aspect-[16/9]
               "
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary-soft via-elevated to-accent-soft" />
-              <div className="absolute inset-0 blueprint-grid opacity-30" />
+              <div className="absolute inset-0 blueprint-grid opacity-20" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div
                   animate={
@@ -246,7 +246,7 @@ export default function HeroLmsVisual() {
                   }}
                   className="
                     flex h-11 w-11 items-center justify-center
-                    rounded-full border border-primary/30
+                    rounded-lg border border-primary/30
                     bg-primary/90 text-white shadow-lg
                   "
                 >
@@ -279,7 +279,7 @@ export default function HeroLmsVisual() {
                       ease: EASE,
                     }}
                     className={`
-                      flex items-center gap-3 rounded-xl border px-3 py-2.5
+                      flex items-center gap-3 rounded-lg border px-3 py-2.5
                       transition-colors duration-300
                       ${
                         isActive
@@ -343,7 +343,7 @@ export default function HeroLmsVisual() {
         transition={{ duration: 0.6, delay: 1.4, ease: EASE }}
         className={`
           absolute -bottom-4 -left-4 z-10
-          rounded-xl border border-border
+          rounded-lg border border-border
           bg-surface/95 px-3 py-2.5
           shadow-[var(--shadow-card-value)] backdrop-blur-md
           ${shouldReduceMotion ? "" : "float-3"}

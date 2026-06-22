@@ -265,7 +265,7 @@ export default function MyCoursesPage() {
                   className={`
                     absolute right-4 top-4
 
-                    rounded-full
+                    rounded-lg
 
                     px-2 py-1
 
@@ -454,7 +454,7 @@ export default function MyCoursesPage() {
                           className="
                             inline-flex items-center gap-2
 
-                            rounded-full
+                            rounded-lg
 
                             bg-emerald-500/10
 
@@ -482,7 +482,7 @@ export default function MyCoursesPage() {
                           className="
                             inline-flex items-center gap-2
 
-                            rounded-full
+                            rounded-lg
 
                             bg-blue-500/10
 
@@ -529,7 +529,7 @@ export default function MyCoursesPage() {
 
                       overflow-hidden
 
-                      rounded-full
+                      rounded-lg
 
                       bg-gray-200
                     "
@@ -537,7 +537,7 @@ export default function MyCoursesPage() {
 
                     <div
                       className={`
-                        h-full rounded-full
+                        h-full rounded-lg
 
                         transition-all duration-700
 

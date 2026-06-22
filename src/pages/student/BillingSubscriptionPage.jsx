@@ -343,7 +343,7 @@ export default function BillingSubscriptionPage() {
                       gap-2
 
                       overflow-hidden
-                      rounded-none
+                      rounded-lg
 
                       border border-white/10
 
@@ -360,8 +360,6 @@ export default function BillingSubscriptionPage() {
                       duration-300
 
                       hover:-translate-y-[2px]
-
-                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     "
                   >
                     Upgrade Plan
@@ -380,7 +378,7 @@ export default function BillingSubscriptionPage() {
                       justify-center
 
                       overflow-hidden
-                      rounded-none
+                      rounded-lg
 
                       border border-white/10
 
@@ -397,8 +395,6 @@ export default function BillingSubscriptionPage() {
                       duration-300
 
                       hover:bg-white/15
-
-                      [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                     "
                   >
                     Cancel Plan
@@ -620,7 +616,7 @@ export default function BillingSubscriptionPage() {
           gap-2
 
           overflow-hidden
-          rounded-none
+          rounded-lg
 
           border
 
@@ -641,8 +637,6 @@ export default function BillingSubscriptionPage() {
 
           hover:-translate-y-[2px]
           hover:border-primary/20
-
-          [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
         `}
                 >
                   Update Payment Method

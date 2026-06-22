@@ -19,9 +19,9 @@ function Toggle({ on, onChange }) {
   return (
     <button
       onClick={() => onChange(!on)}
-      className={`relative w-12 h-6 rounded-full transition-colors duration-300 shadow-inner focus:outline-none ${on ? 'bg-success' : 'bg-border'}`}
+      className={`relative w-12 h-6 rounded-lg transition-colors duration-300 shadow-inner focus:outline-none ${on ? 'bg-success' : 'bg-border'}`}
     >
-      <div className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-all duration-300 ${on ? 'right-1' : 'left-1'}`} />
+      <div className={`absolute top-1 h-4 w-4 rounded-lg bg-white shadow-sm transition-all duration-300 ${on ? 'right-1' : 'left-1'}`} />
     </button>
   );
 }
@@ -264,7 +264,7 @@ export default function SystemSettingsPage() {
                   <div className="flex items-center justify-between p-4 bg-bg border border-border rounded-[5px]">
                     <div>
                       <p className="font-bold text-text text-sm">Stripe Integration</p>
-                      <p className="text-xs text-success font-medium mt-0.5 flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-success" /> Connected · sk_live_****4821</p>
+                      <p className="text-xs text-success font-medium mt-0.5 flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-lg bg-success" /> Connected · sk_live_****4821</p>
                     </div>
                     <button className="text-xs font-bold text-primary hover:underline">Reconfigure</button>
                   </div>
@@ -375,7 +375,7 @@ export default function SystemSettingsPage() {
                       </div>
                       {item.connected ? (
                         <span className="flex items-center gap-1.5 text-xs font-bold text-success bg-success/10 px-2.5 py-1 rounded-[5px]">
-                          <span className="h-1.5 w-1.5 rounded-full bg-success" /> Connected
+                          <span className="h-1.5 w-1.5 rounded-lg bg-success" /> Connected
                         </span>
                       ) : (
                         <button className="text-xs font-bold text-primary border border-primary/20 bg-primary/5 px-3 py-1.5 rounded-[5px] hover:bg-primary hover:text-white transition-all">

@@ -133,7 +133,7 @@ export default function CourseApprovalsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -144,8 +144,6 @@ export default function CourseApprovalsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export
           </button>
@@ -212,7 +210,7 @@ export default function CourseApprovalsPage() {
                 <div className="flex flex-col lg:flex-row gap-0">
 
                   {/* Left thumbnail strip */}
-                  <div className="w-[4px] bg-emerald-400 rounded-full " />
+                  <div className="w-[4px] bg-emerald-400 rounded-lg " />
 
                   <div className="flex-1 p-6">
                     <div className="flex flex-col md:flex-row gap-5 justify-between">
@@ -222,12 +220,12 @@ export default function CourseApprovalsPage() {
                         {/* Header row */}
                         <div className="flex items-center gap-3 flex-wrap">
                           <span className="bg-bg border border-border text-muted text-xs font-mono px-2 py-1 rounded-[5px] font-bold">{course.id}</span>
-                          <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${sc.bg} ${sc.border} ${sc.color}`}>
-                            <span className={`h-1.5 w-1.5 rounded-full ${sc.dot}`} />
+                          <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${sc.bg} ${sc.border} ${sc.color}`}>
+                            <span className={`h-1.5 w-1.5 rounded-lg ${sc.dot}`} />
                             {course.status}
                           </span>
                           {course.priority === 'high' && (
-                            <span className="text-[10px] font-bold bg-danger/10 text-danger border border-danger/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            <span className="text-[10px] font-bold bg-danger/10 text-danger border border-danger/20 px-2 py-0.5 rounded-lg uppercase tracking-wider">
                               High Priority
                             </span>
                           )}
@@ -239,7 +237,7 @@ export default function CourseApprovalsPage() {
                         {/* Meta row */}
                         <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-muted">
                           <span className="flex items-center gap-1.5">
-                            <div className={`h-6 w-6 rounded-full bg-gradient-to-br ${course.thumbnail} flex items-center justify-center text-white text-[9px] font-bold`}>
+                            <div className={`h-6 w-6 rounded-lg bg-gradient-to-br ${course.thumbnail} flex items-center justify-center text-white text-[9px] font-bold`}>
                               {course.mentorAvatar}
                             </div>
                             <span className="font-bold text-text">{course.mentor}</span>

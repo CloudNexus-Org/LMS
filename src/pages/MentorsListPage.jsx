@@ -57,21 +57,21 @@ function MentorListCard({ mentor, index }) {
         {/* Top row: availability + arrow chip */}
         <div className="flex items-center justify-between">
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.14em] ${mentor.available
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.14em] ${mentor.available
                 ? "border-[color:color-mix(in_oklab,var(--success)_30%,transparent)] bg-[color:color-mix(in_oklab,var(--success)_10%,transparent)] text-success"
                 : "border-border bg-elevated text-muted"
               }`}
           >
             <span
               aria-hidden
-              className={`h-1.5 w-1.5 rounded-full ${mentor.available ? "bg-success animate-pulse" : "bg-warning"
+              className={`h-1.5 w-1.5 rounded-lg ${mentor.available ? "bg-success animate-pulse" : "bg-warning"
                 }`}
             />
             {mentor.available ? "Available" : "Waitlist"}
           </span>
           <span
             aria-hidden
-            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-bg/70 text-muted opacity-0 transition-all duration-200 group-hover/mentor:opacity-100 group-hover/mentor:border-primary group-hover/mentor:text-primary group-focus-visible/mentor:opacity-100"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-bg/70 text-muted opacity-0 transition-all duration-200 group-hover/mentor:opacity-100 group-hover/mentor:border-primary group-hover/mentor:text-primary group-focus-visible/mentor:opacity-100"
           >
             <ArrowUpRight size={13} strokeWidth={2.2} />
           </span>
@@ -83,7 +83,7 @@ function MentorListCard({ mentor, index }) {
             src={mentor.avatar}
             alt={mentor.name}
             loading="lazy"
-            className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-border"
+            className="h-14 w-14 shrink-0 rounded-lg object-cover ring-1 ring-border"
           />
           <div className="min-w-0 flex-1">
             <h3 className="truncate font-display text-[16px] font-semibold tracking-tight text-text">
@@ -100,7 +100,7 @@ function MentorListCard({ mentor, index }) {
 
         {/* Track pill */}
         <div className="mt-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary-soft px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+          <span className="inline-flex items-center gap-1.5 rounded-lg border border-primary/15 bg-primary-soft px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
             <Sparkles size={10} aria-hidden />
             {mentor.trackLabel}
           </span>
@@ -116,7 +116,7 @@ function MentorListCard({ mentor, index }) {
           {mentor.specialties.slice(0, 3).map((s) => (
             <span
               key={s}
-              className="inline-flex items-center rounded-full border border-border bg-bg/60 px-2 py-0.5 text-[11px] font-medium text-muted"
+              className="inline-flex items-center rounded-lg border border-border bg-bg/60 px-2 py-0.5 text-[11px] font-medium text-muted"
             >
               {s}
             </span>
@@ -212,7 +212,7 @@ export default function MentorsListPage() {
         <section className="relative overflow-hidden pt-[78px] pb-10 md:pt-[92px] md:pb-12">
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-32 left-1/2 -z-10 h-[480px] w-[680px] -translate-x-1/2 rounded-full bg-primary-soft opacity-60 blur-[160px]"
+            className="pointer-events-none absolute -top-32 left-1/2 -z-10 h-[480px] w-[680px] -translate-x-1/2 rounded-lg bg-primary-soft opacity-60 blur-[160px]"
           />
           <div
             aria-hidden
@@ -230,7 +230,7 @@ export default function MentorsListPage() {
 
             <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
               <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary-soft px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+                <div className="inline-flex items-center gap-1.5 rounded-lg border border-primary/15 bg-primary-soft px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
                   <Sparkles size={11} aria-hidden />
                   All mentors
                 </div>
@@ -298,7 +298,7 @@ export default function MentorsListPage() {
                     type="button"
                     onClick={() => setQuery("")}
                     aria-label="Clear search"
-                    className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition-colors hover:bg-surface hover:text-text"
+                    className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-lg text-subtle transition-colors hover:bg-surface hover:text-text"
                   >
                     <X size={13} />
                   </button>
@@ -360,7 +360,7 @@ export default function MentorsListPage() {
                     type="button"
                     onClick={() => setActiveTrack(t)}
                     aria-pressed={isActive}
-                    className={`shrink-0 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${isActive
+                    className={`shrink-0 rounded-lg border px-3 py-1.5 text-[12.5px] font-semibold transition-colors ${isActive
                         ? "border-primary bg-primary text-white shadow-[0_4px_12px_-4px_var(--primary)]"
                         : "border-border bg-elevated text-muted hover:border-border-strong hover:text-text"
                       }`}
@@ -392,7 +392,7 @@ export default function MentorsListPage() {
 
             {filtered.length === 0 ? (
               <div className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-elevated/40 px-6 py-16 text-center">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border bg-bg text-muted">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-border bg-bg text-muted">
                   <Search size={18} aria-hidden />
                 </div>
                 <h3 className="mt-4 font-display text-[18px] font-semibold tracking-tight text-text">

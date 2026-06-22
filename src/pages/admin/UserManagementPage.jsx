@@ -96,7 +96,7 @@ export default function UserManagementPage() {
                   dark:text-black
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -107,8 +107,6 @@ export default function UserManagementPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export
           </button>
@@ -140,7 +138,7 @@ export default function UserManagementPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -151,8 +149,6 @@ export default function UserManagementPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <UserPlus className="h-4 w-4" /> Add User
           </button>
@@ -252,7 +248,7 @@ export default function UserManagementPage() {
                     {/* User */}
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className={`relative h-10 w-10 rounded-full bg-gradient-to-br ${GRAD_COLORS[i % GRAD_COLORS.length]} flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0 overflow-hidden`}>
+                        <div className={`relative h-10 w-10 rounded-lg bg-gradient-to-br ${GRAD_COLORS[i % GRAD_COLORS.length]} flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0 overflow-hidden`}>
                           <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
                           <span className="relative z-10">{user.avatar}</span>
                         </div>
@@ -286,7 +282,7 @@ export default function UserManagementPage() {
                     {/* Status */}
                     <td className="px-5 py-4">
                       <span className={`inline-flex items-center gap-1.5 text-xs font-bold ${sc.color}`}>
-                        <span className={`h-1.5 w-1.5 rounded-full ${sc.dot}`} />
+                        <span className={`h-1.5 w-1.5 rounded-lg ${sc.dot}`} />
                         {user.status}
                       </span>
                     </td>
@@ -342,7 +338,7 @@ export default function UserManagementPage() {
           <div className="bg-surface border border-border rounded-[5px] shadow-elevated w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-5">
               <div className="flex items-center gap-4">
-                <div className={`h-14 w-14 rounded-full bg-gradient-to-br ${GRAD_COLORS[selectedUser.id % GRAD_COLORS.length]} flex items-center justify-center text-white font-bold text-lg shadow-sm`}>
+                <div className={`h-14 w-14 rounded-lg bg-gradient-to-br ${GRAD_COLORS[selectedUser.id % GRAD_COLORS.length]} flex items-center justify-center text-white font-bold text-lg shadow-sm`}>
                   {selectedUser.avatar}
                 </div>
                 <div>

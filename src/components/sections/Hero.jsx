@@ -61,7 +61,7 @@ export default function Hero() {
               {...fadeUp(10, 0.05)}
               className="
                 inline-flex items-center gap-3.5
-                rounded-full border border-border
+                rounded-lg border border-border
                 bg-surface/90 backdrop-blur-md
                 pl-2 pr-5 py-1.5
                 text-[14px] sm:text-[15px] font-semibold tracking-wide
@@ -120,16 +120,7 @@ export default function Hero() {
               <Button
                 to="/signup"
                 size="lg"
-                className="
-                  relative inline-flex h-[48px] w-full sm:w-auto min-w-[180px]
-                  items-center justify-center overflow-hidden rounded-none
-                  border border-primary/20 bg-primary px-6
-                  text-[18px] font-semibold text-white
-                  shadow-[0_10px_30px_rgba(44,91,255,0.15)]
-                  transition-all duration-300
-                  hover:-translate-y-[2px] hover:bg-primary-hover
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
-                "
+                className="w-full sm:w-auto min-w-[180px] hover:-translate-y-0.5"
                 rightIcon={<ArrowRight size={18} />}
               >
                 Start free trial
@@ -137,17 +128,9 @@ export default function Hero() {
 
               <Button
                 to="/demo"
+                variant="secondary"
                 size="lg"
-                className="
-                  relative inline-flex h-[48px] w-full sm:w-auto min-w-[180px]
-                  items-center justify-center overflow-hidden rounded-none
-                  border border-border bg-elevated px-6
-                  text-[14px] font-semibold text-text
-                  shadow-[var(--shadow-card-value)]
-                  transition-all duration-300
-                  hover:-translate-y-[2px] hover:border-primary/30 hover:bg-surface
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
-                "
+                className="w-full sm:w-auto min-w-[180px] hover:-translate-y-0.5"
                 leftIcon={<PlayCircle size={18} />}
               >
                 Watch demo
@@ -198,7 +181,7 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.9 + i * 0.15, duration: 0.35, ease: EASE }}
                     className={`
-                      rounded-full border px-2.5 py-1 text-[10px] font-semibold
+                      rounded-lg border px-2.5 py-1 text-[10px] font-semibold
                       ${i === 0
                         ? "border-success/30 bg-success/10 text-success"
                         : i === 1

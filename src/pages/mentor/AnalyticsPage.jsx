@@ -36,7 +36,7 @@ export default function AnalyticsPage() {
         "
       >
         {/* GLOW */}
-        <div className={`absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-full ${glowClasses.primary}`} />
+        <div className={`absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-lg ${glowClasses.primary}`} />
 
         <div className="relative z-10 flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
           {/* LEFT */}
@@ -300,13 +300,13 @@ export default function AnalyticsPage() {
           "
         >
           {/* GLOW */}
-          <div className="absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-full bg-blue-500/10 blur-[90px]" />
+          <div className="absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-lg bg-blue-500/10 blur-[90px]" />
 
           {/* TOP */}
           <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
               <div className="inline-flex items-center gap-2 rounded-[5px] border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-500">
-                <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+                <div className="h-2 w-2 rounded-lg bg-blue-500 animate-pulse" />
                 Live Enrollment Data
               </div>
 
@@ -538,10 +538,10 @@ export default function AnalyticsPage() {
                   </span>
                 </div>
 
-                <div className="mt-4 w-full h-3 bg-bg rounded-full overflow-hidden border border-border">
+                <div className="mt-4 w-full h-3 bg-bg rounded-lg overflow-hidden border border-border">
                   <div
                     className="
-                      h-full rounded-full
+                      h-full rounded-lg
                       bg-gradient-to-r
                       from-blue-500
                       to-cyan-400
@@ -607,9 +607,9 @@ export default function AnalyticsPage() {
                   </span>
                 </div>
 
-                <div className="h-2 rounded-full overflow-hidden bg-bg border border-border">
+                <div className="h-2 rounded-lg overflow-hidden bg-bg border border-border">
                   <div
-                    className="h-full bg-blue-500 rounded-full"
+                    className="h-full bg-blue-500 rounded-lg"
                     style={{
                       width: item.val,
                     }}
@@ -669,7 +669,7 @@ export default function AnalyticsPage() {
                   justify-center
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   border
                   border-[#d9e2ff]
@@ -693,9 +693,6 @@ export default function AnalyticsPage() {
                   duration-300
 
                   hover:-translate-y-[2px]
-                  
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
             >
               View Reviews

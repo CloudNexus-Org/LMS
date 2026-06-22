@@ -1,3 +1,6 @@
+export const SHELL_MAX_WIDTH = "max-w-[1440px]";
+export const SHELL_PADDING = "px-5 sm:px-6 lg:px-8";
+
 export default function Container({
   children,
   size = "default",

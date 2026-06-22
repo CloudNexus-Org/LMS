@@ -124,7 +124,7 @@ export default function ManageLessonsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -135,8 +135,6 @@ export default function ManageLessonsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
         >
           <Plus className="h-4 w-4" /> New Course
@@ -322,7 +320,7 @@ export default function ManageLessonsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
                     <h3 className="font-bold text-text text-base leading-tight">{course.title}</h3>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg ${
                       course.status === 'Published' ? 'bg-success/15 text-success' : 'bg-border text-muted'
                     }`}>{course.status}</span>
                   </div>
@@ -422,7 +420,7 @@ export default function ManageLessonsPage() {
 
                         <div className="flex items-center gap-3 flex-shrink-0">
                           {lesson.free && (
-                            <span className="text-[10px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-full uppercase tracking-wider">Free</span>
+                            <span className="text-[10px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-lg uppercase tracking-wider">Free</span>
                           )}
                           {!lesson.free && (
                             <Lock className="h-3.5 w-3.5 text-muted" />
@@ -430,7 +428,7 @@ export default function ManageLessonsPage() {
                           <span className="text-xs font-medium text-muted flex items-center gap-1">
                             <Clock className="h-3 w-3" /> {lesson.duration}
                           </span>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider ${
                             lesson.published ? 'bg-success/10 text-success' : 'bg-border text-muted'
                           }`}>{lesson.published ? 'Live' : 'Draft'}</span>
 

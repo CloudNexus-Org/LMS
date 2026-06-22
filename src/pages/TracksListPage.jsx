@@ -81,9 +81,9 @@ function BackgroundEffects() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
       {/* Mesh gradient orbs */}
-      <div className="mesh-orb absolute -top-32 left-[15%] h-[500px] w-[500px] rounded-full bg-primary-soft opacity-50 blur-[140px]" />
-      <div className="mesh-orb-2 absolute -top-20 right-[5%] h-[400px] w-[400px] rounded-full bg-accent-soft opacity-40 blur-[120px]" />
-      <div className="mesh-orb-3 absolute top-[300px] left-[50%] h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-primary-soft opacity-30 blur-[100px]" />
+      <div className="mesh-orb absolute -top-32 left-[15%] h-[500px] w-[500px] rounded-lg bg-primary-soft opacity-50 blur-[140px]" />
+      <div className="mesh-orb-2 absolute -top-20 right-[5%] h-[400px] w-[400px] rounded-lg bg-accent-soft opacity-40 blur-[120px]" />
+      <div className="mesh-orb-3 absolute top-[300px] left-[50%] h-[300px] w-[300px] -translate-x-1/2 rounded-lg bg-primary-soft opacity-30 blur-[100px]" />
       {/* Animated grid overlay */}
       <div className="animated-grid absolute inset-0 h-[600px]" />
     </div>
@@ -150,7 +150,7 @@ function TrackListCard({ track, index }) {
               <Icon size={18} aria-hidden />
             </span>
             {track.badge ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-warning ring-1 ring-warning/20">
+              <span className="inline-flex items-center gap-1 rounded-lg bg-warning/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-warning ring-1 ring-warning/20">
                 <Sparkles size={9} className="text-warning" aria-hidden />
                 {track.badge}
               </span>
@@ -190,13 +190,13 @@ function TrackListCard({ track, index }) {
             {track.skills.slice(0, 4).map((s) => (
               <span
                 key={s}
-                className="inline-flex items-center rounded-full border border-border bg-bg/60 px-2 py-0.5 text-[11px] font-medium text-muted transition-colors duration-200 group-hover/track:border-border-strong"
+                className="inline-flex items-center rounded-lg border border-border bg-bg/60 px-2 py-0.5 text-[11px] font-medium text-muted transition-colors duration-200 group-hover/track:border-border-strong"
               >
                 {s}
               </span>
             ))}
             {track.skills.length > 4 && (
-              <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium text-subtle">
+              <span className="inline-flex items-center rounded-lg px-2 py-0.5 text-[11px] font-medium text-subtle">
                 +{track.skills.length - 4}
               </span>
             )}
@@ -214,7 +214,7 @@ function TrustBadge({ icon: IconComp, text, delay }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: EASE, delay }}
-      className="inline-flex items-center gap-2 rounded-full border border-border bg-elevated/70 px-3.5 py-2 text-[12px] font-medium text-muted backdrop-blur"
+      className="inline-flex items-center gap-2 rounded-lg border border-border bg-elevated/70 px-3.5 py-2 text-[12px] font-medium text-muted backdrop-blur"
     >
       <IconComp size={13} className="text-primary" aria-hidden />
       {text}
@@ -294,7 +294,7 @@ export default function TracksListPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease: EASE }}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary-soft px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-primary/15 bg-primary-soft px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary"
                 >
                   <Sparkles size={11} aria-hidden />
                   All career tracks
@@ -382,7 +382,7 @@ export default function TracksListPage() {
                     type="button"
                     onClick={() => setQuery("")}
                     aria-label="Clear search"
-                    className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-subtle transition-colors hover:bg-surface hover:text-text"
+                    className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-lg text-subtle transition-colors hover:bg-surface hover:text-text"
                   >
                     <X size={13} />
                   </button>
@@ -470,7 +470,7 @@ export default function TracksListPage() {
                 transition={{ duration: 0.4, ease: EASE }}
                 className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-elevated/40 px-6 py-16 text-center"
               >
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full border border-border bg-bg text-muted">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg border border-border bg-bg text-muted">
                   <Search size={20} aria-hidden />
                 </div>
                 <h3 className="mt-4 font-display text-[18px] font-semibold tracking-tight text-text">

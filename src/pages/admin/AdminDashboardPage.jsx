@@ -209,7 +209,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+            <span className="h-2 w-2 rounded-lg bg-success animate-pulse" />
             <span className="text-xs font-bold text-muted uppercase tracking-wider">Live Dashboard</span>
           </div>
           <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Platform Overview</h1>
@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
                   text-black
                   dark:text-black
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
                   transition-all
@@ -244,7 +244,6 @@ export default function AdminDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <RefreshCw className="h-3.5 w-3.5" /> Refresh
           </button>
@@ -268,7 +267,7 @@ export default function AdminDashboardPage() {
                   text-white
                   dark:text-white
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
                   transition-all
@@ -276,7 +275,6 @@ export default function AdminDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
@@ -567,7 +565,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center justify-between mb-5">
             <h3 className="font-bold text-lg text-text">System Health</h3>
             <span className="flex items-center gap-1.5 text-xs font-bold text-success">
-              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" /> All Systems Go
+              <span className="h-1.5 w-1.5 rounded-lg bg-success animate-pulse" /> All Systems Go
             </span>
           </div>
           <div className="space-y-5">
@@ -669,13 +667,13 @@ export default function AdminDashboardPage() {
             <div className="space-y-3">
               {recentUsers.map((user, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[11px] font-bold flex-shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-[11px] font-bold flex-shrink-0">
                     {user.avatar}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-xs font-bold text-text leading-tight">{user.name}</p>
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${roleColors[user.role]}`}>
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-lg ${roleColors[user.role]}`}>
                         {user.role}
                       </span>
                     </div>
@@ -700,9 +698,9 @@ export default function AdminDashboardPage() {
                     <span className="text-xs font-bold text-text">{geo.region}</span>
                     <span className="text-xs font-bold text-muted">{geo.pct}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-bg rounded-full overflow-hidden border border-border">
+                  <div className="w-full h-1.5 bg-bg rounded-lg overflow-hidden border border-border">
                     <div
-                      className={`h-full ${geo.color} rounded-full transition-all duration-700`}
+                      className={`h-full ${geo.color} rounded-lg transition-all duration-700`}
                       style={{ width: `${geo.pct}%` }}
                     />
                   </div>

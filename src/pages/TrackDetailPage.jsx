@@ -127,8 +127,8 @@ export default function TrackDetailPage() {
         <section className="relative overflow-hidden py-20 md:py-32">
           {/* Ambient background */}
           <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-primary/[0.03] blur-[120px]" />
-            <div className="absolute bottom-0 right-[15%] h-[350px] w-[350px] rounded-full bg-primary/[0.025] blur-[100px]" />
+            <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-lg bg-primary/[0.03] blur-[120px]" />
+            <div className="absolute bottom-0 right-[15%] h-[350px] w-[350px] rounded-lg bg-primary/[0.025] blur-[100px]" />
           </div>
 
           <Container size="lg" className="relative">
@@ -144,7 +144,7 @@ export default function TrackDetailPage() {
               <h2 className="mt-6 font-display text-[40px] font-black leading-[1.05] tracking-[-0.03em] text-text sm:text-[48px] xl:text-[56px]">
                 What you'll learn
               </h2>
-              <div className="mt-3 h-[3px] w-12 rounded-full bg-primary/40" aria-hidden />
+              <div className="mt-3 h-[3px] w-12 rounded-lg bg-primary/40" aria-hidden />
               <p className="mt-5 max-w-[600px] text-[16px] leading-7 text-muted sm:text-[17px]">
                 Concrete skills that translate directly to senior-engineer work.
               </p>
@@ -210,7 +210,7 @@ export default function TrackDetailPage() {
                     </div>
 
                     {/* Minimalist Tech Arrow */}
-                    <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/50 bg-bg/30 text-muted transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/[0.08] group-hover:text-primary">
+                    <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-bg/30 text-muted transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/[0.08] group-hover:text-primary">
                       <ArrowRight
                         size={14}
                         className="transition-transform duration-300 group-hover:translate-x-0.5"
@@ -228,12 +228,12 @@ export default function TrackDetailPage() {
         <section className="relative overflow-hidden py-16 md:py-10">
           {/* Ambient Cosmic Glow */}
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="h-[400px] w-[800px] rounded-full bg-primary/[0.04] blur-[150px] animate-pulse duration-[6s]" />
+            <div className="h-[400px] w-[800px] rounded-lg bg-primary/[0.04] blur-[150px] animate-pulse duration-[6s]" />
           </div>
 
           <Container size="lg" className="relative">
             <div className="flex flex-col items-center text-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary">
+              <span className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary">
                 <Sparkles size={14} className="text-primary" />
                 <span>Tech Stack</span>
               </span>
@@ -327,7 +327,7 @@ export default function TrackDetailPage() {
                           />
                         ) : (
                           <div
-                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            className="w-2.5 h-2.5 rounded-lg shrink-0"
                             style={{ backgroundColor: meta.color, boxShadow: `0 0 8px ${meta.color}` }}
                           />
                         )}
@@ -357,8 +357,8 @@ export default function TrackDetailPage() {
             <div className="group/mentor relative mt-8 overflow-hidden rounded-[2.5rem] border border-border bg-elevated/20 p-8 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-primary/30 hover:bg-elevated/35 hover:shadow-2xl hover:shadow-primary/[0.05] card-shimmer">
               {/* Internal Mesh Orbs for Ambient Backlighting */}
               <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-                <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/10 blur-[60px] opacity-0 transition-opacity duration-500 group-hover/mentor:opacity-100" />
-                <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-accent/10 blur-[60px] opacity-0 transition-opacity duration-500 group-hover/mentor:opacity-100" />
+                <div className="absolute -right-16 -top-16 h-48 w-48 rounded-lg bg-primary/10 blur-[60px] opacity-0 transition-opacity duration-500 group-hover/mentor:opacity-100" />
+                <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-lg bg-accent/10 blur-[60px] opacity-0 transition-opacity duration-500 group-hover/mentor:opacity-100" />
               </div>
 
               <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-10">
@@ -367,9 +367,9 @@ export default function TrackDetailPage() {
                   <img
                     src={mentor?.avatar || track.leadMentor.photo}
                     alt={track.leadMentor.name}
-                    className="h-24 w-24 rounded-full object-cover ring-4 ring-primary/20 transition-all duration-300 group-hover/mentor:ring-primary/45 md:h-32 md:w-32"
+                    className="h-24 w-24 rounded-lg object-cover ring-4 ring-primary/20 transition-all duration-300 group-hover/mentor:ring-primary/45 md:h-32 md:w-32"
                   />
-                  <div className="absolute -top-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-bg bg-primary text-white shadow-md">
+                  <div className="absolute -top-1 -right-1 flex h-8 w-8 items-center justify-center rounded-lg border-2 border-bg bg-primary text-white shadow-md">
                     <Star size={14} className="fill-current" />
                   </div>
                 </div>
@@ -379,7 +379,7 @@ export default function TrackDetailPage() {
                     <h3 className="font-display text-[22px] font-bold tracking-tight text-text md:text-[26px]">
                       {track.leadMentor.name}
                     </h3>
-                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase text-primary">
+                    <span className="inline-flex items-center rounded-lg bg-primary/10 px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase text-primary">
                       Lead Instructor
                     </span>
                   </div>
@@ -403,7 +403,7 @@ export default function TrackDetailPage() {
                 {mentor ? (
                   <Link
                     to={`/mentors/${mentor.slug}`}
-                    className="inline-flex items-center gap-2 self-center bg-primary/10 border border-primary/20 px-6 py-3.5 text-[13.5px] font-bold text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/20 [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]"
+                    className="inline-flex items-center gap-2 self-center rounded-lg bg-primary/10 border border-primary/20 px-6 py-3.5 text-[13.5px] font-bold text-primary transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/20"
                   >
                     Full profile
                     <ArrowUpRight size={14} aria-hidden />
@@ -420,7 +420,7 @@ export default function TrackDetailPage() {
           <RevealSection className="py-18 md:py-25">
             <Container size="lg">
               <div className="mb-20 text-center flex flex-col items-center">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary">
+                <span className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.2em] text-primary">
                   <Sparkles size={14} />
                   Clear Your Doubts
                 </span>

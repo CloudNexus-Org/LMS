@@ -267,7 +267,7 @@ const Analytics = () => {
 
           <div className="relative z-10 flex justify-center py-10">
             <div className="relative h-52 w-52">
-              <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl" />
+              <div className="absolute inset-0 rounded-lg bg-primary/10 blur-2xl" />
 
               <svg className="-rotate-90" viewBox="0 0 200 200">
                 <circle
@@ -311,13 +311,12 @@ const Analytics = () => {
           <button
             className="
               relative inline-flex h-[44px] w-full items-center justify-center overflow-hidden
-              rounded-none border border-primary/20 bg-primary px-6
+              rounded-lg border border-primary/20 bg-primary px-6
               text-white
               transition-all duration-300
               hover:-translate-y-[2px]
               hover:scale-[1.02]
               hover:shadow-[0_25px_60px_rgba(139,92,246,0.18)]
-              [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
             "
           >
             Optimize CV

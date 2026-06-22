@@ -169,7 +169,7 @@ export default function LessonPlayerPage() {
                   {progressPct}%
                 </div>
               </div>
-              <div className="h-1.5 w-28 overflow-hidden rounded-full bg-border lg:w-40">
+              <div className="h-1.5 w-28 overflow-hidden rounded-lg bg-border lg:w-40">
                 <div
                   className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
                   style={{ width: `${progressPct}%` }}
@@ -275,7 +275,7 @@ export default function LessonPlayerPage() {
                         type="button"
                         onClick={() => setActiveTab(t.id)}
                         aria-current={isActive ? "page" : undefined}
-                        className={`relative flex h-10 items-center gap-2 rounded-full px-5 text-[13px] font-bold transition-all duration-300 ${
+                        className={`relative flex h-10 items-center gap-2 rounded-lg px-5 text-[13px] font-bold transition-all duration-300 ${
                           isActive
                             ? "bg-primary text-white shadow-[0_4px_15px_rgba(33,92,255,0.4)] scale-105"
                             : "bg-elevated/50 text-muted hover:bg-elevated hover:text-text border border-border/50"
@@ -397,7 +397,7 @@ export default function LessonPlayerPage() {
                       {progressPct}%
                     </span>
                   </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-border">
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-lg bg-border">
                     <div
                       className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
                       style={{ width: `${progressPct}%` }}
@@ -441,7 +441,7 @@ export default function LessonPlayerPage() {
                 </span>
                 <span className="font-semibold text-text">{progressPct}%</span>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-border">
+              <div className="mt-2 h-1.5 overflow-hidden rounded-lg bg-border">
                 <div
                   className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
                   style={{ width: `${progressPct}%` }}

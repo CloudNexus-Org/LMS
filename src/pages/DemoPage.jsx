@@ -40,11 +40,11 @@ export default function DemoPage() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[600px] -translate-x-1/2 rounded-full bg-primary-soft blur-[140px]"
+        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[600px] -translate-x-1/2 rounded-lg bg-primary-soft blur-[140px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-[-10%] right-[-10%] -z-10 h-[460px] w-[460px] rounded-full bg-accent-soft blur-[140px]"
+        className="pointer-events-none absolute bottom-[-10%] right-[-10%] -z-10 h-[460px] w-[460px] rounded-lg bg-accent-soft blur-[140px]"
       />
 
       <div className="absolute right-5 top-5 z-20">
@@ -60,7 +60,7 @@ export default function DemoPage() {
           Back to home
         </Link>
 
-        <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary-soft px-4 py-1.5 text-[12px] font-semibold text-primary">
+        <span className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary-soft px-4 py-1.5 text-[12px] font-semibold text-primary">
           <PlayCircle size={14} />
           Interactive product demo
         </span>
@@ -103,7 +103,7 @@ export default function DemoPage() {
                     className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"
                   />
                   <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-bg shadow-2xl transition group-hover:scale-110 md:h-20 md:w-20">
+                    <span className="flex h-16 w-16 items-center justify-center rounded-lg bg-white text-bg shadow-2xl transition group-hover:scale-110 md:h-20 md:w-20">
                       <PlayCircle size={36} />
                     </span>
                   </span>

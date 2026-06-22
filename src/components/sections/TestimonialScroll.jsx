@@ -6,19 +6,8 @@ import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Avatar from "@/components/ui/Avatar";
 
-import Testimonialbg1 from "@/assets/testimonial/Testimonialbg1.png";
-import Testimonialbg2 from "@/assets/testimonial/Testimonialbg2 (2).png";
-import Testimonialbg3 from "@/assets/testimonial/Testimonialbg4.png";
-
-const bgImages = [
-  Testimonialbg1,
-  Testimonialbg2,
-  Testimonialbg3,
-];
-
-function ReviewCard({ item, index }) {
+function ReviewCard({ item }) {
   const isDarkTheme = useIsDarkTheme();
-  const bgImage = bgImages[index % bgImages.length];
 
   return (
     <article
@@ -34,7 +23,7 @@ function ReviewCard({ item, index }) {
 
         overflow-hidden
 
-        rounded-[26px]
+        rounded-lg
 
         border
         border-black/[0.06]
@@ -48,77 +37,12 @@ function ReviewCard({ item, index }) {
         hover:-translate-y-2
 
         hover:border-[#2563ff]/30
-
-        hover:shadow-[0_0_70px_rgba(37,99,235,0.18)]
-
-        dark:hover:shadow-[0_0_90px_rgba(37,99,235,0.22)]
       "
       style={{
         backgroundColor: isDarkTheme ? "#06070b" : "#ffffff",
         backdropFilter: "blur(12px)",
       }}
     >
-
-      {/* BIG BLUE AMBIENT GLOW */}
-      <div
-        className="
-          pointer-events-none
-
-          absolute
-
-          -bottom-28
-          -left-24
-
-          h-72
-          w-72
-
-          rounded-full
-
-          opacity-0
-
-          blur-[90px]
-
-          transition-all
-          duration-700
-
-          group-hover:opacity-100
-        "
-        style={{
-          background:
-            "radial-gradient(circle, rgba(37,99,255,0.65) 0%, rgba(37,99,255,0.35) 42%, transparent 74%)",
-        }}
-      />
-
-      {/* EXTRA TOP BLUE GLOW */}
-      <div
-        className="
-          pointer-events-none
-
-          absolute
-
-          -right-16
-          -top-16
-
-          h-44
-          w-44
-
-          rounded-full
-
-          opacity-0
-
-          blur-[70px]
-
-          transition-all
-          duration-700
-
-          group-hover:opacity-100
-        "
-        style={{
-          background:
-            "radial-gradient(circle, rgba(96,165,250,0.55) 0%, rgba(37,99,255,0.25) 45%, transparent 72%)",
-        }}
-      />
-
       {/* ROTATING BLURRED BORDER */}
       <div
         className="
@@ -127,7 +51,7 @@ function ReviewCard({ item, index }) {
           absolute
           inset-0
 
-          rounded-[26px]
+          rounded-lg
 
           opacity-0
 
@@ -137,32 +61,13 @@ function ReviewCard({ item, index }) {
           group-hover:opacity-100
         "
       >
-
-        {/* WIDE GLOW */}
-        <div
-          className="
-            absolute
-            -inset-[4px]
-
-            rounded-[30px]
-
-            animate-spin-slow
-
-            blur-xl
-          "
-          style={{
-            background:
-              "conic-gradient(from 0deg, transparent 0deg, rgba(37,99,255,0.95) 55deg, transparent 110deg)",
-          }}
-        />
-
         {/* SHARP INNER BORDER */}
         <div
           className="
             absolute
             -inset-[1px]
 
-            rounded-[28px]
+            rounded-lg
 
             animate-spin-slow
 
@@ -180,7 +85,7 @@ function ReviewCard({ item, index }) {
             absolute
             inset-[1.5px]
 
-            rounded-[24px]
+            rounded-lg
 
             backdrop-blur-xl
           "
@@ -188,93 +93,13 @@ function ReviewCard({ item, index }) {
             backgroundColor: isDarkTheme ? "rgba(6, 7, 11, 0.88)" : "rgba(255, 255, 255, 0.88)",
           }}
         />
-
-      </div>
-
-      {/* BG IMAGE */}
-      <div
-        className="
-          absolute
-          inset-0
-
-          overflow-hidden
-        "
-      >
-
-        <img
-          src={bgImage}
-          alt="testimonial background"
-          className="
-            h-full
-            w-full
-
-            object-cover
-
-            scale-[1.12]
-
-            opacity-[0.14]
-
-            transition-all
-            duration-700
-            ease-out
-
-            brightness-[1.15]
-
-            group-hover:scale-[1.22]
-
-            group-hover:opacity-[0.65]
-          "
-          style={{
-            filter: isDarkTheme ? "blur(4px)" : "none",
-          }}
-        />
-
-        {/* LIGHT THEME OVERLAY */}
-        <div
-          className="
-            absolute
-            inset-0
-
-            transition-all
-            duration-700
-            
-            opacity-100
-            group-hover:opacity-40
-          "
-          style={{
-            display: isDarkTheme ? "none" : "block",
-            background: "linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.98))",
-          }}
-        />
-
-        {/* DARK THEME OVERLAY */}
-        <div
-          className="
-            absolute
-            inset-0
-
-            transition-all
-            duration-700
-            
-            opacity-100
-            group-hover:opacity-50
-          "
-          style={{
-            display: isDarkTheme ? "block" : "none",
-            background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.68), rgba(5, 6, 10, 0.92))",
-          }}
-        />
-
       </div>
 
       {/* CONTENT */}
       <div className="relative z-10 flex h-full flex-col p-6">
-
         {/* TOP */}
         <div className="flex items-start justify-between">
-
           <div className="flex items-center gap-3">
-
             <Avatar
               src={item.avatar}
               name={item.name}
@@ -282,7 +107,6 @@ function ReviewCard({ item, index }) {
             />
 
             <div className="min-w-0">
-
               <div
                 className="
                   truncate
@@ -316,9 +140,7 @@ function ReviewCard({ item, index }) {
               >
                 {item.role}
               </div>
-
             </div>
-
           </div>
 
           <Quote
@@ -335,7 +157,6 @@ function ReviewCard({ item, index }) {
               group-hover:text-[#2563ff]
             "
           />
-
         </div>
 
         {/* LINE */}
@@ -358,7 +179,6 @@ function ReviewCard({ item, index }) {
 
         {/* RATING */}
         <div className="mt-5 flex items-center gap-3">
-
           <span
             className="
               text-[15px]
@@ -378,9 +198,7 @@ function ReviewCard({ item, index }) {
           </span>
 
           <div className="flex items-center gap-1">
-
             {Array.from({ length: item.rating }).map((_, i) => (
-
               <Star
                 key={i}
                 size={14}
@@ -389,11 +207,8 @@ function ReviewCard({ item, index }) {
                   text-[#2563ff]
                 "
               />
-
             ))}
-
           </div>
-
         </div>
 
         {/* REVIEW */}
@@ -418,21 +233,16 @@ function ReviewCard({ item, index }) {
         >
           {item.text}
         </p>
-
       </div>
-
     </article>
   );
 }
 
 export default function TestimonialScroll() {
-
   const firstRow = [...testimonials, ...testimonials];
 
   return (
-
     <SectionShell id="testimonials">
-
       <SectionHeading
         eyebrow="Learner stories"
         title="Real progress,"
@@ -441,28 +251,17 @@ export default function TestimonialScroll() {
       />
 
       <div className="space-y-6">
-
         <div className="testimonial-mask overflow-visible">
-
           <div className="testimonial-row-left flex w-max gap-5 py-6">
-
             {firstRow.map((item, index) => (
-
               <ReviewCard
                 key={`top-${index}`}
                 item={item}
-                index={index}
               />
-
             ))}
-
           </div>
-
         </div>
-
       </div>
-
     </SectionShell>
-
   );
 }

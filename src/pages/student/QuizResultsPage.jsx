@@ -42,7 +42,7 @@ export default function QuizResultsPage() {
         <div className="md:col-span-1 bg-surface border border-border rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-card relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-bg to-transparent pointer-events-none" />
           
-          <div className="relative z-10 w-40 h-40 rounded-full border-8 border-bg flex items-center justify-center mb-6 shadow-inner bg-surface">
+          <div className="relative z-10 w-40 h-40 rounded-lg border-8 border-bg flex items-center justify-center mb-6 shadow-inner bg-surface">
             {/* SVG Circular Progress */}
             <svg className="absolute inset-0 w-full h-full -rotate-90">
               <circle cx="72" cy="72" r="68" className="stroke-bg" strokeWidth="8" fill="none" />
@@ -78,9 +78,9 @@ export default function QuizResultsPage() {
                     <span className="text-text">{topic.label}</span>
                     <span className={topic.value < 70 ? 'text-warning' : 'text-success'}>{topic.value}%</span>
                   </div>
-                  <div className="h-2 w-full bg-bg rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-bg rounded-lg overflow-hidden">
                     <div 
-                      className={`h-full rounded-full ${topic.value < 70 ? 'bg-warning' : 'bg-success'}`} 
+                      className={`h-full rounded-lg ${topic.value < 70 ? 'bg-warning' : 'bg-success'}`} 
                       style={{ width: `${topic.value}%` }} 
                     />
                   </div>

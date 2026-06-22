@@ -97,7 +97,7 @@ export default function PremiumCurriculum({ track }) {
                 </div>
               </div>
 
-              <button className="w-full mt-6 py-3 bg-gradient-to-r from-[#215cff] to-[#4b79ff] hover:from-[#4b79ff] hover:to-[#215cff] transition-all duration-300 text-white font-bold text-[15px] shadow-sm group flex items-center justify-center gap-2 [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]">
+              <button className="w-full mt-6 py-3 rounded-full bg-primary hover:bg-primary-hover transition-all duration-300 text-white font-bold text-[15px] shadow-sm group flex items-center justify-center gap-2">
                 View Full Syllabus
                 <span className="group-hover:translate-x-1 transition-transform">→</span>
               </button>
@@ -183,7 +183,7 @@ export default function PremiumCurriculum({ track }) {
               >
                 <button
                   onClick={() => setShowAll(!showAll)}
-                    className={`px-6 py-3 font-semibold transition-colors shadow-sm flex items-center gap-2 [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)] ${isDarkTheme ? 'bg-white/5 border border-white/10 text-white/90 hover:bg-white/10' : 'bg-slate-100 border border-slate-300 text-slate-700 hover:bg-slate-200'}`}
+                    className={`rounded-full px-6 py-3 font-semibold transition-colors shadow-sm flex items-center gap-2 ${isDarkTheme ? 'bg-white/5 border border-white/10 text-white/90 hover:bg-white/10' : 'bg-slate-100 border border-slate-300 text-slate-700 hover:bg-slate-200'}`}
                 >
                   {showAll ? 'Show less' : 'Show more'}
                   <span aria-hidden>→</span>

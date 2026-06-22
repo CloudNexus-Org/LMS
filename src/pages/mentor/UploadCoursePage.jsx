@@ -91,7 +91,7 @@ export default function UploadCoursePage() {
 
             return (
               <div key={s.id} className="flex flex-col items-center gap-2 bg-bg px-2">
-                <div className={`h-12 w-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                <div className={`h-12 w-12 rounded-lg flex items-center justify-center border-2 transition-all duration-300 ${
                   isCompleted ? 'bg-primary border-primary text-white shadow-[0_0_20px_rgba(44,91,255,0.3)]' :
                   isActive ? 'bg-surface border-primary text-primary shadow-md' :
                   'bg-surface border-border text-muted'
@@ -289,7 +289,7 @@ export default function UploadCoursePage() {
                       className={`relative text-left p-5 rounded-[5px] border-2 transition-all duration-200 hover:-translate-y-0.5 ${isSelected ? plan.color + ' ' + (plan.id === 'paid' ? 'border-primary' : plan.id === 'free' ? 'border-success' : 'border-accent') : 'border-border bg-bg hover:border-primary/30'}`}
                     >
                       {plan.badge && (
-                        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-primary text-white px-3 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
+                        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-primary text-white px-3 py-0.5 rounded-lg uppercase tracking-wider whitespace-nowrap">
                           {plan.badge}
                         </span>
                       )}
@@ -304,7 +304,7 @@ export default function UploadCoursePage() {
                       <p className="text-xs text-muted mt-1">{plan.desc}</p>
                       <p className="font-display font-bold text-text mt-3">{plan.price}</p>
                       {isSelected && (
-                        <div className="absolute top-3 right-3 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                        <div className="absolute top-3 right-3 h-5 w-5 rounded-lg bg-primary flex items-center justify-center">
                           <CheckCircle2 className="h-3.5 w-3.5 text-white" />
                         </div>
                       )}
@@ -413,7 +413,7 @@ export default function UploadCoursePage() {
 
           <div className="flex items-center gap-2">
             {STEPS.map(s => (
-              <div key={s.id} className={`h-1.5 rounded-full transition-all duration-300 ${step === s.id ? 'w-6 bg-primary' : step > s.id ? 'w-3 bg-primary/40' : 'w-3 bg-border'}`} />
+              <div key={s.id} className={`h-1.5 rounded-lg transition-all duration-300 ${step === s.id ? 'w-6 bg-primary' : step > s.id ? 'w-3 bg-primary/40' : 'w-3 bg-border'}`} />
             ))}
           </div>
 
@@ -447,7 +447,7 @@ export default function UploadCoursePage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -458,8 +458,6 @@ export default function UploadCoursePage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
           >
             {step === STEPS.length ? (

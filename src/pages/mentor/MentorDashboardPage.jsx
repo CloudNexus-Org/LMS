@@ -121,8 +121,8 @@ export default function MentorDashboardPage() {
         "
       >
       {/* GLOW */}
-        <div className={`absolute right-[-120px] top-[-120px] h-[300px] w-[300px] rounded-full ${heroGlowClasses.primary}`} />
-        <div className={`absolute bottom-[-100px] left-[-100px] h-[240px] w-[240px] rounded-full ${heroGlowClasses.secondary}`} />
+        <div className={`absolute right-[-120px] top-[-120px] h-[300px] w-[300px] rounded-lg ${heroGlowClasses.primary}`} />
+        <div className={`absolute bottom-[-100px] left-[-100px] h-[240px] w-[240px] rounded-lg ${heroGlowClasses.secondary}`} />
 
         <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
@@ -181,7 +181,7 @@ export default function MentorDashboardPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -192,8 +192,6 @@ export default function MentorDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
               >
                 Create Course
@@ -214,7 +212,7 @@ export default function MentorDashboardPage() {
                   justify-center
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   border
                   border-border
@@ -240,8 +238,6 @@ export default function MentorDashboardPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/40
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 "
               >
                 <PlayCircle className="h-4 w-4" />

@@ -110,7 +110,7 @@ export default function AdminReportsPage() {
                   dark:text-white
 
                   overflow-hidden
-                  rounded-none
+                  rounded-lg
 
                   shadow-[0_10px_30px_rgba(37,99,235,0.08)]
                   dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
@@ -121,8 +121,6 @@ export default function AdminReportsPage() {
                   hover:-translate-y-[2px]
                   hover:border-primary/40
                   dark:hover:border-primary/60
-
-                  [clip-path:polygon(12px_0,100%_0,100%_calc(100%-12px),calc(100%-12px)_100%,0_100%,0_12px)]
                 ">
             <Download className="h-4 w-4" /> Export
           </button>
@@ -172,8 +170,8 @@ export default function AdminReportsPage() {
                   <span className="font-bold text-text text-xs">{cat.name}</span>
                   <span className={`font-bold text-xs ${cat.text}`}>{cat.share}%</span>
                 </div>
-                <div className="w-full h-2 bg-bg rounded-full overflow-hidden border border-border">
-                  <div className={`h-full ${cat.color} rounded-full transition-all duration-700`} style={{ width: `${cat.share}%` }} />
+                <div className="w-full h-2 bg-bg rounded-lg overflow-hidden border border-border">
+                  <div className={`h-full ${cat.color} rounded-lg transition-all duration-700`} style={{ width: `${cat.share}%` }} />
                 </div>
               </div>
             ))}
@@ -194,8 +192,8 @@ export default function AdminReportsPage() {
                     <span className="text-xs font-bold text-muted">{geo.region}</span>
                     <span className="text-xs font-bold text-text">{geo.pct}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-bg rounded-full overflow-hidden border border-border">
-                    <div className={`h-full ${geo.color} rounded-full`} style={{ width: `${geo.pct}%` }} />
+                  <div className="w-full h-1.5 bg-bg rounded-lg overflow-hidden border border-border">
+                    <div className={`h-full ${geo.color} rounded-lg`} style={{ width: `${geo.pct}%` }} />
                   </div>
                 </div>
               ))}
@@ -272,7 +270,7 @@ export default function AdminReportsPage() {
           {TOP_MENTORS.map((mentor) => (
             <div key={mentor.name} className="bg-bg border border-border rounded-[5px] p-4 hover:border-primary/30 hover:-translate-y-0.5 transition-all duration-200">
               <div className="flex items-center gap-3 mb-4">
-                <div className={`h-11 w-11 rounded-full bg-gradient-to-br ${mentor.grad} flex items-center justify-center text-white text-sm font-bold shadow-sm overflow-hidden relative`}>
+                <div className={`h-11 w-11 rounded-lg bg-gradient-to-br ${mentor.grad} flex items-center justify-center text-white text-sm font-bold shadow-sm overflow-hidden relative`}>
                   <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
                   <span className="relative z-10">{mentor.avatar}</span>
                 </div>

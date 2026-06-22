@@ -125,7 +125,7 @@ function WhereToFindUsCard() {
             shrink-0
             items-center
             justify-center
-            rounded-full
+            rounded-lg
             bg-primary/10
             dark:bg-[#5B8CFF]/15
           "
@@ -199,7 +199,7 @@ function ContactCard() {
   return (
     <div
       className="
-        w-full rounded-2xl border p-4
+        w-full rounded-lg border p-4
         border-border/70 bg-elevated
         shadow-[var(--shadow-card-value)]
         dark:border-white/[0.08] dark:bg-[#111316]
@@ -208,7 +208,7 @@ function ContactCard() {
       <Link
         to="/contact"
         className="
-          flex h-9 w-full items-center justify-center rounded-full
+          flex h-9 w-full items-center justify-center rounded-lg
           bg-primary text-[13px] font-semibold text-white
           transition-colors duration-200 hover:bg-primary-hover
         "
@@ -274,7 +274,7 @@ export default function Footer() {
               shrink-0
               items-center
               justify-center
-              rounded-full
+              rounded-lg
               bg-primary
               px-6
               text-[13px]
@@ -362,7 +362,7 @@ export default function Footer() {
                   w-9
                   items-center
                   justify-center
-                  rounded-full
+                  rounded-lg
                   border
                   border-primary/40
                   text-primary
