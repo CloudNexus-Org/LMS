@@ -413,15 +413,12 @@
     
     .testimonial-row-left {
         animation: testimonialLeft 40s linear infinite;
+        will-change: transform;
     }
     
     .testimonial-row-right {
         animation: testimonialRight 40s linear infinite;
-    }
-    
-    .testimonial-row-left:hover,
-    .testimonial-row-right:hover {
-        animation-play-state: paused;
+        will-change: transform;
     }
     
     @keyframes drawLine {

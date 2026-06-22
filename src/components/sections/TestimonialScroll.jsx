@@ -30,18 +30,19 @@ function ReviewCard({ item }) {
         border-black/[0.06]
         dark:border-white/[0.08]
 
-        transition-all
-        duration-700
+        transition-[transform,border-color,box-shadow]
+        duration-500
+        ease-out
 
         md:w-[420px]
 
-        hover:-translate-y-2
+        hover:-translate-y-1
 
-        hover:border-primary/30
+        hover:border-primary/25
 
-        hover:shadow-[0_0_70px_rgba(139,97,210,0.18)]
+        hover:shadow-[0_12px_48px_rgba(139,97,210,0.12)]
 
-        dark:hover:shadow-[0_0_90px_rgba(139,97,210,0.22)]
+        dark:hover:shadow-[0_16px_56px_rgba(139,97,210,0.16)]
       "
       style={{
         backgroundColor: isDarkTheme ? "#06070b" : "#ffffff",
@@ -64,14 +65,15 @@ function ReviewCard({ item }) {
 
           rounded-full
 
-          opacity-0
+          opacity-25
 
           blur-[90px]
 
-          transition-all
-          duration-700
+          transition-opacity
+          duration-500
+          ease-out
 
-          group-hover:opacity-100
+          group-hover:opacity-60
         "
         style={{
           background:
@@ -94,14 +96,15 @@ function ReviewCard({ item }) {
 
           rounded-full
 
-          opacity-0
+          opacity-15
 
           blur-[70px]
 
-          transition-all
-          duration-700
+          transition-opacity
+          duration-500
+          ease-out
 
-          group-hover:opacity-100
+          group-hover:opacity-45
         "
         style={{
           background:
@@ -121,10 +124,11 @@ function ReviewCard({ item }) {
 
           opacity-0
 
-          transition-all
-          duration-700
+          transition-opacity
+          duration-500
+          ease-out
 
-          group-hover:opacity-100
+          group-hover:opacity-80
         "
       >
 
@@ -203,9 +207,6 @@ function ReviewCard({ item }) {
 
                   text-[15px]
                   font-semibold
-
-                  transition-all
-                  duration-300
                 "
                 style={{
                   color: isDarkTheme ? "#ffffff" : "#0f172a",
@@ -218,11 +219,12 @@ function ReviewCard({ item }) {
                 className="
                   text-[12px]
 
-                  transition-all
-                  duration-300
+                  transition-colors
+                  duration-400
+                  ease-out
 
-                  group-hover:text-primary
-                  dark:group-hover:text-white/80
+                  group-hover:text-primary/90
+                  dark:group-hover:text-white/75
                 "
                 style={{
                   color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(100, 116, 139)",
@@ -242,11 +244,11 @@ function ReviewCard({ item }) {
 
               text-primary/40
 
-              transition-all
-              duration-500
+              transition-colors
+              duration-400
+              ease-out
 
-              group-hover:scale-110
-              group-hover:text-primary
+              group-hover:text-primary/80
             "
           />
 
@@ -260,10 +262,11 @@ function ReviewCard({ item }) {
             h-px
             w-full
 
-            transition-all
-            duration-700
+            transition-colors
+            duration-400
+            ease-out
 
-            group-hover:bg-primary/35
+            group-hover:bg-primary/30
           "
           style={{
             backgroundColor: isDarkTheme ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)",
@@ -278,11 +281,12 @@ function ReviewCard({ item }) {
               text-[15px]
               font-medium
 
-              transition-all
-              duration-300
+              transition-colors
+              duration-400
+              ease-out
 
-              group-hover:text-primary
-              dark:group-hover:text-white
+              group-hover:text-primary/90
+              dark:group-hover:text-white/85
             "
             style={{
               color: isDarkTheme ? "rgba(255, 255, 255, 0.7)" : "rgb(71, 85, 105)",
@@ -320,11 +324,12 @@ function ReviewCard({ item }) {
             text-[15px]
             leading-8
 
-            transition-all
-            duration-500
+            transition-colors
+            duration-400
+            ease-out
 
-            group-hover:text-slate-800
-            dark:group-hover:text-white/92
+            group-hover:text-slate-700
+            dark:group-hover:text-white/88
           "
           style={{
             color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(71, 85, 105)",
