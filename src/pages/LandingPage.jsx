@@ -14,8 +14,7 @@ import Contact from '@/components/sections/Contact';
 export default function LandingPage() {
   return (
     <div className="min-h-screen text-text bg-bg transition-colors duration-300">
-      <div className="min-h-screen">
-        <main id="main">
+      <main id="main">
           <Hero />
           <TrustedCompanies />
           <Stats />
@@ -29,7 +28,6 @@ export default function LandingPage() {
           <FAQ />
           <Contact />
         </main>
-      </div>
     </div>
   );
 }

@@ -35,7 +35,7 @@ export default function Hero() {
     <HeroBackdrop
       id="home"
       imageSrc={heroBackground}
-      className="bg-bg"
+      className="bg-bg min-h-svh"
       positions={{
         desktop: "center center",
         tablet: "center center",
@@ -45,14 +45,12 @@ export default function Hero() {
       <Container size="shell">
         <div
           className="
-            grid items-start
+            grid min-h-[calc(100svh-4rem)] items-start
             pt-20 pb-10
-            sm:pt-24 sm:pb-16
-            md:pt-24 md:pb-20
-            lg:min-h-screen lg:items-center lg:py-24
-            xl:py-28
-            lg:grid-cols-2
-            lg:gap-6 xl:gap-8
+            sm:pt-24 sm:pb-14
+            md:grid-cols-1 md:pt-24 md:pb-16
+            lg:grid-cols-2 lg:items-center lg:gap-6 lg:pt-[4.75rem] lg:pb-10
+            xl:gap-8 xl:pb-12
           "
         >
           <div
@@ -94,9 +92,9 @@ export default function Hero() {
             <motion.h1
               {...fadeUp(2, 0.12, 0.6)}
               className="
-                hero-title mt-12 mb-12 max-w-[720px]
+                hero-title mt-6 mb-4 max-w-[720px]
                 font-extrabold leading-[0.95] tracking-[-0.04em]
-                text-[42px] sm:text-[58px] md:text-[72px] lg:text-[88px]
+                text-[42px] sm:text-[58px] md:text-[72px] lg:text-[80px] xl:text-[88px]
                 text-text
               "
             >
@@ -108,9 +106,10 @@ export default function Hero() {
             <motion.p
               {...fadeUp(10, 0.22)}
               className="
-                mt-12 mb-12 max-w-[580px]
+                mb-6 max-w-[580px]
                 text-[17px] leading-7
-                sm:text-[21px] sm:leading-8
+                sm:text-[19px] sm:leading-8
+                lg:text-[20px]
                 text-muted
               "
             >
@@ -121,7 +120,7 @@ export default function Hero() {
             {/* Buttons */}
             <motion.div
               {...fadeUp(10, 0.38)}
-              className="mt-8 sm:mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
+              className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
             >
               <Button
                 to="/signup"
@@ -207,7 +206,7 @@ export default function Hero() {
           {/* LMS dashboard animation — desktop */}
           <motion.div
             {...fadeUp(24, 0.5, 0.8)}
-            className="relative z-10 hidden w-full min-w-0 md:block"
+            className="relative z-10 hidden w-full min-w-0 md:flex md:flex-col lg:h-[calc(100svh-6.5rem)] lg:max-h-[640px] lg:self-center"
           >
             <HeroLmsVisual />
           </motion.div>

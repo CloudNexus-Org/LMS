@@ -7,19 +7,8 @@ import SectionHeading from "@/app/layouts/SectionHeading";
 import Container from "@/components/ui/Container";
 import Avatar from "@/components/ui/Avatar";
 
-import Testimonialbg1 from "@/assets/testimonial/Testimonialbg1.png";
-import Testimonialbg2 from "@/assets/testimonial/Testimonialbg2 (2).png";
-import Testimonialbg3 from "@/assets/testimonial/Testimonialbg4.png";
-
-const bgImages = [
-  Testimonialbg1,
-  Testimonialbg2,
-  Testimonialbg3,
-];
-
-function ReviewCard({ item, index }) {
+function ReviewCard({ item }) {
   const isDarkTheme = useIsDarkTheme();
-  const bgImage = bgImages[index % bgImages.length];
 
   return (
     <article
@@ -187,82 +176,6 @@ function ReviewCard({ item, index }) {
           "
           style={{
             backgroundColor: isDarkTheme ? "rgba(6, 7, 11, 0.88)" : "rgba(255, 255, 255, 0.88)",
-          }}
-        />
-
-      </div>
-
-      {/* BG IMAGE */}
-      <div
-        className="
-          absolute
-          inset-0
-
-          overflow-hidden
-        "
-      >
-
-        <img
-          src={bgImage}
-          alt="testimonial background"
-          className="
-            h-full
-            w-full
-
-            object-cover
-
-            scale-[1.12]
-
-            opacity-[0.14]
-
-            transition-all
-            duration-700
-            ease-out
-
-            brightness-[1.15]
-
-            group-hover:scale-[1.22]
-
-            group-hover:opacity-[0.65]
-          "
-          style={{
-            filter: isDarkTheme ? "blur(4px)" : "none",
-          }}
-        />
-
-        {/* LIGHT THEME OVERLAY */}
-        <div
-          className="
-            absolute
-            inset-0
-
-            transition-all
-            duration-700
-            
-            opacity-100
-            group-hover:opacity-40
-          "
-          style={{
-            display: isDarkTheme ? "none" : "block",
-            background: "linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.98))",
-          }}
-        />
-
-        {/* DARK THEME OVERLAY */}
-        <div
-          className="
-            absolute
-            inset-0
-
-            transition-all
-            duration-700
-            
-            opacity-100
-            group-hover:opacity-50
-          "
-          style={{
-            display: isDarkTheme ? "block" : "none",
-            background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.68), rgba(5, 6, 10, 0.92))",
           }}
         />
 
@@ -452,7 +365,6 @@ export default function TestimonialScroll() {
               <ReviewCard
                 key={`top-${index}`}
                 item={item}
-                index={index}
               />
 
             ))}
