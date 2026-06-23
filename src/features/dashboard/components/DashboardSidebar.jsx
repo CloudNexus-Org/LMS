@@ -36,10 +36,10 @@ export default function DashboardSidebar({ role, onClose }) {
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between px-6 border-b border-border shrink-0">
         <Link to="/student/dashboard" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-[5px] bg-primary text-white flex items-center justify-center font-bold font-display shadow-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary font-bold font-display text-white shadow-sm">
             CN
           </div>
-          <span className="font-semibold text-lg text-text">Cloud Nexus</span>
+          <span className="text-base font-semibold text-text">Cloud Nexus</span>
         </Link>
         <button onClick={onClose} className="lg:hidden text-muted hover:text-text transition-colors">
           <X className="h-5 w-5" />
@@ -54,7 +54,7 @@ export default function DashboardSidebar({ role, onClose }) {
               key={link.name}
               to={link.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-[5px] px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
                   isActive
                     ? 'bg-primary-soft text-primary'
                     : 'text-muted hover:bg-surface hover:text-text hover:shadow-sm'
@@ -69,7 +69,7 @@ export default function DashboardSidebar({ role, onClose }) {
       </nav>
 
       <div className="p-4 border-t border-border shrink-0">
-        <div className="rounded-[5px] bg-bg p-4 border border-border shadow-sm">
+        <div className="rounded-xl border border-border bg-bg p-4 shadow-sm">
           <p className="font-bold text-text text-sm">
             {role.charAt(0).toUpperCase() + role.slice(1)} Pro
           </p>
