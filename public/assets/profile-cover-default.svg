@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="base" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14121c"/>
+      <stop offset="45%" stop-color="#1e1630"/>
+      <stop offset="100%" stop-color="#0c0c10"/>
+    </linearGradient>
+    <radialGradient id="glow-a" cx="18%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#8b61d2" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#8b61d2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-b" cx="82%" cy="25%" r="50%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-c" cx="55%" cy="85%" r="45%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="300" fill="url(#base)"/>
+  <rect width="1200" height="300" fill="url(#glow-a)"/>
+  <rect width="1200" height="300" fill="url(#glow-b)"/>
+  <rect width="1200" height="300" fill="url(#glow-c)"/>
+  <rect width="1200" height="300" fill="url(#grid)"/>
+  <ellipse cx="200" cy="180" rx="120" ry="40" fill="#8b61d2" fill-opacity="0.08"/>
+  <ellipse cx="950" cy="90" rx="160" ry="55" fill="#7c3aed" fill-opacity="0.1"/>
+</svg>

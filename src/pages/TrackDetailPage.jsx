@@ -91,7 +91,7 @@ export default function TrackDetailPage() {
   const [openFaq, setOpenFaq] = useState(null);
 
   if (!track) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/tracks" replace />;
   }
 
   const mentor = track.leadMentorSlug

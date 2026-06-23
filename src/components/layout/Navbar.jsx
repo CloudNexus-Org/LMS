@@ -50,7 +50,7 @@ const DEFAULT_LINKS = [
         icon: <BookOpen size={16} />,
         label: "All courses",
         description: "Browse our full course catalog",
-        href: "#courses",
+        href: "/tracks",
       },
       {
         icon: <Award size={16} />,
@@ -67,7 +67,7 @@ const DEFAULT_LINKS = [
         icon: <GraduationCap size={16} />,
         label: "Meet the mentors",
         description: "Learn from top industry experts",
-        href: "#mentors",
+        href: "/mentors",
       },
       {
         icon: <Users size={16} />,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -48,6 +48,7 @@ const FILTERS = [
 const MOCK_COURSES = [
   {
     id: 1,
+    trackId: "cloud",
     title: "AWS Solution Architect",
     image:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
@@ -65,6 +66,7 @@ const MOCK_COURSES = [
   },
   {
     id: 2,
+    trackId: "ai",
     title: "Azure Generative AI",
     image:
       "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1600&auto=format&fit=crop",
@@ -82,6 +84,7 @@ const MOCK_COURSES = [
   },
   {
     id: 3,
+    trackId: "fullstack",
     title: "Modern JavaScript",
     image:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
@@ -99,6 +102,7 @@ const MOCK_COURSES = [
   },
   {
     id: 4,
+    trackId: "backend",
     title: "High Performance Go",
     image:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop",
@@ -116,6 +120,7 @@ const MOCK_COURSES = [
   },
   {
     id: 5,
+    trackId: "data",
     title: "Python for Data Engineering",
     image:
       "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop",
@@ -133,6 +138,7 @@ const MOCK_COURSES = [
   },
   {
     id: 6,
+    trackId: "cloud",
     title: "GCP Cloud Engineering",
     image:
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop",
@@ -150,6 +156,7 @@ const MOCK_COURSES = [
   },
   {
     id: 7,
+    trackId: "devops",
     title: "Docker Essentials",
     image:
       "https://images.unsplash.com/photo-1605745341112-85968b19335b?q=80&w=1600&auto=format&fit=crop",
@@ -308,7 +315,7 @@ function MyCourseCard({ course, index }) {
             )}
 
             <Link
-              to="/student/dashboard"
+              to={`/learn/${course.trackId}`}
               className="
                 inline-flex h-8 shrink-0 items-center justify-center gap-1
                 rounded-lg bg-primary px-3.5
@@ -328,6 +335,7 @@ function MyCourseCard({ course, index }) {
 }
 
 export default function MyCoursesPage() {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [courses, setCourses] = useState([]);
@@ -397,7 +405,7 @@ export default function MyCoursesPage() {
               : `You don't have any ${filter.replace("-", " ")} courses right now.`
           }
           actionLabel="Browse Courses"
-          onAction={() => (window.location.href = "/tracks")}
+          onAction={() => navigate("/tracks")}
         />
       ) : (
         <>

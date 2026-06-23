@@ -98,7 +98,7 @@ export default function LessonPlayerPage() {
   }, [track, lessonId, lessons, trackId, navigate]);
 
   if (!track) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/tracks" replace />;
   }
   if (!initialLesson) {
     return <Navigate to={`/tracks/${trackId}`} replace />;

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, HeartOff, Star, Heart } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import { DashboardGridSkeleton } from '@/components/ui/Skeletons';
 
 export default function StudentWishlistPage() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
 
@@ -31,7 +33,7 @@ export default function StudentWishlistPage() {
           title="Your wishlist is empty" 
           description="You haven't saved any courses yet. Browse our catalog to find courses that interest you."
           actionLabel="Browse Courses"
-          onAction={() => window.location.href = '/tracks'}
+          onAction={() => navigate('/tracks')}
         />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

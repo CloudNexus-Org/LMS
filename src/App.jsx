@@ -42,9 +42,6 @@ const StudentDashboardPage = lazy(() =>
 const MyCoursesPage = lazy(() =>
   import('@/pages/student/MyCoursesPage')
 );
-const Analytics = lazy(() =>
-  import('@/pages/student/Analytics')
-);
 const ProfilePage = lazy(() =>
   import('@/pages/student/ProfilePage')
 );
@@ -115,6 +112,9 @@ const AdminReportsPage = lazy(() =>
 const AdminNotificationsPage = lazy(() =>
   import('@/pages/admin/AdminNotificationsPage')
 );
+const AdminProfilePage = lazy(() =>
+  import('@/pages/admin/AdminProfilePage')
+);
 
 function App() {
   return (
@@ -178,6 +178,8 @@ function App() {
                 path="/student"
                 element={<DashboardLayout role="student" />}
               >
+                <Route index element={<Navigate to="dashboard" replace />} />
+
                 <Route
                   path="dashboard"
                   element={<StudentDashboardPage />}
@@ -187,11 +189,6 @@ function App() {
                   path="courses"
                   element={<MyCoursesPage />}
                 />
-                <Route
-                  path="analyticse"
-                  element={<Analytics/>}
-                />
-
                 <Route
                   path="learn"
                   element={
@@ -253,6 +250,8 @@ function App() {
                 path="/mentor"
                 element={<DashboardLayout role="mentor" />}
               >
+                <Route index element={<Navigate to="dashboard" replace />} />
+
                 <Route
                   path="dashboard"
                   element={<MentorDashboardPage />}
@@ -305,6 +304,8 @@ function App() {
                 path="/admin"
                 element={<DashboardLayout role="admin" />}
               >
+                <Route index element={<Navigate to="dashboard" replace />} />
+
                 <Route
                   path="dashboard"
                   element={<AdminDashboardPage />}
@@ -342,7 +343,7 @@ function App() {
 
                 <Route
                   path="profile"
-                  element={<ProfileSettingsPage />}
+                  element={<AdminProfilePage />}
                 />
               </Route>
             </Route>

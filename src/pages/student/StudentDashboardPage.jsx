@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Sparkles,
   CalendarDays,
@@ -58,10 +59,10 @@ const COURSE_PROGRESS = [
 ];
 
 const LEARNING_ACTIONS = [
-  "Continue Course",
-  "Join Live Class",
-  "Submit Assignment",
-  "View Certificates",
+  { label: "Continue Course", to: "/learn/cloud" },
+  { label: "Join Live Class", to: "/student/notifications" },
+  { label: "Submit Assignment", to: "/student/courses" },
+  { label: "View Certificates", to: "/student/certificates" },
 ];
 
 const UPCOMING = [
@@ -172,16 +173,16 @@ export default function StudentDashboardPage() {
             <Sparkles className="h-4 w-4 text-primary" />
           </div>
           <div className="space-y-2">
-            {LEARNING_ACTIONS.map((label) => (
-              <button key={label} type="button" className="dashboard-action-btn group">
+            {LEARNING_ACTIONS.map((action) => (
+              <Link key={action.label} to={action.to} className="dashboard-action-btn group">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <PlayCircle className="h-4 w-4" />
                   </div>
-                  <span className="truncate text-xs font-semibold text-text">{label}</span>
+                  <span className="truncate text-xs font-semibold text-text">{action.label}</span>
                 </div>
                 <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
-              </button>
+              </Link>
             ))}
           </div>
         </Card>

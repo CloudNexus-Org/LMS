@@ -5,7 +5,6 @@ const navConfig = {
   student: [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/student/dashboard' },
     { name: 'My Courses', icon: BookOpen, path: '/student/courses' },
-    { name: 'Analytics', icon: BarChart, path: '/student/analyticse' },
     { name: 'Wishlist', icon: Heart, path: '/student/wishlist' },
     { name: 'Certificates', icon: Award, path: '/student/certificates' },
     // { name: 'Notes', icon: FileText, path: '/student/notes' },
@@ -58,7 +57,7 @@ export default function DashboardSidebar({ role, onClose }) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between px-6 border-b border-border shrink-0">
-        <Link to="/student/dashboard" className="flex items-center gap-2">
+        <Link to={`/${role}/dashboard`} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary font-bold font-display text-white shadow-sm">
             CN
           </div>
