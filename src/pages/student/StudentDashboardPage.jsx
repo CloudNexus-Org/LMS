@@ -10,7 +10,6 @@ import {
   FileText,
   PlayCircle,
   TrendingUp,
-  Flame,
 } from "lucide-react";
 
 const STATS = [
@@ -136,22 +135,10 @@ export default function StudentDashboardPage() {
               <p className="dashboard-metric-label">Study hours</p>
             </div>
           </div>
-          <div className="dashboard-analytics-metric">
-            <Flame className="h-3.5 w-3.5 text-warning" />
-            <div>
-              <p className="dashboard-metric-value">12</p>
-              <p className="dashboard-metric-label">Day streak</p>
-            </div>
-          </div>
           <div className="dashboard-analytics-chart">
             <p className="dashboard-metric-label mb-1">Weekly trend</p>
             <MiniSparkline data={STUDY_TREND} />
           </div>
-        </div>
-
-        <div className="dashboard-analytics-status">
-          <span className="dashboard-status-live">● Learning active</span>
-          <span className="dashboard-status-date">Mon, May 28</span>
         </div>
       </section>
 
@@ -256,12 +243,7 @@ export default function StudentDashboardPage() {
 
       {/* Upcoming classes */}
       <section>
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 className="dashboard-section-title">Upcoming Classes</h2>
-          <button type="button" className="shrink-0 text-xs font-semibold text-primary hover:underline">
-            View Calendar
-          </button>
-        </div>
+        <h2 className="dashboard-section-title mb-3">Upcoming Classes</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {UPCOMING.map((item) => (
             <Card

@@ -32,7 +32,7 @@ export default function DashboardTopbar({ onMenuClick, role }) {
 
         {/* STREAK — students only */}
         {role === "student" && (
-          <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-sm font-semibold text-orange-500">
+          <div className="dashboard-streak-badge hidden sm:flex">
             <Flame className="h-4 w-4" />
             <span>12 Day Streak</span>
           </div>
