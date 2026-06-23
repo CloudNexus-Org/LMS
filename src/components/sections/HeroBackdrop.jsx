@@ -40,15 +40,6 @@ export default function HeroBackdrop({
         object-position: ${desktopPos} !important;
       }
     }
-    ${
-      isDarkTheme
-        ? `
-    section[data-hero-uid="${safeUid}"] img.hero-bg-img {
-      filter: brightness(0.62) saturate(1.05) contrast(1.02) !important;
-    }
-    `
-        : ""
-    }
   `;
 
   const ref = useRef(null);
@@ -64,7 +55,7 @@ export default function HeroBackdrop({
       id={id}
       ref={ref}
       data-hero-uid={safeUid}
-      className={`relative overflow-hidden isolate bg-[var(--hero-base)] ${className}`}
+      className={`relative overflow-hidden isolate bg-bg ${className}`}
     >
       <style>{css}</style>
 
@@ -75,68 +66,71 @@ export default function HeroBackdrop({
           "absolute inset-0 -z-10 pointer-events-none"
         }
       >
-        <img
-          src={imageSrc}
-          alt=""
-          className="hero-bg-img absolute inset-0 h-full w-full object-cover transition-[filter,opacity] duration-300"
-          aria-hidden
-        />
-
         {isDarkTheme ? (
           <>
-            {/* Dark veil — texture faintly visible */}
-            <div
-              className="absolute inset-0 bg-[var(--hero-base)]/62"
-              aria-hidden
-            />
-            <div
-              className="absolute inset-0 bg-gradient-to-b from-[var(--hero-base)]/35 via-[var(--hero-base)]/10 to-[var(--hero-base)]/45"
-              aria-hidden
-            />
-            <div
-              className="absolute inset-0 bg-gradient-to-br from-primary/[0.025] via-transparent to-[#1a2a4a]/[0.04]"
+            {/* Same stack as rest of page: solid base + bg token */}
+            <div className="absolute inset-0 bg-[var(--bg-solid,#171717)]" aria-hidden />
+
+            <img
+              src={imageSrc}
+              alt=""
+              className="hero-bg-img absolute inset-0 h-full w-full object-cover opacity-[0.14]"
               aria-hidden
             />
 
-            {/* Faint purple/blue ambient blobs */}
+            <div className="absolute inset-0 bg-bg" aria-hidden />
+
+            {/* Texture only in upper hero — bottom stays flat for seamless join */}
             <div
-              className="absolute -left-36 bottom-[-10%] h-[460px] w-[460px] rounded-full bg-[#3d2a6b]/16 blur-[130px]"
+              className="absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-primary/[0.04] to-transparent"
               aria-hidden
             />
             <div
-              className="absolute -right-28 bottom-[-6%] h-[400px] w-[400px] rounded-full bg-primary/10 blur-[115px]"
-              aria-hidden
-            />
-            <div
-              className="absolute right-[8%] top-[18%] h-[280px] w-[280px] rounded-full bg-[#1e3a6e]/8 blur-[100px]"
+              className="absolute -left-32 top-[5%] h-72 w-72 rounded-full bg-primary/[0.05] blur-[120px]"
               aria-hidden
             />
           </>
         ) : (
-          <div
-            className="absolute inset-0 bg-gradient-to-b from-[var(--hero-base)]/30 via-transparent to-bg/10"
-            aria-hidden
-          />
+          <>
+            <img
+              src={imageSrc}
+              alt=""
+              className="hero-bg-img absolute inset-0 h-full w-full object-cover transition-[filter,opacity] duration-300"
+              aria-hidden
+            />
+            <div
+              className="absolute inset-0 bg-gradient-to-b from-[var(--hero-base)]/30 via-transparent to-bg/10"
+              aria-hidden
+            />
+          </>
         )}
       </div>
 
       {!shouldReduceMotion ? (
         <motion.div
           style={{ y: overlayY }}
-          className="absolute inset-0 pointer-events-none -z-10 bg-gradient-to-b from-transparent via-transparent to-bg/12"
+          className={`absolute inset-0 pointer-events-none -z-10 ${
+            isDarkTheme
+              ? ""
+              : "bg-gradient-to-b from-transparent via-transparent to-bg/12"
+          }`}
           aria-hidden
         />
       ) : (
         <div
-          className="absolute inset-0 pointer-events-none -z-10 bg-gradient-to-b from-transparent to-bg/10"
+          className={`absolute inset-0 pointer-events-none -z-10 ${
+            isDarkTheme ? "" : "bg-gradient-to-b from-transparent to-bg/10"
+          }`}
           aria-hidden
         />
       )}
 
-      <div
-        className="absolute inset-x-0 bottom-0 h-20 -z-10 pointer-events-none bg-gradient-to-t from-bg to-transparent"
-        aria-hidden
-      />
+      {!isDarkTheme && (
+        <div
+          className="absolute inset-x-0 bottom-0 h-20 -z-10 pointer-events-none bg-gradient-to-t from-bg to-transparent"
+          aria-hidden
+        />
+      )}
 
       {!shouldReduceMotion ? (
         <motion.div

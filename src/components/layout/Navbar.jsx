@@ -258,7 +258,7 @@ export default function Navbar({
           isLandingTop
             ? "border-transparent bg-transparent shadow-none"
             : isHome
-              ? "border-b border-border/10 bg-[var(--hero-base)]/75 shadow-none backdrop-blur-xl"
+              ? "border-b border-border/10 bg-bg/75 shadow-none backdrop-blur-xl"
               : "border-b border-border/10 bg-bg/90 shadow-[0_1px_0_0_rgba(255,255,255,0.03)] backdrop-blur-md"
         }`}
       >
@@ -398,7 +398,7 @@ export default function Navbar({
               <div
                 className={`relative overflow-hidden rounded-b-2xl border-t backdrop-blur-2xl ${
                   isDarkTheme
-                    ? "border-white/10 bg-[#050816]/98"
+                    ? "border-white/10 bg-bg/98"
                     : "border-black/10 bg-white/98"
                 }`}
               >

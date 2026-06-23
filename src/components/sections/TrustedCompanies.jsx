@@ -104,7 +104,7 @@ function MarqueeRow({ data }) {
 
 export default function TrustedCompanies() {
   return (
-    <section className="relative overflow-hidden bg-transparent py-20 text-text transition-colors duration-300">
+    <section className="relative overflow-hidden bg-bg py-20 text-text transition-colors duration-300">
 
       {/* Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--grid-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid-line)_1px,transparent_1px)] bg-[size:120px_120px] opacity-20" />
