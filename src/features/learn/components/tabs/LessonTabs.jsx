@@ -1,6 +1,6 @@
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2,
   Download,
@@ -9,8 +9,19 @@ import {
   ArrowUpRight,
   Target,
   User,
+  Loader2,
+  Check,
+  BookOpen,
 } from "lucide-react";
 import { useNotesAutosave } from "@/features/learn/hooks/useNotesAutosave";
+import {
+  getLessonResources,
+  downloadResource,
+  getTranscriptLines,
+  loadLessonQA,
+  addLessonQuestion,
+  getReadingContent,
+} from "@/data/lessonContent";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -101,24 +112,21 @@ export const NotesPane = memo(function NotesPane({ trackId, lessonId }) {
   );
 });
 
-export function TranscriptPane({ lesson }) {
-  const lines = [
-    { t: "0:00", text: `In this lesson we'll cover ${lesson.title}.` },
-    { t: "0:42", text: "The first thing to know is the high-level intent — why this exists in production." },
-    { t: "1:38", text: "Let's pull up a real example from a system I've worked on." },
-    { t: "3:10", text: "Notice how the trade-off changes as load increases — that's the key insight." },
-    { t: "5:25", text: "A common failure mode is to skip this step. Here's what happens when you do." },
-    { t: "8:02", text: "Pause here and try it on your own. We'll regroup in the next clip." },
-    { t: "10:18", text: "If you got that working — congrats. Move on to the next lesson." },
-  ];
+export function TranscriptPane({ lesson, onSeek }) {
+  const lines = getTranscriptLines(lesson);
 
   return (
     <motion.div {...fadeIn} className="learn-pane">
       <p className="learn-pane-label">Transcript</p>
+      <p className="mb-3 text-xs text-muted">Click a timestamp to jump in the video.</p>
       <ul className="learn-transcript-list">
         {lines.map((l, i) => (
           <li key={i} className="learn-transcript-row">
-            <button type="button" className="learn-transcript-time">
+            <button
+              type="button"
+              onClick={() => onSeek?.(l.seconds)}
+              className="learn-transcript-time"
+            >
               {l.t}
             </button>
             <span className="learn-transcript-text">{l.text}</span>
@@ -130,75 +138,169 @@ export function TranscriptPane({ lesson }) {
 }
 
 export function ResourcesPane({ lesson }) {
-  const files = [
-    { label: `${lesson.title} — slides.pdf`, meta: "2.1 MB · PDF" },
-    { label: "Starter code repository", meta: "GitHub · Public" },
-    { label: "Recommended reading list", meta: "3 articles" },
-    { label: "Sandbox environment", meta: "Hosted · 1-click open" },
-  ];
+  const resources = getLessonResources(lesson);
+  const [downloading, setDownloading] = useState(null);
+  const [downloaded, setDownloaded] = useState({});
+
+  const handleDownload = async (resource) => {
+    setDownloading(resource.id);
+    await new Promise((r) => setTimeout(r, 400));
+    const ok = downloadResource(resource);
+    setDownloading(null);
+    if (ok) {
+      setDownloaded((prev) => ({ ...prev, [resource.id]: true }));
+      setTimeout(() => setDownloaded((prev) => ({ ...prev, [resource.id]: false })), 2000);
+    }
+  };
 
   return (
     <motion.div {...fadeIn} className="learn-pane">
       <p className="learn-pane-label">Lesson resources</p>
       <ul className="learn-resource-grid">
-        {files.map((f) => (
-          <li key={f.label} className="learn-resource-card">
-            <span className="learn-resource-icon">
-              <Download size={14} aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-semibold text-text">{f.label}</span>
-              <span className="block text-xs text-muted">{f.meta}</span>
-            </span>
-            <button type="button" className="learn-resource-btn">
-              Download
-            </button>
-          </li>
-        ))}
+        {resources.map((f) => {
+          const isLoading = downloading === f.id;
+          const justDone = downloaded[f.id];
+          return (
+            <li key={f.id} className="learn-resource-card">
+              <span className="learn-resource-icon">
+                <Download size={14} aria-hidden />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold text-text">{f.label}</span>
+                <span className="block text-xs text-muted">{f.meta}</span>
+              </span>
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() => handleDownload(f)}
+                className="learn-resource-btn"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : justDone ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" /> Done
+                  </>
+                ) : f.type === "link" ? (
+                  "Open"
+                ) : (
+                  "Download"
+                )}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </motion.div>
   );
 }
 
-export function QAPane({ lesson }) {
-  const threads = [
-    {
-      author: "Priya I.",
-      time: "2 hours ago",
-      text: `When applying ${lesson.title.toLowerCase()} in a multi-region setup, do we keep one writer or share writes?`,
-      replies: 3,
-    },
-    {
-      author: "Karan M.",
-      time: "yesterday",
-      text: "The example at 3:10 — would this still work if the upstream was eventually-consistent?",
-      replies: 5,
-    },
-  ];
+export function QAPane({ trackId, lessonId, lesson }) {
+  const [threads, setThreads] = useState(() => loadLessonQA(trackId, lessonId));
+  const [question, setQuestion] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setThreads(loadLessonQA(trackId, lessonId));
+    setQuestion("");
+  }, [trackId, lessonId]);
+
+  const handleAsk = async (e) => {
+    e.preventDefault();
+    if (!question.trim()) return;
+    setSubmitting(true);
+    await new Promise((r) => setTimeout(r, 350));
+    const next = addLessonQuestion(trackId, lessonId, question);
+    setThreads(next);
+    setQuestion("");
+    setSubmitting(false);
+  };
 
   return (
     <motion.div {...fadeIn} className="learn-pane">
       <p className="learn-pane-label">Questions from learners</p>
-      <div className="space-y-2.5">
-        {threads.map((t) => (
-          <div key={t.author} className="learn-qa-card">
-            <div className="flex items-center gap-2 text-xs text-muted">
-              <span className="font-bold text-text">{t.author}</span>
-              <span aria-hidden>·</span>
-              <span>{t.time}</span>
-            </div>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted">{t.text}</p>
-            <div className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary">
-              <MessagesSquare size={12} aria-hidden />
-              {t.replies} replies
-            </div>
-          </div>
-        ))}
+
+      <form onSubmit={handleAsk} className="learn-qa-form">
+        <textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder={`Ask a question about "${lesson.title}"…`}
+          rows={3}
+          className="learn-notes-input !mt-0"
+        />
+        <button
+          type="submit"
+          disabled={!question.trim() || submitting}
+          className="learn-ask-btn mt-2"
+        >
+          {submitting ? "Posting…" : "Post question"}
+          <ArrowRight size={13} aria-hidden />
+        </button>
+      </form>
+
+      <div className="mt-5 space-y-2.5">
+        <AnimatePresence initial={false}>
+          {threads.map((t) => (
+            <motion.div
+              key={t.id}
+              layout
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="learn-qa-card"
+            >
+              <div className="flex items-center gap-2 text-xs text-muted">
+                <span className="font-bold text-text">{t.author}</span>
+                <span aria-hidden>·</span>
+                <span>{t.time}</span>
+                {!t.seed && (
+                  <span className="rounded bg-primary-soft px-1.5 py-0.5 text-[10px] font-bold text-primary">
+                    New
+                  </span>
+                )}
+              </div>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted">{t.text}</p>
+              {t.replies > 0 && (
+                <div className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary">
+                  <MessagesSquare size={12} aria-hidden />
+                  {t.replies} replies
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
-      <button type="button" className="learn-ask-btn">
-        Ask a question
-        <ArrowRight size={13} aria-hidden />
-      </button>
+    </motion.div>
+  );
+}
+
+export function ReadingPane({ lesson }) {
+  const content = getReadingContent(lesson);
+
+  return (
+    <motion.div {...fadeIn} className="learn-pane space-y-4">
+      <div className="learn-reading-header">
+        <BookOpen className="h-5 w-5 text-primary" />
+        <div>
+          <p className="text-sm font-bold text-text">{content.title}</p>
+          <p className="text-xs text-muted">{content.duration} read · {content.courseTitle}</p>
+        </div>
+      </div>
+      {content.sections.map((section) => (
+        <div key={section.heading}>
+          <p className="learn-pane-label">{section.heading}</p>
+          {section.body && <p className="learn-pane-text">{section.body}</p>}
+          {section.bullets && (
+            <ul className="mt-2 space-y-1.5">
+              {section.bullets.map((b) => (
+                <li key={b} className="flex items-start gap-2 text-sm text-muted">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                  {b}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
     </motion.div>
   );
 }

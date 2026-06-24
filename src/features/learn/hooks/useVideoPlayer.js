@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 
-export function useVideoPlayer({ lesson, onEnded }) {
+export function useVideoPlayer({ lesson, onEnded, onRegisterSeek }) {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -137,6 +137,17 @@ export function useVideoPlayer({ lesson, onEnded }) {
     if (onEnded) onEnded();
   }, [onEnded]);
 
+  const seekTo = useCallback((seconds) => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.currentTime = Math.max(0, Math.min(v.duration || 0, seconds));
+    setShowControls(true);
+  }, []);
+
+  useEffect(() => {
+    onRegisterSeek?.(seekTo);
+  }, [onRegisterSeek, seekTo]);
+
   return {
     videoRef,
     containerRef,
@@ -163,5 +174,6 @@ export function useVideoPlayer({ lesson, onEnded }) {
     handleLoadedMetadata,
     handleTimeUpdate,
     handleEnded,
+    seekTo,
   };
 }

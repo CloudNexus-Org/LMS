@@ -11,7 +11,7 @@ function formatTime(s) {
 
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
-export function VideoPlayer({ src, lesson, onEnded }) {
+export function VideoPlayer({ src, lesson, onEnded, onRegisterSeek }) {
   const {
     videoRef,
     containerRef,
@@ -38,7 +38,7 @@ export function VideoPlayer({ src, lesson, onEnded }) {
     handleLoadedMetadata,
     handleTimeUpdate,
     handleEnded,
-  } = useVideoPlayer({ lesson, onEnded });
+  } = useVideoPlayer({ lesson, onEnded, onRegisterSeek });
 
   return (
     <div
