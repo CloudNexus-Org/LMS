@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import ProfileHeroBanner from "@/components/profile/ProfileHeroBanner";
+import { getResumeUrlForTrack } from "@/features/learn/learningSession";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -1113,7 +1114,7 @@ export default function ProfilePage() {
                             />
                           </div>
                         </div>
-                        <Link to={`/learn/${course.trackId}`} className="profile-course-cta mt-4">
+                        <Link to={getResumeUrlForTrack(course.trackId)} className="profile-course-cta mt-4">
                           Continue learning
                           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                         </Link>

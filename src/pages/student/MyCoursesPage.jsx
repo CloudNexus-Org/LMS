@@ -12,6 +12,7 @@ import {
 
 import EmptyState from "@/components/ui/EmptyState";
 import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
+import { getResumeUrlForTrack } from "@/features/learn/learningSession";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -315,7 +316,7 @@ function MyCourseCard({ course, index }) {
             )}
 
             <Link
-              to={`/learn/${course.trackId}`}
+              to={getResumeUrlForTrack(course.trackId)}
               className="
                 inline-flex h-8 shrink-0 items-center justify-center gap-1
                 rounded-lg bg-primary px-3.5

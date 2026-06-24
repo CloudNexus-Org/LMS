@@ -12,6 +12,7 @@ import {
   PlayCircle,
   TrendingUp,
 } from "lucide-react";
+import { getContinueLearningUrl } from "@/features/learn/learningSession";
 
 const STATS = [
   {
@@ -59,9 +60,9 @@ const COURSE_PROGRESS = [
 ];
 
 const LEARNING_ACTIONS = [
-  { label: "Continue Course", to: "/learn/cloud" },
+  { label: "Continue Course", getTo: getContinueLearningUrl },
   { label: "Join Live Class", to: "/student/notifications" },
-  { label: "Submit Assignment", to: "/student/courses" },
+  { label: "Submit Assignment", to: "/student/assignments" },
   { label: "View Certificates", to: "/student/certificates" },
 ];
 
@@ -148,7 +149,7 @@ export default function StudentDashboardPage() {
         {STATS.map((item) => {
           const Icon = item.icon;
           return (
-            <Card key={item.title} className={`dashboard-kpi-card group p-3.5 ${item.accent}`}>
+            <Card key={item.title} className={`dashboard-kpi-card p-3.5 ${item.accent}`}>
               <div className="flex items-center gap-2.5">
                 <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconColor}`}>
                   <Icon className="h-4 w-4" />
@@ -157,7 +158,6 @@ export default function StudentDashboardPage() {
                   <p className="text-xl font-bold leading-none text-text">{item.count}</p>
                   <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-muted">{item.title}</p>
                 </div>
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
               </div>
               <p className="mt-2 text-[11px] text-muted">{item.subtitle}</p>
             </Card>
@@ -174,7 +174,11 @@ export default function StudentDashboardPage() {
           </div>
           <div className="space-y-2">
             {LEARNING_ACTIONS.map((action) => (
-              <Link key={action.label} to={action.to} className="dashboard-action-btn group">
+              <Link
+                key={action.label}
+                to={action.getTo ? action.getTo() : action.to}
+                className="dashboard-action-btn group"
+              >
                 <div className="flex min-w-0 items-center gap-2.5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <PlayCircle className="h-4 w-4" />

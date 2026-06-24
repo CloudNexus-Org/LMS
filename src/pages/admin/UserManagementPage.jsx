@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import {
   Search, Shield, Edit3, Ban, ShieldCheck,
-  UserPlus, Users, X, Mail, Sparkles, ArrowUpRight,
+  UserPlus, Users, X, Mail,
   UserCheck, UserX, Download, Clock,
-  Eye, BarChart2
+  Eye, BarChart2,
 } from 'lucide-react';
 
 const USERS = [
@@ -55,134 +55,96 @@ export default function UserManagementPage() {
   const banned = USERS.filter(u => u.status === 'Banned').length;
   const mentors = USERS.filter(u => u.role === 'Mentor').length;
 
+  const stats = [
+    {
+      label: 'Total users',
+      value: total,
+      meta: '+284 this month',
+      metaTone: 'success',
+      icon: Users,
+      iconColor: 'text-primary',
+    },
+    {
+      label: 'Active accounts',
+      value: active,
+      meta: `${Math.round((active / total) * 100)}% of directory`,
+      metaTone: 'muted',
+      icon: UserCheck,
+      iconColor: 'text-success',
+    },
+    {
+      label: 'Mentors',
+      value: mentors,
+      meta: 'Teaching roles',
+      metaTone: 'muted',
+      icon: Shield,
+      iconColor: 'text-accent',
+    },
+    {
+      label: 'Banned',
+      value: banned,
+      meta: 'Requires review',
+      metaTone: banned > 0 ? 'warning' : 'muted',
+      icon: UserX,
+      iconColor: 'text-warning',
+    },
+  ];
+
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
+    <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
 
-      {/* ── HEADER ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
-            <Sparkles className="h-3 w-3" /> User Management
-          </div>
-          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Platform Users</h1>
-          <p className="text-muted mt-1 font-medium">Manage students, mentors, and platform administrators.</p>
+          <h1 className="text-[32px] font-bold tracking-tight text-text sm:text-[36px]">
+            User Management
+          </h1>
+          <p className="mt-1 text-[15px] text-muted">
+            Review accounts, roles, and access for students, mentors, and administrators.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="
-                  relative
-                  inline-flex
-
-                  h-[48px]
-                  w-full
-                  sm:w-auto
-                  min-w-[80px]
-
-                  items-center
-                  justify-center
-
-                  border
-                  border-border
-                  dark:border-border
-
-                  bg-white
-                  dark:bg-white
-
-                  px-6
-
-                  text-[14px]
-                  font-semibold
-
-                  text-black
-                  dark:text-black
-
-                  overflow-hidden
-                  rounded-lg
-
-                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
-                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
-
-                  transition-all
-                  duration-300
-
-                  hover:-translate-y-[2px]
-                  hover:border-primary/40
-                  dark:hover:border-primary/60
-                ">
-            <Download className="h-4 w-4" /> Export
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted transition-colors hover:text-text"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
           </button>
-          <button className="
-                  relative
-                  inline-flex
-
-                  h-[48px]
-                  w-full
-                  sm:w-auto
-                  min-w-[80px]
-
-                  items-center
-                  justify-center
-
-                  border
-                  border-border
-                  dark:border-border
-
-                  bg-primary
-                  dark:bg-primary
-
-                  px-6
-
-                  text-[14px]
-                  font-semibold
-
-                  text-white
-                  dark:text-white
-
-                  overflow-hidden
-                  rounded-lg
-
-                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
-                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
-
-                  transition-all
-                  duration-300
-
-                  hover:-translate-y-[2px]
-                  hover:border-primary/40
-                  dark:hover:border-primary/60
-                ">
-            <UserPlus className="h-4 w-4" /> Add User
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-primary-hover"
+          >
+            <UserPlus className="h-4 w-4" />
+            Add User
           </button>
         </div>
       </div>
 
-      {/* ── KPI STRIP ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Users', value: total, icon: Users, color: 'text-primary', bg: 'bg-primary/10', trend: '+284 this month' },
-          { label: 'Active Users', value: active, icon: UserCheck, color: 'text-success', bg: 'bg-success/10', trend: '' },
-          { label: 'Active Mentors', value: mentors, icon: Shield, color: 'text-accent', bg: 'bg-accent/10', trend: '' },
-          { label: 'Banned Accounts', value: banned, icon: UserX, color: 'text-danger', bg: 'bg-danger/10', trend: '' },
-        ].map(kpi => {
-          const Icon = kpi.icon;
+      <section className="admin-stat-strip" aria-label="User directory statistics">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
           return (
-            <div key={kpi.label} className="bg-surface border border-border rounded-[5px] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
-              <div className="flex items-center justify-between mb-3">
-                <div className={`h-9 w-9 rounded-[5px] ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                {kpi.trend && (
-                  <span className="text-[10px] font-bold text-success bg-success/10 px-2 py-0.5 rounded-[5px] flex items-center gap-0.5">
-                    <ArrowUpRight className="h-3 w-3" />{kpi.trend}
-                  </span>
-                )}
+            <div key={stat.label} className="admin-stat-cell">
+              <div className={`admin-stat-icon ${stat.iconColor}`}>
+                <Icon className="h-4 w-4" />
               </div>
-              <p className="text-2xl font-display font-bold text-text">{kpi.value}</p>
-              <p className="text-xs font-bold text-muted mt-0.5">{kpi.label}</p>
+              <div className="min-w-0">
+                <p className="admin-stat-value">{stat.value}</p>
+                <p className="admin-stat-label">{stat.label}</p>
+                <p className={`admin-stat-meta ${
+                  stat.metaTone === 'muted'
+                    ? 'admin-stat-meta-muted'
+                    : stat.metaTone === 'warning'
+                      ? 'admin-stat-meta-warning'
+                      : ''
+                }`}>
+                  {stat.meta}
+                </p>
+              </div>
             </div>
           );
         })}
-      </div>
-      
+      </section>
 
       {/* ── TABLE CARD ── */}
       <div className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden">

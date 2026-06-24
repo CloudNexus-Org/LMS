@@ -1,5 +1,6 @@
 import { ChevronLeft, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { getContinueLearningUrl } from '@/features/learn/learningSession';
 
 const QUIZ_DATA = {
   title: 'React Hooks Fundamentals',
@@ -62,9 +63,12 @@ export default function QuizResultsPage() {
             You got {QUIZ_DATA.correct} out of {QUIZ_DATA.totalQuestions} correct.
           </p>
 
-          <button className="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover shadow-md transition-colors">
+          <Link
+            to={getContinueLearningUrl()}
+            className="block w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover shadow-md transition-colors text-center"
+          >
             {passed ? 'Continue to Next Lesson' : 'Retake Quiz'}
-          </button>
+          </Link>
         </div>
 
         {/* Analytics & Strengths */}

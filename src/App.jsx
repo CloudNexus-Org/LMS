@@ -50,6 +50,9 @@ const ProfilePage = lazy(() =>
 const CertificatesPage = lazy(() =>
   import('@/pages/student/CertificatesPage')
 );
+const CertificateDetailPage = lazy(() =>
+  import('@/pages/student/CertificateDetailPage')
+);
 const StudentWishlistPage = lazy(() =>
   import('@/pages/student/StudentWishlistPage')
 );
@@ -61,6 +64,15 @@ const ProfileSettingsPage = lazy(() =>
 );
 const BillingSubscriptionPage = lazy(() =>
   import('@/pages/student/BillingSubscriptionPage')
+);
+const CoursePaymentPage = lazy(() =>
+  import('@/pages/student/CoursePaymentPage')
+);
+const PendingAssignmentsPage = lazy(() =>
+  import('@/pages/student/PendingAssignmentsPage')
+);
+const StudentLearnRedirect = lazy(() =>
+  import('@/pages/student/StudentLearnRedirect')
 );
 const NotificationsPage = lazy(() =>
   import('@/pages/student/NotificationsPage')
@@ -196,17 +208,17 @@ function App() {
                 />
                 <Route
                   path="learn"
-                  element={
-                    <Navigate
-                      to="/learn/cloud"
-                      replace
-                    />
-                  }
+                  element={<StudentLearnRedirect />}
                 />
 
                 <Route
                   path="certificates"
                   element={<CertificatesPage />}
+                />
+
+                <Route
+                  path="certificates/:id"
+                  element={<CertificateDetailPage />}
                 />
 
                 <Route
@@ -227,6 +239,16 @@ function App() {
                 <Route
                   path="billing"
                   element={<BillingSubscriptionPage />}
+                />
+
+                <Route
+                  path="payment"
+                  element={<CoursePaymentPage />}
+                />
+
+                <Route
+                  path="assignments"
+                  element={<PendingAssignmentsPage />}
                 />
 
                 <Route
