@@ -183,10 +183,6 @@ function buildSnapshot() {
   };
 }
 
-function formatLastUpdated(date) {
-  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
-
 function Card({ className = "", children }) {
   return <div className={`dashboard-card ${className}`}>{children}</div>;
 }
@@ -215,7 +211,6 @@ function MiniSparkline({ data }) {
 export default function MentorDashboardPage() {
   const [snapshot, setSnapshot] = useState(() => buildSnapshot());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const [chartTab, setChartTab] = useState("week");
 
   const handleRefresh = useCallback(async () => {
@@ -223,7 +218,6 @@ export default function MentorDashboardPage() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 650));
       setSnapshot(buildSnapshot());
-      setLastUpdated(new Date());
     } finally {
       setIsRefreshing(false);
     }
@@ -313,25 +307,24 @@ export default function MentorDashboardPage() {
         </div>
 
         <div className="dashboard-analytics-status">
-          <p className="hidden text-[11px] text-muted sm:block">
-            Updated {formatLastUpdated(lastUpdated)}
-          </p>
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="dashboard-header-btn dashboard-header-btn-outline disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-            {isRefreshing ? "Refreshing…" : "Refresh"}
-          </button>
-          <Link
-            to="/mentor/upload"
-            className="dashboard-header-btn dashboard-header-btn-primary"
-          >
-            <Upload className="h-3.5 w-3.5" />
-            Create Course
-          </Link>
+          <div className="dashboard-analytics-actions">
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Refreshing…" : "Refresh"}
+            </button>
+            <Link
+              to="/mentor/upload"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-primary-hover"
+            >
+              <Upload className="h-4 w-4" />
+              Create Course
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -12,6 +12,13 @@ import AuthPrimaryButton from "@/components/auth/AuthPrimaryButton";
 import AuthAutofillTrap from "@/components/auth/AuthAutofillTrap";
 import { authItemMotion } from "@/components/auth/authMotion";
 import useAuthStore from "@/store/useAuthStore";
+import {
+  trimLoginValues,
+  validateLoginField,
+  validateLoginForm,
+} from "@/lib/authValidation";
+
+const LOGIN_FIELDS = ["email", "password"];
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -20,48 +27,57 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [touched, setTouched] = useState({});
 
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const isFormValid = useMemo(
+    () => validateLoginForm(formData).isValid,
+    [formData]
+  );
 
-    if (errors[e.target.name]) {
-      setErrors({
-        ...errors,
-        [e.target.name]: "",
-      });
+  const setFieldError = (name, nextFormData) => {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateLoginField(name, nextFormData),
+    }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const nextFormData = { ...formData, [name]: value };
+    setFormData(nextFormData);
+
+    if (touched[name]) {
+      setFieldError(name, nextFormData);
+    } else if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setFieldError(name, formData);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    const trimmed = trimLoginValues(formData);
+    const { errors: submitErrors, isValid } = validateLoginForm(trimmed);
+
+    setTouched(
+      LOGIN_FIELDS.reduce((acc, field) => ({ ...acc, [field]: true }), {})
+    );
+    setErrors(submitErrors);
+
+    if (!isValid) return;
 
     setIsLoading(true);
 
@@ -70,8 +86,9 @@ export default function LoginPage() {
 
       login(
         {
-          username: formData.username,
-          fullName: formData.username,
+          username: trimmed.email,
+          email: trimmed.email,
+          fullName: trimmed.email,
           role: "student",
           rememberMe,
         },
@@ -87,22 +104,24 @@ export default function LoginPage() {
       title="Sign In"
       subtitle="Enter your credentials to access your account"
     >
-      <form onSubmit={handleSubmit} autoComplete="off" className="relative space-y-3.5">
+      <form onSubmit={handleSubmit} autoComplete="off" className="relative space-y-3.5" noValidate>
         <AuthAutofillTrap />
         <SocialAuthButtons delay={0.05} />
 
         <AuthDivider delay={0.1} />
 
         <AuthInput
-          label="Username"
-          name="username"
-          value={formData.username}
+          label="E-mail Address"
+          name="email"
+          type="email"
+          inputMode="email"
+          value={formData.email}
           onChange={handleChange}
-          placeholder="Enter username"
+          placeholder="Enter email address"
           required
-          prefix="@"
-          error={errors.username}
+          error={errors.email}
           delay={0.14}
+          inputProps={{ onBlur: handleBlur }}
         />
 
         <AuthPasswordField
@@ -111,11 +130,13 @@ export default function LoginPage() {
           label="Password"
           value={formData.password}
           onChange={handleChange}
-          placeholder="Enter Password"
+          onBlur={handleBlur}
+          placeholder="Enter password"
           showPassword={showPassword}
           onToggle={() => setShowPassword(!showPassword)}
           error={errors.password}
           delay={0.18}
+          autoComplete="current-password"
           extraAction={
             <Link
               to="/forgot-password"
@@ -146,7 +167,7 @@ export default function LoginPage() {
           <span className="text-[13px] text-muted">Remember me</span>
         </motion.label>
 
-        <AuthPrimaryButton delay={0.26} disabled={isLoading}>
+        <AuthPrimaryButton delay={0.26} disabled={isLoading || !isFormValid}>
           {isLoading ? (
             <>
               <Loader2 size={18} className="animate-spin" />

@@ -24,6 +24,10 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  csvFilename,
+  downloadMultiSectionCsv,
+} from "@/lib/exportCsv";
 
 function MiniSparkline({ data, className = "" }) {
   const w = 88;
@@ -337,14 +341,9 @@ function buildDashboardSnapshot(
   };
 }
 
-function formatLastUpdated(date) {
-  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
-
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState("week");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const [snapshot, setSnapshot] = useState(() => buildDashboardSnapshot());
   const [chartKey, setChartKey] = useState(0);
 
@@ -353,7 +352,6 @@ export default function AdminDashboardPage() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 700));
       setSnapshot(buildDashboardSnapshot());
-      setLastUpdated(new Date());
       setChartKey((key) => key + 1);
     } finally {
       setIsRefreshing(false);
@@ -454,6 +452,44 @@ export default function AdminDashboardPage() {
     },
   ];
 
+  const handleExportDashboard = () => {
+    const weekRevenue = snapshot.revenueData.week;
+    downloadMultiSectionCsv(csvFilename("admin-dashboard"), [
+      {
+        title: "Platform Overview KPIs",
+        headers: ["Metric", "Value", "Detail"],
+        rows: kpis.map((k) => [k.title, k.count, k.subtitle]),
+      },
+      {
+        title: "Revenue Trend (Week)",
+        headers: ["Day", "Course Sales (k)", "Mentor Payouts (k)"],
+        rows: weekRevenue.map((d) => [d.month, d.s, d.m]),
+      },
+      {
+        title: "System Health",
+        headers: ["Component", "Value %", "Status"],
+        rows: systemHealth.map((s) => [s.label, s.value, s.status]),
+      },
+      {
+        title: "Action Items",
+        headers: ["Title", "Description", "Type"],
+        rows: actionItems.map((a) => [a.title, a.desc, a.type]),
+      },
+      {
+        title: "Top Performing Courses",
+        headers: ["Course", "Mentor", "Students", "Rating", "Revenue", "Trend"],
+        rows: topCourses.map((c) => [
+          c.name,
+          c.mentor,
+          c.students,
+          c.rating,
+          c.revenue,
+          c.trend,
+        ]),
+      },
+    ]);
+  };
+
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
       {/* Compact analytics header — matches student dashboard */}
@@ -495,22 +531,25 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="dashboard-analytics-status">
-          <p className="hidden text-[11px] text-muted sm:block">
-            Updated {formatLastUpdated(lastUpdated)}
-          </p>
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="dashboard-header-btn dashboard-header-btn-outline disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-            {isRefreshing ? "Refreshing…" : "Refresh"}
-          </button>
-          <button type="button" className="dashboard-header-btn dashboard-header-btn-primary">
-            <Download className="h-3.5 w-3.5" />
-            Export
-          </button>
+          <div className="dashboard-analytics-actions">
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Refreshing…" : "Refresh"}
+            </button>
+            <button
+              type="button"
+              onClick={handleExportDashboard}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-primary-hover"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </button>
+          </div>
         </div>
       </section>
 

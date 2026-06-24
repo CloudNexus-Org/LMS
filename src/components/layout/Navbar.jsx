@@ -1,19 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Menu,
-  X,
-  ChevronDown,
-  Users,
-  Compass,
-  GraduationCap,
-  BarChart2,
-  MessageSquare,
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 import ThemeToggle from "../ui/ThemeToggle";
-import Button from "../ui/Button";
 import CartButton from "../courses/CartButton";
 import { SHELL_MAX_WIDTH, SHELL_PADDING } from "../ui/Container";
 
@@ -25,98 +15,18 @@ import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 import { scrollToSection as scrollSectionUtil } from "../../utils/scroll";
 
 const DEFAULT_LINKS = [
-  {
-    label: "Explore",
-    items: [
-      {
-        icon: <Compass size={16} />,
-        label: "How it works",
-        description: "See how Cloud Nexus helps you grow",
-        href: "#how-it-works",
-      },
-      {
-        icon: <BarChart2 size={16} />,
-        label: "Dashboard preview",
-        description: "Get a feel for the learning experience",
-        href: "#dashboard",
-      },
-    ],
-  },
-  {
-    label: "Courses",
-    href: "/courses",
-  },
-  {
-    label: "Mentors",
-    items: [
-      {
-        icon: <GraduationCap size={16} />,
-        label: "Meet the mentors",
-        description: "Learn from top industry experts",
-        href: "/mentors",
-      },
-      {
-        icon: <Users size={16} />,
-        label: "Community",
-        description: "Join thousands of learners worldwide",
-        href: "#stats",
-      },
-    ],
-  },
-  {
-    label: "Contact",
-    href: "#contact",
-  },
+  { label: "Explore", href: "#how-it-works" },
+  { label: "Courses", href: "/courses" },
+  { label: "Mentors", href: "/mentors" },
+  { label: "Contact", href: "#contact" },
 ];
 
 const NAV_HEIGHT = 64;
 
-function DropdownPanel({ items, onSelect }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 6, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 6, scale: 0.98 }}
-      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-      className="absolute top-[calc(100%+10px)] left-1/2 z-50 min-w-[260px] -translate-x-1/2 rounded-xl border border-border bg-elevated p-1.5 shadow-2xl"
-    >
-      <div className="absolute -top-[5px] left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-l border-t border-border bg-elevated" />
-      {items.map((item) => (
-        <a
-          key={item.label}
-          href={item.href}
-          onClick={(e) => onSelect(e, item.href)}
-          className="group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors duration-150 hover:bg-primary/5"
-        >
-          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-            {item.icon}
-          </span>
-          <span className="flex flex-col gap-0.5">
-            <span className="text-[13px] font-medium leading-none text-text">
-              {item.label}
-            </span>
-            <span className="text-[12px] leading-snug text-muted">
-              {item.description}
-            </span>
-          </span>
-        </a>
-      ))}
-    </motion.div>
-  );
-}
-
 function collectSectionHrefs(links) {
-  const hrefs = [];
-  for (const link of links) {
-    if (link.items) {
-      for (const item of link.items) {
-        if (item.href?.startsWith("#")) hrefs.push(item.href);
-      }
-    } else if (link.href?.startsWith("#")) {
-      hrefs.push(link.href);
-    }
-  }
-  return hrefs;
+  return links
+    .map((link) => link.href)
+    .filter((href) => href?.startsWith("#"));
 }
 
 export default function Navbar({
@@ -124,13 +34,10 @@ export default function Navbar({
   showAuthButtons = true,
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const [openMobileItem, setOpenMobileItem] = useState(null);
   const [activeSection, setActiveSection] = useState("");
   const [logoFailed, setLogoFailed] = useState(false);
 
   const pendingScrollRef = useRef(null);
-  const dropdownTimerRef = useRef(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -152,6 +59,13 @@ export default function Navbar({
     if (ok) setActiveSection(href);
     return ok;
   }, []);
+
+  const isLinkActive = (link) => {
+    if (link.href?.startsWith("/")) {
+      return location.pathname === link.href;
+    }
+    return isHome && link.href === activeSection;
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -195,17 +109,9 @@ export default function Navbar({
     };
   }, [isMobileMenuOpen]);
 
-  useEffect(() => {
-    const handler = () => setOpenDropdown(null);
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, []);
-
   const handleNavClick = (e, href) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
-    setOpenDropdown(null);
-    setOpenMobileItem(null);
 
     if (href?.startsWith("/")) {
       navigate(href);
@@ -220,16 +126,12 @@ export default function Navbar({
     }
   };
 
-  const handleMouseEnter = (label) => {
-    clearTimeout(dropdownTimerRef.current);
-    setOpenDropdown(label);
-  };
-
-  const handleMouseLeave = () => {
-    dropdownTimerRef.current = setTimeout(() => setOpenDropdown(null), 120);
-  };
-
   const isLandingTop = isHome && !isScrolled;
+
+  const linkClassName = (isActive) =>
+    `inline-flex items-center rounded-md px-3 py-2 text-[14px] font-normal tracking-[-0.01em] transition-colors duration-150 ${
+      isActive ? "text-text" : "text-muted hover:text-text"
+    }`;
 
   return (
     <>
@@ -278,65 +180,17 @@ export default function Navbar({
 
           <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 lg:flex">
             {navLinks.map((link) => {
-              const hasDropdown = !!link.items;
-              const isOpen = openDropdown === link.label;
-              const isActive = hasDropdown
-                ? link.items.some(
-                    (item) =>
-                      item.href === activeSection ||
-                      (item.href?.startsWith("/") &&
-                        location.pathname === item.href)
-                  )
-                : link.href?.startsWith("/")
-                  ? location.pathname === link.href
-                  : isHome && link.href === activeSection;
+              const isActive = isLinkActive(link);
 
               return (
-                <div
+                <a
                   key={link.label}
-                  className="relative"
-                  onMouseEnter={() => hasDropdown && handleMouseEnter(link.label)}
-                  onMouseLeave={() => hasDropdown && handleMouseLeave()}
-                  onClick={(e) => e.stopPropagation()}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={linkClassName(isActive)}
                 >
-                  {hasDropdown ? (
-                    <button
-                      type="button"
-                      className={`inline-flex items-center gap-1 rounded-md px-3 py-2 text-[14px] font-normal tracking-[-0.01em] transition-colors duration-150 ${
-                        isActive || isOpen
-                          ? "text-text"
-                          : "text-muted hover:text-text"
-                      }`}
-                    >
-                      {link.label}
-                      <ChevronDown
-                        size={13}
-                        className={`transition-transform duration-200 ${
-                          isOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                  ) : (
-                    <a
-                      href={link.href}
-                      onClick={(e) => handleNavClick(e, link.href)}
-                      className={`inline-flex items-center rounded-md px-3 py-2 text-[14px] font-normal tracking-[-0.01em] transition-colors duration-150 ${
-                        isActive ? "text-text" : "text-muted hover:text-text"
-                      }`}
-                    >
-                      {link.label}
-                    </a>
-                  )}
-
-                  <AnimatePresence>
-                    {hasDropdown && isOpen && (
-                      <DropdownPanel
-                        items={link.items}
-                        onSelect={handleNavClick}
-                      />
-                    )}
-                  </AnimatePresence>
-                </div>
+                  {link.label}
+                </a>
               );
             })}
           </div>
@@ -346,21 +200,13 @@ export default function Navbar({
             <ThemeToggle className="hidden sm:inline-flex" />
 
             {showAuthButtons && (
-              <div className="hidden items-center gap-5 lg:flex">
+              <div className="hidden items-center lg:flex">
                 <Link
                   to="/login"
                   className="px-1 text-[14px] font-normal text-muted transition-colors hover:text-text"
                 >
                   Log in
                 </Link>
-                <Button
-                  to="/signup"
-                  variant="primary"
-                  size="md"
-                  className="bg-primary px-5 shadow-none hover:bg-primary-hover"
-                >
-                  Get Started
-                </Button>
               </div>
             )}
 
@@ -406,109 +252,30 @@ export default function Navbar({
 
                   <div className="flex flex-col gap-2">
                     {navLinks.map((link, index) => {
-                      const hasDropdown = !!link.items;
-                      const isExpanded = openMobileItem === link.label;
-                      const isActive = hasDropdown
-                        ? link.items.some(
-                            (item) =>
-                              item.href === activeSection ||
-                              (item.href?.startsWith("/") &&
-                                location.pathname === item.href)
-                          )
-                        : link.href?.startsWith("/")
-                          ? location.pathname === link.href
-                          : activeSection === link.href;
-
-                      if (!hasDropdown) {
-                        return (
-                          <motion.a
-                            key={link.label}
-                            href={link.href}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            onClick={(e) => handleNavClick(e, link.href)}
-                            className={`flex items-center gap-3 rounded-xl border px-5 py-4 text-[15px] font-medium transition-colors ${
-                              isDarkTheme
-                                ? "border-white/10 bg-white/[0.03] text-white"
-                                : "border-black/10 bg-black/[0.02] text-black"
-                            } ${isActive ? "border-primary text-primary" : ""}`}
-                          >
-                            <MessageSquare size={16} className="text-primary" />
-                            {link.label}
-                          </motion.a>
-                        );
-                      }
+                      const isActive = isLinkActive(link);
 
                       return (
-                        <motion.div
+                        <motion.a
                           key={link.label}
+                          href={link.href}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className="overflow-hidden rounded-xl border border-border/80"
+                          onClick={(e) => handleNavClick(e, link.href)}
+                          className={`flex items-center rounded-xl border px-5 py-4 text-[15px] font-medium transition-colors ${
+                            isDarkTheme
+                              ? "border-white/10 bg-white/[0.03] text-white"
+                              : "border-black/10 bg-black/[0.02] text-black"
+                          } ${isActive ? "border-primary text-primary" : ""}`}
                         >
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setOpenMobileItem((prev) =>
-                                prev === link.label ? null : link.label
-                              )
-                            }
-                            className={`flex w-full items-center justify-between px-5 py-4 text-left text-[15px] font-medium transition-colors ${
-                              isDarkTheme
-                                ? "bg-white/[0.03] text-white"
-                                : "bg-black/[0.02] text-black"
-                            } ${isActive ? "text-primary" : ""}`}
-                          >
-                            <span>{link.label}</span>
-                            <ChevronDown
-                              size={16}
-                              className={`transition-transform duration-300 ${
-                                isExpanded ? "rotate-180" : ""
-                              }`}
-                            />
-                          </button>
-
-                          <AnimatePresence>
-                            {isExpanded && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.25 }}
-                                className="overflow-hidden border-t border-border/60"
-                              >
-                                {link.items.map((item) => (
-                                  <a
-                                    key={item.label}
-                                    href={item.href}
-                                    onClick={(e) => handleNavClick(e, item.href)}
-                                    className="flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-primary/5"
-                                  >
-                                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-                                      {item.icon}
-                                    </span>
-                                    <span>
-                                      <span className="block text-[14px] font-medium text-text">
-                                        {item.label}
-                                      </span>
-                                      <span className="mt-0.5 block text-[12px] text-muted">
-                                        {item.description}
-                                      </span>
-                                    </span>
-                                  </a>
-                                ))}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
+                          {link.label}
+                        </motion.a>
                       );
                     })}
                   </div>
 
                   {showAuthButtons && (
-                    <div className="mt-7 flex flex-col items-center gap-3">
+                    <div className="mt-7 flex justify-center">
                       <Link
                         to="/login"
                         onClick={() => setIsMobileMenuOpen(false)}
@@ -516,16 +283,6 @@ export default function Navbar({
                       >
                         Log in
                       </Link>
-                      <Button
-                        to="/signup"
-                        variant="primary"
-                        size="lg"
-                        fullWidth
-                        className="bg-primary shadow-none hover:bg-primary-hover"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        Get Started
-                      </Button>
                     </div>
                   )}
                 </div>
