@@ -3,923 +3,408 @@ import {
   User,
   Lock,
   Bell,
-  UploadCloud,
-  CheckCircle,
   Shield,
-  Camera,
-  Sparkles,
-  ChevronRight,
-  Monitor,
+  Pencil,
+  CheckCircle,
   Sun,
+  Monitor,
   Smartphone,
+  Trash2,
 } from "lucide-react";
-import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 
 const TABS = [
-  { id: "general", label: "General Profile", icon: User },
-  { id: "security", label: "Security & Login", icon: Lock },
-  { id: "preferences", label: "Preferences", icon: Bell },
+  { id: "general", label: "My Profile", icon: User },
+  { id: "security", label: "Password & Security", icon: Lock },
+  { id: "preferences", label: "Notifications", icon: Bell },
 ];
 
+const PROFILE = {
+  firstName: "Alex",
+  lastName: "Chen",
+  email: "alex.chen@example.com",
+  phone: "+44 7700 900123",
+  bio: "Frontend developer learning advanced cloud architecture and scalable system design.",
+  role: "Student · Frontend Developer",
+  location: "Leeds, United Kingdom",
+  country: "United Kingdom",
+  city: "Leeds, East London",
+  postal: "LS1 4DY",
+  timezone: "GMT (UTC+0)",
+  avatar:
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+};
+
+function PanelCard({ title, onEdit, children, action }) {
+  return (
+    <div className="settings-panel-card">
+      {(title || onEdit || action) && (
+        <div className="settings-panel-header">
+          {title ? <h3 className="settings-panel-title">{title}</h3> : <span />}
+          {action}
+          {onEdit && (
+            <button type="button" className="settings-edit-btn" onClick={onEdit}>
+              <Pencil className="h-3.5 w-3.5" />
+              Edit
+            </button>
+          )}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function Field({ label, value, span }) {
+  return (
+    <div className={span ? "settings-field-span" : undefined}>
+      <span className="settings-field-label">{label}</span>
+      <p className="settings-field-value">{value}</p>
+    </div>
+  );
+}
+
 export default function ProfileSettingsPage() {
-  const isDark = useIsDarkTheme();
   const [activeTab, setActiveTab] = useState("general");
   const [isSaved, setIsSaved] = useState(false);
-
-  const cardBg = isDark ? "bg-[#0d111d]" : "bg-white";
-  const cardBorder = isDark ? "border-white/10" : "border-gray-200";
-  const surfaceBg = isDark ? "bg-[#0f172a]" : "bg-gray-50";
-  const textPrimary = isDark ? "text-white" : "text-slate-900";
-  const textSecondary = isDark ? "text-white/60" : "text-slate-600";
-  const inputBg = isDark ? "bg-[#0f172a]" : "bg-gray-50";
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [editingPersonal, setEditingPersonal] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(false);
 
   const handleSave = (e) => {
     e.preventDefault();
     setIsSaved(true);
-
-    setTimeout(() => {
-      setIsSaved(false);
-    }, 3000);
+    setEditingProfile(false);
+    setEditingPersonal(false);
+    setEditingAddress(false);
+    setTimeout(() => setIsSaved(false), 3000);
   };
 
   return (
-    <div className="min-h-screen bg-bg text-text mx-auto max-w-7xl px-1 sm:px-2">
-
-      {/* HEADER */}
-      <div className="mb-7">
-        <h1
-          className={`
-            text-[42px]
-            sm:text-[42px]
-            font-black
-            leading-[0.95]
-            tracking-[-0.05em]
-            ${textPrimary}
-          `}
-        >
+    <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-text font-display sm:text-[28px]">
           Account Settings
         </h1>
-
-        <p
-          className={`
-            mt-3
-            text-[20px]
-            font-medium
-            leading-7
-            ${textSecondary}
-          `}
-        >
-          Manage your identity, preferences,
-          account privacy and learning experience.
+        <p className="mt-1 text-sm text-muted">
+          Manage your profile, security, and notification preferences.
         </p>
       </div>
 
-      {/* MAIN */}
-      <div className="grid gap-8 xl:grid-cols-[300px_1fr]">
-
-        {/* SIDEBAR */}
-        <div
-          className={`
-            h-fit
-            rounded-[5px]
-            border
-            ${cardBorder}
-            ${cardBg}
-            p-4
-            shadow-sm
-          `}
-        >
-
-          {/* PROFILE MINI CARD */}
-          <div
-            className="
-              overflow-hidden
-
-              rounded-[5px]
-
-              bg-gradient-to-br
-              from-[#2563ff]
-              to-[#215cff]
-
-              p-5
-
-              text-white
-            "
-          >
-
-            <div className="flex items-center gap-4">
-
-              <div className="relative">
-
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                  alt="avatar"
-                  className="
-                    h-16
-                    w-16
-
-                    rounded-lg
-                    object-cover
-
-                    border-2 border-white/30
-                  "
-                />
-
-                <div
-                  className="
-                    absolute
-                    bottom-0
-                    right-0
-
-                    flex
-                    h-6
-                    w-6
-
-                    items-center
-                    justify-center
-
-                    rounded-lg
-
-                    bg-white
-
-                    text-primary
-                  "
-                >
-                  <Camera size={13} />
-                </div>
-
-              </div>
-
-              <div>
-
-                <h3 className="text-lg font-black">
-                  Alex Chen
-                </h3>
-
-                <p className="text-sm text-white/70">
-                  Student Pro Member
-                </p>
-
-              </div>
-
-            </div>
-
-            <div
-              className="
-                mt-5
-
-                flex
-                items-center
-                justify-between
-
-                rounded-[5px]
-
-                border border-white/10
-
-                bg-white/10
-
-                px-4
-                py-3
-              "
-            >
-
-              <div>
-
-                <p className="text-[11px] uppercase tracking-[0.18em] text-white/60">
-                  Learning Streak
-                </p>
-
-                <h4 className="mt-1 text-2xl font-black">
-                  12 Days
-                </h4>
-
-              </div>
-
-              <Sparkles className="h-8 w-8 text-white/70" />
-
-            </div>
-
-          </div>
-
-          {/* NAVIGATION */}
-          <div className="mt-5 space-y-2">
-
+      <div className="dashboard-card settings-shell">
+        <div className="settings-layout">
+          {/* Left sub-navigation */}
+          <nav className="settings-nav" aria-label="Settings sections">
             {TABS.map((tab) => {
               const Icon = tab.icon;
-
+              const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`
-                    group
-                    flex
-                    w-full
-                    items-center
-                    justify-between
-                    rounded-[5px]
-                    px-4
-                    py-4
-                    text-left
-                    transition-all
-                    duration-300
-                    ${
-                      activeTab === tab.id
-                        ? "bg-primary text-white shadow-[0_10px_30px_rgba(37,99,235,0.18)]"
-                        : `border border-transparent ${textSecondary} ${isDark ? "hover:border-white/10 hover:bg-[#0f172a]" : "hover:border-slate-200 hover:bg-slate-50"}`
-                    }
-                  `}
+                  className={`settings-nav-btn${isActive ? " is-active" : ""}`}
                 >
-
-                  <div className="flex items-center gap-3">
-
-                    <Icon className="h-5 w-5" />
-
-                    <span className="font-semibold">
-                      {tab.label}
-                    </span>
-
-                  </div>
-
-                  <ChevronRight
-                    className={`
-                      h-4
-                      w-4
-
-                      transition-transform
-
-                      ${
-                        activeTab === tab.id
-                          ? "translate-x-0"
-                          : "translate-x-[-4px] opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
-                      }
-                    `}
-                  />
-
+                  <Icon className="settings-nav-icon h-4 w-4" />
+                  {tab.label}
                 </button>
               );
             })}
 
-          </div>
-
-        </div>
-
-        {/* RIGHT CONTENT */}
-        <div
-          className={`
-            overflow-hidden
-            rounded-[5px]
-            border
-            ${cardBorder}
-            ${cardBg}
-            shadow-sm
-          `}
-        >
-
-          {/* TOP BAR */}
-          <div
-            className={`
-              flex
-              flex-col
-              gap-5
-              border-b
-              ${cardBorder}
-              px-6
-              py-6
-              sm:flex-row
-              sm:items-center
-              sm:justify-between
-            `}
-          >
-
-            <div>
-
-              <h2
-                className={`
-                  text-[28px]
-                  font-black
-                  ${textPrimary}
-                `}
-              >
-                {activeTab === "general" && "General Profile"}
-                {activeTab === "security" && "Security & Login"}
-                {activeTab === "preferences" && "Preferences"}
-              </h2>
-
-              <p
-                className={`
-                  mt-1
-                  text-sm
-                  ${textSecondary}
-                `}
-              >
-                Customize your personal workspace and account settings.
-              </p>
-
+            <div className="settings-nav-delete">
+              <button type="button" className="settings-nav-delete-btn">
+                <Trash2 className="h-4 w-4" />
+                Delete Account
+              </button>
             </div>
+          </nav>
 
-            <div
-              className="
-                inline-flex
-                items-center
-                gap-2
-
-                rounded-[5px]
-
-                border border-green-500/20
-
-                bg-green-500/10
-
-                px-4
-                py-2
-
-                text-[11px]
-                font-bold
-                uppercase
-                tracking-[0.15em]
-
-                text-green-500
-              "
-            >
-              <Shield className="h-4 w-4" />
-              Account Protected
-            </div>
-
-          </div>
-
-          {/* GENERAL */}
-          {activeTab === "general" && (
-            <form
-              onSubmit={handleSave}
-              className="space-y-8 p-6 sm:p-8"
-            >
-
-              {/* PROFILE */} 
-              <div
-                className={`
-                  flex
-                  flex-col
-                  gap-6
-                  rounded-[5px]
-                  border
-                  ${cardBorder}
-                  ${surfaceBg}
-                  p-6
-                  sm:flex-row
-                  sm:items-center
-                  sm:justify-between
-                `}
-              >
-
-                <div className="flex items-center gap-5">
-
-                  <div className="relative group">
-
-                    <img
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                      alt="avatar"
-                      className="
-                        h-24
-                        w-24
-
-                        rounded-lg
-                        object-cover
-
-                        border-2 border-primary/20
-                      "
-                    />
-
-                    <div
-                      className="
-                        absolute
-                        inset-0
-
-                        flex
-                        items-center
-                        justify-center
-
-                        rounded-lg
-
-                        bg-black/40
-
-                        opacity-0
-                        transition-opacity
-                        group-hover:opacity-100
-                      "
-                    >
-                      <UploadCloud className="h-8 w-8 text-white" />
-                    </div>
-
-                  </div>
-
-                  <div>
-
-                    <h3
-                      className={`
-                        text-xl
-                        font-black
-                        ${textPrimary}
-                      `}
-                    >
-                      Profile Avatar
-                    </h3>
-
-                    <p
-                      className={`
-                        mt-2
-                        text-sm
-                        ${textSecondary}
-                      `}
-                    >
-                      JPG, PNG or GIF. Maximum size of 800KB.
-                    </p>
-
-                    <button
-                      type="button"
-                      className="
-                        mt-3
-
-                        text-sm
-                        font-bold
-
-                        text-primary
-                        hover:underline
-                      "
-                    >
-                      Upload New Photo
-                    </button>
-
-                  </div>
-
-                </div>
-
-                <button
-                  type="button"
-                  className={`
-                    relative
-                    inline-flex
-                    h-[48px]
-                    items-center
-                    justify-center
-                    gap-2
-                    overflow-hidden
-                    rounded-lg
-                    border
-                    ${cardBorder}
-                    ${cardBg}
-                    px-6
-                    text-sm
-                    font-semibold
-                    ${textPrimary}
-                    transition-all
-                    duration-300
-                    hover:-translate-y-[2px]
-                  `}
+          {/* Right content */}
+          <div className="settings-content">
+            {activeTab === "general" && (
+              <form onSubmit={handleSave} className="flex flex-col gap-4 sm:gap-5">
+                {/* Profile summary */}
+                <PanelCard
+                  onEdit={editingProfile ? undefined : () => setEditingProfile(true)}
+                  action={
+                    <span className="settings-status-badge">
+                      <Shield className="h-3.5 w-3.5" />
+                      Account Protected
+                    </span>
+                  }
                 >
-                  Remove Photo
-                </button>
-
-              </div>
-
-              {/* FORM */}
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-
-                <div className="space-y-2">
-
-                  <label
-                    className={`
-                      text-sm
-                      font-bold
-                      ${textPrimary}
-                    `}
-                  >
-                    First Name
-                  </label>
-
-                  <input
-                    type="text"
-                    defaultValue="Alex"
-                    className={`
-                      h-[54px]
-                      w-full
-                      rounded-[5px]
-                      border
-                      ${cardBorder}
-                      ${inputBg}
-                      px-4
-                      text-sm
-                      font-medium
-                      ${textPrimary}
-                      outline-none
-                      transition-all
-                      focus:border-primary
-                    `}
-                  />
-
-                </div>
-
-                <div className="space-y-2">
-
-                  <label
-                    className={`
-                      text-sm
-                      font-bold
-                      ${textPrimary}
-                    `}
-                  >
-                    Last Name
-                  </label>
-
-                  <input
-                    type="text"
-                    defaultValue="Chen"
-                    className={`
-                      h-[54px]
-                      w-full
-                      rounded-[5px]
-                      border
-                      ${cardBorder}
-                      ${inputBg}
-                      px-4
-                      text-sm
-                      font-medium
-                      ${textPrimary}
-                      outline-none
-                      transition-all
-                      focus:border-primary
-                    `}
-                  />
-
-                </div>
-
-              </div>
-
-              {/* EMAIL */}
-              <div className="space-y-2">
-
-                <label
-                  className={`
-                    text-sm
-                    font-bold
-                    ${textPrimary}
-                  `}
-                >
-                  Email Address
-                </label>
-
-                <input
-                  type="email"
-                  defaultValue="alex.chen@example.com"
-                  className={`
-                    h-[54px]
-                    w-full
-                    rounded-[5px]
-                    border
-                    ${cardBorder}
-                    ${inputBg}
-                    px-4
-                    text-sm
-                    font-medium
-                    ${textPrimary}
-                    outline-none
-                    transition-all
-                    focus:border-primary
-                  `}
-                />
-
-              </div>
-
-              {/* BIO */}
-              <div className="space-y-2">
-
-                <label
-                  className={`
-                    text-sm
-                    font-bold
-                    ${textPrimary}
-                  `}
-                >
-                  Short Bio
-                </label>
-
-                <textarea
-                  rows="5"
-                  defaultValue="Frontend developer learning advanced cloud architecture and scalable system design."
-                  className={`
-                    w-full
-                    resize-none
-                    rounded-[5px]
-                    border
-                    ${cardBorder}
-                    ${inputBg}
-                    px-4
-                    py-4
-                    text-sm
-                    font-medium
-                    ${textPrimary}
-                    outline-none
-                    transition-all
-                    focus:border-primary
-                  `}
-                />
-
-              </div>
-
-              {/* FOOTER */}
-              <div
-                className={`
-                  flex
-                  flex-col
-                  gap-4
-                  border-t
-                  ${cardBorder}
-                  pt-6
-                  sm:flex-row
-                  sm:items-center
-                  sm:justify-between
-                `}
-              >
-
-                <div
-                  className={`
-                    flex
-                    items-center
-                    gap-2
-
-                    text-sm
-                    font-semibold
-
-                    ${
-                      isSaved
-                        ? "text-green-500 opacity-100"
-                        : "opacity-0"
-                    }
-
-                    transition-all
-                  `}
-                >
-                  <CheckCircle className="h-4 w-4" />
-                  Changes Saved Successfully
-                </div>
-
-                <button
-                  onClick={handleSave}
-                  className="
-                    relative
-                    inline-flex
-
-                    h-[50px]
-
-                    items-center
-                    justify-center
-                    gap-2
-
-                    overflow-hidden
-                    rounded-lg
-
-                    bg-primary
-
-                    px-8
-
-                    text-[14px]
-                    font-bold
-
-                    text-white
-
-                    transition-all
-                    duration-300
-
-                    hover:-translate-y-[2px]
-                    hover:bg-[#004182]
-                  "
-                >
-                  Save Changes
-                </button>
-
-              </div>
-
-            </form>
-          )}
-
-          {/* SECURITY */}
-          {activeTab === "security" && (
-            <div className="space-y-8 p-6 sm:p-8">
-
-              <div
-                className={`
-                  flex
-                  flex-col
-                  gap-5
-                  rounded-[5px]
-                  border
-                  ${cardBorder}
-                  ${surfaceBg}
-                  p-6
-                  sm:flex-row
-                  sm:items-center
-                  sm:justify-between
-                `}
-              >
-
-                <div className="flex items-center gap-4">
-
-                  <div
-                    className="
-                      flex
-                      h-14
-                      w-14
-                      items-center
-                      justify-center
-                      rounded-lg
-                      bg-primary/10
-                      text-primary
-                    "
-                  >
-                    <Shield className="h-7 w-7" />
-                  </div>
-
-                  <div>
-
-                    <h3
-                      className={`
-                        text-xl
-                        font-black
-                        ${textPrimary}
-                      `}
-                    >
-                      Two-Factor Authentication
-                    </h3>
-
-                    <p
-                      className={`
-                        mt-1
-                        text-sm
-                        ${textSecondary}
-                      `}
-                    >
-                      Protect your account with additional security verification.
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <button
-                  className="
-                    relative
-                    inline-flex
-
-                    h-[48px]
-
-                    items-center
-                    justify-center
-
-                    overflow-hidden
-                    rounded-lg
-
-                    bg-primary
-
-                    px-6
-
-                    text-sm
-                    font-bold
-
-                    text-white
-
-                    transition-all
-                    duration-300
-
-                    hover:-translate-y-[2px]
-                  "
-                >
-                  Enable 2FA
-                </button>
-
-              </div>
-
-            </div>
-          )}
-
-          {/* PREFERENCES */}
-          {activeTab === "preferences" && (
-            <div className="space-y-6 p-6 sm:p-8">
-
-              {[
-                {
-                  icon: Sun,
-                  title: "Appearance",
-                  desc: "Customize dark and light mode behavior.",
-                },
-                {
-                  icon: Monitor,
-                  title: "Device Sessions",
-                  desc: "Manage active devices and login sessions.",
-                },
-                {
-                  icon: Smartphone,
-                  title: "Mobile Notifications",
-                  desc: "Receive course updates on your phone.",
-                },
-              ].map((item, index) => {
-                const Icon = item.icon;
-
-                return (
-                  <div
-                    key={index}
-                    className={`
-                      flex
-                      flex-col
-                      gap-5
-                      rounded-[5px]
-                      border
-                      ${cardBorder}
-                      ${surfaceBg}
-                      p-6
-                      sm:flex-row
-                      sm:items-center
-                      sm:justify-between
-                    `}
-                  >
-                    <div className="flex items-center gap-4">
-
-                      <div
-                        className="
-                          flex
-                          h-12
-                          w-12
-
-                          items-center
-                          justify-center
-
-                          rounded-lg
-
-                          bg-primary/10
-
-                          text-primary
-                        "
-                      >
-                        <Icon className="h-6 w-6" />
-                      </div>
-
+                  {editingProfile ? (
+                    <div className="settings-avatar-upload">
+                      <img
+                        src={PROFILE.avatar}
+                        alt="Profile"
+                        className="settings-avatar-lg"
+                      />
                       <div>
-
-                        <h3
-                          className={`
-                            text-lg
-                            font-black
-                            ${textPrimary}
-                          `}
-                        >
-                          {item.title}
-                        </h3>
-
-                        <p
-                          className={`
-                            mt-1
-                            text-sm
-                            ${textSecondary}
-                          `}
-                        >
-                          {item.desc}
+                        <p className="text-sm font-semibold text-text">Profile Photo</p>
+                        <p className="mt-1 text-xs text-muted">
+                          JPG, PNG or GIF. Maximum size of 800KB.
                         </p>
-
+                        <button type="button" className="settings-upload-link mt-2">
+                          Upload New Photo
+                        </button>
+                        <button
+                          type="button"
+                          className="settings-edit-btn ml-3"
+                          onClick={() => setEditingProfile(false)}
+                        >
+                          Cancel
+                        </button>
                       </div>
-
                     </div>
+                  ) : (
+                    <div className="settings-profile-summary">
+                      <img
+                        src={PROFILE.avatar}
+                        alt="Alex Chen"
+                        className="settings-avatar"
+                      />
+                      <div>
+                        <p className="settings-profile-name">
+                          {PROFILE.firstName} {PROFILE.lastName}
+                        </p>
+                        <p className="settings-profile-meta">{PROFILE.role}</p>
+                        <p className="settings-profile-meta">{PROFILE.location}</p>
+                      </div>
+                    </div>
+                  )}
+                </PanelCard>
 
-                    <button
-                      className={`
-                        relative
-                        inline-flex
-                        h-[46px]
-                        items-center
-                        justify-center
-                        overflow-hidden
-                        rounded-lg
-                        border
-                        ${cardBorder}
-                        ${cardBg}
-                        px-6
-                        text-sm
-                        font-semibold
-                        ${textPrimary}
-                        transition-all
-                        duration-300
-                        hover:-translate-y-[2px]
-                      `}
-                    >
-                      Configure
+                {/* Personal information */}
+                <PanelCard
+                  title="Personal Information"
+                  onEdit={editingPersonal ? undefined : () => setEditingPersonal(true)}
+                >
+                  {editingPersonal ? (
+                    <div className="settings-field-grid">
+                      <div>
+                        <label className="settings-field-label" htmlFor="firstName">
+                          First Name
+                        </label>
+                        <input
+                          id="firstName"
+                          type="text"
+                          defaultValue={PROFILE.firstName}
+                          className="settings-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="settings-field-label" htmlFor="lastName">
+                          Last Name
+                        </label>
+                        <input
+                          id="lastName"
+                          type="text"
+                          defaultValue={PROFILE.lastName}
+                          className="settings-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="settings-field-label" htmlFor="email">
+                          Email Address
+                        </label>
+                        <input
+                          id="email"
+                          type="email"
+                          defaultValue={PROFILE.email}
+                          className="settings-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="settings-field-label" htmlFor="phone">
+                          Phone
+                        </label>
+                        <input
+                          id="phone"
+                          type="tel"
+                          defaultValue={PROFILE.phone}
+                          className="settings-input"
+                        />
+                      </div>
+                      <div className="settings-field-span">
+                        <label className="settings-field-label" htmlFor="bio">
+                          Bio
+                        </label>
+                        <textarea
+                          id="bio"
+                          rows={4}
+                          defaultValue={PROFILE.bio}
+                          className="settings-textarea"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="settings-field-grid">
+                      <Field label="First Name" value={PROFILE.firstName} />
+                      <Field label="Last Name" value={PROFILE.lastName} />
+                      <Field label="Email Address" value={PROFILE.email} />
+                      <Field label="Phone" value={PROFILE.phone} />
+                      <Field label="Bio" value={PROFILE.bio} span />
+                    </div>
+                  )}
+                </PanelCard>
+
+                {/* Address */}
+                <PanelCard
+                  title="Address"
+                  onEdit={editingAddress ? undefined : () => setEditingAddress(true)}
+                >
+                  {editingAddress ? (
+                    <div className="settings-field-grid">
+                      <div>
+                        <label className="settings-field-label" htmlFor="country">
+                          Country
+                        </label>
+                        <input
+                          id="country"
+                          type="text"
+                          defaultValue={PROFILE.country}
+                          className="settings-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="settings-field-label" htmlFor="city">
+                          City / State
+                        </label>
+                        <input
+                          id="city"
+                          type="text"
+                          defaultValue={PROFILE.city}
+                          className="settings-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="settings-field-label" htmlFor="postal">
+                          Postal Code
+                        </label>
+                        <input
+                          id="postal"
+                          type="text"
+                          defaultValue={PROFILE.postal}
+                          className="settings-input"
+                        />
+                      </div>
+                      <div>
+                        <label className="settings-field-label" htmlFor="timezone">
+                          Timezone
+                        </label>
+                        <input
+                          id="timezone"
+                          type="text"
+                          defaultValue={PROFILE.timezone}
+                          className="settings-input"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="settings-field-grid">
+                      <Field label="Country" value={PROFILE.country} />
+                      <Field label="City / State" value={PROFILE.city} />
+                      <Field label="Postal Code" value={PROFILE.postal} />
+                      <Field label="Timezone" value={PROFILE.timezone} />
+                    </div>
+                  )}
+                </PanelCard>
+
+                {(editingProfile || editingPersonal || editingAddress) && (
+                  <div className="settings-save-row">
+                    {isSaved && (
+                      <span className="settings-saved-msg">
+                        <CheckCircle className="h-4 w-4" />
+                        Changes saved successfully
+                      </span>
+                    )}
+                    <button type="submit" className="settings-save-btn">
+                      Save Changes
                     </button>
-
                   </div>
-                );
-              })}
+                )}
+              </form>
+            )}
 
-            </div>
-          )}
+            {activeTab === "security" && (
+              <div className="flex flex-col gap-4 sm:gap-5">
+                <PanelCard title="Password" onEdit={() => {}}>
+                  <div className="settings-field-grid">
+                    <Field label="Last Changed" value="3 months ago" />
+                    <Field label="Strength" value="Strong" />
+                  </div>
+                </PanelCard>
 
+                <PanelCard title="Two-Factor Authentication">
+                  <div className="settings-security-row">
+                    <div className="flex items-center gap-3">
+                      <div className="settings-security-icon">
+                        <Shield className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-text">
+                          Protect your account
+                        </p>
+                        <p className="mt-0.5 text-xs text-muted">
+                          Add an extra layer of security with 2FA verification.
+                        </p>
+                      </div>
+                    </div>
+                    <button type="button" className="settings-save-btn">
+                      Enable 2FA
+                    </button>
+                  </div>
+                </PanelCard>
+
+                <PanelCard title="Active Sessions">
+                  <div className="settings-field-grid">
+                    <Field label="Current Device" value="Windows · Chrome" />
+                    <Field label="Last Login" value="Today, 2:14 PM" />
+                  </div>
+                </PanelCard>
+              </div>
+            )}
+
+            {activeTab === "preferences" && (
+              <div className="flex flex-col gap-4 sm:gap-5">
+                {[
+                  {
+                    icon: Sun,
+                    title: "Appearance",
+                    desc: "Customize dark and light mode behavior.",
+                  },
+                  {
+                    icon: Monitor,
+                    title: "Device Sessions",
+                    desc: "Manage active devices and login sessions.",
+                  },
+                  {
+                    icon: Smartphone,
+                    title: "Mobile Notifications",
+                    desc: "Receive course updates on your phone.",
+                  },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <PanelCard key={item.title} title={item.title}>
+                      <div className="settings-pref-row">
+                        <div className="flex items-center gap-3">
+                          <div className="settings-security-icon">
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <p className="text-xs text-muted">{item.desc}</p>
+                        </div>
+                        <button type="button" className="settings-edit-btn">
+                          Configure
+                        </button>
+                      </div>
+                    </PanelCard>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-
       </div>
     </div>
   );

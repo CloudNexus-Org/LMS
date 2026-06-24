@@ -18,6 +18,7 @@ import {
   Trash2,
   Video,
 } from "lucide-react";
+import { getContinueLearningUrl } from "@/features/learn/learningSession";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -64,7 +65,7 @@ const NOTIFICATIONS = [
     content: '3 new lessons added to "Enterprise React Systems" — hooks, context, and performance.',
     time: "2 days ago",
     unread: true,
-    action: { label: "Continue course", to: "/learn/cloud" },
+    action: { label: "Continue course", resolveTo: getContinueLearningUrl },
   },
   {
     id: 4,
@@ -73,7 +74,7 @@ const NOTIFICATIONS = [
     content: "Submit your Cloud Architecture diagram before 11:59 PM PT.",
     time: "3 days ago",
     unread: false,
-    action: { label: "Open assignment", to: "/learn/cloud" },
+    action: { label: "Open assignment", to: "/student/assignments" },
   },
   {
     id: 5,
@@ -82,7 +83,7 @@ const NOTIFICATIONS = [
     content: "React Masterclass begins in 30 minutes. Join the session from your dashboard.",
     time: "4 days ago",
     unread: false,
-    action: { label: "Join live class", to: "/student/dashboard" },
+    action: { label: "Join live class", to: "/student/notifications" },
   },
   {
     id: 6,
@@ -476,7 +477,10 @@ export default function NotificationsPage() {
                       </div>
 
                       {note.action && (
-                        <Link to={note.action.to} className="notif-item-cta group">
+                        <Link
+                          to={note.action.resolveTo ? note.action.resolveTo() : note.action.to}
+                          className="notif-item-cta group"
+                        >
                           {note.action.label}
                           <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                         </Link>

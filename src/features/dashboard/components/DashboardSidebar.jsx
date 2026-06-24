@@ -75,12 +75,14 @@ export default function DashboardSidebar({ role, onClose }) {
       </nav>
 
       <div className="shrink-0 border-t border-border p-4 space-y-3">
-        <div className="rounded-xl border border-border bg-bg p-4 shadow-sm">
-          <p className="font-bold text-text text-sm">
-            {role.charAt(0).toUpperCase() + role.slice(1)} Pro
-          </p>
-          <p className="mt-1 text-xs text-muted font-medium">Active Subscription</p>
-        </div>
+        {!isStudent && (
+          <div className="rounded-xl border border-border bg-bg p-4 shadow-sm">
+            <p className="font-bold text-text text-sm">
+              {role.charAt(0).toUpperCase() + role.slice(1)} Pro
+            </p>
+            <p className="mt-1 text-xs text-muted font-medium">Active Subscription</p>
+          </div>
+        )}
 
         {isStudent && (
           <div className="space-y-1">

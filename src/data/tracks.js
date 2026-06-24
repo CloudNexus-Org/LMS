@@ -61,6 +61,8 @@ export const tracks = [
     level: "Intermediate to Advanced",
     language: "English",
     certificate: "Verified Cloud Engineer Certificate",
+    price: 24999,
+    originalPrice: 32999,
     skills: [
       "AWS",
       "Azure",
@@ -222,6 +224,8 @@ export const tracks = [
     level: "Advanced",
     language: "English",
     certificate: "Verified AI · ML Engineer Certificate",
+    price: 27999,
+    originalPrice: 35999,
     skills: [
       "PyTorch",
       "LangChain",
@@ -368,6 +372,8 @@ export const tracks = [
     level: "Beginner to Intermediate",
     language: "English",
     certificate: "Verified Full-Stack Engineer Certificate",
+    price: 21999,
+    originalPrice: 28999,
     skills: [
       "JavaScript",
       "React",
@@ -508,6 +514,8 @@ export const tracks = [
     level: "Intermediate to Advanced",
     language: "English",
     certificate: "Verified DevOps Engineer Certificate",
+    price: 22999,
+    originalPrice: 29999,
     skills: [
       "Docker",
       "Kubernetes",
@@ -643,6 +651,8 @@ export const tracks = [
     level: "Intermediate",
     language: "English",
     certificate: "Verified Data Engineer Certificate",
+    price: 23499,
+    originalPrice: 30499,
     skills: [
       "Python",
       "SQL",
@@ -778,6 +788,8 @@ export const tracks = [
     level: "Advanced",
     language: "English",
     certificate: "Verified Backend Architect Certificate",
+    price: 25499,
+    originalPrice: 33499,
     skills: [
       "System Design",
       "Postgres",
@@ -864,6 +876,14 @@ export const tracks = [
 
 export function getTrackById(id) {
   return tracks.find((t) => t.id === id);
+}
+
+export function formatTrackPrice(amount) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 /* ----------------------------------------------------------------------
