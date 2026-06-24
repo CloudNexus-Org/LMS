@@ -5,17 +5,16 @@ import {
   Menu,
   X,
   ChevronDown,
-  BookOpen,
   Users,
   Compass,
   GraduationCap,
   BarChart2,
-  Award,
   MessageSquare,
 } from "lucide-react";
 
 import ThemeToggle from "../ui/ThemeToggle";
 import Button from "../ui/Button";
+import CartButton from "../courses/CartButton";
 import { SHELL_MAX_WIDTH, SHELL_PADDING } from "../ui/Container";
 
 import cnlg from "@/assets/navbar/white.png";
@@ -45,20 +44,7 @@ const DEFAULT_LINKS = [
   },
   {
     label: "Courses",
-    items: [
-      {
-        icon: <BookOpen size={16} />,
-        label: "All courses",
-        description: "Browse our full course catalog",
-        href: "/tracks",
-      },
-      {
-        icon: <Award size={16} />,
-        label: "Certificates",
-        description: "Earn recognised industry certificates",
-        href: "#certificates",
-      },
-    ],
+    href: "/courses",
   },
   {
     label: "Mentors",
@@ -294,11 +280,16 @@ export default function Navbar({
             {navLinks.map((link) => {
               const hasDropdown = !!link.items;
               const isOpen = openDropdown === link.label;
-              const isActive =
-                isHome &&
-                (hasDropdown
-                  ? link.items.some((item) => item.href === activeSection)
-                  : link.href === activeSection);
+              const isActive = hasDropdown
+                ? link.items.some(
+                    (item) =>
+                      item.href === activeSection ||
+                      (item.href?.startsWith("/") &&
+                        location.pathname === item.href)
+                  )
+                : link.href?.startsWith("/")
+                  ? location.pathname === link.href
+                  : isHome && link.href === activeSection;
 
               return (
                 <div
@@ -351,6 +342,7 @@ export default function Navbar({
           </div>
 
           <div className="relative z-10 ml-auto flex items-center gap-2.5 sm:gap-3 lg:gap-4">
+            <CartButton />
             <ThemeToggle className="hidden sm:inline-flex" />
 
             {showAuthButtons && (
@@ -420,10 +412,12 @@ export default function Navbar({
                         ? link.items.some(
                             (item) =>
                               item.href === activeSection ||
-                              (item.href === "/mentors" &&
-                                location.pathname === "/mentors")
+                              (item.href?.startsWith("/") &&
+                                location.pathname === item.href)
                           )
-                        : activeSection === link.href;
+                        : link.href?.startsWith("/")
+                          ? location.pathname === link.href
+                          : activeSection === link.href;
 
                       if (!hasDropdown) {
                         return (

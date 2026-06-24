@@ -19,6 +19,13 @@ import { tracks } from '@/data/tracks';
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Container from '@/components/ui/Container';
+import {
+  fadeEdgeLeft,
+  fadeEdgeRight,
+  pageBg,
+  sectionCta,
+  sectionTextDark,
+} from '@/styles/theme';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -310,7 +317,11 @@ export default function Courses() {
   }, [scrollPrev, scrollNext]);
 
   return (
-    <SectionShell id="courses" glow>
+    <SectionShell
+      id="courses"
+      glow
+      className={`${pageBg} ${sectionTextDark}`}
+    >
       <Container>
         <SectionHeading
           align="center"
@@ -323,8 +334,8 @@ export default function Courses() {
         {/* CAROUSEL CONTAINER */}
         <div className="relative mt-14">
           {/* FADE EDGES */}
-          <div className="absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-background via-background/80 to-transparent pointer-events-none md:w-20" />
-          <div className="absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none md:w-20" />
+          <div className={`absolute left-0 top-0 z-10 h-full w-16 ${fadeEdgeLeft} pointer-events-none md:w-20`} />
+          <div className={`absolute right-0 top-0 z-10 h-full w-16 ${fadeEdgeRight} pointer-events-none md:w-20`} />
 
           {/* NAVIGATION BUTTONS */}
           <button
@@ -389,22 +400,16 @@ export default function Courses() {
         {/* BUTTON */}
         <div className="mt-14 flex justify-center">
           <Link
-            to="/tracks"
-            className="
+            to="/courses"
+            className={`
               group inline-flex items-center gap-2
-              rounded-lg
-              border border-border
-              bg-elevated
-              px-7 py-3
-              text-[14px]
-              font-semibold
-              text-text
+              rounded-lg px-7 py-3
+              text-[14px] font-semibold
               transition-all duration-300 ease-out
-              hover:border-primary
-              hover:text-primary
-            "
+              ${sectionCta}
+            `}
           >
-            Browse all {tracks.length} career tracks
+            Browse all {featuredCourses.length} courses
 
             <ArrowRight
               size={15}

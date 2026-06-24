@@ -7,12 +7,13 @@ import {
   FaLinkedinIn,
   FaXTwitter,
 } from "react-icons/fa6";
+import { footerShell } from "@/styles/theme";
 
 const FOOTER_COLUMNS = [
   {
     title: "Courses",
     links: [
-      { label: "Browse All Courses", to: "/tracks" },
+      { label: "Browse All Courses", to: "/courses" },
       { label: "Categories", href: "#" },
       { label: "Certifications", to: "/student/certificates" },
       { label: "Live Classes", href: "#" },
@@ -253,7 +254,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-transparent dark:border-white/10">
+    <footer className={footerShell}>
       <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-6 lg:px-8">
         {/* Top section */}
         <div className="flex flex-col items-start justify-between gap-4 py-8 sm:flex-row sm:items-center">

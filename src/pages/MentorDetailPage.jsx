@@ -614,7 +614,7 @@ export default function MentorDetailPage() {
                       className="relative w-full shadow-xl sm:w-auto md:w-full lg:w-auto"
                       rightIcon={<ArrowRight size={16} className="transition-transform group-hover/btn:translate-x-1" />}
                     >
-                      Start free trial
+                      Get started
                     </Button>
                   </div>
                   <Button

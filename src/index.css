@@ -1,9 +1,11 @@
     @import "tailwindcss";
+    @import "./styles/theme.css";
     @variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
     @theme inline {
         --font-sans: "Russo One", sans-serif;
         --font-display: "Russo One", sans-serif;
         --font-mono: "Russo One", sans-serif;
+        --color-page: var(--page-bg);
         --color-bg: var(--bg);
         --color-surface: var(--surface);
         --color-elevated: var(--elevated);
@@ -28,61 +30,7 @@
         --shadow-card: var(--shadow-card-value);
         --shadow-elevated: var(--shadow-elevated-value);
     }
-    /* ==========================================================================
-   DESIGN TOKENS (LIGHT & DARK)
-   ========================================================================== */
-    
-     :root,
-    [data-theme="light"] {
-        --bg: #fafbfd;
-        --surface: #ffffff;
-        --elevated: #ffffff;
-        --border: #e5e7eb;
-        --border-strong: #cbd5e1;
-        --text: #0b1020;
-        --muted: #52607a;
-        --subtle: #8b95a8;
-        --primary: #8b61d2;
-        --primary-hover: #7a52c0;
-        --primary-soft: rgba(139, 97, 210, 0.1);
-        --accent: #7c3aed;
-        --accent-soft: rgba(124, 58, 237, 0.08);
-        --success: #059669;
-        --warning: #d97706;
-        --danger: #dc2626;
-        --shadow-card-value: 0 1px 2px rgba(11, 16, 32, 0.06), 0 8px 24px rgba(11, 16, 32, 0.06);
-        --shadow-elevated-value: 0 12px 40px rgba(11, 16, 32, 0.12);
-        --grid-line: rgba(11, 16, 32, 0.06);
-        --nav-fog: rgba(250, 251, 253, 0.85);
-        --nav-fog-mobile: rgba(250, 251, 253, 0.95);
-        --hero-base: #f4f6fb;
-    }
-    
-    [data-theme="dark"] {
-        --bg-solid: #171717;
-        --bg: #17171799;
-        --surface: #17171799;
-        --elevated: #1f1f1f;
-        --border: rgba(255, 255, 255, 0.08);
-        --border-strong: rgba(255, 255, 255, 0.16);
-        --text: #e5e7f0;
-        --muted: #9ca3b5;
-        --subtle: #6b7488;
-        --primary: #8b61d2;
-        --primary-hover: #9b74db;
-        --primary-soft: rgba(139, 97, 210, 0.14);
-        --accent: #a78bfa;
-        --accent-soft: rgba(167, 139, 250, 0.12);
-        --success: #34d399;
-        --warning: #fbbf24;
-        --danger: #f87171;
-        --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.35);
-        --shadow-elevated-value: 0 24px 60px rgba(0, 0, 0, 0.5);
-        --grid-line: rgba(255, 255, 255, 0.04);
-        --nav-fog: rgba(23, 23, 23, 0.88);
-        --nav-fog-mobile: rgba(23, 23, 23, 0.96);
-        --hero-base: var(--bg);
-    }
+    /* Theme tokens live in src/styles/theme.css */
     /* ==========================================================================
    BASE STYLES
    ========================================================================== */
@@ -2331,6 +2279,73 @@
         background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
         background-size: 48px 48px;
         animation: gridFade 8s ease-in-out infinite;
+    }
+
+    /* Courses catalog hero — animated beam & pulse */
+    @keyframes coursesBeamSweep {
+        0%,
+        100% {
+            transform: translateX(-30%) rotate(-4deg);
+            opacity: 0.15;
+        }
+        50% {
+            transform: translateX(120%) rotate(-4deg);
+            opacity: 0.45;
+        }
+    }
+
+    @keyframes coursesHeroPulse {
+        0%,
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.25;
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.12);
+            opacity: 0.45;
+        }
+    }
+
+    .courses-hero-beam {
+        position: absolute;
+        top: 28%;
+        left: 0;
+        width: 55%;
+        height: 2px;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            color-mix(in srgb, var(--primary) 60%, transparent) 45%,
+            color-mix(in srgb, var(--accent) 50%, transparent) 55%,
+            transparent 100%
+        );
+        filter: blur(0.5px);
+        animation: coursesBeamSweep 10s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    .courses-hero-pulse {
+        position: absolute;
+        top: 35%;
+        left: 68%;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(
+            circle,
+            color-mix(in srgb, var(--primary) 18%, transparent) 0%,
+            transparent 70%
+        );
+        animation: coursesHeroPulse 6s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    [data-theme="dark"] .courses-hero-beam {
+        opacity: 0.7;
+    }
+
+    [data-theme="dark"] .courses-hero-pulse {
+        opacity: 0.85;
     }
     /* Progress ring */
     
@@ -4854,6 +4869,8 @@
         .glow-dot,
         .animated-gradient-text,
         .animated-grid,
+        .courses-hero-beam,
+        .courses-hero-pulse,
         .card-shimmer::before,
         .animated-border {
             animation: none !important;
