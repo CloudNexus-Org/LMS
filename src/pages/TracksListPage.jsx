@@ -4,11 +4,7 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Search,
-  Clock,
-  GraduationCap,
-  Calendar,
   Sparkles,
-  TrendingUp,
   X,
   Award,
   Target,
@@ -16,35 +12,9 @@ import {
 } from "lucide-react";
 import { tracks } from "@/data/tracks";
 import Container from "@/components/ui/Container";
+import TrackCatalogCard from "@/components/tracks/TrackCatalogCard";
 
 const EASE = [0.16, 1, 0.3, 1];
-
-const COLOR_TINT = {
-  primary: {
-    bg: "bg-primary-soft",
-    text: "text-primary",
-    grad: "from-primary via-primary to-accent",
-    glow: "shadow-[0_0_20px_-4px_var(--primary)]",
-  },
-  accent: {
-    bg: "bg-accent-soft",
-    text: "text-accent",
-    grad: "from-accent via-accent to-primary",
-    glow: "shadow-[0_0_20px_-4px_var(--accent)]",
-  },
-  success: {
-    bg: "bg-[color:color-mix(in_oklab,var(--success)_12%,transparent)]",
-    text: "text-success",
-    grad: "from-success via-success to-primary",
-    glow: "shadow-[0_0_20px_-4px_var(--success)]",
-  },
-  warning: {
-    bg: "bg-[color:color-mix(in_oklab,var(--warning)_12%,transparent)]",
-    text: "text-warning",
-    grad: "from-warning via-warning to-accent",
-    glow: "shadow-[0_0_20px_-4px_var(--warning)]",
-  },
-};
 
 const LEVELS = [
   { value: "all", label: "All levels" },
@@ -111,100 +81,7 @@ function HeroStat({ value, label, accent, delay = 0 }) {
 
 /* ── Premium Track Card ── */
 function TrackListCard({ track, index }) {
-  const accent = COLOR_TINT[track.color] || COLOR_TINT.primary;
-  const Icon = track.icon;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: EASE, delay: index * 0.06 }}
-      className="h-full"
-    >
-      <Link
-        to={`/tracks/${track.id}`}
-        aria-label={`Open ${track.name} track`}
-        className="group/track card-shimmer relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-elevated shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1.5 hover:border-border-strong hover:shadow-[var(--shadow-elevated)] focus-visible:-translate-y-1 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-      >
-        {/* Gradient accent bar */}
-        <div
-          aria-hidden
-          className={`h-1 w-full bg-gradient-to-r ${accent.grad} opacity-80 transition-opacity duration-300 group-hover/track:opacity-100`}
-        />
-
-        {/* Hover glow overlay */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover/track:opacity-100"
-          style={{
-            background: `radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 0%), color-mix(in srgb, var(--primary), transparent 92%), transparent 40%)`,
-          }}
-        />
-
-        <div className="relative flex flex-1 flex-col p-5">
-          {/* Header: Icon + Badge */}
-          <div className="flex items-start justify-between">
-            <span
-              className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${accent.bg} ${accent.text} transition-transform duration-300 group-hover/track:scale-110`}
-            >
-              <Icon size={18} aria-hidden />
-            </span>
-            {track.badge ? (
-              <span className="inline-flex items-center gap-1 rounded-lg bg-warning/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-warning ring-1 ring-warning/20">
-                <Sparkles size={9} className="text-warning" aria-hidden />
-                {track.badge}
-              </span>
-            ) : null}
-          </div>
-
-          {/* Title & Tagline */}
-          <h3 className="mt-4 font-display text-[18px] font-extrabold leading-tight tracking-tight text-text">
-            {track.name}
-          </h3>
-          <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.6] text-muted">
-            {track.tagline}
-          </p>
-
-          {/* Meta Grid */}
-          <div className="mt-4 grid grid-cols-2 gap-2.5 text-[12px] text-muted">
-            <span className="inline-flex items-center gap-1.5">
-              <Clock size={12} className="text-subtle" aria-hidden />
-              {track.durationWeeks} weeks
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <GraduationCap size={12} className="text-subtle" aria-hidden />
-              {track.curriculum.length} courses
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Calendar size={12} className="text-subtle" aria-hidden />
-              {track.nextCohort.split(",")[1]?.trim() || track.nextCohort}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <TrendingUp size={12} className="text-success" aria-hidden />
-              <span className="font-semibold text-success">{track.salary}</span>
-            </span>
-          </div>
-
-          {/* Skills */}
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {track.skills.slice(0, 4).map((s) => (
-              <span
-                key={s}
-                className="inline-flex items-center rounded-lg border border-border bg-bg/60 px-2 py-0.5 text-[11px] font-medium text-muted transition-colors duration-200 group-hover/track:border-border-strong"
-              >
-                {s}
-              </span>
-            ))}
-            {track.skills.length > 4 && (
-              <span className="inline-flex items-center rounded-lg px-2 py-0.5 text-[11px] font-medium text-subtle">
-                +{track.skills.length - 4}
-              </span>
-            )}
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
+  return <TrackCatalogCard track={track} index={index} variant="catalog" />;
 }
 
 /* ── Trust Badge ── */

@@ -64,6 +64,7 @@ const TABS = [
 ];
 
 import { useCourseProgress } from "@/features/learn/hooks/useCourseProgress";
+import { saveLastLearningSession } from "@/features/learn/learningSession";
 
 /* ----------------------------------------------------------------------
    PAGE
@@ -97,8 +98,18 @@ export default function LessonPlayerPage() {
     }
   }, [track, lessonId, lessons, trackId, navigate]);
 
+  useEffect(() => {
+    if (!track || !initialLesson) return;
+    saveLastLearningSession({
+      trackId,
+      lessonId: initialLesson.id,
+      trackName: track.name,
+      lessonTitle: initialLesson.title,
+    });
+  }, [track, trackId, initialLesson]);
+
   if (!track) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/tracks" replace />;
   }
   if (!initialLesson) {
     return <Navigate to={`/tracks/${trackId}`} replace />;

@@ -1,524 +1,498 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence, useSpring, useTransform, useInView } from "framer-motion";
 import {
-  MessageSquare,
   AlertCircle,
   Award,
-  Check,
   Bell,
-  Sparkles,
-  Trash2,
+  BellOff,
+  BookOpen,
+  Check,
+  CheckCircle2,
   ChevronRight,
+  Clock3,
+  GraduationCap,
+  MessageSquare,
+  Sparkles,
+  Star,
+  Trash2,
+  Video,
 } from "lucide-react";
-import useIsDarkTheme from "../../hooks/useIsDarkTheme";
+import { getContinueLearningUrl } from "@/features/learn/learningSession";
 
-const MOCK_NOTIFICATIONS = [
+const EASE = [0.16, 1, 0.3, 1];
+
+const container = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.04 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 18 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: EASE },
+  },
+};
+
+const NOTIFICATIONS = [
   {
     id: 1,
     type: "mentorship",
-    icon: MessageSquare,
-    title: "New reply from your Mentor",
-    content:
-      'Jane Doe replied to your question in "React State Architecture".',
+    title: "New reply from your mentor",
+    content: 'Jane Doe replied to your question in "React State Architecture".',
     time: "2 hours ago",
     unread: true,
+    action: { label: "Reply to mentor", to: "/student/courses" },
   },
   {
     id: 2,
-    type: "system",
-    icon: Award,
-    title: "Certificate Unlocked!",
-    content:
-      "You have successfully completed Cloud Architecture Patterns. View your certificate now.",
+    type: "achievement",
+    title: "Certificate unlocked!",
+    content: "You completed Cloud Architecture Patterns. Your certificate is ready to download.",
     time: "1 day ago",
     unread: true,
+    action: { label: "View certificate", to: "/student/certificates" },
   },
   {
     id: 3,
-    type: "update",
-    icon: AlertCircle,
-    title: "Course Content Updated",
-    content:
-      'New lessons have been added to "Enterprise React Systems".',
+    type: "course",
+    title: "Course content updated",
+    content: '3 new lessons added to "Enterprise React Systems" — hooks, context, and performance.',
+    time: "2 days ago",
+    unread: true,
+    action: { label: "Continue course", resolveTo: getContinueLearningUrl },
+  },
+  {
+    id: 4,
+    type: "assignment",
+    title: "Assignment due tomorrow",
+    content: "Submit your Cloud Architecture diagram before 11:59 PM PT.",
     time: "3 days ago",
     unread: false,
+    action: { label: "Open assignment", to: "/student/assignments" },
+  },
+  {
+    id: 5,
+    type: "live",
+    title: "Live class starting soon",
+    content: "React Masterclass begins in 30 minutes. Join the session from your dashboard.",
+    time: "4 days ago",
+    unread: false,
+    action: { label: "Join live class", to: "/student/notifications" },
+  },
+  {
+    id: 6,
+    type: "quiz",
+    title: "Quiz results available",
+    content: "You scored 92% on the Cloud Architecture Quiz. Review your answers and feedback.",
+    time: "5 days ago",
+    unread: false,
+    action: { label: "View results", to: "/student/quiz" },
+  },
+  {
+    id: 7,
+    type: "system",
+    title: "Weekly learning summary",
+    content: "You studied 7 hours this week — 70% of your goal. Keep the streak going!",
+    time: "1 week ago",
+    unread: false,
+    action: { label: "View progress", to: "/student/courses" },
+  },
+  {
+    id: 8,
+    type: "mentorship",
+    title: "Mentor feedback on your project",
+    content: 'Dr. Arjan Singh left detailed feedback on your "AWS VPC Design" submission. Great work on subnet planning!',
+    time: "35 min ago",
+    unread: true,
+    action: { label: "Read feedback", to: "/student/courses" },
+  },
+  {
+    id: 9,
+    type: "course",
+    title: "New module unlocked",
+    content: 'You unlocked Module 4 in "Azure Generative AI" — explore prompt engineering and RAG pipelines.',
+    time: "5 hours ago",
+    unread: true,
+    action: { label: "Start module", to: "/learn/ai" },
+  },
+  {
+    id: 10,
+    type: "achievement",
+    title: "7-day learning streak!",
+    content: "You've studied every day this week. Earn the Consistency Champion badge at 14 days.",
+    time: "Yesterday",
+    unread: true,
+    action: { label: "View badges", to: "/student/profile" },
+  },
+  {
+    id: 11,
+    type: "live",
+    title: "Recording available",
+    content: 'Missed "Docker & Kubernetes Workshop"? The full recording is now in your course library.',
+    time: "2 days ago",
+    unread: false,
+    action: { label: "Watch recording", to: "/learn/devops" },
+  },
+  {
+    id: 12,
+    type: "assignment",
+    title: "Assignment graded",
+    content: 'Your "React Component Library" assignment received an A (96%). Review mentor comments.',
+    time: "3 days ago",
+    unread: false,
+    action: { label: "View grade", to: "/learn/fullstack" },
+  },
+  {
+    id: 13,
+    type: "quiz",
+    title: "New practice quiz",
+    content: 'A new self-paced quiz is available for "Python for Data Engineering" — 15 questions, no time limit.',
+    time: "4 days ago",
+    unread: false,
+    action: { label: "Take quiz", to: "/student/quiz" },
+  },
+  {
+    id: 14,
+    type: "system",
+    title: "Profile 85% complete",
+    content: "Add a bio and portfolio link to unlock personalized course recommendations.",
+    time: "5 days ago",
+    unread: false,
+    action: { label: "Complete profile", to: "/student/settings" },
+  },
+  {
+    id: 15,
+    type: "mentorship",
+    title: "1-on-1 session confirmed",
+    content: "Your mentor session with Sarah Jenkins is scheduled for Friday, 3:00 PM IST. Calendar invite sent.",
+    time: "6 days ago",
+    unread: false,
+    action: { label: "View details", to: "/student/notifications" },
+  },
+  {
+    id: 16,
+    type: "course",
+    title: "Wishlist course on sale",
+    content: '"Full-Stack Development Bootcamp" is 30% off for 48 hours. Enroll before the offer ends.',
+    time: "1 week ago",
+    unread: false,
+    action: { label: "View offer", to: "/student/wishlist" },
   },
 ];
 
+const TYPE_CONFIG = {
+  mentorship: { icon: MessageSquare, accent: "notif-accent-primary", label: "Mentor" },
+  achievement: { icon: Award, accent: "notif-accent-warning", label: "Achievement" },
+  course: { icon: BookOpen, accent: "notif-accent-success", label: "Course" },
+  assignment: { icon: GraduationCap, accent: "notif-accent-accent", label: "Assignment" },
+  live: { icon: Video, accent: "notif-accent-primary", label: "Live" },
+  quiz: { icon: Star, accent: "notif-accent-success", label: "Quiz" },
+  system: { icon: Sparkles, accent: "notif-accent-accent", label: "Insight" },
+};
+
+const FILTERS = [
+  { id: "all", label: "All", icon: Bell },
+  { id: "unread", label: "Unread", icon: AlertCircle },
+  { id: "mentorship", label: "Mentors", icon: MessageSquare },
+  { id: "achievement", label: "Achievements", icon: Award },
+  { id: "course", label: "Courses", icon: BookOpen },
+];
+
+function AnimatedNumber({ value }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-30px" });
+  const spring = useSpring(0, { stiffness: 60, damping: 18 });
+  const display = useTransform(spring, (v) => String(Math.round(v)));
+
+  useEffect(() => {
+    if (isInView) spring.set(value);
+  }, [isInView, spring, value]);
+
+  return (
+    <motion.span ref={ref} className="notif-stat-value">
+      {display}
+    </motion.span>
+  );
+}
+
 export default function NotificationsPage() {
   const [filter, setFilter] = useState("all");
-  const [notifications, setNotifications] =
-    useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
-  const isDark = useIsDarkTheme();
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
-  const cardBg = isDark ? "bg-[#0d111d]" : "bg-white";
-
-  const cardBorder = isDark
-    ? "border-white/10"
-    : "border-border";
-
-  const surfaceBg = isDark
-    ? "bg-[#0f172a]"
-    : "bg-[#f8fbff]";
-
-  const textPrimary = isDark
-    ? "text-white"
-    : "text-slate-900";
-
-  const textSecondary = isDark
-    ? "text-white/60"
-    : "text-slate-500";
+  const filtered = notifications.filter((n) => {
+    if (filter === "all") return true;
+    if (filter === "unread") return n.unread;
+    return n.type === filter;
+  });
 
   const markAllRead = () => {
-    setNotifications(
-      notifications.map((n) => ({
-        ...n,
-        unread: false,
-      }))
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+  };
+
+  const markRead = (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, unread: false } : n))
     );
   };
 
   const removeNotification = (id) => {
-    setNotifications(
-      notifications.filter((n) => n.id !== id)
-    );
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  const filtered = notifications.filter(
-    (n) => filter === "all" || n.type === filter
-  );
+  const stats = [
+    {
+      label: "Unread",
+      value: unreadCount,
+      sub: "Need attention",
+      icon: Bell,
+      accent: "profile-kpi-primary",
+    },
+    {
+      label: "Mentor msgs",
+      value: notifications.filter((n) => n.type === "mentorship").length,
+      sub: "Conversations",
+      icon: MessageSquare,
+      accent: "profile-kpi-success",
+    },
+    {
+      label: "Achievements",
+      value: notifications.filter((n) => n.type === "achievement").length,
+      sub: "Certs & badges",
+      icon: Award,
+      accent: "profile-kpi-warning",
+    },
+    {
+      label: "Course updates",
+      value: notifications.filter((n) => ["course", "assignment", "live"].includes(n.type)).length,
+      sub: "Learning activity",
+      icon: BookOpen,
+      accent: "profile-kpi-accent",
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-bg text-text p-1 sm:p-2">
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* HEADER */}
-        <div
-          className={`
-            relative overflow-hidden rounded-[6px]
-            border
-            ${cardBorder}
-            ${cardBg}
-            px-6 py-7
-            transition-all duration-500
-            hover:shadow-[0_30px_70px_rgba(37,99,235,0.14)]
-          `}
-        >
-          {/* GLOW */}
-          <div className="absolute right-[-100px] top-[-100px] h-[260px] w-[260px] rounded-lg bg-blue-500/10 blur-[90px]" />
-
-          <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-[5px] border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.25em] text-blue-500">
-                <Sparkles size={13} />
-                Notification Center
-              </div>
-
-              <h1
-                className={`
-                  mt-4
-                  text-[42px]
-                  sm:text-[42px]
-                  font-black
-                  leading-[0.95]
-                  tracking-[-0.05em]
-                  ${textPrimary}
-                `}
-              >
-                Notifications
-              </h1>
-
-              <p
-                className={`
-                  mt-3
-                  max-w-[700px]
-                  text-[15px]
-                  leading-7
-                  font-medium
-                  ${textSecondary}
-                `}
-              >
-                Stay updated with your mentors, certifications,
-                course activities and platform insights.
-              </p>
-            </div>
-
-            {/* ACTION */}
-            <button
-              onClick={markAllRead}
-              className="
-                relative inline-flex
-                h-[52px]
-                items-center
-                justify-center
-                gap-2
-                overflow-hidden
-                rounded-lg
-                bg-blue-500
-                px-7
-                text-sm
-                font-black
-                uppercase
-                tracking-[0.15em]
-                text-white
-                transition-all
-                duration-300
-                hover:-translate-y-[2px]
-                hover:bg-blue-600
-                hover:shadow-[0_20px_45px_rgba(37,99,235,0.30)]
-              "
-            >
-              <Check className="h-4 w-4" />
-              Mark All Read
-            </button>
-          </div>
-        </div>
-
-        {/* STATS */}
-<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-  {[
-    {
-      title: "Unread Alerts",
-      value: notifications.filter((n) => n.unread).length,
-      Icon: Bell,
-      iconColor: "text-blue-500",
-      line: "bg-blue-500/20",
-      iconBg: "bg-blue-500/10",
-      hover: "hover:border-blue-500/20",
-      glow:
-        "hover:shadow-[0_20px_50px_rgba(37,99,235,0.10)]",
-    },
-    {
-      title: "Mentor Messages",
-      value: notifications.filter(
-        (n) => n.type === "mentorship"
-      ).length,
-      Icon: MessageSquare,
-      iconColor: "text-emerald-500",
-      line: "bg-emerald-500/20",
-      iconBg: "bg-emerald-500/10",
-      hover: "hover:border-emerald-500/20",
-      glow:
-        "hover:shadow-[0_20px_50px_rgba(16,185,129,0.10)]",
-    },
-    {
-      title: "Achievements",
-      value: notifications.filter(
-        (n) => n.type === "system"
-      ).length,
-      Icon: Award,
-      iconColor: "text-orange-500",
-      line: "bg-orange-500/20",
-      iconBg: "bg-orange-500/10",
-      hover: "hover:border-orange-500/20",
-      glow:
-        "hover:shadow-[0_20px_50px_rgba(249,115,22,0.10)]",
-    },
-  ].map((item, i) => (
-    <div
-      key={i}
-      className={`
-        group
-        relative overflow-hidden
-
-        rounded-[5px]
-
-        border border-gray-200
-        dark:border-border
-
-        bg-white
-        dark:bg-elevated/80
-
-        px-5 py-4
-
-        shadow-sm
-
-        transition-all duration-300
-
-        hover:-translate-y-1
-
-        ${item.hover}
-        ${item.glow}
-      `}
+    <motion.div
+      className="dashboard-page notif-page mx-auto w-full max-w-[1320px] space-y-3 sm:space-y-4"
+      variants={container}
+      initial="hidden"
+      animate="visible"
     >
-      
-
-      {/* CONTENT */}
-      <div className="relative z-10">
-        <div className="flex items-center gap-3">
-          {/* ICON */}
-          <div
-            className={`
-              flex h-11 w-11 items-center justify-center
-              rounded-[10px]
-
-              ${item.iconBg}
-
-              shadow-sm
-
-              ${item.iconColor}
-            `}
-          >
-            <item.Icon className="h-5 w-5" />
-          </div>
-
-          {/* VALUE + TITLE */}
-          <div>
-            <h3 className="text-[30px] font-black leading-none">
-              {item.value}
-            </h3>
-
-            <p
-              className="
-                mt-1
-                text-[10px]
-                font-black
-                uppercase
-                tracking-[0.18em]
-                text-muted
-              "
-            >
-              {item.title}
-            </p>
-          </div>
+      {/* Header */}
+      <motion.section className="notif-header dashboard-analytics-bar" variants={item}>
+        <div className="dashboard-analytics-intro">
+          <span className="dashboard-pill">
+            <Sparkles className="h-3 w-3" />
+            Notification center
+          </span>
+          <p className="dashboard-greeting">
+            Stay on top of your <span className="text-primary">learning</span>
+          </p>
+          <p className="dashboard-greeting-sub">
+            Mentors, certificates, course updates, and live sessions in one place.
+          </p>
         </div>
-      </div>
-    </div>
-  ))}
-</div>
 
-        {/* MAIN CARD */}
-        <div
-          className={`
-            overflow-hidden rounded-[6px]
-            border
-            ${cardBorder}
-            ${cardBg}
-            transition-all duration-500
-            hover:shadow-[0_30px_70px_rgba(37,99,235,0.12)]
-          `}
-        >
-          {/* FILTERS */}
-          <div
-            className={`
-              flex items-center gap-6 overflow-x-auto
-              border-b
-              ${cardBorder}
-              px-6
-              py-2
-              ${surfaceBg}
-            `}
+        <div className="notif-header-actions">
+          {unreadCount > 0 && (
+            <motion.span
+              className="notif-unread-pill"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              key={unreadCount}
+            >
+              <span className="notif-unread-dot" />
+              {unreadCount} unread
+            </motion.span>
+          )}
+          <motion.button
+            type="button"
+            className="profile-btn profile-btn-primary"
+            onClick={markAllRead}
+            disabled={unreadCount === 0}
+            whileHover={{ y: unreadCount > 0 ? -2 : 0 }}
+            whileTap={{ scale: unreadCount > 0 ? 0.97 : 1 }}
           >
-            {["all", "mentorship", "system", "update"].map(
-              (f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`
-                    relative py-4 text-sm font-black uppercase tracking-[0.15em]
-                    transition-all duration-300 whitespace-nowrap
+            <Check className="h-4 w-4" />
+            Mark all read
+          </motion.button>
+        </div>
+      </motion.section>
 
-                    ${
-                      filter === f
-                        ? "text-blue-500"
-                        : `${textSecondary} hover:text-blue-500`
-                    }
-                  `}
-                >
-                  {f}
+      {/* Stats */}
+      <motion.section className="profile-stats-wrap" variants={item}>
+        <div className="profile-stats-scroll profile-stats-6 notif-stats-grid">
+          {stats.map((stat, i) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                key={stat.label}
+                className={`profile-stat-card ${stat.accent}`}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: EASE }}
+                whileHover={{ y: -3 }}
+              >
+                <div className={`profile-stat-icon ${stat.accent}`}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <AnimatedNumber value={stat.value} />
+                  <p className="profile-stat-label">{stat.label}</p>
+                  <p className="profile-stat-sub">{stat.sub}</p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.section>
 
-                  {filter === f && (
-                    <div className="absolute bottom-0 left-0 h-[3px] w-full rounded-lg bg-blue-500" />
-                  )}
-                </button>
-              )
-            )}
-          </div>
+      {/* Filters */}
+      <motion.div className="profile-tabs-shell dashboard-card" variants={item}>
+        <div className="profile-tabs-scroll notif-filters" role="tablist" aria-label="Filter notifications">
+          {FILTERS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = filter === tab.id;
+            const count =
+              tab.id === "all"
+                ? notifications.length
+                : tab.id === "unread"
+                  ? unreadCount
+                  : notifications.filter((n) => n.type === tab.id).length;
 
-          {/* NOTIFICATIONS */}
-          <div className="divide-y divide-border">
-            {filtered.length === 0 ? (
-              <div className="py-20 text-center">
-                <Bell className="mx-auto h-14 w-14 text-muted opacity-20" />
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setFilter(tab.id)}
+                className={`profile-tab relative ${isActive ? "profile-tab-active" : ""}`}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="notif-tab-bg"
+                    className="profile-tab-indicator"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+                <Icon className="relative z-[1] h-4 w-4" />
+                <span className="relative z-[1]">{tab.label}</span>
+                <span className="notif-filter-count relative z-[1]">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </motion.div>
 
-                <p className="mt-4 font-bold text-muted">
-                  No notifications found.
-                </p>
+      {/* List */}
+      <motion.section className="notif-list-stack" variants={item}>
+        <AnimatePresence mode="popLayout">
+          {filtered.length === 0 ? (
+            <motion.div
+              key="empty"
+              className="notif-empty dashboard-card"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.35, ease: EASE }}
+            >
+              <div className="notif-empty-icon">
+                <BellOff className="h-8 w-8 text-muted" />
               </div>
-            ) : (
-              filtered.map((note) => {
-                const Icon = note.icon;
+              <h3 className="text-base font-bold text-text">All caught up!</h3>
+              <p className="mt-1 max-w-xs text-sm text-muted">
+                {filter === "unread"
+                  ? "You have no unread notifications."
+                  : "No notifications in this category."}
+              </p>
+            </motion.div>
+          ) : (
+            <ul className="notif-list">
+              {filtered.map((note, i) => {
+                const config = TYPE_CONFIG[note.type] || TYPE_CONFIG.system;
+                const Icon = config.icon;
 
                 return (
-                  <div
+                  <motion.li
                     key={note.id}
-                    className={`
-                      group relative overflow-hidden
-                      px-6 py-6
-                      transition-all duration-500
-                      hover:-translate-y-[2px]
-
-                      ${
-                        note.unread
-                          ? isDark
-                            ? "bg-blue-500/[0.05]"
-                            : "bg-blue-500/[0.02]"
-                          : ""
-                      }
-
-                      hover:shadow-[0_18px_45px_rgba(37,99,235,0.10)]
-                    `}
+                    layout
+                    className={`notif-card dashboard-card ${note.unread ? "notif-item-unread" : ""}`}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                    transition={{ delay: i * 0.05, duration: 0.38, ease: EASE }}
+                    whileHover={{ y: -3 }}
                   >
-                    {/* HOVER GLOW */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/[0.03] via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    <div className={`notif-item-icon ${config.accent}`}>
+                      <Icon className="h-5 w-5" />
+                      {note.unread && <span className="notif-item-dot" aria-label="Unread" />}
+                    </div>
 
-                    <div className="relative z-10 flex gap-5">
-                      {/* ICON */}
-                      <div
-                        className={`
-                          relative flex h-14 w-14 shrink-0
-                          items-center justify-center
-                          rounded-[16px]
-                          transition-all duration-500
-                          overflow-hidden
-                          group-hover:scale-110
-
-                          ${
-                            note.type === "mentorship"
-                              ? "bg-gradient-to-br from-blue-500/30 via-blue-500/10 to-cyan-400/20"
-                              : note.type === "system"
-                              ? "bg-gradient-to-br from-orange-500/30 via-orange-500/10 to-yellow-400/20"
-                              : "bg-gradient-to-br from-emerald-500/30 via-emerald-500/10 to-lime-400/20"
-                          }
-
-                          shadow-[0_10px_30px_rgba(0,0,0,0.08)]
-                        `}
-                      >
-                        {/* GLOSS */}
-                        <div
-                          className="
-                            absolute inset-0
-                            bg-gradient-to-br
-                            from-white/40
-                            to-transparent
-                          "
-                        />
-
-                        <Icon
-                          className={`
-                            relative z-10 h-6 w-6
-
-                            ${
-                              note.type === "mentorship"
-                                ? "text-blue-500"
-                                : note.type === "system"
-                                ? "text-orange-500"
-                                : "text-emerald-500"
-                            }
-                          `}
-                        />
-
-                        {note.unread && (
-                          <div
-                            className="
-                              absolute right-[-2px] top-[-2px]
-                              h-3 w-3 rounded-lg
-                              bg-cyan-400
-                              shadow-[0_0_15px_rgba(34,211,238,0.9)]
-                            "
-                          />
-                        )}
-                      </div>
-
-                      {/* CONTENT */}
-                      <div className="flex-1">
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                          <div>
-                            <h3
-                              className={`
-                                text-[17px]
-                                font-black
-                                ${
-                                  note.unread
-                                    ? textPrimary
-                                    : textSecondary
-                                }
-                              `}
-                            >
-                              {note.title}
-                            </h3>
-
-                            <p
-                              className={`
-                                mt-2
-                                text-[14px]
-                                leading-7
-                                font-medium
-                                ${textSecondary}
-                              `}
-                            >
-                              {note.content}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-4">
-                            <span className="whitespace-nowrap text-xs font-bold uppercase tracking-[0.15em] text-muted">
+                    <div className="notif-item-body min-w-0 flex-1">
+                      <div className="notif-item-top">
+                        <div className="min-w-0 flex-1">
+                          <div className="notif-item-meta">
+                            <span className={`notif-type-chip ${config.accent}`}>{config.label}</span>
+                            <span className="notif-item-time">
+                              <Clock3 className="h-3 w-3" />
                               {note.time}
                             </span>
-
-                            <button
-                              onClick={() =>
-                                removeNotification(note.id)
-                              }
-                              className="text-muted transition-all duration-300 hover:text-red-500 hover:scale-110"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
                           </div>
+                          <h3 className={`notif-item-title ${note.unread ? "notif-item-title-unread" : ""}`}>
+                            {note.title}
+                          </h3>
+                          <p className="notif-item-content">{note.content}</p>
                         </div>
 
-                        {/* ACTIONS */}
-                        <div className="mt-5 flex items-center gap-4">
-                          {note.type === "mentorship" && (
-                            <button
-                              className="
-                                inline-flex items-center gap-2
-                                text-sm font-black text-blue-500
-                                transition-all duration-300
-
-                                hover:gap-3
-                                hover:text-cyan-400
-                              "
+                        <div className="notif-item-actions">
+                          {note.unread && (
+                            <motion.button
+                              type="button"
+                              className="notif-action-btn"
+                              aria-label="Mark as read"
+                              onClick={() => markRead(note.id)}
+                              whileTap={{ scale: 0.9 }}
                             >
-                              Reply to Mentor
-                              <ChevronRight className="h-4 w-4" />
-                            </button>
+                              <CheckCircle2 className="h-4 w-4" />
+                            </motion.button>
                           )}
-
-                          {note.type === "system" && (
-                            <button
-                              className="
-                                inline-flex items-center gap-2
-                                text-sm font-black text-orange-500
-                                transition-all duration-300
-
-                                hover:gap-3
-                                hover:text-yellow-400
-                              "
-                            >
-                              View Certificate
-                              <ChevronRight className="h-4 w-4" />
-                            </button>
-                          )}
+                          <motion.button
+                            type="button"
+                            className="notif-action-btn notif-action-btn-danger"
+                            aria-label="Delete notification"
+                            onClick={() => removeNotification(note.id)}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </motion.button>
                         </div>
                       </div>
+
+                      {note.action && (
+                        <Link
+                          to={note.action.resolveTo ? note.action.resolveTo() : note.action.to}
+                          className="notif-item-cta group"
+                        >
+                          {note.action.label}
+                          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                      )}
                     </div>
-                  </div>
+                  </motion.li>
                 );
-              })
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+              })}
+            </ul>
+          )}
+        </AnimatePresence>
+      </motion.section>
+    </motion.div>
   );
 }

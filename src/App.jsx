@@ -42,14 +42,14 @@ const StudentDashboardPage = lazy(() =>
 const MyCoursesPage = lazy(() =>
   import('@/pages/student/MyCoursesPage')
 );
-const Analytics = lazy(() =>
-  import('@/pages/student/Analytics')
-);
 const ProfilePage = lazy(() =>
   import('@/pages/student/ProfilePage')
 );
 const CertificatesPage = lazy(() =>
   import('@/pages/student/CertificatesPage')
+);
+const CertificateDetailPage = lazy(() =>
+  import('@/pages/student/CertificateDetailPage')
 );
 const StudentWishlistPage = lazy(() =>
   import('@/pages/student/StudentWishlistPage')
@@ -62,6 +62,15 @@ const ProfileSettingsPage = lazy(() =>
 );
 const BillingSubscriptionPage = lazy(() =>
   import('@/pages/student/BillingSubscriptionPage')
+);
+const CoursePaymentPage = lazy(() =>
+  import('@/pages/student/CoursePaymentPage')
+);
+const PendingAssignmentsPage = lazy(() =>
+  import('@/pages/student/PendingAssignmentsPage')
+);
+const StudentLearnRedirect = lazy(() =>
+  import('@/pages/student/StudentLearnRedirect')
 );
 const NotificationsPage = lazy(() =>
   import('@/pages/student/NotificationsPage')
@@ -114,6 +123,9 @@ const AdminReportsPage = lazy(() =>
 );
 const AdminNotificationsPage = lazy(() =>
   import('@/pages/admin/AdminNotificationsPage')
+);
+const AdminProfilePage = lazy(() =>
+  import('@/pages/admin/AdminProfilePage')
 );
 
 function App() {
@@ -178,6 +190,8 @@ function App() {
                 path="/student"
                 element={<DashboardLayout role="student" />}
               >
+                <Route index element={<Navigate to="dashboard" replace />} />
+
                 <Route
                   path="dashboard"
                   element={<StudentDashboardPage />}
@@ -188,23 +202,18 @@ function App() {
                   element={<MyCoursesPage />}
                 />
                 <Route
-                  path="analyticse"
-                  element={<Analytics/>}
-                />
-
-                <Route
                   path="learn"
-                  element={
-                    <Navigate
-                      to="/learn/cloud"
-                      replace
-                    />
-                  }
+                  element={<StudentLearnRedirect />}
                 />
 
                 <Route
                   path="certificates"
                   element={<CertificatesPage />}
+                />
+
+                <Route
+                  path="certificates/:id"
+                  element={<CertificateDetailPage />}
                 />
 
                 <Route
@@ -225,6 +234,16 @@ function App() {
                 <Route
                   path="billing"
                   element={<BillingSubscriptionPage />}
+                />
+
+                <Route
+                  path="payment"
+                  element={<CoursePaymentPage />}
+                />
+
+                <Route
+                  path="assignments"
+                  element={<PendingAssignmentsPage />}
                 />
 
                 <Route
@@ -253,6 +272,8 @@ function App() {
                 path="/mentor"
                 element={<DashboardLayout role="mentor" />}
               >
+                <Route index element={<Navigate to="dashboard" replace />} />
+
                 <Route
                   path="dashboard"
                   element={<MentorDashboardPage />}
@@ -305,6 +326,8 @@ function App() {
                 path="/admin"
                 element={<DashboardLayout role="admin" />}
               >
+                <Route index element={<Navigate to="dashboard" replace />} />
+
                 <Route
                   path="dashboard"
                   element={<AdminDashboardPage />}
@@ -342,7 +365,7 @@ function App() {
 
                 <Route
                   path="profile"
-                  element={<ProfileSettingsPage />}
+                  element={<AdminProfilePage />}
                 />
               </Route>
             </Route>

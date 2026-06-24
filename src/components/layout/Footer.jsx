@@ -28,7 +28,6 @@ const FOOTER_COLUMNS = [
       { label: "My Dashboard", to: "/student/dashboard" },
       { label: "My Courses", to: "/student/courses" },
       { label: "Assignments", href: "#" },
-      { label: "Progress Tracker", to: "/student/analyticse" },
       { label: "Certificates", to: "/student/certificates" },
       { label: "Discussion Forums", href: "#" },
       { label: "Mobile App", href: "#" },
@@ -206,7 +205,7 @@ function ContactCard() {
       "
     >
       <Link
-        to="/contact"
+        to="/#contact"
         className="
           flex h-9 w-full items-center justify-center rounded-lg
           bg-primary text-[13px] font-semibold text-white
