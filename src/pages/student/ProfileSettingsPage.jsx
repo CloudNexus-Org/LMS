@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import {
+  ArrowLeft,
   User,
   Lock,
   Bell,
@@ -10,7 +13,11 @@ import {
   Monitor,
   Smartphone,
   Trash2,
+  Settings,
+  LogOut,
 } from "lucide-react";
+import useAuthStore from "@/store/useAuthStore";
+import Button from "@/components/ui/Button";
 
 const TABS = [
   { id: "general", label: "My Profile", icon: User },
@@ -64,11 +71,23 @@ function Field({ label, value, span }) {
 }
 
 export default function ProfileSettingsPage() {
+  const navigate = useNavigate();
+  const logout = useAuthStore((s) => s.logout);
   const [activeTab, setActiveTab] = useState("general");
   const [isSaved, setIsSaved] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
+
+  useEffect(() => {
+    if (!logoutOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setLogoutOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [logoutOpen]);
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -79,15 +98,36 @@ export default function ProfileSettingsPage() {
     setTimeout(() => setIsSaved(false), 3000);
   };
 
+  const handleLogout = () => {
+    setLogoutOpen(false);
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-text font-display sm:text-[28px]">
-          Account Settings
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Manage your profile, security, and notification preferences.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Link
+            to="/student/profile"
+            className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-primary"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to profile
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight text-text font-display sm:text-[28px]">
+            Account Settings
+          </h1>
+          <p className="mt-1 text-sm text-muted">
+            Manage your profile, security, and notification preferences.
+          </p>
+        </div>
+        <div
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary-soft text-primary"
+          aria-hidden
+        >
+          <Settings className="h-4 w-4" />
+        </div>
       </div>
 
       <div className="dashboard-card settings-shell">
@@ -109,6 +149,13 @@ export default function ProfileSettingsPage() {
                 </button>
               );
             })}
+
+            <div className="settings-nav-footer">
+              <button type="button" className="settings-nav-logout-btn" onClick={() => setLogoutOpen(true)}>
+                <LogOut className="h-4 w-4" />
+                Log out
+              </button>
+            </div>
 
             <div className="settings-nav-delete">
               <button type="button" className="settings-nav-delete-btn">
@@ -406,6 +453,55 @@ export default function ProfileSettingsPage() {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {logoutOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            role="presentation"
+            onClick={() => setLogoutOpen(false)}
+          >
+            <motion.div
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              aria-hidden
+            />
+            <motion.div
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="logout-dialog-title"
+              aria-describedby="logout-dialog-desc"
+              className="relative w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-[var(--shadow-card-value)]"
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                <LogOut className="h-5 w-5" />
+              </div>
+              <h2 id="logout-dialog-title" className="mt-4 text-xl font-bold text-text font-display">
+                Are you sure you want to log out?
+              </h2>
+              <p id="logout-dialog-desc" className="mt-2 text-sm leading-relaxed text-muted">
+                You will be signed out of your account. You can sign back in anytime to continue
+                learning.
+              </p>
+              <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
+                <Button variant="secondary" onClick={() => setLogoutOpen(false)} className="sm:min-w-[120px]">
+                  Cancel
+                </Button>
+                <Button onClick={handleLogout} className="sm:min-w-[120px]">
+                  Log out
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

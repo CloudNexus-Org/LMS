@@ -61,7 +61,7 @@ const COURSE_PROGRESS = [
 
 const LEARNING_ACTIONS = [
   { label: "Continue Course", getTo: getContinueLearningUrl },
-  { label: "Join Live Class", to: "/student/notifications" },
+  { label: "Browse Courses", to: "/student/catalog" },
   { label: "Submit Assignment", to: "/student/assignments" },
   { label: "View Certificates", to: "/student/certificates" },
 ];

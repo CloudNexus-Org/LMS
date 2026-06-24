@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   Award,
   BookOpen,
-  Heart,
   Search,
   Shield,
   Sparkles,
@@ -14,10 +13,8 @@ import {
 } from 'lucide-react';
 import { featuredCourses } from '@/data/courses';
 import CatalogCourseCard from '@/components/courses/CatalogCourseCard';
-import CartButton from '@/components/courses/CartButton';
 import CoursesHeroBackground, { COURSES_HERO_EASE } from '@/components/courses/CoursesHeroBackground';
 import Container from '@/components/ui/Container';
-import useWishlistStore from '@/store/useWishlistStore';
 import { pageShell } from '@/styles/theme';
 
 const EASE = COURSES_HERO_EASE;
@@ -132,7 +129,6 @@ export default function CoursesListPage() {
   const [level, setLevel] = useState('all');
   const [sort, setSort] = useState('featured');
   const [searchFocused, setSearchFocused] = useState(false);
-  const wishlistCount = useWishlistStore((s) => s.items.length);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -198,7 +194,7 @@ export default function CoursesListPage() {
           <CoursesHeroBackground />
 
           <Container size="lg">
-            <div className="mb-8 flex items-center justify-between gap-4">
+            <div className="mb-8">
               <motion.div
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -215,41 +211,6 @@ export default function CoursesListPage() {
                   />
                   Back to home
                 </Link>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.45, ease: EASE }}
-                className="flex items-center gap-2"
-              >
-                <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-                  <Link
-                    to="/student/wishlist"
-                    aria-label={`Wishlist${wishlistCount ? `, ${wishlistCount} items` : ''}`}
-                    className="
-                      relative inline-flex h-10 w-10 items-center justify-center
-                      rounded-lg border border-border text-text
-                      transition-all duration-200
-                      hover:border-primary/40 hover:bg-primary/10 hover:text-primary
-                      hover:shadow-[0_0_20px_-6px_var(--primary)]
-                    "
-                  >
-                    <Heart size={20} strokeWidth={2} />
-                    {wishlistCount > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white"
-                      >
-                        {wishlistCount > 9 ? '9+' : wishlistCount}
-                      </motion.span>
-                    )}
-                  </Link>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-                  <CartButton />
-                </motion.div>
               </motion.div>
             </div>
 
@@ -332,9 +293,9 @@ export default function CoursesListPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: EASE, delay: 0.25 }}
               className={`
-                sticky top-[72px] z-20 mb-8 rounded-2xl border p-4
-                backdrop-blur-xl shadow-[var(--shadow-card-value)]
-                transition-all duration-300 md:top-[80px] md:p-5
+                relative mb-8 rounded-2xl border p-4
+                shadow-[var(--shadow-card-value)]
+                transition-all duration-300 md:p-5
                 ${searchFocused
                   ? 'border-primary/40 bg-surface/95 shadow-[0_8px_32px_-12px_var(--primary)]'
                   : 'border-border bg-surface/90'
@@ -405,10 +366,6 @@ export default function CoursesListPage() {
                       Clear
                     </motion.button>
                   )}
-
-                  <div className="ml-auto flex items-center gap-2 lg:hidden">
-                    <CartButton />
-                  </div>
                 </div>
               </div>
             </motion.div>

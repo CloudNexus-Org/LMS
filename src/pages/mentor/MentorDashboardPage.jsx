@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Users,
   DollarSign,
@@ -7,6 +8,7 @@ import {
   Star,
   ArrowRight,
   ArrowUpRight,
+  ArrowDownRight,
   TrendingUp,
   MessageSquare,
   Activity,
@@ -18,180 +20,482 @@ import {
   BarChart2,
   Upload,
   RefreshCw,
-  Bell,
   Video,
+  PlayCircle,
+  PieChart,
 } from "lucide-react";
+import {
+  buildSnapshot,
+  fetchMentorDashboardSnapshot,
+  formatMentorCurrency,
+  toTopCoursesTable,
+} from "@/data/mentorDashboard";
 
-const ENGAGEMENT_WEEK = [
-  { label: "Mon", value: 62 },
-  { label: "Tue", value: 78 },
-  { label: "Wed", value: 71 },
-  { label: "Thu", value: 88 },
-  { label: "Fri", value: 95 },
-  { label: "Sat", value: 82 },
-  { label: "Sun", value: 74 },
-];
+const EASE = [0.16, 1, 0.3, 1];
 
-const ENGAGEMENT_TREND = [58, 64, 61, 72, 78, 74, 86, 90, 88, 94, 98, 92];
-
-const BASE_KPIS = {
-  students: 1248,
-  revenue: 4250,
-  courses: 4,
-  rating: 4.8,
-  pendingQa: 12,
-  weeklyGrowth: 24,
-  newReviews: 86,
-  engagement: 92,
+const pageVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.04 },
+  },
 };
 
-const RECENT_ENROLLMENTS = [
-  {
-    name: "Alex Chen",
-    initials: "AC",
-    course: "Advanced State Management",
-    time: "2 hours ago",
-    amount: "$89.99",
+const sectionVariants = {
+  hidden: { opacity: 0, y: 18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: EASE },
   },
-  {
-    name: "Sarah Miller",
-    initials: "SM",
-    course: "Cloud Architecture Patterns",
-    time: "5 hours ago",
-    amount: "$129.99",
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: EASE },
   },
-  {
-    name: "James Wilson",
-    initials: "JW",
-    course: "Cloud Architecture Patterns",
-    time: "1 day ago",
-    amount: "$129.99",
-  },
-  {
-    name: "Emily Davis",
-    initials: "ED",
-    course: "React Performance Patterns",
-    time: "2 days ago",
-    amount: "$79.99",
-  },
+};
+
+const COURSE_PROGRESS = [
+  { title: "Cloud Architecture Patterns", value: 88, color: "bg-primary" },
+  { title: "Advanced State Management", value: 72, color: "bg-success" },
+  { title: "React Performance Patterns", value: 54, color: "bg-warning" },
 ];
 
-const TOP_COURSES = [
-  {
-    name: "Cloud Architecture Patterns",
-    students: 842,
-    rating: 4.9,
-    revenue: "$28,400",
-    trend: "up",
-  },
-  {
-    name: "Advanced State Management",
-    students: 621,
-    rating: 4.8,
-    revenue: "$19,850",
-    trend: "up",
-  },
-  {
-    name: "React Performance Patterns",
-    students: 498,
-    rating: 4.7,
-    revenue: "$14,200",
-    trend: "up",
-  },
-  {
-    name: "System Design Fundamentals",
-    students: 312,
-    rating: 4.6,
-    revenue: "$9,800",
-    trend: "down",
-  },
+const RECENT_ENROLLMENTS = [
+  { name: "Alex Chen", initials: "AC", course: "Advanced State Management", time: "2h ago", amount: "$89.99" },
+  { name: "Sarah Miller", initials: "SM", course: "Cloud Architecture Patterns", time: "5h ago", amount: "$129.99" },
+  { name: "James Wilson", initials: "JW", course: "Cloud Architecture Patterns", time: "1d ago", amount: "$129.99" },
+  { name: "Emily Davis", initials: "ED", course: "React Performance Patterns", time: "2d ago", amount: "$79.99" },
 ];
 
 const ACTIVITIES = [
-  {
-    title: "New review received",
-    desc: "Your React course got a 5 star review.",
-    icon: Star,
-    iconBg: "bg-warning/10",
-    iconColor: "text-warning",
-  },
-  {
-    title: "Course trending",
-    desc: "Cloud Architecture Patterns is trending today.",
-    icon: Flame,
-    iconBg: "bg-[color:color-mix(in_oklab,var(--warning)_12%,transparent)]",
-    iconColor: "text-warning",
-  },
-  {
-    title: "Live session reminder",
-    desc: "You have a mentoring session at 7 PM.",
-    icon: CalendarDays,
-    iconBg: "bg-primary/10",
-    iconColor: "text-primary",
-  },
+  { title: "New 5-star review", desc: "React Performance Patterns", icon: Star, iconBg: "bg-warning/10", iconColor: "text-warning", time: "14m" },
+  { title: "Course trending", desc: "Cloud Architecture Patterns", icon: Flame, iconBg: "bg-warning/10", iconColor: "text-warning", time: "1h" },
+  { title: "Live session reminder", desc: "Q&A at 7:00 PM today", icon: CalendarDays, iconBg: "bg-primary/10", iconColor: "text-primary", time: "3h" },
+  { title: "New enrollment", desc: "Sarah Miller joined your course", icon: Users, iconBg: "bg-success/10", iconColor: "text-success", time: "5h" },
 ];
 
 const UPCOMING = [
   { date: "Today", title: "Live Q&A Session", subtitle: "Cloud Architecture · 7:00 PM" },
   { date: "Tomorrow", title: "Course Review Call", subtitle: "Platform QA feedback" },
-  { date: "Fri", title: "Student Office Hours", subtitle: "React Performance track" },
-  { date: "Mon", title: "New Cohort Kickoff", subtitle: "Advanced State Management" },
+  { date: "Friday", title: "Student Office Hours", subtitle: "React Performance track" },
+  { date: "Monday", title: "New Cohort Kickoff", subtitle: "Advanced State Management" },
 ];
 
 const QUICK_ACTIONS = [
   { label: "Upload Course", icon: Upload, to: "/mentor/upload" },
   { label: "Manage Lessons", icon: BookOpen, to: "/mentor/lessons" },
   { label: "View Analytics", icon: BarChart2, to: "/mentor/analytics" },
-  { label: "Revenue & Payouts", icon: DollarSign, to: "/mentor/revenue" },
 ];
 
-const PENDING_QA = {
-  name: "John Doe",
-  initials: "JD",
-  course: "Cloud Architecture",
-  lesson: "Lesson 3",
-  urgent: true,
-  question:
-    "Could you clarify the difference between standard and FIFO queues here?",
-};
-
-function jitterValue(value, spread = 0.08) {
-  const next = Math.round(value * (1 + (Math.random() * 2 - 1) * spread));
-  return Math.max(1, next);
-}
-
-function jitterDecimal(value, spread = 0.04) {
-  const next = value * (1 + (Math.random() * 2 - 1) * spread);
-  return +Math.max(0, next).toFixed(1);
-}
-
-function buildSnapshot() {
+function polarToCartesian(cx, cy, radius, angleDeg) {
+  const rad = ((angleDeg - 90) * Math.PI) / 180;
   return {
-    students: jitterValue(BASE_KPIS.students, 0.03),
-    revenue: jitterValue(BASE_KPIS.revenue, 0.06),
-    courses: BASE_KPIS.courses,
-    rating: jitterDecimal(BASE_KPIS.rating, 0.02),
-    pendingQa: BASE_KPIS.pendingQa,
-    weeklyGrowth: jitterDecimal(BASE_KPIS.weeklyGrowth, 0.05),
-    newReviews: jitterValue(BASE_KPIS.newReviews, 0.1),
-    engagement: jitterValue(BASE_KPIS.engagement, 0.04),
-    engagementWeek: ENGAGEMENT_WEEK.map((d) => ({
-      ...d,
-      value: jitterValue(d.value, 0.12),
-    })),
-    trend: ENGAGEMENT_TREND.map((v) => jitterValue(v, 0.08)),
+    x: cx + radius * Math.cos(rad),
+    y: cy + radius * Math.sin(rad),
   };
+}
+
+function describeDonutSegment(cx, cy, outerR, innerR, startAngle, endAngle) {
+  const startOuter = polarToCartesian(cx, cy, outerR, endAngle);
+  const endOuter = polarToCartesian(cx, cy, outerR, startAngle);
+  const startInner = polarToCartesian(cx, cy, innerR, startAngle);
+  const endInner = polarToCartesian(cx, cy, innerR, endAngle);
+  const largeArc = endAngle - startAngle <= 180 ? 0 : 1;
+
+  return [
+    `M ${startOuter.x} ${startOuter.y}`,
+    `A ${outerR} ${outerR} 0 ${largeArc} 0 ${endOuter.x} ${endOuter.y}`,
+    `L ${startInner.x} ${startInner.y}`,
+    `A ${innerR} ${innerR} 0 ${largeArc} 1 ${endInner.x} ${endInner.y}`,
+    "Z",
+  ].join(" ");
+}
+
+function buildPieSegments(data) {
+  let cursor = 0;
+  return data.map((slice) => {
+    const sweep = (slice.share / 100) * 360;
+    const start = cursor;
+    const end = cursor + sweep;
+    cursor = end;
+    return { ...slice, startAngle: start, endAngle: end };
+  });
+}
+
+function MentorRevenuePieChart({ data, metric, chartKey, centerLabel, centerValue }) {
+  const shouldReduceMotion = useReducedMotion();
+  const [activeId, setActiveId] = useState(null);
+  const size = 220;
+  const cx = size / 2;
+  const cy = size / 2;
+  const outerR = 88;
+  const innerR = 54;
+  const segments = useMemo(() => buildPieSegments(data), [data]);
+  const active = activeId ? segments.find((s) => s.id === activeId) : null;
+
+  return (
+    <div className="dashboard-pie-chart">
+      <div className="dashboard-pie-chart-visual">
+        <svg
+          viewBox={`0 0 ${size} ${size}`}
+          className="dashboard-pie-chart-svg"
+          role="img"
+          aria-label={`Course ${metric} distribution pie chart`}
+        >
+          {segments.map((slice, i) => (
+            <motion.path
+              key={`${slice.id}-${chartKey}`}
+              d={describeDonutSegment(cx, cy, outerR, innerR, slice.startAngle, slice.endAngle)}
+              fill={slice.color}
+              className="dashboard-pie-chart-segment"
+              initial={
+                shouldReduceMotion
+                  ? { opacity: 1, scale: 1 }
+                  : { opacity: 0, scale: 0.82 }
+              }
+              animate={{
+                opacity: activeId && activeId !== slice.id ? 0.45 : 1,
+                scale: activeId === slice.id ? 1.04 : 1,
+              }}
+              transition={{
+                opacity: { duration: 0.2 },
+                scale: { type: "spring", stiffness: 320, damping: 22 },
+                delay: shouldReduceMotion ? 0 : 0.08 + i * 0.07,
+                duration: 0.45,
+                ease: EASE,
+              }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+              onMouseEnter={() => setActiveId(slice.id)}
+              onMouseLeave={() => setActiveId(null)}
+              onFocus={() => setActiveId(slice.id)}
+              onBlur={() => setActiveId(null)}
+              tabIndex={0}
+            />
+          ))}
+          <circle cx={cx} cy={cy} r={innerR - 1} className="dashboard-pie-chart-hole" />
+          <text x={cx} y={cy - 6} textAnchor="middle" className="dashboard-pie-chart-center-value">
+            {active ? `${active.share}%` : centerValue}
+          </text>
+          <text x={cx} y={cy + 12} textAnchor="middle" className="dashboard-pie-chart-center-label">
+            {active ? active.name.split(" ").slice(0, 2).join(" ") : centerLabel}
+          </text>
+        </svg>
+      </div>
+
+      <ul className="dashboard-pie-chart-legend">
+        {segments.map((slice, i) => (
+          <motion.li
+            key={slice.id}
+            className={`dashboard-pie-chart-legend-row ${activeId === slice.id ? "dashboard-pie-chart-legend-row-active" : ""}`}
+            initial={{ opacity: 0, x: 8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 + i * 0.05, duration: 0.35, ease: EASE }}
+            onMouseEnter={() => setActiveId(slice.id)}
+            onMouseLeave={() => setActiveId(null)}
+          >
+            <span className="dashboard-pie-chart-swatch" style={{ background: slice.color }} />
+            <span className="dashboard-pie-chart-legend-name">{slice.name}</span>
+            <span className="dashboard-pie-chart-legend-value">
+              {metric === "revenue" ? formatMentorCurrency(slice.value) : slice.value.toLocaleString()}
+            </span>
+            <span className="dashboard-pie-chart-legend-share">{slice.share}%</span>
+          </motion.li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const ACTION_ITEMS = [
+  {
+    icon: MessageSquare,
+    iconBg: "bg-warning/10",
+    iconColor: "text-warning",
+    title: "12 Q&A threads need replies",
+    desc: "Students are waiting for answers on Cloud Architecture.",
+    action: { label: "Reply now", to: "/mentor/notifications", variant: "primary" },
+  },
+  {
+    icon: BookOpen,
+    iconBg: "bg-primary/10",
+    iconColor: "text-primary",
+    title: "2 lessons pending review",
+    desc: "Upload drafts need your final approval before publishing.",
+    action: { label: "Review", to: "/mentor/lessons", variant: "outline" },
+  },
+  {
+    icon: DollarSign,
+    iconBg: "bg-success/10",
+    iconColor: "text-success",
+    title: "May payout processing",
+    desc: "$4,250.00 estimated — available May 1, 2026.",
+    action: { label: "View revenue", to: "/mentor/analytics", variant: "outline" },
+  },
+];
+
+function buildSmoothPath(coords) {
+  if (coords.length < 2) return "";
+  let d = `M ${coords[0].x},${coords[0].y}`;
+  for (let i = 0; i < coords.length - 1; i += 1) {
+    const p0 = coords[i];
+    const p1 = coords[i + 1];
+    const cpx = (p0.x + p1.x) / 2;
+    d += ` C ${cpx},${p0.y} ${cpx},${p1.y} ${p1.x},${p1.y}`;
+  }
+  return d;
+}
+
+function buildAreaPath(coords, baseline) {
+  if (coords.length < 2) return "";
+  const line = buildSmoothPath(coords);
+  const last = coords[coords.length - 1];
+  const first = coords[0];
+  return `${line} L ${last.x},${baseline} L ${first.x},${baseline} Z`;
+}
+
+function MentorEngagementLineChart({ data, animate = true }) {
+  const shouldReduceMotion = useReducedMotion();
+  const width = 640;
+  const height = 200;
+  const pad = { top: 28, right: 52, bottom: 32, left: 8 };
+  const chartW = width - pad.left - pad.right;
+  const chartH = height - pad.top - pad.bottom;
+  const baseline = pad.top + chartH;
+
+  const enrollments = data.map((d) => d.enrollments);
+  const watchHours = data.map((d) => d.watchHours);
+  const max = Math.max(...enrollments, ...watchHours, 1);
+  const min = Math.min(...enrollments, ...watchHours, 0);
+  const range = max - min || 1;
+
+  const toCoords = (values) =>
+    values.map((v, i) => ({
+      x: pad.left + (i / (values.length - 1)) * chartW,
+      y: pad.top + chartH - ((v - min) / range) * chartH,
+    }));
+
+  const enrollmentCoords = toCoords(enrollments);
+  const watchCoords = toCoords(watchHours);
+  const enrollmentPath = buildSmoothPath(enrollmentCoords);
+  const watchPath = buildSmoothPath(watchCoords);
+  const enrollmentArea = buildAreaPath(enrollmentCoords, baseline);
+
+  const lastEnrollments = enrollments[enrollments.length - 1];
+  const lastWatch = watchHours[watchHours.length - 1];
+  const totalEnrollments = enrollments.reduce((sum, v) => sum + v, 0);
+  const totalWatch = watchHours.reduce((sum, v) => sum + v, 0);
+  const enrollmentGrowth =
+    enrollments.length > 1
+      ? (((lastEnrollments - enrollments[0]) / enrollments[0]) * 100).toFixed(1)
+      : "0.0";
+  const watchGrowth =
+    watchHours.length > 1
+      ? (((lastWatch - watchHours[0]) / watchHours[0]) * 100).toFixed(1)
+      : "0.0";
+
+  const gridLines = 4;
+  const pathTransition = shouldReduceMotion || !animate
+    ? { duration: 0 }
+    : { duration: 1.1, ease: EASE };
+
+  return (
+    <div className="dashboard-line-chart -mx-1 overflow-x-auto px-1 sm:mx-0 sm:px-0">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="dashboard-line-chart-svg min-w-[280px] w-full"
+        role="img"
+        aria-label="Student engagement line chart"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <defs>
+          <linearGradient id="mentor-eng-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="var(--primary)" />
+            <stop offset="55%" stopColor="var(--accent)" />
+            <stop offset="100%" stopColor="var(--success)" />
+          </linearGradient>
+          <linearGradient id="mentor-eng-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="color-mix(in srgb, var(--primary) 22%, transparent)" />
+            <stop offset="100%" stopColor="color-mix(in srgb, var(--primary) 2%, transparent)" />
+          </linearGradient>
+        </defs>
+
+        {Array.from({ length: gridLines + 1 }).map((_, i) => {
+          const y = pad.top + (i / gridLines) * chartH;
+          return (
+            <line
+              key={i}
+              x1={pad.left}
+              y1={y}
+              x2={width - pad.right}
+              y2={y}
+              className="dashboard-line-chart-grid"
+            />
+          );
+        })}
+
+        <motion.path
+          d={enrollmentArea}
+          fill="url(#mentor-eng-fill)"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
+        />
+        <motion.path
+          d={watchPath}
+          className="dashboard-line-chart-payouts"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0.4 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ ...pathTransition, delay: 0.2 }}
+        />
+        <motion.path
+          d={enrollmentPath}
+          className="dashboard-line-chart-sales"
+          stroke="url(#mentor-eng-stroke)"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={pathTransition}
+        />
+
+        {enrollmentCoords.map((pt, i) => (
+          <motion.circle
+            key={`enrollment-${data[i].label}`}
+            cx={pt.x}
+            cy={pt.y}
+            r={i === enrollmentCoords.length - 1 ? 4.5 : 2.5}
+            className={
+              i === enrollmentCoords.length - 1
+                ? "dashboard-line-chart-dot-sales"
+                : "dashboard-line-chart-dot"
+            }
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.35 + i * 0.06, duration: 0.35, ease: EASE }}
+          />
+        ))}
+
+        {watchCoords.map((pt, i) => (
+          <motion.circle
+            key={`watch-${data[i].label}`}
+            cx={pt.x}
+            cy={pt.y}
+            r={i === watchCoords.length - 1 ? 4 : 2}
+            className={
+              i === watchCoords.length - 1
+                ? "dashboard-line-chart-dot-payouts"
+                : "dashboard-line-chart-dot-muted"
+            }
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.45 + i * 0.06, duration: 0.35, ease: EASE }}
+          />
+        ))}
+
+        <text
+          x={enrollmentCoords[enrollmentCoords.length - 1].x + 8}
+          y={enrollmentCoords[enrollmentCoords.length - 1].y + 4}
+          className="dashboard-line-chart-label-sales"
+        >
+          {lastEnrollments}
+        </text>
+        <text
+          x={watchCoords[watchCoords.length - 1].x + 8}
+          y={watchCoords[watchCoords.length - 1].y + 4}
+          className="dashboard-line-chart-label-payouts"
+        >
+          {lastWatch}h
+        </text>
+
+        {data.map((d, i) => (
+          <text
+            key={d.label}
+            x={enrollmentCoords[i].x}
+            y={height - 8}
+            textAnchor="middle"
+            className="dashboard-line-chart-axis"
+          >
+            {d.label}
+          </text>
+        ))}
+      </svg>
+
+      <motion.div
+        className="dashboard-line-chart-summary grid-cols-1 sm:grid-cols-2"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.4, ease: EASE }}
+      >
+        <div className="dashboard-line-chart-stat">
+          <div className="dashboard-line-chart-stat-head">
+            <span className="dashboard-line-chart-marker dashboard-line-chart-marker-sales" />
+            <span className="dashboard-line-chart-stat-label">Enrollments</span>
+          </div>
+          <p className="dashboard-line-chart-stat-value">{totalEnrollments}</p>
+          <p className="dashboard-line-chart-stat-change dashboard-line-chart-stat-change-up">
+            +{enrollmentGrowth}% <span className="text-muted">vs start</span>
+          </p>
+        </div>
+        <div className="dashboard-line-chart-stat">
+          <div className="dashboard-line-chart-stat-head">
+            <span className="dashboard-line-chart-marker dashboard-line-chart-marker-payouts" />
+            <span className="dashboard-line-chart-stat-label">Watch hours</span>
+          </div>
+          <p className="dashboard-line-chart-stat-value">{totalWatch}h</p>
+          <p className="dashboard-line-chart-stat-change dashboard-line-chart-stat-change-up">
+            +{watchGrowth}% <span className="text-muted">vs start</span>
+          </p>
+        </div>
+      </motion.div>
+    </div>
+  );
 }
 
 function formatLastUpdated(date) {
   return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
 
-function Card({ className = "", children }) {
-  return <div className={`dashboard-card ${className}`}>{children}</div>;
+function MotionCard({ className = "", children, delay = 0, hover = true }) {
+  const shouldReduceMotion = useReducedMotion();
+  return (
+    <motion.div
+      variants={itemVariants}
+      initial="hidden"
+      animate="show"
+      transition={{ delay }}
+      whileHover={
+        hover && !shouldReduceMotion
+          ? { y: -3, transition: { duration: 0.2 } }
+          : undefined
+      }
+      className={`dashboard-card ${className}`}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function AnimatedProgress({ value, color, delay = 0 }) {
+  const shouldReduceMotion = useReducedMotion();
+  return (
+    <div className="h-1.5 overflow-hidden rounded-full bg-primary/10">
+      <motion.div
+        className={`h-full rounded-full ${color}`}
+        initial={{ width: shouldReduceMotion ? `${value}%` : 0 }}
+        animate={{ width: `${value}%` }}
+        transition={{ duration: 0.85, ease: EASE, delay }}
+      />
+    </div>
+  );
 }
 
 function MiniSparkline({ data }) {
+  const shouldReduceMotion = useReducedMotion();
   const w = 88;
   const h = 28;
   const max = Math.max(...data);
@@ -206,28 +510,54 @@ function MiniSparkline({ data }) {
     .join(" ");
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="dashboard-sparkline" aria-hidden>
-      <polyline points={points} className="dashboard-sparkline-line" />
+    <svg viewBox={`0 0 ${w} ${h}`} className="dashboard-sparkline w-full max-w-[88px]" aria-hidden>
+      <motion.polyline
+        points={points}
+        className="dashboard-sparkline-line"
+        fill="none"
+        initial={{ pathLength: shouldReduceMotion ? 1 : 0, opacity: 0.5 }}
+        animate={{ pathLength: 1, opacity: 1 }}
+        transition={{ duration: 0.9, ease: EASE }}
+      />
     </svg>
   );
 }
 
 export default function MentorDashboardPage() {
+  const shouldReduceMotion = useReducedMotion();
   const [snapshot, setSnapshot] = useState(() => buildSnapshot());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const [chartTab, setChartTab] = useState("week");
+  const [pieTab, setPieTab] = useState("revenue");
+  const [chartKey, setChartKey] = useState(0);
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 650));
-      setSnapshot(buildSnapshot());
+      const next = await fetchMentorDashboardSnapshot();
+      setSnapshot(next);
       setLastUpdated(new Date());
+      setChartKey((key) => key + 1);
     } finally {
       setIsRefreshing(false);
     }
   }, []);
+
+  const topCourses = useMemo(
+    () => (snapshot.courseList ? toTopCoursesTable(snapshot.courseList) : []),
+    [snapshot.courseList]
+  );
+
+  const pieData = pieTab === "revenue" ? snapshot.revenueMix ?? [] : snapshot.enrollmentMix ?? [];
+  const pieCenterValue =
+    pieTab === "revenue"
+      ? formatMentorCurrency(snapshot.totalRevenue)
+      : snapshot.totalStudents?.toLocaleString() ?? "0";
+
+  const avgCompletion = Math.round(
+    COURSE_PROGRESS.reduce((sum, c) => sum + c.value, 0) / COURSE_PROGRESS.length
+  );
 
   const kpis = useMemo(
     () => [
@@ -271,114 +601,244 @@ export default function MentorDashboardPage() {
     [snapshot]
   );
 
-  const chartData = snapshot.engagementWeek;
-  const maxBar = Math.max(...chartData.map((d) => d.value), 1);
-
   return (
-    <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
-      {/* Analytics header — aligned with admin & student dashboards */}
-      <section className="dashboard-analytics-bar">
-        <div className="dashboard-analytics-intro">
-          <span className="dashboard-pill">
+    <motion.div
+      className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4 pb-2"
+      variants={shouldReduceMotion ? undefined : pageVariants}
+      initial={shouldReduceMotion ? false : "hidden"}
+      animate={shouldReduceMotion ? undefined : "show"}
+    >
+      {/* Analytics header */}
+      <motion.section variants={sectionVariants} className="dashboard-analytics-bar">
+        <div className="dashboard-analytics-intro min-w-0">
+          <motion.span
+            className="dashboard-pill"
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: EASE }}
+          >
             <Sparkles className="h-3 w-3" />
             Mentor hub
-          </span>
-          <p className="dashboard-greeting">
-            Welcome back, <span className="text-primary">Mentor</span>
+          </motion.span>
+          <p className="dashboard-greeting text-base sm:text-lg">
+            Welcome back, <span className="text-primary">Dr. Sarah</span>
           </p>
           <p className="dashboard-greeting-sub">
             Track students, revenue, and course performance from one place.
           </p>
         </div>
 
-        <div className="dashboard-analytics-metrics">
-          <div className="dashboard-analytics-metric">
-            <TrendingUp className="h-3.5 w-3.5 text-success" />
-            <div>
+        <div className="dashboard-analytics-metrics min-w-0">
+          <motion.div
+            className="dashboard-analytics-metric"
+            whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+          >
+            <TrendingUp className="h-3.5 w-3.5 shrink-0 text-success" />
+            <div className="min-w-0">
               <p className="dashboard-metric-value">+{snapshot.weeklyGrowth}%</p>
               <p className="dashboard-metric-label">Weekly growth</p>
             </div>
-          </div>
-          <div className="dashboard-analytics-metric">
-            <Activity className="h-3.5 w-3.5 text-primary" />
-            <div>
+          </motion.div>
+          <motion.div
+            className="dashboard-analytics-metric"
+            whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+          >
+            <Activity className="h-3.5 w-3.5 shrink-0 text-primary" />
+            <div className="min-w-0">
               <p className="dashboard-metric-value">{snapshot.engagement}%</p>
               <p className="dashboard-metric-label">Engagement</p>
             </div>
-          </div>
-          <div className="dashboard-analytics-chart">
+          </motion.div>
+          <motion.div
+            className="dashboard-analytics-chart col-span-2 sm:col-span-1"
+            whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+          >
             <p className="dashboard-metric-label mb-1">Student trend</p>
             <MiniSparkline data={snapshot.trend} />
-          </div>
+          </motion.div>
         </div>
 
-        <div className="dashboard-analytics-status">
-          <p className="hidden text-[11px] text-muted sm:block">
+        <div className="dashboard-analytics-status w-full lg:w-auto">
+          <p className="w-full text-center text-[11px] text-muted sm:w-auto sm:text-left lg:text-right">
             Updated {formatLastUpdated(lastUpdated)}
           </p>
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="dashboard-header-btn dashboard-header-btn-outline disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-            {isRefreshing ? "Refreshing…" : "Refresh"}
-          </button>
-          <Link
-            to="/mentor/upload"
-            className="dashboard-header-btn dashboard-header-btn-primary"
-          >
-            <Upload className="h-3.5 w-3.5" />
-            Create Course
-          </Link>
+          <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end">
+            <motion.button
+              type="button"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+              className="dashboard-header-btn dashboard-header-btn-outline w-full disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Refreshing…" : "Refresh"}
+            </motion.button>
+            <motion.div whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }} className="w-full sm:w-auto">
+              <Link
+                to="/mentor/upload"
+                className="dashboard-header-btn dashboard-header-btn-primary w-full sm:w-auto"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                Create Course
+              </Link>
+            </motion.div>
+          </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* KPI cards */}
-      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-        {kpis.map((item) => {
+      <motion.section
+        variants={sectionVariants}
+        className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4"
+      >
+        {kpis.map((item, index) => {
           const Icon = item.icon;
           return (
-            <Card key={item.title} className={`dashboard-kpi-card p-3.5 ${item.accent}`}>
+            <MotionCard
+              key={item.title}
+              delay={index * 0.05}
+              className={`dashboard-kpi-card p-3.5 ${item.accent}`}
+            >
               <div className="flex items-center gap-2.5">
-                <div
+                <motion.div
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconColor}`}
+                  whileHover={shouldReduceMotion ? undefined : { rotate: 4, scale: 1.06 }}
+                  transition={{ type: "spring", stiffness: 320, damping: 18 }}
                 >
                   <Icon className="h-4 w-4" />
-                </div>
+                </motion.div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xl font-bold leading-none text-text">{item.count}</p>
+                  <p className="text-lg font-bold leading-none text-text sm:text-xl">{item.count}</p>
                   <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-muted">
                     {item.title}
                   </p>
                 </div>
               </div>
               <p className="mt-2 text-[11px] text-muted">{item.subtitle}</p>
-            </Card>
+            </MotionCard>
           );
         })}
-      </section>
+      </motion.section>
 
-      {/* Engagement chart + quick actions */}
-      <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <Card className="flex h-full flex-col p-4 xl:col-span-2">
+      {/* Main widgets */}
+      <motion.section variants={sectionVariants} className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <MotionCard className="flex h-full flex-col p-4" delay={0.05}>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="dashboard-section-title">Teaching Actions</h2>
+            <PlayCircle className="h-4 w-4 text-primary" />
+          </div>
+          <div className="space-y-2">
+            {QUICK_ACTIONS.map((action, i) => {
+              const Icon = action.icon;
+              return (
+                <motion.div
+                  key={action.label}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + i * 0.06, duration: 0.35, ease: EASE }}
+                >
+                  <Link to={action.to} className="dashboard-action-btn group">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <span className="truncate text-xs font-semibold text-text">{action.label}</span>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
+                </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </MotionCard>
+
+        <MotionCard className="flex h-full flex-col p-4" delay={0.1}>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="dashboard-section-title">Course Completion</h2>
+            <Activity className="h-4 w-4 text-primary" />
+          </div>
+          <div className="space-y-3.5">
+            {COURSE_PROGRESS.map((course, i) => (
+              <motion.div
+                key={course.title}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.12 + i * 0.08, duration: 0.35, ease: EASE }}
+              >
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <p className="truncate text-xs font-semibold text-text">{course.title}</p>
+                  <span className="shrink-0 text-[11px] font-bold text-muted">{course.value}%</span>
+                </div>
+                <AnimatedProgress value={course.value} color={course.color} delay={0.15 + i * 0.08} />
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2.5">
+            <div className="dashboard-mini-stat">
+              <p className="text-lg font-bold text-text">{avgCompletion}%</p>
+              <p className="text-[11px] text-muted">Avg. completion</p>
+            </div>
+            <div className="dashboard-mini-stat">
+              <p className="text-lg font-bold text-text">{snapshot.pendingQa}</p>
+              <p className="text-[11px] text-muted">Pending Q&amp;A</p>
+            </div>
+          </div>
+        </MotionCard>
+
+        <MotionCard className="flex h-full flex-col p-4 lg:col-span-2 xl:col-span-1" delay={0.15}>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="dashboard-section-title">Recent Activity</h2>
+            <Clock3 className="h-4 w-4 text-primary" />
+          </div>
+          <div className="space-y-2">
+            {ACTIVITIES.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.title}
+                  className="dashboard-recent-row"
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + i * 0.07, duration: 0.35, ease: EASE }}
+                  whileHover={shouldReduceMotion ? undefined : { x: 2 }}
+                >
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconColor}`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-bold text-text">{item.title}</p>
+                    <p className="text-[11px] text-muted">{item.desc}</p>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-muted">{item.time}</span>
+                </motion.div>
+              );
+            })}
+          </div>
+        </MotionCard>
+      </motion.section>
+
+      {/* Engagement line chart + course mix pie chart */}
+      <motion.section
+        variants={sectionVariants}
+        className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-5"
+      >
+        <MotionCard className="flex min-h-0 flex-col p-4 lg:col-span-3" delay={0.05} hover={false}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="dashboard-section-title">Course Performance</h2>
+              <h2 className="dashboard-section-title">Student Engagement</h2>
               <p className="mt-0.5 text-[11px] text-muted">
-                Student engagement analytics overview
+                Enrollments vs watch hours across your courses
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="dashboard-status-live">● Live data</span>
-              <div className="dashboard-chart-tabs">
+            <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+              <span className="dashboard-status-live whitespace-nowrap">● Live data</span>
+              <div className="dashboard-chart-tabs w-full sm:w-auto">
                 {["week", "month"].map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setChartTab(t)}
-                    className={`dashboard-chart-tab capitalize ${chartTab === t ? "dashboard-chart-tab-active" : ""}`}
+                    className={`dashboard-chart-tab flex-1 capitalize sm:flex-none ${chartTab === t ? "dashboard-chart-tab-active" : ""}`}
                   >
                     {t}
                   </button>
@@ -387,28 +847,30 @@ export default function MentorDashboardPage() {
             </div>
           </div>
 
-          <div className="dashboard-bar-chart-bars">
-            {chartData.map((bar, i) => (
-              <div key={bar.label} className="dashboard-bar-col">
-                <div className="dashboard-bar-track">
-                  <div
-                    className={`dashboard-bar-fill w-full transition-all duration-500 ${i % 2 === 0 ? "" : "dashboard-bar-fill-success"}`}
-                    style={{ height: `${(bar.value / maxBar) * 100}%` }}
-                  />
-                </div>
-                <span className="dashboard-bar-label">{bar.label}</span>
-              </div>
-            ))}
+          <div className="mb-3 flex flex-wrap gap-3">
+            <span className="dashboard-chart-legend dashboard-chart-legend-primary">Enrollments</span>
+            <span className="dashboard-chart-legend dashboard-chart-legend-success">Watch hours</span>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${chartTab}-${chartKey}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: EASE }}
+            >
+              <MentorEngagementLineChart
+                key={chartKey}
+                data={snapshot.chartData[chartTab]}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">{snapshot.newReviews}</p>
               <p className="text-[11px] text-muted">New reviews</p>
-            </div>
-            <div className="dashboard-mini-stat">
-              <p className="text-lg font-bold text-text">{snapshot.pendingQa}</p>
-              <p className="text-[11px] text-muted">Pending Q&amp;A</p>
             </div>
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">94%</p>
@@ -418,190 +880,179 @@ export default function MentorDashboardPage() {
               <p className="text-lg font-bold text-text">3.2h</p>
               <p className="text-[11px] text-muted">Avg. watch time</p>
             </div>
+            <div className="dashboard-mini-stat">
+              <p className="text-lg font-bold text-text">{snapshot.students.toLocaleString()}</p>
+              <p className="text-[11px] text-muted">Total students</p>
+            </div>
           </div>
-        </Card>
+        </MotionCard>
 
-        <Card className="flex h-full flex-col p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="dashboard-section-title">Quick Actions</h2>
-            <Activity className="h-4 w-4 text-primary" />
+        <MotionCard className="flex min-h-0 flex-col p-4 lg:col-span-2" delay={0.1} hover={false}>
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="dashboard-section-title">Course Mix</h2>
+              <p className="mt-0.5 text-[11px] text-muted">Share by course performance</p>
+            </div>
+            <PieChart className="h-4 w-4 shrink-0 text-primary" />
           </div>
-          <div className="space-y-2">
-            {QUICK_ACTIONS.map((action) => {
-              const Icon = action.icon;
-              return (
-                <Link key={action.label} to={action.to} className="dashboard-action-btn group">
-                  <div className="flex min-w-0 items-center gap-2.5">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <span className="truncate text-xs font-semibold text-text">
-                      {action.label}
-                    </span>
-                  </div>
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              );
-            })}
+
+          <div className="dashboard-chart-tabs mb-3 w-full">
+            {[
+              { id: "revenue", label: "Revenue" },
+              { id: "students", label: "Students" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setPieTab(tab.id)}
+                className={`dashboard-chart-tab flex-1 ${pieTab === tab.id ? "dashboard-chart-tab-active" : ""}`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
-          <div className="dashboard-mini-stat mt-3 flex items-center justify-between">
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${pieTab}-${chartKey}`}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.3, ease: EASE }}
+              className="flex flex-1 flex-col"
+            >
+              <MentorRevenuePieChart
+                data={pieData}
+                metric={pieTab}
+                chartKey={chartKey}
+                centerLabel={pieTab === "revenue" ? "Total revenue" : "Total students"}
+                centerValue={pieCenterValue}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted">
-                Pending Q&amp;A
+                {pieTab === "revenue" ? "Gross revenue" : "Active learners"}
               </p>
-              <p className="mt-0.5 text-lg font-bold text-text">{snapshot.pendingQa}</p>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning/10 text-warning">
-              <Bell className="h-5 w-5" />
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* Enrollments + Q&A / activity */}
-      <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <Card className="overflow-hidden xl:col-span-2">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
-            <div>
-              <h2 className="dashboard-section-title">Recent Enrollments</h2>
-              <p className="mt-0.5 text-[11px] text-muted">Students who joined recently</p>
+              <p className="text-base font-bold text-text">{pieCenterValue}</p>
             </div>
             <Link
-              to="/mentor/students"
-              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+              to="/mentor/analytics"
+              className="dashboard-admin-btn dashboard-admin-btn-outline shrink-0"
             >
-              View all <ChevronRight className="h-3.5 w-3.5" />
+              Analytics
+              <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="dashboard-table w-full text-sm">
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Course</th>
-                  <th>Revenue</th>
-                  <th className="text-right">Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {RECENT_ENROLLMENTS.map((row) => (
-                  <tr key={`${row.name}-${row.time}`}>
-                    <td>
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[11px] font-bold text-primary">
-                          {row.initials}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-text">{row.name}</p>
-                          <p className="text-[10px] text-muted">Premium student</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="text-muted">{row.course}</td>
-                    <td>
-                      <span className="font-bold text-success">{row.amount}</span>
-                    </td>
-                    <td className="text-right text-[11px] text-muted">{row.time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        </MotionCard>
+      </motion.section>
+
+      {/* Action items */}
+      <motion.section variants={sectionVariants} className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <MotionCard className="flex h-full flex-col p-4 xl:col-span-2" delay={0.05} hover={false}>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h2 className="dashboard-section-title">Action Items</h2>
+            <span className="dashboard-trend dashboard-trend-down">{ACTION_ITEMS.length} pending</span>
           </div>
-        </Card>
-
-        <div className="flex flex-col gap-4">
-          <Card className="flex flex-col p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="dashboard-section-title">Q&amp;A Pending</h2>
-              <span className="dashboard-trend dashboard-trend-down">
-                {snapshot.pendingQa} pending
-              </span>
-            </div>
-            <div className="dashboard-recent-row flex-col !items-stretch !gap-3">
-              <div className="flex gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-[11px] font-bold text-primary">
-                  {PENDING_QA.initials}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-bold text-text">{PENDING_QA.name}</p>
-                    {PENDING_QA.urgent ? (
-                      <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary">
-                        Urgent
-                      </span>
-                    ) : null}
-                  </div>
-                  <p className="text-[11px] text-muted">
-                    {PENDING_QA.course} · {PENDING_QA.lesson}
-                  </p>
-                </div>
-              </div>
-              <p className="rounded-lg border border-border bg-bg/50 p-3 text-[12px] leading-relaxed text-text">
-                &ldquo;{PENDING_QA.question}&rdquo;
-              </p>
-              <Link
-                to="/mentor/notifications"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
-              >
-                <MessageSquare className="h-3.5 w-3.5" />
-                Reply
-              </Link>
-            </div>
-          </Card>
-
-          <Card className="flex flex-col p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="dashboard-section-title">Recent Activity</h2>
-              <Clock3 className="h-4 w-4 text-primary" />
-            </div>
-            <div className="space-y-2">
-              {ACTIVITIES.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div key={item.title} className="dashboard-recent-row">
-                    <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconColor}`}
-                    >
+          <div className="space-y-2">
+            {ACTION_ITEMS.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.title}
+                  className="dashboard-recent-row flex-col gap-3 sm:flex-row sm:items-center"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.08 + i * 0.08, duration: 0.35, ease: EASE }}
+                  whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
+                >
+                  <div className="flex min-w-0 flex-1 items-start gap-3">
+                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconColor}`}>
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-bold text-text">{item.title}</p>
+                      <p className="text-xs font-bold text-text">{item.title}</p>
                       <p className="text-[11px] text-muted">{item.desc}</p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </Card>
-        </div>
-      </section>
+                  <Link
+                    to={item.action.to}
+                    className={`dashboard-admin-btn dashboard-admin-btn-${item.action.variant} w-full shrink-0 sm:w-auto`}
+                  >
+                    {item.action.label}
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </MotionCard>
+
+        <MotionCard className="overflow-hidden" delay={0.1}>
+          <div className="border-b border-border p-4">
+            <h2 className="dashboard-section-title">Recent Enrollments</h2>
+            <p className="mt-0.5 text-[11px] text-muted">Latest students who joined</p>
+          </div>
+          <div className="divide-y divide-border">
+            {RECENT_ENROLLMENTS.map((row, i) => (
+              <motion.div
+                key={`${row.name}-${row.time}`}
+                className="flex items-center gap-3 p-3"
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 + i * 0.06, duration: 0.35, ease: EASE }}
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-[11px] font-bold text-primary">
+                  {row.initials}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-bold text-text">{row.name}</p>
+                  <p className="truncate text-[11px] text-muted">{row.course}</p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="text-xs font-bold text-success">{row.amount}</p>
+                  <p className="text-[10px] text-muted">{row.time}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="border-t border-border p-3">
+            <Link
+              to="/mentor/students"
+              className="flex items-center justify-center gap-1 text-xs font-semibold text-primary hover:underline"
+            >
+              View all students <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </MotionCard>
+      </motion.section>
 
       {/* Upcoming sessions */}
-      <section>
+      <motion.section variants={sectionVariants}>
         <h2 className="dashboard-section-title mb-3">Upcoming Sessions</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {UPCOMING.map((item) => (
-            <Card
+        <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 xl:grid-cols-4">
+          {UPCOMING.map((item, i) => (
+            <MotionCard
               key={item.title}
-              className="group p-4 transition-colors duration-200 hover:border-primary/25"
+              delay={0.05 + i * 0.05}
+              className="group min-w-[220px] shrink-0 snap-start p-4 transition-colors duration-200 hover:border-primary/25 sm:min-w-0"
             >
               <div className="flex items-center gap-2 text-primary">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                   <Video className="h-3.5 w-3.5" />
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.12em]">
-                  {item.date}
-                </p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.12em]">{item.date}</p>
               </div>
               <h3 className="mt-3 text-sm font-bold leading-snug text-text">{item.title}</h3>
               <p className="mt-1 text-xs text-muted">{item.subtitle}</p>
-            </Card>
+            </MotionCard>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* Top courses table */}
-      <Card className="overflow-hidden">
+      <MotionCard className="overflow-hidden" delay={0.08} hover={false}>
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
           <div>
             <h2 className="dashboard-section-title">Top Performing Courses</h2>
@@ -611,11 +1062,11 @@ export default function MentorDashboardPage() {
             to="/mentor/analytics"
             className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
           >
-            View analytics <ArrowUpRight className="h-3.5 w-3.5" />
+            View analytics <ChevronRight className="h-3.5 w-3.5" />
           </Link>
         </div>
-        <div className="overflow-x-auto">
-          <table className="dashboard-table w-full text-sm">
+        <div className="-mx-1 overflow-x-auto px-1 sm:mx-0 sm:px-0">
+          <table className="dashboard-table w-full min-w-[520px] text-sm">
             <thead>
               <tr>
                 <th>#</th>
@@ -626,18 +1077,21 @@ export default function MentorDashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {TOP_COURSES.map((course, i) => (
-                <tr key={course.name}>
+              {topCourses.map((course, i) => (
+                <motion.tr
+                  key={course.name}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + i * 0.05, duration: 0.3, ease: EASE }}
+                >
                   <td className="text-muted">{i + 1}</td>
                   <td>
-                    <p className="font-semibold text-text">{course.name}</p>
+                    <p className="max-w-[180px] truncate font-semibold text-text sm:max-w-none">{course.name}</p>
                   </td>
                   <td className="hidden sm:table-cell">
                     <div className="flex items-center gap-1.5">
                       <Users className="h-3.5 w-3.5 text-muted" />
-                      <span className="text-xs font-semibold">
-                        {course.students.toLocaleString()}
-                      </span>
+                      <span className="text-xs font-semibold">{course.students.toLocaleString()}</span>
                     </div>
                   </td>
                   <td className="hidden md:table-cell">
@@ -652,16 +1106,16 @@ export default function MentorDashboardPage() {
                       {course.trend === "up" ? (
                         <ArrowUpRight className="h-3.5 w-3.5 text-success" />
                       ) : (
-                        <TrendingUp className="h-3.5 w-3.5 rotate-180 text-danger" />
+                        <ArrowDownRight className="h-3.5 w-3.5 text-danger" />
                       )}
                     </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
         </div>
-      </Card>
-    </div>
+      </MotionCard>
+    </motion.div>
   );
 }

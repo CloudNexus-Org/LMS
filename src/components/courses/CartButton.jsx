@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import useCartStore from '@/store/useCartStore';
 
-export default function CartButton({ className = '', size = 20 }) {
+export default function CartButton({ className = '', size = 20, to = '/cart' }) {
   const items = useCartStore((s) => s.items);
   const count = items.length;
 
   return (
     <Link
-      to="/cart"
+      to={to}
       aria-label={`Shopping cart${count ? `, ${count} items` : ''}`}
       className={`
         relative inline-flex h-10 w-10 items-center justify-center

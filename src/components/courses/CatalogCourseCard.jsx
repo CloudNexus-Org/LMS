@@ -31,7 +31,7 @@ export function getDiscountPercent(price, originalPrice) {
   return Math.round(((originalPrice - price) / originalPrice) * 100);
 }
 
-export default function CatalogCourseCard({ course }) {
+export default function CatalogCourseCard({ course, cartPath = '/cart' }) {
   const navigate = useNavigate();
   const addToCart = useCartStore((s) => s.addItem);
   const isInCart = useCartStore((s) => s.isInCart(course.id));
@@ -45,7 +45,7 @@ export default function CatalogCourseCard({ course }) {
   const handleCartAction = (e) => {
     e.stopPropagation();
     if (isInCart) {
-      navigate('/cart');
+      navigate(cartPath);
       return;
     }
     addToCart(course);
@@ -54,7 +54,7 @@ export default function CatalogCourseCard({ course }) {
   const handleBuyNow = (e) => {
     e.stopPropagation();
     addToCart(course);
-    navigate('/cart');
+    navigate(cartPath);
   };
 
   const handleWishlist = (e) => {

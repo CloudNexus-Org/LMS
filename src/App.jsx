@@ -44,6 +44,12 @@ const StudentDashboardPage = lazy(() =>
 const MyCoursesPage = lazy(() =>
   import('@/pages/student/MyCoursesPage')
 );
+const StudentBrowseCoursesPage = lazy(() =>
+  import('@/pages/student/StudentBrowseCoursesPage')
+);
+const StudentCartPage = lazy(() =>
+  import('@/pages/student/StudentCartPage')
+);
 const ProfilePage = lazy(() =>
   import('@/pages/student/ProfilePage')
 );
@@ -80,6 +86,9 @@ const NotificationsPage = lazy(() =>
 const QuizResultsPage = lazy(() =>
   import('@/pages/student/QuizResultsPage')
 );
+const CourseReviewsPage = lazy(() =>
+  import('@/pages/student/CourseReviewsPage')
+);
 
 // Mentor Pages
 const MentorDashboardPage = lazy(() =>
@@ -90,9 +99,6 @@ const UploadCoursePage = lazy(() =>
 );
 const ManageLessonsPage = lazy(() =>
   import('@/pages/mentor/ManageLessonsPage')
-);
-const RevenuePage = lazy(() =>
-  import('@/pages/mentor/RevenuePage')
 );
 const AnalyticsPage = lazy(() =>
   import('@/pages/mentor/AnalyticsPage')
@@ -110,6 +116,9 @@ const AdminDashboardPage = lazy(() =>
 );
 const UserManagementPage = lazy(() =>
   import('@/pages/admin/UserManagementPage')
+);
+const AddMentorPage = lazy(() =>
+  import('@/pages/admin/AddMentorPage')
 );
 const CourseApprovalsPage = lazy(() =>
   import('@/pages/admin/CourseApprovalsPage')
@@ -207,6 +216,14 @@ function App() {
                   element={<MyCoursesPage />}
                 />
                 <Route
+                  path="catalog"
+                  element={<StudentBrowseCoursesPage />}
+                />
+                <Route
+                  path="cart"
+                  element={<StudentCartPage />}
+                />
+                <Route
                   path="learn"
                   element={<StudentLearnRedirect />}
                 />
@@ -224,6 +241,11 @@ function App() {
                 <Route
                   path="wishlist"
                   element={<StudentWishlistPage />}
+                />
+
+                <Route
+                  path="reviews"
+                  element={<CourseReviewsPage />}
                 />
 
                 <Route
@@ -296,7 +318,7 @@ function App() {
 
                 <Route
                   path="revenue"
-                  element={<RevenuePage />}
+                  element={<Navigate to="/mentor/analytics" replace />}
                 />
 
                 <Route
@@ -341,6 +363,11 @@ function App() {
                 <Route
                   path="users"
                   element={<UserManagementPage />}
+                />
+
+                <Route
+                  path="users/add-mentor"
+                  element={<AddMentorPage />}
                 />
 
                 <Route

@@ -22,7 +22,7 @@ const EASE = [0.16, 1, 0.3, 1];
 const DEFAULT_COVER = "/assets/profile-cover-default.svg";
 
 const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
-  { profile, settingsPath = "/student/settings" },
+  { profile, settingsPath = "/student/settings", showStreak = true, showEditProfile = true },
   ref
 ) {
   const coverInputRef = useRef(null);
@@ -238,14 +238,20 @@ const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
             </div>
 
             <div className="profile-hero-actions-linkedin">
-              <Link to={settingsPath} className="profile-btn profile-btn-outline">
+              <Link
+                to={settingsPath}
+                className="profile-btn profile-btn-outline profile-btn-icon-only"
+                aria-label="Account settings"
+                title="Settings"
+              >
                 <Settings className="h-4 w-4" />
-                <span>Settings</span>
               </Link>
-              <button type="button" className="profile-btn profile-btn-primary">
-                <Edit3 className="h-4 w-4" />
-                <span>Edit profile</span>
-              </button>
+              {showEditProfile && (
+                <button type="button" className="profile-btn profile-btn-primary">
+                  <Edit3 className="h-4 w-4" />
+                  <span>Edit profile</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -274,14 +280,16 @@ const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
                 <Zap className="h-3 w-3" />
                 {profile.plan}
               </span>
-              <motion.span
-                className="dashboard-streak-badge"
-                animate={{ scale: [1, 1.03, 1] }}
-                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-              >
-                <Flame className="h-3.5 w-3.5" />
-                {profile.streak} day streak
-              </motion.span>
+              {showStreak && (
+                <motion.span
+                  className="dashboard-streak-badge"
+                  animate={{ scale: [1, 1.03, 1] }}
+                  transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+                >
+                  <Flame className="h-3.5 w-3.5" />
+                  {profile.streak} day streak
+                </motion.span>
+              )}
             </div>
 
             <p className="profile-hero-bio">{profile.bio}</p>

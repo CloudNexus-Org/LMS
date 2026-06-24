@@ -1,21 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Search, Shield, Edit3, Ban, ShieldCheck,
-  UserPlus, Users, X, Mail,
+  UserPlus, Users, X,
   UserCheck, UserX, Download, Clock,
-  Eye, BarChart2,
+  Eye, CheckCircle2, Trash2, AlertTriangle,
 } from 'lucide-react';
-
-const USERS = [
-  { id: 1, name: 'Alex Chen', email: 'alex.chen@example.com', role: 'Student', joined: 'Mar 12, 2026', status: 'Active', courses: 4, lastActive: '2 hours ago', avatar: 'AC', spend: '$360' },
-  { id: 2, name: 'Dr. Arjan Singh', email: 'arjan@cloudnexus.com', role: 'Mentor', joined: 'Jan 5, 2024', status: 'Active', courses: 3, lastActive: '30 mins ago', avatar: 'AS', spend: '$0' },
-  { id: 3, name: 'Sarah Miller', email: 'sarah.m@example.com', role: 'Student', joined: 'Feb 18, 2026', status: 'Active', courses: 6, lastActive: '5 hours ago', avatar: 'SM', spend: '$540' },
-  { id: 4, name: 'Admin User', email: 'admin@cloudnexus.com', role: 'Admin', joined: 'Dec 1, 2023', status: 'Active', courses: 0, lastActive: '1 hour ago', avatar: 'AU', spend: '$0' },
-  { id: 5, name: 'James Wilson', email: 'j.wilson@example.com', role: 'Student', joined: 'Jan 22, 2026', status: 'Inactive', courses: 2, lastActive: '3 days ago', avatar: 'JW', spend: '$180' },
-  { id: 6, name: 'Priya Nair', email: 'priya.n@cloudnexus.com', role: 'Mentor', joined: 'Mar 3, 2025', status: 'Active', courses: 5, lastActive: '1 day ago', avatar: 'PN', spend: '$0' },
-  { id: 7, name: 'Spam Account', email: 'fake1234@spam.com', role: 'Student', joined: 'May 5, 2026', status: 'Banned', courses: 0, lastActive: 'Never', avatar: 'SA', spend: '$0' },
-  { id: 8, name: 'Emily Davis', email: 'emily.d@example.com', role: 'Student', joined: 'Apr 10, 2026', status: 'Active', courses: 3, lastActive: '4 hours ago', avatar: 'ED', spend: '$270' },
-];
+import { loadAdminUsers, saveAdminUsers, updateAdminUser, removeAdminUser, toggleUserBan, MENTOR_TRACK_OPTIONS } from '@/data/adminUsers';
 
 const GRAD_COLORS = [
   'from-blue-500 to-cyan-400', 'from-emerald-500 to-lime-400',
@@ -37,23 +28,148 @@ const STATUS_CONFIG = {
 };
 
 export default function UserManagementPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [users, setUsers] = useState(() => loadAdminUsers());
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const filtered = useMemo(() => USERS.filter(u => {
+  const persistUsers = (next) => {
+    setUsers(next);
+    saveAdminUsers(next);
+  };
+
+  const showToast = (message) => {
+    setSuccessMessage(message);
+    setTimeout(() => setSuccessMessage(''), 5000);
+  };
+
+  const handleView = (user) => {
+    setSelectedUser(user);
+  };
+
+  const handleEdit = (user) => {
+    setEditingUser({ ...user });
+    setSelectedUser(null);
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    if (!editingUser) return;
+
+    const name = editingUser.name?.trim();
+    const email = editingUser.email?.trim().toLowerCase();
+
+    if (!name || !email) {
+      showToast('Name and email are required.');
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      showToast('Please enter a valid email address.');
+      return;
+    }
+
+    const duplicate = users.some(
+      (u) => u.id !== editingUser.id && u.email.toLowerCase() === email
+    );
+    if (duplicate) {
+      showToast('Another user already uses this email.');
+      return;
+    }
+
+    const next = updateAdminUser(users, editingUser.id, {
+      name,
+      email,
+      role: editingUser.role,
+      status: editingUser.status,
+      professionalRole: editingUser.professionalRole,
+      company: editingUser.company,
+      trackLabel: editingUser.trackLabel,
+      location: editingUser.location,
+      bio: editingUser.bio,
+    });
+
+    persistUsers(next);
+    setEditingUser(null);
+    showToast(`${name} was updated successfully.`);
+  };
+
+  const handleBanToggle = (user) => {
+    if (user.role === 'Admin') {
+      showToast('Admin accounts cannot be banned.');
+      return;
+    }
+
+    const next = toggleUserBan(users, user.id);
+    persistUsers(next);
+
+    const updated = next.find((u) => u.id === user.id);
+    if (selectedUser?.id === user.id) {
+      setSelectedUser(updated ?? null);
+    }
+
+    showToast(
+      updated?.status === 'Banned'
+        ? `${user.name} has been banned.`
+        : `${user.name} has been unbanned.`
+    );
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+
+    if (deleteTarget.role === 'Admin') {
+      showToast('Admin accounts cannot be deleted.');
+      setDeleteTarget(null);
+      return;
+    }
+
+    const next = removeAdminUser(users, deleteTarget.id);
+    persistUsers(next);
+
+    if (selectedUser?.id === deleteTarget.id) setSelectedUser(null);
+    if (editingUser?.id === deleteTarget.id) setEditingUser(null);
+
+    showToast(`${deleteTarget.name} was removed from the directory.`);
+    setDeleteTarget(null);
+  };
+
+  const updateEditField = (field, value) => {
+    setEditingUser((prev) => (prev ? { ...prev, [field]: value } : prev));
+  };
+
+  useEffect(() => {
+    setUsers(loadAdminUsers());
+  }, [location.key]);
+
+  useEffect(() => {
+    if (!location.state?.mentorAdded) return;
+
+    setSuccessMessage(`${location.state.mentorAdded} was added as a mentor.`);
+    navigate(location.pathname, { replace: true, state: {} });
+
+    const timer = setTimeout(() => setSuccessMessage(''), 5000);
+    return () => clearTimeout(timer);
+  }, [location.state, location.pathname, navigate]);
+
+  const filtered = useMemo(() => users.filter(u => {
     const q = search.toLowerCase();
     const matchQ = u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
     const matchRole = roleFilter === 'All' || u.role === roleFilter;
     const matchStatus = statusFilter === 'All' || u.status === statusFilter;
     return matchQ && matchRole && matchStatus;
-  }), [search, roleFilter, statusFilter]);
+  }), [search, roleFilter, statusFilter, users]);
 
-  const total = USERS.length;
-  const active = USERS.filter(u => u.status === 'Active').length;
-  const banned = USERS.filter(u => u.status === 'Banned').length;
-  const mentors = USERS.filter(u => u.role === 'Mentor').length;
+  const total = users.length;
+  const active = users.filter(u => u.status === 'Active').length;
+  const banned = users.filter(u => u.status === 'Banned').length;
+  const mentors = users.filter(u => u.role === 'Mentor').length;
 
   const stats = [
     {
@@ -110,15 +226,22 @@ export default function UserManagementPage() {
             <Download className="h-4 w-4" />
             Export CSV
           </button>
-          <button
-            type="button"
+          <Link
+            to="/admin/users/add-mentor"
             className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-primary-hover"
           >
             <UserPlus className="h-4 w-4" />
-            Add User
-          </button>
+            Add Mentor
+          </Link>
         </div>
       </div>
+
+      {successMessage ? (
+        <div className="flex items-center gap-2 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm font-semibold text-success">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          {successMessage}
+        </div>
+      ) : null}
 
       <section className="admin-stat-strip" aria-label="User directory statistics">
         {stats.map((stat) => {
@@ -256,14 +379,33 @@ export default function UserManagementPage() {
 
                     {/* Actions */}
                     <td className="px-5 py-4">
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => setSelectedUser(user)} className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all" title="View">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleView(user)}
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all"
+                          title="View"
+                          aria-label={`View ${user.name}`}
+                        >
                           <Eye className="h-3.5 w-3.5" />
                         </button>
-                        <button className="h-8 w-8 flex items-center justify-center rounded-[5px]  border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all" title="Edit">
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(user)}
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all"
+                          title="Edit"
+                          aria-label={`Edit ${user.name}`}
+                        >
                           <Edit3 className="h-3.5 w-3.5" />
                         </button>
-                        <button className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all" title={user.status === 'Banned' ? 'Unban' : 'Ban'}>
+                        <button
+                          type="button"
+                          onClick={() => handleBanToggle(user)}
+                          disabled={user.role === 'Admin'}
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all disabled:cursor-not-allowed disabled:opacity-40"
+                          title={user.status === 'Banned' ? 'Unban user' : 'Ban user'}
+                          aria-label={user.status === 'Banned' ? `Unban ${user.name}` : `Ban ${user.name}`}
+                        >
                           <Ban className="h-3.5 w-3.5" />
                         </button>
                       </div>
@@ -285,7 +427,7 @@ export default function UserManagementPage() {
 
         {/* Pagination footer */}
         <div className="px-5 py-3 border-t border-border bg-bg/30 flex items-center justify-between">
-          <p className="text-xs font-bold text-muted">Showing {filtered.length} of {USERS.length} users</p>
+          <p className="text-xs font-bold text-muted">Showing {filtered.length} of {users.length} users</p>
           <div className="flex items-center gap-1">
             {[1, 2, 3].map(p => (
               <button key={p} className={`h-7 w-7 rounded-[5px] text-xs font-bold transition-all ${p === 1 ? 'bg-primary text-white' : 'text-muted hover:bg-bg border border-border hover:text-text'}`}>{p}</button>
@@ -295,32 +437,41 @@ export default function UserManagementPage() {
       </div>
 
       {/* ── USER DETAIL MODAL ── */}
-      {selectedUser && (
+      {selectedUser && (() => {
+        const viewed = users.find((u) => u.id === selectedUser.id) ?? selectedUser;
+        return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedUser(null)}>
           <div className="bg-surface border border-border rounded-[5px] shadow-elevated w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-5">
               <div className="flex items-center gap-4">
-                <div className={`h-14 w-14 rounded-lg bg-gradient-to-br ${GRAD_COLORS[selectedUser.id % GRAD_COLORS.length]} flex items-center justify-center text-white font-bold text-lg shadow-sm`}>
-                  {selectedUser.avatar}
+                <div className={`h-14 w-14 rounded-lg bg-gradient-to-br ${GRAD_COLORS[viewed.id % GRAD_COLORS.length]} flex items-center justify-center text-white font-bold text-lg shadow-sm`}>
+                  {viewed.avatar}
                 </div>
                 <div>
-                  <h3 className="font-bold text-text text-lg">{selectedUser.name}</h3>
-                  <p className="text-sm text-muted">{selectedUser.email}</p>
+                  <h3 className="font-bold text-text text-lg">{viewed.name}</h3>
+                  <p className="text-sm text-muted">{viewed.email}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedUser(null)} className="text-muted hover:text-text p-1">
+              <button type="button" onClick={() => setSelectedUser(null)} className="text-muted hover:text-text p-1">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-5">
               {[
-                { label: 'Role', value: selectedUser.role },
-                { label: 'Status', value: selectedUser.status },
-                { label: 'Joined', value: selectedUser.joined },
-                { label: 'Last Active', value: selectedUser.lastActive },
-                { label: 'Courses', value: selectedUser.courses || '—' },
-                { label: 'Total Spend', value: selectedUser.spend },
+                { label: 'Role', value: viewed.role },
+                { label: 'Status', value: viewed.status },
+                { label: 'Joined', value: viewed.joined },
+                { label: 'Last Active', value: viewed.lastActive },
+                { label: 'Courses', value: viewed.courses || '—' },
+                { label: 'Total Spend', value: viewed.spend },
+                ...(viewed.role === 'Mentor' && viewed.trackLabel
+                  ? [{ label: 'Track', value: viewed.trackLabel }]
+                  : []),
+                ...(viewed.professionalRole
+                  ? [{ label: 'Title', value: viewed.professionalRole }]
+                  : []),
+                ...(viewed.company ? [{ label: 'Company', value: viewed.company }] : []),
               ].map(item => (
                 <div key={item.label} className="bg-bg border border-border rounded-xl p-3">
                   <p className="text-xs font-bold text-muted uppercase tracking-wider">{item.label}</p>
@@ -329,15 +480,216 @@ export default function UserManagementPage() {
               ))}
             </div>
 
-            <div className="flex gap-3">
-              <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover transition-all">
-                <Mail className="h-4 w-4" /> Message
+            {viewed.bio ? (
+              <p className="mb-5 rounded-xl border border-border bg-bg/50 p-3 text-sm text-muted">
+                {viewed.bio}
+              </p>
+            ) : null}
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => handleEdit(viewed)}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-[5px] text-sm font-bold hover:bg-primary-hover transition-all min-w-[120px]"
+              >
+                <Edit3 className="h-4 w-4" /> Edit
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-bg border border-border rounded-[5px]   text-sm font-bold text-muted hover:text-text hover:border-primary/40 transition-all">
-                <BarChart2 className="h-4 w-4" /> Analytics
-              </button>
-              <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-danger/10 border border-danger/20 rounded-[5px] text-sm font-bold text-danger hover:bg-danger hover:text-white transition-all">
+              <button
+                type="button"
+                onClick={() => handleBanToggle(viewed)}
+                disabled={viewed.role === 'Admin'}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-warning/10 border border-warning/20 rounded-[5px] text-sm font-bold text-warning hover:bg-warning hover:text-white transition-all disabled:cursor-not-allowed disabled:opacity-40"
+              >
                 <Ban className="h-4 w-4" />
+                {viewed.status === 'Banned' ? 'Unban' : 'Ban'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedUser(null);
+                  if (viewed.role !== 'Admin') setDeleteTarget(viewed);
+                  else showToast('Admin accounts cannot be deleted.');
+                }}
+                disabled={viewed.role === 'Admin'}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-danger/10 border border-danger/20 rounded-[5px] text-sm font-bold text-danger hover:bg-danger hover:text-white transition-all disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+        );
+      })()}
+
+      {/* ── EDIT USER MODAL ── */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setEditingUser(null)}>
+          <form
+            className="bg-surface border border-border rounded-[5px] shadow-elevated w-full max-w-lg p-6 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={handleSaveEdit}
+          >
+            <div className="flex items-start justify-between mb-5">
+              <div>
+                <h3 className="font-bold text-text text-lg">Edit user</h3>
+                <p className="text-sm text-muted">Update account details and access.</p>
+              </div>
+              <button type="button" onClick={() => setEditingUser(null)} className="text-muted hover:text-text p-1">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block">
+                <span className="mb-1.5 block text-[11px] font-medium text-muted">Full name</span>
+                <input
+                  value={editingUser.name}
+                  onChange={(e) => updateEditField('name', e.target.value)}
+                  className="w-full h-11 rounded-xl border border-border bg-bg px-4 text-sm text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  required
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-1.5 block text-[11px] font-medium text-muted">Email</span>
+                <input
+                  type="email"
+                  value={editingUser.email}
+                  onChange={(e) => updateEditField('email', e.target.value)}
+                  className="w-full h-11 rounded-xl border border-border bg-bg px-4 text-sm text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  required
+                />
+              </label>
+
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block">
+                  <span className="mb-1.5 block text-[11px] font-medium text-muted">Role</span>
+                  <select
+                    value={editingUser.role}
+                    onChange={(e) => updateEditField('role', e.target.value)}
+                    disabled={editingUser.role === 'Admin'}
+                    className="w-full h-11 rounded-xl border border-border bg-bg px-4 text-sm text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:opacity-60"
+                  >
+                    <option value="Student">Student</option>
+                    <option value="Mentor">Mentor</option>
+                    <option value="Admin">Admin</option>
+                  </select>
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-[11px] font-medium text-muted">Status</span>
+                  <select
+                    value={editingUser.status}
+                    onChange={(e) => updateEditField('status', e.target.value)}
+                    disabled={editingUser.role === 'Admin'}
+                    className="w-full h-11 rounded-xl border border-border bg-bg px-4 text-sm text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:opacity-60"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Banned">Banned</option>
+                  </select>
+                </label>
+              </div>
+
+              {editingUser.role === 'Mentor' ? (
+                <>
+                  <label className="block">
+                    <span className="mb-1.5 block text-[11px] font-medium text-muted">Professional role</span>
+                    <input
+                      value={editingUser.professionalRole || ''}
+                      onChange={(e) => updateEditField('professionalRole', e.target.value)}
+                      className="w-full h-11 rounded-xl border border-border bg-bg px-4 text-sm text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-1.5 block text-[11px] font-medium text-muted">Company</span>
+                    <input
+                      value={editingUser.company || ''}
+                      onChange={(e) => updateEditField('company', e.target.value)}
+                      className="w-full h-11 rounded-xl border border-border bg-bg px-4 text-sm text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-1.5 block text-[11px] font-medium text-muted">Teaching track</span>
+                    <select
+                      value={editingUser.trackLabel || MENTOR_TRACK_OPTIONS[0]}
+                      onChange={(e) => updateEditField('trackLabel', e.target.value)}
+                      className="w-full h-11 rounded-xl border border-border bg-bg px-4 text-sm text-text outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    >
+                      {MENTOR_TRACK_OPTIONS.map((track) => (
+                        <option key={track} value={track}>{track}</option>
+                      ))}
+                    </select>
+                  </label>
+                </>
+              ) : null}
+            </div>
+
+            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+              {editingUser.role !== 'Admin' ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDeleteTarget(editingUser);
+                    setEditingUser(null);
+                  }}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/30 px-4 py-2.5 text-sm font-bold text-danger hover:bg-danger/10"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete user
+                </button>
+              ) : (
+                <span />
+              )}
+              <div className="flex gap-2 sm:ml-auto">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-muted hover:text-text"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-hover"
+                >
+                  Save changes
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ── DELETE CONFIRMATION ── */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteTarget(null)}>
+          <div
+            className="bg-surface border border-border rounded-[5px] shadow-elevated w-full max-w-sm p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-danger/10 text-danger">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-bold text-text">Delete user?</h3>
+            <p className="mt-2 text-sm text-muted">
+              Remove <span className="font-semibold text-text">{deleteTarget.name}</span> from the directory?
+              This cannot be undone.
+            </p>
+            <div className="mt-6 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                className="flex-1 rounded-lg border border-border py-2.5 text-sm font-semibold text-muted hover:text-text"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="flex-1 rounded-lg bg-danger py-2.5 text-sm font-bold text-white hover:opacity-90"
+              >
+                Delete
               </button>
             </div>
           </div>

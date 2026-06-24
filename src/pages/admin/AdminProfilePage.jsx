@@ -292,7 +292,7 @@ export default function AdminProfilePage() {
   return (
     <motion.div className="dashboard-page profile-page mx-auto w-full max-w-[1320px] space-y-3 sm:space-y-4" variants={container} initial="hidden" animate="visible">
       <motion.div variants={item}>
-        <ProfileHeroBanner ref={heroRef} profile={PROFILE} settingsPath="/admin/settings" />
+        <ProfileHeroBanner ref={heroRef} profile={PROFILE} settingsPath="/admin/settings" showStreak={false} />
       </motion.div>
 
       <motion.section className="profile-stats-wrap" variants={item}>
