@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -13,6 +13,13 @@ import AuthAutofillTrap from "@/components/auth/AuthAutofillTrap";
 import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
 import { authItemMotion } from "@/components/auth/authMotion";
 import useAuthStore from "@/store/useAuthStore";
+import {
+  trimSignupValues,
+  validateSignupField,
+  validateSignupForm,
+} from "@/lib/authValidation";
+
+const SIGNUP_FIELDS = ["name", "email", "password", "confirmPassword"];
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -20,9 +27,10 @@ export default function SignupPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [touched, setTouched] = useState({});
 
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -30,54 +38,58 @@ export default function SignupPage() {
 
   const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const isFormValid = useMemo(
+    () => validateSignupForm(formData).isValid,
+    [formData]
+  );
 
-    if (errors[e.target.name]) {
-      setErrors({
-        ...errors,
-        [e.target.name]: "",
-      });
+  const setFieldError = (name, nextFormData) => {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateSignupField(name, nextFormData),
+    }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const nextFormData = { ...formData, [name]: value };
+    setFormData(nextFormData);
+
+    if (touched[name]) {
+      setFieldError(name, nextFormData);
+    }
+
+    if (name === "password" && touched.confirmPassword) {
+      setFieldError("confirmPassword", nextFormData);
+    }
+
+    if (!touched[name] && errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setFieldError(name, formData);
 
-    if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
+    if (name === "password" && touched.confirmPassword) {
+      setFieldError("confirmPassword", formData);
     }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.confirmPassword !== formData.password) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    const trimmed = trimSignupValues(formData);
+    const { errors: submitErrors, isValid } = validateSignupForm(trimmed);
+
+    setTouched(
+      SIGNUP_FIELDS.reduce((acc, field) => ({ ...acc, [field]: true }), {})
+    );
+    setErrors(submitErrors);
+
+    if (!isValid) return;
 
     setIsLoading(true);
 
@@ -86,9 +98,9 @@ export default function SignupPage() {
 
       login(
         {
-          username: formData.username,
-          email: formData.email,
-          fullName: formData.username,
+          username: trimmed.name,
+          email: trimmed.email,
+          fullName: trimmed.name,
           role: "student",
         },
         "mock-jwt-token"
@@ -104,7 +116,7 @@ export default function SignupPage() {
       title="Create Account"
       subtitle="Please enter your details to get started"
     >
-      <form onSubmit={handleSubmit} autoComplete="off" className="relative space-y-2.5">
+      <form onSubmit={handleSubmit} autoComplete="off" className="relative space-y-2.5" noValidate>
         <AuthAutofillTrap />
         <SocialAuthButtons delay={0.04} />
 
@@ -112,29 +124,30 @@ export default function SignupPage() {
 
         <AuthInput
           compact
-          label="Username"
-          name="username"
-          value={formData.username}
+          label="Name"
+          name="name"
+          value={formData.name}
           onChange={handleChange}
-          placeholder="Enter username"
+          placeholder="Enter your full name"
           required
-          prefix="@"
-          error={errors.username}
+          error={errors.name}
           delay={0.12}
+          inputProps={{ onBlur: handleBlur }}
         />
 
         <AuthInput
           compact
           label="E-mail Address"
           name="email"
-          type="text"
+          type="email"
           inputMode="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="Enter Email ID"
+          placeholder="Enter email address"
           required
           error={errors.email}
           delay={0.16}
+          inputProps={{ onBlur: handleBlur }}
         />
 
         <AuthPasswordField
@@ -144,7 +157,8 @@ export default function SignupPage() {
           label="Password"
           value={formData.password}
           onChange={handleChange}
-          placeholder="Enter Password"
+          onBlur={handleBlur}
+          placeholder="Enter password"
           showPassword={showPassword}
           onToggle={() => setShowPassword(!showPassword)}
           error={errors.password}
@@ -158,7 +172,8 @@ export default function SignupPage() {
           label="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          placeholder="Confirm Password"
+          onBlur={handleBlur}
+          placeholder="Confirm password"
           showPassword={showPassword}
           onToggle={() => setShowPassword(!showPassword)}
           error={errors.confirmPassword}
@@ -171,7 +186,7 @@ export default function SignupPage() {
           </motion.div>
         ) : null}
 
-        <AuthPrimaryButton compact delay={0.28} disabled={isLoading}>
+        <AuthPrimaryButton compact delay={0.28} disabled={isLoading || !isFormValid}>
           {isLoading ? (
             <>
               <Loader2 size={17} className="animate-spin" />

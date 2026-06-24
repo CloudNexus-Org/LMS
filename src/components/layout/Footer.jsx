@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
 
 import {
@@ -8,6 +8,8 @@ import {
   FaXTwitter,
 } from "react-icons/fa6";
 import { footerShell } from "@/styles/theme";
+import Button from "@/components/ui/Button";
+import { scrollToTop } from "@/utils/scroll";
 
 const FOOTER_COLUMNS = [
   {
@@ -87,7 +89,7 @@ const SOCIALS = [
   },
 ];
 
-const FOOTER_HOVER = "transition-colors duration-200 hover:text-[#5B8CFF]";
+const FOOTER_HOVER = "transition-colors duration-200 hover:text-primary";
 
 function FooterLink({ label, href, to, className = "" }) {
   const base = `text-[12px] leading-5 text-muted ${FOOTER_HOVER}`;
@@ -127,13 +129,12 @@ function WhereToFindUsCard() {
             justify-center
             rounded-lg
             bg-primary/10
-            dark:bg-[#5B8CFF]/15
           "
         >
           <MapPin
             size={15}
             strokeWidth={2.2}
-            className="text-primary dark:text-[#5B8CFF]"
+            className="text-primary"
           />
         </span>
 
@@ -157,9 +158,6 @@ function WhereToFindUsCard() {
           from-primary/50
           via-primary/25
           to-transparent
-          dark:from-[#5B8CFF]/70
-          dark:via-[#5B8CFF]/35
-          dark:to-transparent
         "
       />
 
@@ -195,69 +193,24 @@ function LinkColumn({ title, links }) {
   );
 }
 
-function ContactCard() {
-  return (
-    <div
-      className="
-        w-full rounded-lg border p-4
-        border-border/70 bg-elevated
-        shadow-[var(--shadow-card-value)]
-        dark:border-white/[0.08] dark:bg-[#111316]
-      "
-    >
-      <Link
-        to="/#contact"
-        className="
-          flex h-9 w-full items-center justify-center rounded-lg
-          bg-primary text-[13px] font-semibold text-white
-          transition-colors duration-200 hover:bg-primary-hover
-        "
-      >
-        Contact Us
-      </Link>
-
-      <div className="my-3 border-t border-border/50 dark:border-white/[0.06]" />
-
-      <ul className="space-y-2">
-        {CONTACT_ITEMS.map(({ icon: Icon, label, href }) => (
-          <li key={label}>
-            {href ? (
-              <a
-                href={href}
-                className="group flex items-center gap-2.5 transition-colors"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary dark:bg-primary/15">
-                  <Icon size={12} strokeWidth={2.2} />
-                </span>
-                <span className="text-[11.5px] leading-tight text-muted group-hover:text-text">
-                  {label}
-                </span>
-              </a>
-            ) : (
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary dark:bg-primary/15">
-                  <Icon size={12} strokeWidth={2.2} />
-                </span>
-                <span className="text-[11.5px] leading-tight text-muted">
-                  {label}
-                </span>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 export default function Footer() {
   const year = new Date().getFullYear();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleExploreCourses = () => {
+    if (location.pathname === "/courses") {
+      scrollToTop();
+      return;
+    }
+    navigate("/courses");
+  };
 
   return (
-    <footer className={footerShell}>
+    <footer className={`relative z-10 ${footerShell}`}>
       <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-6 lg:px-8">
         {/* Top section */}
-        <div className="flex flex-col items-start justify-between gap-4 py-8 sm:flex-row sm:items-center">
+        <div className="relative z-10 flex flex-col items-start justify-between gap-4 py-8 sm:flex-row sm:items-center">
           <Link
             to="/"
             className={`text-[26px] font-bold leading-none tracking-tight ${FOOTER_HOVER}`}
@@ -266,28 +219,15 @@ export default function Footer() {
             <span className="text-primary">Nexus</span>
           </Link>
 
-          <Link
-            to="/demo"
-            className="
-              inline-flex
-              h-10
-              shrink-0
-              items-center
-              justify-center
-              rounded-lg
-              bg-primary
-              px-6
-              text-[13px]
-              font-semibold
-              text-white
-              shadow-[0_8px_20px_-10px_var(--primary)]
-              transition-all
-              duration-200
-              hover:bg-primary-hover
-            "
+          <Button
+            type="button"
+            onClick={handleExploreCourses}
+            variant="primary"
+            size="md"
+            className="relative z-10 shrink-0 bg-primary px-6 shadow-[0_8px_20px_-10px_var(--primary)] hover:bg-primary-hover"
           >
-            Request a Demo
-          </Link>
+            Explore Courses
+          </Button>
         </div>
 
         <div className="h-px w-full bg-border dark:bg-white/10" />
@@ -368,14 +308,14 @@ export default function Footer() {
                   text-primary
                   transition-all
                   duration-200
-                  hover:border-[#5B8CFF]
+                  hover:border-primary
                   hover:bg-primary-soft
-                  hover:text-[#5B8CFF]
+                  hover:text-primary
                   dark:border-white/40
                   dark:text-white
-                  dark:hover:border-[#5B8CFF]
-                  dark:hover:bg-white/10
-                  dark:hover:text-[#5B8CFF]
+                  dark:hover:border-primary
+                  dark:hover:bg-primary/10
+                  dark:hover:text-primary
                 "
               >
                 <Icon size={13} />

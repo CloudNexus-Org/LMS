@@ -527,7 +527,6 @@ export default function MentorDashboardPage() {
   const shouldReduceMotion = useReducedMotion();
   const [snapshot, setSnapshot] = useState(() => buildSnapshot());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const [chartTab, setChartTab] = useState("week");
   const [pieTab, setPieTab] = useState("revenue");
   const [chartKey, setChartKey] = useState(0);

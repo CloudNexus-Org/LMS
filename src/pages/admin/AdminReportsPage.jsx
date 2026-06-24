@@ -1,250 +1,423 @@
-import { useState } from 'react';
+import { useMemo, useState } from "react";
 import {
-  Download, PieChart,
-  Users, DollarSign, BookOpen, Star, ArrowUpRight,
-  ArrowDownRight, Globe, Sparkles, Award,
-  ChevronRight
-} from 'lucide-react';
+  csvFilename,
+  downloadMultiSectionCsv,
+} from "@/lib/exportCsv";
+import {
+  Download,
+  Users,
+  DollarSign,
+  BookOpen,
+  Star,
+  ArrowUpRight,
+  ArrowDownRight,
+  Globe,
+  Award,
+  ChevronRight,
+  Search,
+  X,
+} from "lucide-react";
 
-function Sparkline({ data, color = 'var(--primary)', height = 40 }) {
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const w = 100;
-  const h = height;
-  const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * w;
-    const y = h - ((v - min) / range) * h;
-    return `${x},${y}`;
-  }).join(' ');
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="opacity-80">
-      <polyline fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" points={pts} />
-    </svg>
-  );
-}
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const GROWTH_DATA = [380, 520, 470, 680, 820, 940, 860, 1050, 1120, 1280, 1180, 1420];
-const REVENUE_DATA = [28, 34, 30, 48, 62, 75, 68, 88, 95, 110, 98, 124];
-const COMPLETION_DATA = [42, 45, 38, 52, 58, 62, 55, 68, 65, 72, 70, 75];
-
-const KPI_CARDS = [
-  { label: 'Total Revenue (YTD)', value: '$428.5k', trend: '+24%', positive: true, spark: REVENUE_DATA, sparkColor: 'var(--success)', icon: DollarSign, color: 'text-success', bg: 'bg-success/10' },
-  { label: 'New Users (YTD)', value: '12,482', trend: '+18%', positive: true, spark: GROWTH_DATA.map(v => v / 10), sparkColor: 'var(--primary)', icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
-  { label: 'Courses Published', value: '284', trend: '+42', positive: true, spark: [8, 10, 7, 12, 14, 18, 15, 20, 22, 25, 23, 28], sparkColor: 'var(--accent)', icon: BookOpen, color: 'text-accent', bg: 'bg-accent/10' },
-  { label: 'Avg Completion Rate', value: '63%', trend: '+5%', positive: true, spark: COMPLETION_DATA, sparkColor: 'var(--warning)', icon: Award, color: 'text-warning', bg: 'bg-warning/10' },
-];
+const KPI_BASE = {
+  revenue: 428.5,
+  users: 12482,
+  courses: 284,
+  completion: 63,
+};
 
 const TOP_COURSES = [
-  { rank: 1, name: 'AWS Cloud Architect Pro', mentor: 'Sarah Chen', students: 2840, revenue: '$28,400', rating: 4.9, growth: '+22%', up: true },
-  { rank: 2, name: 'Kubernetes & DevOps Mastery', mentor: 'Liam Carter', students: 2210, revenue: '$22,100', rating: 4.8, growth: '+18%', up: true },
-  { rank: 3, name: 'React & Next.js Complete', mentor: 'Priya Nair', students: 1985, revenue: '$19,850', rating: 4.7, growth: '+15%', up: true },
-  { rank: 4, name: 'Python for Data Science', mentor: 'Omar Hassan', students: 1740, revenue: '$17,400', rating: 4.6, growth: '-3%', up: false },
-  { rank: 5, name: 'System Design at Scale', mentor: 'Yuki Tanaka', students: 1320, revenue: '$13,200', rating: 4.8, growth: '+12%', up: true },
+  {
+    rank: 1,
+    name: "AWS Cloud Architect Pro",
+    mentor: "Sarah Chen",
+    students: 2840,
+    revenue: "$28,400",
+    rating: 4.9,
+    growth: "+22%",
+    up: true,
+  },
+  {
+    rank: 2,
+    name: "Kubernetes & DevOps Mastery",
+    mentor: "Liam Carter",
+    students: 2210,
+    revenue: "$22,100",
+    rating: 4.8,
+    growth: "+18%",
+    up: true,
+  },
+  {
+    rank: 3,
+    name: "React & Next.js Complete",
+    mentor: "Priya Nair",
+    students: 1985,
+    revenue: "$19,850",
+    rating: 4.7,
+    growth: "+15%",
+    up: true,
+  },
+  {
+    rank: 4,
+    name: "Python for Data Science",
+    mentor: "Omar Hassan",
+    students: 1740,
+    revenue: "$17,400",
+    rating: 4.6,
+    growth: "-3%",
+    up: false,
+  },
+  {
+    rank: 5,
+    name: "System Design at Scale",
+    mentor: "Yuki Tanaka",
+    students: 1320,
+    revenue: "$13,200",
+    rating: 4.8,
+    growth: "+12%",
+    up: true,
+  },
 ];
 
 const TOP_MENTORS = [
-  { name: 'Sarah Chen', courses: 4, students: 5840, revenue: '$58,400', rating: 4.9, avatar: 'SC', grad: 'from-blue-500 to-cyan-400' },
-  { name: 'Liam Carter', courses: 3, students: 4210, revenue: '$42,100', rating: 4.8, avatar: 'LC', grad: 'from-violet-500 to-fuchsia-400' },
-  { name: 'Priya Nair', courses: 5, students: 3985, revenue: '$39,850', rating: 4.7, avatar: 'PN', grad: 'from-emerald-500 to-lime-400' },
+  {
+    name: "Sarah Chen",
+    courses: 4,
+    students: 5840,
+    revenue: "$58,400",
+    rating: 4.9,
+    avatar: "SC",
+    grad: "from-blue-500 to-cyan-400",
+  },
+  {
+    name: "Liam Carter",
+    courses: 3,
+    students: 4210,
+    revenue: "$42,100",
+    rating: 4.8,
+    avatar: "LC",
+    grad: "from-violet-500 to-fuchsia-400",
+  },
+  {
+    name: "Priya Nair",
+    courses: 5,
+    students: 3985,
+    revenue: "$39,850",
+    rating: 4.7,
+    avatar: "PN",
+    grad: "from-emerald-500 to-lime-400",
+  },
+];
+
+const CATEGORIES = [
+  { name: "Cloud & DevOps", share: 45, color: "bg-primary", text: "text-primary" },
+  { name: "Frontend Engineering", share: 30, color: "bg-success", text: "text-success" },
+  { name: "Backend & Systems", share: 15, color: "bg-warning", text: "text-warning" },
+  { name: "Data & AI", share: 10, color: "bg-accent", text: "text-accent" },
 ];
 
 const GEO_DATA = [
-  { region: 'North America', pct: 42, color: 'bg-primary' },
-  { region: 'Europe', pct: 28, color: 'bg-accent' },
-  { region: 'Asia Pacific', pct: 20, color: 'bg-success' },
-  { region: 'Rest of World', pct: 10, color: 'bg-warning' },
+  { region: "North America", pct: 42, color: "bg-primary" },
+  { region: "Europe", pct: 28, color: "bg-accent" },
+  { region: "Asia Pacific", pct: 20, color: "bg-success" },
+  { region: "Rest of World", pct: 10, color: "bg-warning" },
 ];
 
+const PERIOD_MULTIPLIER = { month: 0.18, quarter: 0.42, year: 1 };
+
 export default function AdminReportsPage() {
-  const [period, setPeriod] = useState('year');
+  const [period, setPeriod] = useState("year");
+  const [search, setSearch] = useState("");
+
+  const multiplier = PERIOD_MULTIPLIER[period];
+
+  const stats = useMemo(
+    () => [
+      {
+        label: "Total revenue",
+        value: `$${(KPI_BASE.revenue * multiplier).toFixed(1)}k`,
+        meta: "+24% vs prior period",
+        metaTone: "success",
+        icon: DollarSign,
+        iconColor: "text-success",
+      },
+      {
+        label: "New users",
+        value: Math.round(KPI_BASE.users * multiplier).toLocaleString(),
+        meta: "+18% growth",
+        metaTone: "success",
+        icon: Users,
+        iconColor: "text-primary",
+      },
+      {
+        label: "Courses published",
+        value: Math.round(KPI_BASE.courses * multiplier),
+        meta: "+42 this period",
+        metaTone: "muted",
+        icon: BookOpen,
+        iconColor: "text-accent",
+      },
+      {
+        label: "Avg completion",
+        value: `${KPI_BASE.completion}%`,
+        meta: "+5% improvement",
+        metaTone: "success",
+        icon: Award,
+        iconColor: "text-warning",
+      },
+    ],
+    [multiplier]
+  );
+
+  const filteredCourses = useMemo(() => {
+    const q = search.toLowerCase();
+    return TOP_COURSES.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) || c.mentor.toLowerCase().includes(q)
+    );
+  }, [search]);
+
+  const handleExport = () => {
+    downloadMultiSectionCsv(csvFilename(`reports-${period}`), [
+      {
+        title: `Platform Reports — ${period}`,
+        headers: ["Metric", "Value", "Trend"],
+        rows: stats.map((s) => [s.label, s.value, s.meta]),
+      },
+      {
+        title: "Top Categories",
+        headers: ["Category", "Share %"],
+        rows: CATEGORIES.map((c) => [c.name, c.share]),
+      },
+      {
+        title: "User Geography",
+        headers: ["Region", "Share %"],
+        rows: GEO_DATA.map((g) => [g.region, g.pct]),
+      },
+      {
+        title: "Top Performing Courses",
+        headers: ["Rank", "Course", "Mentor", "Students", "Rating", "Revenue", "Growth"],
+        rows: TOP_COURSES.map((c) => [
+          c.rank,
+          c.name,
+          c.mentor,
+          c.students,
+          c.rating,
+          c.revenue,
+          c.growth,
+        ]),
+      },
+      {
+        title: "Top Mentors",
+        headers: ["Mentor", "Courses", "Students", "Revenue", "Rating"],
+        rows: TOP_MENTORS.map((m) => [
+          m.name,
+          m.courses,
+          m.students,
+          m.revenue,
+          m.rating,
+        ]),
+      },
+    ]);
+  };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
-
-      {/* ── HEADER ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-[5px] border border-primary/20 bg-primary/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary mb-3">
-            <Sparkles className="h-3 w-3" /> Analytics & Reports
-          </div>
-          <h1 className="text-[42px] font-bold text-text font-display tracking-tight">Platform Reports</h1>
-          <p className="text-muted mt-1 font-medium">Detailed insights into platform growth, user engagement, and revenue.</p>
+          <h1 className="text-[32px] font-bold tracking-tight text-text sm:text-[36px]">
+            Platform Reports
+          </h1>
+          <p className="mt-1 text-[15px] text-muted">
+            Detailed insights into platform growth, user engagement, and revenue.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          {/* Period tabs */}
-          <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1">
-            {['month', 'quarter', 'year'].map(p => (
-              <button key={p} onClick={() => setPeriod(p)}
-                className={`px-3 py-1.5 rounded-[5px] text-xs font-bold transition-all capitalize ${period === p ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}>
-                {p === 'month' ? 'Month' : p === 'quarter' ? 'Quarter' : 'Year'}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="admin-filter-tabs rounded-[5px] border border-border bg-bg p-1">
+            {[
+              { key: "month", label: "Month" },
+              { key: "quarter", label: "Quarter" },
+              { key: "year", label: "Year" },
+            ].map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                onClick={() => setPeriod(p.key)}
+                className={`admin-filter-tab ${period === p.key ? "admin-filter-tab-active" : ""}`}
+              >
+                {p.label}
               </button>
             ))}
           </div>
-          <button className="
-                  relative
-                  inline-flex
-
-                  h-[48px]
-                  w-full
-                  sm:w-auto
-                  min-w-[90px]
-
-                  items-center
-                  justify-center
-
-                  border
-                  border-border
-                  dark:border-border
-
-                  bg-primary
-                  dark:bg-primary
-
-                  px-6
-
-                  text-[14px]
-                  font-semibold
-
-                  text-white
-                  dark:text-white
-
-                  overflow-hidden
-                  rounded-lg
-
-                  shadow-[0_10px_30px_rgba(37,99,235,0.08)]
-                  dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)]
-
-                  transition-all
-                  duration-300
-
-                  hover:-translate-y-[2px]
-                  hover:border-primary/40
-                  dark:hover:border-primary/60
-                ">
-            <Download className="h-4 w-4" /> Export
+          <button
+            type="button"
+            onClick={handleExport}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-primary-hover"
+          >
+            <Download className="h-4 w-4" />
+            Export
           </button>
         </div>
       </div>
 
-      {/* ── KPI CARDS ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {KPI_CARDS.map(kpi => {
-          const Icon = kpi.icon;
+      <section className="admin-stat-strip" aria-label="Platform report summary">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
           return (
-            <div key={kpi.label} className="bg-surface border border-border rounded-[5px] p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`h-9 w-9 rounded-[5px] ${kpi.bg} ${kpi.color} flex items-center justify-center`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <span className={`flex items-center gap-0.5 text-xs font-bold px-2 py-1 rounded-[5px] ${kpi.positive ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`}>
-                  {kpi.positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                  {kpi.trend}
-                </span>
+            <div key={stat.label} className="admin-stat-cell">
+              <div className={`admin-stat-icon ${stat.iconColor}`}>
+                <Icon className="h-4 w-4" />
               </div>
-              <p className="text-2xl font-display font-bold text-text">{kpi.value}</p>
-              <p className="text-xs font-bold text-muted mt-0.5 mb-3">{kpi.label}</p>
-              <Sparkline data={kpi.spark} color={kpi.sparkColor} />
+              <div className="min-w-0">
+                <p className="admin-stat-value">{stat.value}</p>
+                <p className="admin-stat-label">{stat.label}</p>
+                <p
+                  className={`admin-stat-meta ${
+                    stat.metaTone === "muted" ? "admin-stat-meta-muted" : ""
+                  }`}
+                >
+                  {stat.meta}
+                </p>
+              </div>
             </div>
           );
         })}
-      </div>
+      </section>
 
-      {/* ── ENROLLMENT CHART + CATEGORY BREAKDOWN ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Category Breakdown */}
-        <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="font-bold text-lg text-text">Top Categories</h3>
-            <PieChart className="h-4 w-4 text-muted" />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="dashboard-card p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="dashboard-section-title">Top Categories</h2>
+              <p className="mt-0.5 text-[11px] text-muted">Enrollment share by track</p>
+            </div>
+            <BookOpen className="h-4 w-4 text-muted" />
           </div>
-          <div className="space-y-5">
-            {[
-              { name: 'Cloud & DevOps', share: 45, color: 'bg-primary', text: 'text-primary' },
-              { name: 'Frontend Engineering', share: 30, color: 'bg-success', text: 'text-success' },
-              { name: 'Backend & Systems', share: 15, color: 'bg-warning', text: 'text-warning' },
-              { name: 'Data & AI', share: 10, color: 'bg-accent', text: 'text-accent' },
-            ].map(cat => (
+          <div className="space-y-4">
+            {CATEGORIES.map((cat) => (
               <div key={cat.name}>
-                <div className="flex justify-between text-sm mb-1.5">
-                  <span className="font-bold text-text text-xs">{cat.name}</span>
-                  <span className={`font-bold text-xs ${cat.text}`}>{cat.share}%</span>
+                <div className="mb-1.5 flex justify-between text-sm">
+                  <span className="text-xs font-bold text-text">{cat.name}</span>
+                  <span className={`text-xs font-bold ${cat.text}`}>{cat.share}%</span>
                 </div>
-                <div className="w-full h-2 bg-bg rounded-lg overflow-hidden border border-border">
-                  <div className={`h-full ${cat.color} rounded-lg transition-all duration-700`} style={{ width: `${cat.share}%` }} />
+                <div className="h-2 overflow-hidden rounded-lg border border-border bg-bg">
+                  <div
+                    className={`h-full rounded-lg transition-all duration-700 ${cat.color}`}
+                    style={{ width: `${cat.share}%` }}
+                  />
                 </div>
               </div>
             ))}
           </div>
-
-          
         </div>
-        {/* Geo distribution */}
-          <div className="bg-surface border border-border rounded-[5px] p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <Globe className="h-4 w-4 text-muted" />
-              <h4 className="font-bold text-sm text-text">User Geography</h4>
-            </div>
-            <div className="space-y-3">
-              {GEO_DATA.map(geo => (
-                <div key={geo.region}>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-xs font-bold text-muted">{geo.region}</span>
-                    <span className="text-xs font-bold text-text">{geo.pct}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-bg rounded-lg overflow-hidden border border-border">
-                    <div className={`h-full ${geo.color} rounded-lg`} style={{ width: `${geo.pct}%` }} />
-                  </div>
-                </div>
-              ))}
+
+        <div className="dashboard-card p-5">
+          <div className="mb-4 flex items-center gap-2">
+            <Globe className="h-4 w-4 text-muted" />
+            <div>
+              <h2 className="dashboard-section-title">User Geography</h2>
+              <p className="mt-0.5 text-[11px] text-muted">Active learners by region</p>
             </div>
           </div>
+          <div className="space-y-3">
+            {GEO_DATA.map((geo) => (
+              <div key={geo.region}>
+                <div className="mb-1 flex justify-between">
+                  <span className="text-xs font-bold text-muted">{geo.region}</span>
+                  <span className="text-xs font-bold text-text">{geo.pct}%</span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-lg border border-border bg-bg">
+                  <div
+                    className={`h-full rounded-lg ${geo.color}`}
+                    style={{ width: `${geo.pct}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* ── TOP COURSES TABLE ── */}
-      <div className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-border">
+      <div className="bg-surface overflow-hidden rounded-[5px] border border-border shadow-sm">
+        <div className="flex flex-col items-start gap-3 border-b border-border bg-bg/30 p-5 sm:flex-row sm:items-center">
           <div>
-            <h3 className="font-bold text-lg text-text">Top Performing Courses</h3>
-            <p className="text-xs text-muted font-medium mt-0.5">Ranked by enrollment and revenue</p>
+            <h2 className="dashboard-section-title">Top Performing Courses</h2>
+            <p className="mt-0.5 text-[11px] text-muted">
+              Ranked by enrollment and revenue
+            </p>
           </div>
-          <button className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-            View All <ChevronRight className="h-3.5 w-3.5" />
-          </button>
+          <div className="relative ml-auto w-full max-w-xs sm:w-auto">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              type="text"
+              placeholder="Search course, mentor..."
+              className="h-10 w-full rounded-[5px] border border-border bg-surface pl-10 pr-8 text-sm font-medium text-text outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary/20"
+            />
+            {search ? (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            ) : null}
+          </div>
         </div>
+
         <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[700px]">
-            <thead className="bg-bg/50 border-b border-border">
+          <table className="w-full min-w-[700px] text-sm">
+            <thead className="border-b border-border bg-bg/50">
               <tr>
-                {['#', 'Course', 'Mentor', 'Students', 'Rating', 'Revenue', 'Growth'].map(h => (
-                  <th key={h} className="px-5 py-4 text-[11px] font-bold text-muted uppercase tracking-wider text-left">{h}</th>
-                ))}
+                {["#", "Course", "Mentor", "Students", "Rating", "Revenue", "Growth"].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className="px-5 py-4 text-left text-[11px] font-bold uppercase tracking-wider text-muted"
+                    >
+                      {h}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {TOP_COURSES.map(course => (
-                <tr key={course.rank} className="hover:bg-bg/40 transition-colors group">
+              {filteredCourses.map((course) => (
+                <tr key={course.rank} className="transition-colors hover:bg-bg/40">
                   <td className="px-5 py-4 text-xs font-bold text-muted">{course.rank}</td>
                   <td className="px-5 py-4">
-                    <p className="font-bold text-text text-sm">{course.name}</p>
+                    <p className="text-sm font-bold text-text">{course.name}</p>
                   </td>
-                  <td className="px-5 py-4 text-xs font-medium text-muted">{course.mentor}</td>
+                  <td className="px-5 py-4 text-xs font-medium text-muted">
+                    {course.mentor}
+                  </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-1.5">
                       <Users className="h-3.5 w-3.5 text-muted" />
-                      <span className="font-bold text-text text-xs">{course.students.toLocaleString()}</span>
+                      <span className="text-xs font-bold text-text">
+                        {course.students.toLocaleString()}
+                      </span>
                     </div>
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 text-warning fill-warning" />
-                      <span className="font-bold text-text text-xs">{course.rating}</span>
+                      <Star className="h-3.5 w-3.5 fill-warning text-warning" />
+                      <span className="text-xs font-bold text-text">{course.rating}</span>
                     </div>
                   </td>
                   <td className="px-5 py-4 font-bold text-success">{course.revenue}</td>
                   <td className="px-5 py-4">
-                    <span className={`flex items-center gap-0.5 text-xs font-bold ${course.up ? 'text-success' : 'text-danger'}`}>
-                      {course.up ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+                    <span
+                      className={`flex items-center gap-0.5 text-xs font-bold ${
+                        course.up ? "text-success" : "text-danger"
+                      }`}
+                    >
+                      {course.up ? (
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                      ) : (
+                        <ArrowDownRight className="h-3.5 w-3.5" />
+                      )}
                       {course.growth}
                     </span>
                   </td>
@@ -252,32 +425,61 @@ export default function AdminReportsPage() {
               ))}
             </tbody>
           </table>
+
+          {filteredCourses.length === 0 ? (
+            <div className="py-16 text-center">
+              <BookOpen className="mx-auto mb-4 h-12 w-12 text-muted opacity-20" />
+              <p className="font-bold text-text">No courses found</p>
+              <p className="mt-1 text-sm text-muted">Try a different search term.</p>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="flex items-center justify-between border-t border-border bg-bg/30 px-5 py-3">
+          <p className="text-xs font-bold text-muted">
+            Showing {filteredCourses.length} of {TOP_COURSES.length} courses
+          </p>
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          >
+            View all <ChevronRight className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
-      {/* ── TOP MENTORS ── */}
-      <div className="bg-surface border border-border rounded-[5px] shadow-sm p-6">
-        <div className="flex items-center justify-between mb-5">
+      <div className="dashboard-card p-5">
+        <div className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-lg text-text">Top Mentors</h3>
-            <p className="text-xs text-muted font-medium mt-0.5">By total student impact and revenue</p>
+            <h2 className="dashboard-section-title">Top Mentors</h2>
+            <p className="mt-0.5 text-[11px] text-muted">
+              By total student impact and revenue
+            </p>
           </div>
-          <button className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-            All Mentors <ChevronRight className="h-3.5 w-3.5" />
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          >
+            All mentors <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {TOP_MENTORS.map((mentor) => (
-            <div key={mentor.name} className="bg-bg border border-border rounded-[5px] p-4 hover:border-primary/30 hover:-translate-y-0.5 transition-all duration-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`h-11 w-11 rounded-lg bg-gradient-to-br ${mentor.grad} flex items-center justify-center text-white text-sm font-bold shadow-sm overflow-hidden relative`}>
+            <div
+              key={mentor.name}
+              className="rounded-xl border border-border bg-bg/50 p-4 transition-all duration-200 hover:border-primary/25"
+            >
+              <div className="mb-4 flex items-center gap-3">
+                <div
+                  className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br ${mentor.grad} text-sm font-bold text-white shadow-sm`}
+                >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
                   <span className="relative z-10">{mentor.avatar}</span>
                 </div>
                 <div>
-                  <p className="font-bold text-text text-sm">{mentor.name}</p>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Star className="h-3 w-3 text-warning fill-warning" />
+                  <p className="text-sm font-bold text-text">{mentor.name}</p>
+                  <div className="mt-0.5 flex items-center gap-1">
+                    <Star className="h-3 w-3 fill-warning text-warning" />
                     <span className="text-xs font-bold text-muted">{mentor.rating}</span>
                   </div>
                 </div>
@@ -285,15 +487,17 @@ export default function AdminReportsPage() {
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div>
                   <p className="text-[11px] font-bold text-muted">Courses</p>
-                  <p className="font-bold text-text text-sm mt-0.5">{mentor.courses}</p>
+                  <p className="mt-0.5 text-sm font-bold text-text">{mentor.courses}</p>
                 </div>
                 <div>
                   <p className="text-[11px] font-bold text-muted">Students</p>
-                  <p className="font-bold text-text text-sm mt-0.5">{(mentor.students / 1000).toFixed(1)}k</p>
+                  <p className="mt-0.5 text-sm font-bold text-text">
+                    {(mentor.students / 1000).toFixed(1)}k
+                  </p>
                 </div>
                 <div>
                   <p className="text-[11px] font-bold text-muted">Revenue</p>
-                  <p className="font-bold text-success text-sm mt-0.5">{mentor.revenue.replace('$', '$')}</p>
+                  <p className="mt-0.5 text-sm font-bold text-success">{mentor.revenue}</p>
                 </div>
               </div>
             </div>

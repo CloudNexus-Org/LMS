@@ -1,14 +1,11 @@
 import { Star, Quote } from "lucide-react";
 import { testimonials } from "@/data/testimonials";
-import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Avatar from "@/components/ui/Avatar";
 
 function ReviewCard({ item }) {
-  const isDarkTheme = useIsDarkTheme();
-
   return (
     <article
       className="
@@ -26,8 +23,10 @@ function ReviewCard({ item }) {
         rounded-lg
 
         border
-        border-black/[0.06]
-        dark:border-white/[0.08]
+        border-border
+        bg-surface
+
+        shadow-[var(--shadow-card-value)]
 
         transition-all
         duration-700
@@ -35,109 +34,97 @@ function ReviewCard({ item }) {
         md:w-[420px]
 
         hover:-translate-y-2
-
-        hover:border-[#2563ff]/30
+        hover:border-primary/30
+        hover:shadow-[0_12px_40px_color-mix(in_srgb,var(--primary)_12%,transparent)]
       "
-      style={{
-        backgroundColor: isDarkTheme ? "#06070b" : "#ffffff",
-        backdropFilter: "blur(12px)",
-      }}
     >
-      {/* ROTATING BLURRED BORDER */}
       <div
         className="
           pointer-events-none
+          absolute
+          -right-14
+          -top-14
+          h-44
+          w-44
+          rounded-full
+          bg-gradient-to-br
+          from-primary/20
+          via-primary/5
+          to-accent/15
+          blur-3xl
+          opacity-70
+          transition-opacity
+          duration-700
+          group-hover:opacity-100
+        "
+      />
 
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-x-0
+          top-0
+          h-px
+          bg-gradient-to-r
+          from-transparent
+          via-primary/40
+          to-transparent
+          opacity-0
+          transition-opacity
+          duration-700
+          group-hover:opacity-100
+        "
+      />
+
+      <div
+        className="
+          pointer-events-none
           absolute
           inset-0
-
           rounded-lg
-
           opacity-0
-
           transition-all
           duration-700
-
           group-hover:opacity-100
         "
       >
-        {/* SHARP INNER BORDER */}
         <div
           className="
             absolute
             -inset-[1px]
-
-            rounded-lg
-
             animate-spin-slow
-
+            rounded-lg
             blur-[3px]
           "
           style={{
             background:
-              "conic-gradient(from 0deg, transparent 0deg, rgba(96,165,250,1) 45deg, transparent 95deg)",
+              "conic-gradient(from 0deg, transparent 0deg, var(--primary) 35deg, var(--accent) 55deg, transparent 95deg)",
           }}
         />
 
-        {/* CENTER MASK */}
         <div
           className="
             absolute
             inset-[1.5px]
-
             rounded-lg
-
+            bg-surface/90
             backdrop-blur-xl
           "
-          style={{
-            backgroundColor: isDarkTheme ? "rgba(6, 7, 11, 0.88)" : "rgba(255, 255, 255, 0.88)",
-          }}
         />
       </div>
 
-      {/* CONTENT */}
       <div className="relative z-10 flex h-full flex-col p-6">
-        {/* TOP */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <Avatar
-              src={item.avatar}
-              name={item.name}
-              size="md"
-            />
+            <Avatar src={item.avatar} name={item.name} size="md" />
 
             <div className="min-w-0">
-              <div
-                className="
-                  truncate
-
-                  text-[15px]
-                  font-semibold
-
-                  transition-all
-                  duration-300
-                "
-                style={{
-                  color: isDarkTheme ? "#ffffff" : "#0f172a",
-                }}
-              >
+              <div className="truncate text-[15px] font-semibold text-text transition-colors duration-300">
                 {item.name}
               </div>
 
-              <div
-                className="
-                  text-[12px]
-
-                  transition-all
-                  duration-300
-
-                  group-hover:text-[#2563ff]
-                  dark:group-hover:text-white/80
-                "
-                style={{
-                  color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(100, 116, 139)",
-                }}
-              >
+              <div className="text-[12px] text-muted transition-colors duration-300 group-hover:text-primary dark:group-hover:text-white/80">
                 {item.role}
               </div>
             </div>
@@ -147,53 +134,19 @@ function ReviewCard({ item }) {
             size={24}
             className="
               rotate-180
-
-              text-[#2563ff]/40
-
+              text-primary/35
               transition-all
               duration-500
-
               group-hover:scale-110
-              group-hover:text-[#2563ff]
+              group-hover:text-primary
             "
           />
         </div>
 
-        {/* LINE */}
-        <div
-          className="
-            mt-5
+        <div className="mt-5 h-px w-full bg-border transition-all duration-700 group-hover:bg-gradient-to-r group-hover:from-primary/20 group-hover:via-primary/50 group-hover:to-accent/30" />
 
-            h-px
-            w-full
-
-            transition-all
-            duration-700
-
-            group-hover:bg-[#2563ff]/35
-          "
-          style={{
-            backgroundColor: isDarkTheme ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)",
-          }}
-        />
-
-        {/* RATING */}
         <div className="mt-5 flex items-center gap-3">
-          <span
-            className="
-              text-[15px]
-              font-medium
-
-              transition-all
-              duration-300
-
-              group-hover:text-[#2563ff]
-              dark:group-hover:text-white
-            "
-            style={{
-              color: isDarkTheme ? "rgba(255, 255, 255, 0.7)" : "rgb(71, 85, 105)",
-            }}
-          >
+          <span className="text-[15px] font-medium text-muted transition-colors duration-300 group-hover:text-primary dark:group-hover:text-white">
             {item.rating}.0
           </span>
 
@@ -202,35 +155,13 @@ function ReviewCard({ item }) {
               <Star
                 key={i}
                 size={14}
-                className="
-                  fill-[#2563ff]
-                  text-[#2563ff]
-                "
+                className="fill-primary text-primary transition-colors duration-300 group-hover:fill-[color-mix(in_srgb,var(--primary)_70%,var(--accent))] group-hover:text-[color-mix(in_srgb,var(--primary)_70%,var(--accent))]"
               />
             ))}
           </div>
         </div>
 
-        {/* REVIEW */}
-        <p
-          className="
-            mt-6
-
-            flex-1
-
-            text-[15px]
-            leading-8
-
-            transition-all
-            duration-500
-
-            group-hover:text-slate-800
-            dark:group-hover:text-white/92
-          "
-          style={{
-            color: isDarkTheme ? "rgba(255, 255, 255, 0.65)" : "rgb(71, 85, 105)",
-          }}
-        >
+        <p className="mt-6 flex-1 text-[15px] leading-8 text-muted transition-colors duration-500 group-hover:text-text dark:group-hover:text-white/92">
           {item.text}
         </p>
       </div>
@@ -254,10 +185,7 @@ export default function TestimonialScroll() {
         <div className="testimonial-mask overflow-visible">
           <div className="testimonial-row-left flex w-max gap-5 py-6">
             {firstRow.map((item, index) => (
-              <ReviewCard
-                key={`top-${index}`}
-                item={item}
-              />
+              <ReviewCard key={`top-${index}`} item={item} />
             ))}
           </div>
         </div>

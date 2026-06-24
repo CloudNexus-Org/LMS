@@ -68,9 +68,6 @@ const NotesAndBookmarksPage = lazy(() =>
 const ProfileSettingsPage = lazy(() =>
   import('@/pages/student/ProfileSettingsPage')
 );
-const BillingSubscriptionPage = lazy(() =>
-  import('@/pages/student/BillingSubscriptionPage')
-);
 const CoursePaymentPage = lazy(() =>
   import('@/pages/student/CoursePaymentPage')
 );
@@ -256,11 +253,6 @@ function App() {
                 <Route
                   path="settings"
                   element={<ProfileSettingsPage />}
-                />
-
-                <Route
-                  path="billing"
-                  element={<BillingSubscriptionPage />}
                 />
 
                 <Route

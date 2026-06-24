@@ -15,6 +15,7 @@ export default function AuthPasswordField({
   placeholder,
   showPassword,
   onToggle,
+  onBlur,
   error,
   compact = false,
   delay = 0,
@@ -60,6 +61,7 @@ export default function AuthPasswordField({
           name={name}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           type={showPassword ? "text" : "password"}
           placeholder={placeholder}
           required
