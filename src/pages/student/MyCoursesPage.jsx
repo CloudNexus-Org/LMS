@@ -358,16 +358,16 @@ export default function MyCoursesPage() {
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-[32px] font-bold tracking-tight text-text sm:text-[36px]">
-            My Courses
+            My Learning
           </h1>
           <p className="mt-1 text-[15px] text-muted">
             Pick up right where you left off.
           </p>
           <Link
-            to="/tracks"
+            to="/student/catalog"
             className="mt-3 inline-flex items-center gap-1.5 text-[14px] font-medium text-primary transition-colors hover:text-primary-hover"
           >
-            View all courses
+            Browse new courses
             <ArrowRight size={15} />
           </Link>
         </div>
@@ -406,7 +406,7 @@ export default function MyCoursesPage() {
               : `You don't have any ${filter.replace("-", " ")} courses right now.`
           }
           actionLabel="Browse Courses"
-          onAction={() => navigate("/tracks")}
+          onAction={() => navigate("/student/catalog")}
         />
       ) : (
         <>
@@ -418,7 +418,7 @@ export default function MyCoursesPage() {
 
           <div className="flex justify-center pt-2">
             <Link
-              to="/tracks"
+              to="/student/catalog"
               className="
                 inline-flex items-center gap-2 rounded-lg
                 border border-border px-6 py-2.5
@@ -426,7 +426,7 @@ export default function MyCoursesPage() {
                 transition-colors hover:border-primary hover:text-primary
               "
             >
-              Browse all courses
+              Browse more courses
               <ArrowRight size={15} />
             </Link>
           </div>

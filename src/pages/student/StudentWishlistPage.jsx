@@ -26,7 +26,7 @@ export default function StudentWishlistPage() {
           title="Your wishlist is empty"
           description="You haven't saved any courses yet. Browse our catalog to find courses that interest you."
           actionLabel="Browse Courses"
-          onAction={() => navigate('/courses')}
+          onAction={() => navigate('/student/catalog')}
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

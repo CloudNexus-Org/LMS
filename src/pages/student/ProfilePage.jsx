@@ -792,7 +792,7 @@ export default function ProfilePage() {
       animate="visible"
     >
       <motion.div variants={item}>
-        <ProfileHeroBanner ref={heroRef} profile={PROFILE} showActions={false} />
+        <ProfileHeroBanner ref={heroRef} profile={PROFILE} showEditProfile={false} />
       </motion.div>
 
       {/* Stats */}

@@ -1,10 +1,25 @@
 import { Link, NavLink } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Heart, Award, Settings, X, BarChart, Users, UploadCloud, ShieldAlert, DollarSign } from 'lucide-react';
+import {
+  LayoutDashboard,
+  BookOpen,
+  Heart,
+  Award,
+  X,
+  BarChart,
+  Users,
+  UploadCloud,
+  ShieldAlert,
+  DollarSign,
+  ShoppingBag,
+  Star,
+} from 'lucide-react';
 
 const navConfig = {
   student: [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/student/dashboard' },
-    { name: 'My Courses', icon: BookOpen, path: '/student/courses' },
+    { name: 'Courses', icon: ShoppingBag, path: '/student/catalog' },
+    { name: 'My Learning', icon: BookOpen, path: '/student/courses' },
+    { name: 'Reviews', icon: Star, path: '/student/reviews' },
     { name: 'Wishlist', icon: Heart, path: '/student/wishlist' },
     { name: 'Certificates', icon: Award, path: '/student/certificates' },
     // { name: 'Notes', icon: FileText, path: '/student/notes' },
@@ -14,7 +29,6 @@ const navConfig = {
     { name: 'Manage Lessons', icon: BookOpen, path: '/mentor/lessons' },
     { name: 'Upload Course', icon: UploadCloud, path: '/mentor/upload' },
     { name: 'Analytics', icon: BarChart, path: '/mentor/analytics' },
-    { name: 'Revenue', icon: DollarSign, path: '/mentor/revenue' },
     { name: 'Students', icon: Users, path: '/mentor/students' },
   ],
   admin: [
@@ -25,10 +39,6 @@ const navConfig = {
     { name: 'Reports', icon: BarChart, path: '/admin/reports' },
   ],
 };
-
-const studentFooterLinks = [
-  { name: 'Settings', icon: Settings, path: '/student/settings' },
-];
 
 function NavItem({ link }) {
   const Icon = link.icon;
@@ -51,7 +61,6 @@ function NavItem({ link }) {
 
 export default function DashboardSidebar({ role, onClose }) {
   const links = navConfig[role] || navConfig.student;
-  const isStudent = role === 'student';
 
   return (
     <div className="flex h-full flex-col">
@@ -72,25 +81,6 @@ export default function DashboardSidebar({ role, onClose }) {
           <NavItem key={link.name} link={link} />
         ))}
       </nav>
-
-      <div className="shrink-0 border-t border-border p-4 space-y-3">
-        {!isStudent && (
-          <div className="rounded-xl border border-border bg-bg p-4 shadow-sm">
-            <p className="font-bold text-text text-sm">
-              {role.charAt(0).toUpperCase() + role.slice(1)} Pro
-            </p>
-            <p className="mt-1 text-xs text-muted font-medium">Active Subscription</p>
-          </div>
-        )}
-
-        {isStudent && (
-          <div className="space-y-1">
-            {studentFooterLinks.map((link) => (
-              <NavItem key={link.name} link={link} />
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

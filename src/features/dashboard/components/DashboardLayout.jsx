@@ -48,7 +48,7 @@ export default function DashboardLayout({ role = 'student' }) {
       <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardTopbar onMenuClick={() => setSidebarOpen(true)} role={role} />
         
-        <main className="relative flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <main className="relative flex-1 overflow-y-auto overflow-x-clip p-4 lg:p-6">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,97,210,0.05),transparent_45%)]"

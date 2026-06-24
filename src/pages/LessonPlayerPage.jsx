@@ -1,10 +1,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
-  CheckCircle,
+  CheckCircle2,
   Circle,
   ListChecks,
   FileText,
@@ -15,16 +16,13 @@ import {
   Award,
   BookOpen,
   Sparkles,
+  Clock3,
+  PanelRightOpen,
+  Keyboard,
 } from "lucide-react";
-import {
-  getTrackById,
-  getLessonsByTrack,
-} from '@/data/tracks';
-import { getMentorBySlug } from '@/data/mentors';
-import Container from '@/components/ui/Container';
-import ThemeToggle from '@/components/ui/ThemeToggle';
-
-// Extracted Domain Components
+import { getTrackById, getLessonsByTrack } from "@/data/tracks";
+import { getMentorBySlug } from "@/data/mentors";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { VideoPlayer } from "@/features/learn/components/player/VideoPlayer";
 import { SidebarOutline } from "@/features/learn/components/sidebar/SidebarOutline";
 import {
@@ -34,11 +32,10 @@ import {
   ResourcesPane,
   QAPane,
 } from "@/features/learn/components/tabs/LessonTabs";
+import { useCourseProgress } from "@/features/learn/hooks/useCourseProgress";
+import { saveLastLearningSession } from "@/features/learn/learningSession";
 
-/* ----------------------------------------------------------------------
-   Constants
----------------------------------------------------------------------- */
-
+const EASE = [0.16, 1, 0.3, 1];
 const VIDEO_SRC = "/videos/how-it-works.mp4";
 
 const TYPE_LABEL = {
@@ -63,16 +60,30 @@ const TABS = [
   { id: "qa", label: "Q & A", icon: MessagesSquare },
 ];
 
-import { useCourseProgress } from "@/features/learn/hooks/useCourseProgress";
-import { saveLastLearningSession } from "@/features/learn/learningSession";
+function ProgressRing({ pct, size = 40 }) {
+  const r = (size - 4) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (pct / 100) * circ;
 
-/* ----------------------------------------------------------------------
-   PAGE
----------------------------------------------------------------------- */
+  return (
+    <svg width={size} height={size} className="learn-progress-ring" aria-hidden>
+      <circle cx={size / 2} cy={size / 2} r={r} className="learn-progress-ring-bg" />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        className="learn-progress-ring-fill"
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
+      />
+    </svg>
+  );
+}
 
 export default function LessonPlayerPage() {
   const { trackId, lessonId } = useParams();
   const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
   const track = useMemo(() => getTrackById(trackId), [trackId]);
   const lessons = useMemo(() => getLessonsByTrack(trackId), [trackId]);
 
@@ -91,7 +102,6 @@ export default function LessonPlayerPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Keep URL canonical: if the page was loaded without lessonId, redirect once.
   useEffect(() => {
     if (track && !lessonId && lessons[0]) {
       navigate(`/learn/${trackId}/${lessons[0].id}`, { replace: true });
@@ -108,24 +118,22 @@ export default function LessonPlayerPage() {
     });
   }, [track, trackId, initialLesson]);
 
-  if (!track) {
-    return <Navigate to="/tracks" replace />;
-  }
-  if (!initialLesson) {
-    return <Navigate to={`/tracks/${trackId}`} replace />;
-  }
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [initialLesson?.id]);
+
+  if (!track) return <Navigate to="/tracks" replace />;
+  if (!initialLesson) return <Navigate to={`/tracks/${trackId}`} replace />;
 
   const idx = lessons.findIndex((l) => l.id === initialLesson.id);
   const prev = idx > 0 ? lessons[idx - 1] : null;
   const next = idx < lessons.length - 1 ? lessons[idx + 1] : null;
+  const isDone = completed[initialLesson.id];
+  const TypeIcon = TYPE_ICON[initialLesson.type] || PlayCircle;
 
-  const mentor = track.leadMentorSlug
-    ? getMentorBySlug(track.leadMentorSlug)
-    : null;
+  const mentor = track.leadMentorSlug ? getMentorBySlug(track.leadMentorSlug) : null;
 
-  const onToggleComplete = () => {
-    toggleLessonComplete(initialLesson.id);
-  };
+  const onToggleComplete = () => toggleLessonComplete(initialLesson.id);
 
   const onPickLesson = (l) => {
     setDrawerOpen(false);
@@ -135,92 +143,85 @@ export default function LessonPlayerPage() {
 
   const onCompleteAndNext = () => {
     markLessonComplete(initialLesson.id);
-    if (next) {
-      onPickLesson(next);
-    }
+    if (next) onPickLesson(next);
   };
 
   return (
-    <div className="min-h-screen bg-bg text-text relative">
-      {/* Ambient Background Glow for Cinematic Feel */}
-      <div className="pointer-events-none absolute left-0 top-0 -z-10 h-[500px] w-[800px] opacity-20 dark:opacity-30 mix-blend-screen blur-[120px]" 
-           style={{ background: 'radial-gradient(circle, var(--color-primary) 0%, transparent 70%)' }} />
+    <div className="learn-page min-h-screen bg-bg text-text">
+      {/* Ambient glow */}
+      <div className="learn-ambient" aria-hidden />
 
-      {/* ============= MINIMAL TOP BAR ============= */}
-      <header className="sticky top-0 z-40 border-b border-border/40 bg-bg/60 backdrop-blur-2xl shadow-sm">
-        <Container size="xl">
-          <div className="flex h-[60px] items-center gap-3">
+      {/* Top progress hairline */}
+      <div className="learn-hairline" aria-hidden>
+        <motion.div
+          className="learn-hairline-fill"
+          animate={{ width: `${progressPct}%` }}
+          transition={{ duration: 0.5, ease: EASE }}
+        />
+      </div>
+
+      {/* Header */}
+      <header className="learn-header sticky top-0 z-40">
+        <div className="learn-header-inner">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <Link
               to={`/tracks/${track.id}`}
-              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-primary"
+              className="learn-back-btn"
               aria-label="Back to track"
             >
-              <ArrowLeft size={14} aria-hidden />
+              <ArrowLeft size={15} aria-hidden />
               <span className="hidden sm:inline">Back to track</span>
             </Link>
 
-            <div className="mx-2 hidden h-5 w-px bg-border md:block" />
+            <div className="hidden h-5 w-px bg-border md:block" />
 
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-subtle">
-                {track.name}
-              </div>
-              <div className="truncate text-[13px] font-semibold text-text">
+              <p className="learn-breadcrumb">{track.name}</p>
+              <p className="learn-lesson-meta truncate">
                 Lesson {idx + 1} of {lessons.length} · {initialLesson.title}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <div className="hidden items-center gap-2 md:flex">
+              <div className="relative">
+                <ProgressRing pct={progressPct} />
+                <span className="learn-progress-pct">{progressPct}%</span>
+              </div>
+              <div className="hidden lg:block">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted">Progress</p>
+                <p className="text-xs font-bold text-text">
+                  {doneCount}/{lessons.length} lessons
+                </p>
               </div>
             </div>
 
-            {/* Progress (md+) */}
-            <div className="hidden items-center gap-3 md:flex">
-              <div className="flex flex-col items-end">
-                <div className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-subtle">
-                  Progress
-                </div>
-                <div className="text-[13px] font-bold text-text">
-                  {progressPct}%
-                </div>
-              </div>
-              <div className="h-1.5 w-28 overflow-hidden rounded-lg bg-border lg:w-40">
-                <div
-                  className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Curriculum drawer toggle (mobile/tablet) */}
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 text-[12.5px] font-semibold text-text transition-colors hover:border-primary hover:text-primary lg:hidden"
+              className="learn-curriculum-btn lg:hidden"
             >
-              <ListChecks size={14} />
-              Curriculum
+              <PanelRightOpen size={15} />
+              <span className="hidden xs:inline">Curriculum</span>
             </button>
 
             <ThemeToggle />
           </div>
-        </Container>
+        </div>
       </header>
 
-      {/* Top progress hairline */}
-      <div
-        aria-hidden
-        className="h-0.5 w-full overflow-hidden bg-border"
-      >
-        <div
-          className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-          style={{ width: `${progressPct}%` }}
-        />
-      </div>
-
-      {/* ============= MAIN LAYOUT ============= */}
-      <main id="main">
-        <Container size="xl" className="py-5 md:py-8">
-          <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-            {/* ===== LEFT: player + content ===== */}
-            <div className="min-w-0">
-              <div className="relative rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] ring-1 ring-border/50 bg-black">
+      <main id="main" className="learn-main">
+        <div className="learn-grid">
+          {/* Left column */}
+          <div className="learn-content min-w-0">
+            <motion.div
+              key={initialLesson.id}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: EASE }}
+            >
+              <div className="learn-player-shell">
                 <VideoPlayer
                   src={VIDEO_SRC}
                   lesson={initialLesson}
@@ -228,55 +229,54 @@ export default function LessonPlayerPage() {
                 />
               </div>
 
-              {/* Lesson title + actions */}
-              <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-subtle">
-                    <span>{initialLesson.courseTitle}</span>
-                    <span aria-hidden>·</span>
-                    <span className="inline-flex items-center gap-1 text-primary">
-                      {(() => {
-                        const I = TYPE_ICON[initialLesson.type] || PlayCircle;
-                        return <I size={11} aria-hidden />;
-                      })()}
+              {/* Lesson header */}
+              <div className="learn-lesson-header">
+                <div className="min-w-0 flex-1">
+                  <div className="learn-lesson-chips">
+                    <span className="learn-chip">{initialLesson.courseTitle}</span>
+                    <span className="learn-chip learn-chip-primary">
+                      <TypeIcon size={11} aria-hidden />
                       {TYPE_LABEL[initialLesson.type]}
                     </span>
-                    <span aria-hidden>·</span>
-                    <span>{initialLesson.duration}</span>
+                    <span className="learn-chip">
+                      <Clock3 size={11} aria-hidden />
+                      {initialLesson.duration}
+                    </span>
                   </div>
-                  <h1 className="mt-1.5 font-display text-[22px] font-bold leading-tight tracking-tight text-text sm:text-[26px]">
-                    {initialLesson.title}
-                  </h1>
+                  <h1 className="learn-title">{initialLesson.title}</h1>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={onToggleComplete}
-                    className={`inline-flex h-10 items-center gap-1.5 rounded-lg border px-3.5 text-[13px] font-semibold transition-all duration-200 ${
-                      completed[initialLesson.id]
-                        ? "border-success/40 bg-[color:color-mix(in_oklab,var(--success)_12%,transparent)] text-success"
-                        : "border-border bg-elevated text-text hover:border-primary hover:text-primary"
-                    }`}
-                  >
-                    {completed[initialLesson.id] ? (
-                      <>
-                        <CheckCircle size={14} aria-hidden />
-                        Completed
-                      </>
-                    ) : (
-                      <>
-                        <Circle size={14} aria-hidden />
-                        Mark complete
-                      </>
-                    )}
-                  </button>
-                </div>
+                <motion.button
+                  type="button"
+                  onClick={onToggleComplete}
+                  whileTap={{ scale: 0.97 }}
+                  className={`learn-complete-btn ${isDone ? "learn-complete-btn-done" : ""}`}
+                >
+                  {isDone ? (
+                    <>
+                      <CheckCircle2 size={15} aria-hidden />
+                      Completed
+                    </>
+                  ) : (
+                    <>
+                      <Circle size={15} aria-hidden />
+                      Mark complete
+                    </>
+                  )}
+                </motion.button>
               </div>
 
-              {/* ===== PREMIUM TABS ===== */}
-              <div className="mt-8 mb-2">
-                <div className="flex flex-wrap items-center gap-2">
+              {/* Keyboard hint */}
+              <div className="learn-shortcuts hidden md:flex">
+                <Keyboard size={13} className="text-muted" />
+                <span>
+                  <kbd>Space</kbd> play · <kbd>←</kbd><kbd>→</kbd> seek · <kbd>M</kbd> mute · <kbd>F</kbd> fullscreen
+                </span>
+              </div>
+
+              {/* Tabs */}
+              <div className="learn-tabs-shell">
+                <div className="learn-tabs" role="tablist">
                   {TABS.map((t) => {
                     const Icon = t.icon;
                     const isActive = activeTab === t.id;
@@ -284,184 +284,182 @@ export default function LessonPlayerPage() {
                       <button
                         key={t.id}
                         type="button"
+                        role="tab"
+                        aria-selected={isActive}
                         onClick={() => setActiveTab(t.id)}
-                        aria-current={isActive ? "page" : undefined}
-                        className={`relative flex h-10 items-center gap-2 rounded-lg px-5 text-[13px] font-bold transition-all duration-300 ${
-                          isActive
-                            ? "bg-primary text-white shadow-[0_4px_15px_rgba(33,92,255,0.4)] scale-105"
-                            : "bg-elevated/50 text-muted hover:bg-elevated hover:text-text border border-border/50"
-                        }`}
+                        className={`learn-tab ${isActive ? "learn-tab-active" : ""}`}
                       >
-                        <Icon size={14} className={isActive ? "text-white" : ""} aria-hidden />
-                        {t.label}
+                        {isActive && (
+                          <motion.span
+                            layoutId="learn-tab-indicator"
+                            className="learn-tab-indicator"
+                            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                          />
+                        )}
+                        <Icon size={14} className="relative z-[1]" aria-hidden />
+                        <span className="relative z-[1]">{t.label}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* ===== TAB PANES ===== */}
-              <div className="mt-6">
-                {activeTab === "overview" && (
-                  <OverviewPane lesson={initialLesson} mentor={mentor} />
-                )}
-                {activeTab === "notes" && (
-                  <NotesPane trackId={trackId} lessonId={initialLesson.id} />
-                )}
-                {activeTab === "transcript" && (
-                  <TranscriptPane lesson={initialLesson} />
-                )}
-                {activeTab === "resources" && (
-                  <ResourcesPane lesson={initialLesson} />
-                )}
-                {activeTab === "qa" && <QAPane lesson={initialLesson} />}
+              {/* Tab content */}
+              <div className="learn-tab-panel dashboard-card">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${initialLesson.id}-${activeTab}`}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? undefined : { opacity: 0, y: -6 }}
+                    transition={{ duration: 0.28, ease: EASE }}
+                  >
+                    {activeTab === "overview" && (
+                      <OverviewPane lesson={initialLesson} mentor={mentor} />
+                    )}
+                    {activeTab === "notes" && (
+                      <NotesPane trackId={trackId} lessonId={initialLesson.id} />
+                    )}
+                    {activeTab === "transcript" && (
+                      <TranscriptPane lesson={initialLesson} />
+                    )}
+                    {activeTab === "resources" && (
+                      <ResourcesPane lesson={initialLesson} />
+                    )}
+                    {activeTab === "qa" && <QAPane lesson={initialLesson} />}
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
-              {/* ===== PREV / NEXT NAV ===== */}
-              <div className="mt-10 grid gap-3 border-t border-border pt-6 sm:grid-cols-2">
+              {/* Prev / Next */}
+              <div className="learn-nav-grid">
                 {prev ? (
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => onPickLesson(prev)}
-                    className="group/prev flex items-center gap-3 rounded-xl border border-border bg-elevated/60 p-4 text-left transition-colors hover:border-border-strong"
+                    whileHover={{ y: -2 }}
+                    className="learn-nav-card"
                   >
-                    <ChevronLeft
-                      size={16}
-                      aria-hidden
-                      className="shrink-0 text-muted transition-transform duration-200 group-hover/prev:-translate-x-0.5"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-subtle">
-                        Previous lesson
-                      </div>
-                      <div className="mt-0.5 truncate text-[13.5px] font-semibold text-text">
-                        {prev.title}
-                      </div>
+                    <ChevronLeft size={16} className="shrink-0 text-muted" />
+                    <div className="min-w-0">
+                      <p className="learn-nav-label">Previous</p>
+                      <p className="learn-nav-title">{prev.title}</p>
                     </div>
-                  </button>
+                  </motion.button>
                 ) : (
                   <div />
                 )}
+
                 {next ? (
-                  <button
+                  <motion.button
                     type="button"
                     onClick={onCompleteAndNext}
-                    className="group/next flex items-center gap-3 rounded-xl border border-primary/30 bg-primary-soft p-4 text-left transition-colors hover:border-primary"
+                    whileHover={{ y: -2 }}
+                    className="learn-nav-card learn-nav-card-next"
                   >
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-primary">
-                        Next lesson
-                      </div>
-                      <div className="mt-0.5 truncate text-[13.5px] font-semibold text-text">
-                        {next.title}
-                      </div>
+                    <div className="min-w-0 text-right">
+                      <p className="learn-nav-label learn-nav-label-primary">Up next</p>
+                      <p className="learn-nav-title">{next.title}</p>
                     </div>
-                    <ChevronRight
-                      size={16}
-                      aria-hidden
-                      className="shrink-0 text-primary transition-transform duration-200 group-hover/next:translate-x-0.5"
-                    />
-                  </button>
+                    <ChevronRight size={16} className="shrink-0 text-primary" />
+                  </motion.button>
                 ) : (
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => navigate(`/tracks/${trackId}`)}
-                    className="flex items-center gap-3 rounded-xl border border-success/40 bg-[color:color-mix(in_oklab,var(--success)_10%,transparent)] p-4 text-left transition-colors hover:border-success"
+                    whileHover={{ y: -2 }}
+                    className="learn-nav-card learn-nav-card-done"
                   >
-                    <Award
-                      size={18}
-                      aria-hidden
-                      className="shrink-0 text-success"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-success">
-                        Track complete
-                      </div>
-                      <div className="mt-0.5 truncate text-[13.5px] font-semibold text-text">
-                        Claim your certificate
-                      </div>
+                    <Award size={18} className="shrink-0 text-success" />
+                    <div className="min-w-0 text-right">
+                      <p className="learn-nav-label text-success">Track complete</p>
+                      <p className="learn-nav-title">Claim your certificate</p>
                     </div>
-                  </button>
+                  </motion.button>
                 )}
               </div>
-            </div>
+            </motion.div>
+          </div>
 
-            {/* ===== RIGHT: sidebar (desktop) ===== */}
-            <aside className="hidden lg:block">
-              <div className="sticky top-[84px] flex h-[calc(100vh-104px)] flex-col overflow-hidden rounded-[1.5rem] border border-border/60 bg-elevated/40 backdrop-blur-2xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]">
-                <SidebarOutline
-                  track={track}
-                  lessons={lessons}
-                  currentId={initialLesson.id}
-                  completedMap={completed}
-                  onPick={onPickLesson}
-                />
-                <div className="border-t border-border px-4 py-3">
-                  <div className="flex items-center justify-between text-[12px] text-muted">
-                    <span>
-                      <span className="font-semibold text-text">
-                        {doneCount}
-                      </span>{" "}
-                      / {lessons.length} done
-                    </span>
-                    <span className="font-semibold text-text">
-                      {progressPct}%
-                    </span>
-                  </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-lg bg-border">
-                    <div
-                      className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-                      style={{ width: `${progressPct}%` }}
-                    />
-                  </div>
+          {/* Desktop sidebar */}
+          <aside className="learn-sidebar hidden lg:block">
+            <div className="learn-sidebar-inner">
+              <SidebarOutline
+                track={track}
+                lessons={lessons}
+                currentId={initialLesson.id}
+                completedMap={completed}
+                onPick={onPickLesson}
+              />
+              <div className="learn-sidebar-footer">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>
+                    <span className="font-bold text-text">{doneCount}</span> / {lessons.length} done
+                  </span>
+                  <span className="font-bold text-primary">{progressPct}%</span>
+                </div>
+                <div className="learn-sidebar-progress">
+                  <motion.div
+                    className="learn-sidebar-progress-fill"
+                    animate={{ width: `${progressPct}%` }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                  />
                 </div>
               </div>
-            </aside>
-          </div>
-        </Container>
+            </div>
+          </aside>
+        </div>
       </main>
 
-      {/* ===== Mobile drawer ===== */}
-      {drawerOpen ? (
-        <div
-          className="fixed inset-0 z-50 flex lg:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Course curriculum"
-        >
-          <button
-            type="button"
-            aria-label="Close curriculum"
-            onClick={() => setDrawerOpen(false)}
-            className="flex-1 bg-bg/60 backdrop-blur-sm"
-          />
-          <div className="flex h-full w-[88%] max-w-[380px] flex-col overflow-hidden border-l border-border bg-elevated shadow-[var(--shadow-elevated)]">
-            <SidebarOutline
-              track={track}
-              lessons={lessons}
-              currentId={initialLesson.id}
-              completedMap={completed}
-              onPick={onPickLesson}
-              onClose={() => setDrawerOpen(false)}
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {drawerOpen && (
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close curriculum"
+              className="learn-drawer-backdrop lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDrawerOpen(false)}
             />
-            <div className="border-t border-border px-4 py-3">
-              <div className="flex items-center justify-between text-[12px] text-muted">
-                <span>
-                  <span className="font-semibold text-text">{doneCount}</span>{" "}
-                  / {lessons.length} done
-                </span>
-                <span className="font-semibold text-text">{progressPct}%</span>
+            <motion.div
+              className="learn-drawer lg:hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Course curriculum"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 340, damping: 34 }}
+            >
+              <SidebarOutline
+                track={track}
+                lessons={lessons}
+                currentId={initialLesson.id}
+                completedMap={completed}
+                onPick={onPickLesson}
+                onClose={() => setDrawerOpen(false)}
+              />
+              <div className="learn-sidebar-footer">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>
+                    <span className="font-bold text-text">{doneCount}</span> / {lessons.length} done
+                  </span>
+                  <span className="font-bold text-primary">{progressPct}%</span>
+                </div>
+                <div className="learn-sidebar-progress">
+                  <div
+                    className="learn-sidebar-progress-fill"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-lg bg-border">
-                <div
-                  className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
