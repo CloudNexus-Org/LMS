@@ -83,6 +83,9 @@ const NotificationsPage = lazy(() =>
 const QuizResultsPage = lazy(() =>
   import('@/pages/student/QuizResultsPage')
 );
+const PracticeQuizzesPage = lazy(() =>
+  import('@/pages/student/PracticeQuizzesPage')
+);
 const CourseReviewsPage = lazy(() =>
   import('@/pages/student/CourseReviewsPage')
 );
@@ -105,6 +108,9 @@ const StudentsPage = lazy(() =>
 );
 const MentorNotificationsPage = lazy(() =>
   import('@/pages/mentor/MentorNotificationsPage')
+);
+const ManageQuizzesPage = lazy(() =>
+  import('@/pages/mentor/ManageQuizzesPage')
 );
 
 // Admin Pages
@@ -246,6 +252,11 @@ function App() {
                 />
 
                 <Route
+                  path="quizzes"
+                  element={<PracticeQuizzesPage />}
+                />
+
+                <Route
                   path="notes"
                   element={<NotesAndBookmarksPage />}
                 />
@@ -306,6 +317,11 @@ function App() {
                 <Route
                   path="lessons"
                   element={<ManageLessonsPage />}
+                />
+
+                <Route
+                  path="quizzes"
+                  element={<ManageQuizzesPage />}
                 />
 
                 <Route

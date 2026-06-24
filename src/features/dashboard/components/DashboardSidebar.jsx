@@ -12,6 +12,7 @@ import {
   DollarSign,
   ShoppingBag,
   Star,
+  ListChecks,
 } from 'lucide-react';
 
 const navConfig = {
@@ -19,6 +20,7 @@ const navConfig = {
     { name: 'Dashboard', icon: LayoutDashboard, path: '/student/dashboard' },
     { name: 'Courses', icon: ShoppingBag, path: '/student/catalog' },
     { name: 'My Learning', icon: BookOpen, path: '/student/courses' },
+    { name: 'Practice Quizzes', icon: ListChecks, path: '/student/quizzes' },
     { name: 'Reviews', icon: Star, path: '/student/reviews' },
     { name: 'Wishlist', icon: Heart, path: '/student/wishlist' },
     { name: 'Certificates', icon: Award, path: '/student/certificates' },
@@ -27,6 +29,7 @@ const navConfig = {
   mentor: [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/mentor/dashboard' },
     { name: 'Manage Lessons', icon: BookOpen, path: '/mentor/lessons' },
+    { name: 'Quizzes', icon: ListChecks, path: '/mentor/quizzes' },
     { name: 'Upload Course', icon: UploadCloud, path: '/mentor/upload' },
     { name: 'Analytics', icon: BarChart, path: '/mentor/analytics' },
     { name: 'Students', icon: Users, path: '/mentor/students' },
