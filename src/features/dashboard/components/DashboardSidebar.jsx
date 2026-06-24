@@ -8,7 +8,6 @@ const navConfig = {
     { name: 'Wishlist', icon: Heart, path: '/student/wishlist' },
     { name: 'Certificates', icon: Award, path: '/student/certificates' },
     // { name: 'Notes', icon: FileText, path: '/student/notes' },
-    // { name: 'Billing', icon: CreditCard, path: '/student/billing' },
   ],
   mentor: [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/mentor/dashboard' },

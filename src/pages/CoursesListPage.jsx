@@ -325,7 +325,10 @@ export default function CoursesListPage() {
         </section>
 
         {/* Toolbar + grid */}
-        <section className="pb-20 md:pb-28">
+        <section
+          id="courses-catalog"
+          className="scroll-mt-[88px] pb-20 md:scroll-mt-[96px] md:pb-28"
+        >
           <Container size="lg">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
