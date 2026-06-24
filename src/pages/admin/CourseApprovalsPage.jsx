@@ -12,6 +12,7 @@ import {
   X,
   Layers3,
 } from 'lucide-react';
+import { csvFilename, downloadCsvFromObjects } from '@/lib/exportCsv';
 
 const INITIAL_APPROVALS = [
   {
@@ -138,6 +139,27 @@ export default function CourseApprovalsPage() {
     },
   ];
 
+  const handleExportQueue = () => {
+    downloadCsvFromObjects(
+      csvFilename('course-approvals'),
+      [
+        { header: 'Course ID', key: 'id' },
+        { header: 'Title', key: 'title' },
+        { header: 'Mentor', key: 'mentor' },
+        { header: 'Category', key: 'category' },
+        { header: 'Status', key: 'status' },
+        { header: 'Priority', key: 'priority' },
+        { header: 'Modules', key: 'modules' },
+        { header: 'Lessons', key: 'lessons' },
+        { header: 'Duration', key: 'duration' },
+        { header: 'Preview Rating', key: 'previewRating' },
+        { header: 'Submitted', key: 'submitted' },
+        { header: 'Description', key: 'description' },
+      ],
+      approvals
+    );
+  };
+
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -151,6 +173,7 @@ export default function CourseApprovalsPage() {
         </div>
         <button
           type="button"
+          onClick={handleExportQueue}
           className="inline-flex items-center gap-1.5 self-start rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted transition-colors hover:text-text sm:self-center"
         >
           <Download className="h-4 w-4" />

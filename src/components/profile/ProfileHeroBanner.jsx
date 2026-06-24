@@ -22,7 +22,7 @@ const EASE = [0.16, 1, 0.3, 1];
 const DEFAULT_COVER = "/assets/profile-cover-default.svg";
 
 const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
-  { profile, settingsPath = "/student/settings" },
+  { profile, settingsPath = "/student/settings", showActions = true },
   ref
 ) {
   const coverInputRef = useRef(null);
@@ -237,16 +237,18 @@ const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
               />
             </div>
 
-            <div className="profile-hero-actions-linkedin">
-              <Link to={settingsPath} className="profile-btn profile-btn-outline">
-                <Settings className="h-4 w-4" />
-                <span>Settings</span>
-              </Link>
-              <button type="button" className="profile-btn profile-btn-primary">
-                <Edit3 className="h-4 w-4" />
-                <span>Edit profile</span>
-              </button>
-            </div>
+            {showActions ? (
+              <div className="profile-hero-actions-linkedin">
+                <Link to={settingsPath} className="profile-btn profile-btn-outline">
+                  <Settings className="h-4 w-4" />
+                  <span>Settings</span>
+                </Link>
+                <button type="button" className="profile-btn profile-btn-primary">
+                  <Edit3 className="h-4 w-4" />
+                  <span>Edit profile</span>
+                </button>
+              </div>
+            ) : null}
           </div>
 
           {/* Row 2: identity */}

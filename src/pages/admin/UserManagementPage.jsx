@@ -5,6 +5,7 @@ import {
   UserCheck, UserX, Download, Clock,
   Eye, BarChart2,
 } from 'lucide-react';
+import { csvFilename, downloadCsvFromObjects } from '@/lib/exportCsv';
 
 const USERS = [
   { id: 1, name: 'Alex Chen', email: 'alex.chen@example.com', role: 'Student', joined: 'Mar 12, 2026', status: 'Active', courses: 4, lastActive: '2 hours ago', avatar: 'AC', spend: '$360' },
@@ -90,6 +91,24 @@ export default function UserManagementPage() {
     },
   ];
 
+  const handleExportCsv = () => {
+    downloadCsvFromObjects(
+      csvFilename('users'),
+      [
+        { header: 'ID', key: 'id' },
+        { header: 'Name', key: 'name' },
+        { header: 'Email', key: 'email' },
+        { header: 'Role', key: 'role' },
+        { header: 'Status', key: 'status' },
+        { header: 'Courses', key: 'courses' },
+        { header: 'Joined', key: 'joined' },
+        { header: 'Last Active', key: 'lastActive' },
+        { header: 'Total Spend', key: 'spend' },
+      ],
+      USERS
+    );
+  };
+
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
 
@@ -105,6 +124,7 @@ export default function UserManagementPage() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
+            onClick={handleExportCsv}
             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-[13px] font-medium text-muted transition-colors hover:text-text"
           >
             <Download className="h-4 w-4" />

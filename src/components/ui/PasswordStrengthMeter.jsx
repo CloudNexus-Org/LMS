@@ -5,7 +5,7 @@ export default function PasswordStrengthMeter({ password, compact = false }) {
   const getStrength = (pass) => {
     let score = 0;
     if (!pass) return { score: 0, text: '', color: 'bg-border' };
-    if (pass.length >= 8) score += 1;
+    if (pass.length >= 6) score += 1;
     if (/[A-Z]/.test(pass)) score += 1;
     if (/[0-9]/.test(pass)) score += 1;
     if (/[^A-Za-z0-9]/.test(pass)) score += 1;
@@ -20,7 +20,7 @@ export default function PasswordStrengthMeter({ password, compact = false }) {
   const strength = getStrength(password);
 
   const criteria = [
-    { label: '8+ characters', met: password.length >= 8 },
+    { label: '6+ characters', met: password.length >= 6 },
     { label: 'Uppercase letter', met: /[A-Z]/.test(password) },
     { label: 'Number', met: /[0-9]/.test(password) },
     { label: 'Special character', met: /[^A-Za-z0-9]/.test(password) }
