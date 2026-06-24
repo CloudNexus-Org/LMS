@@ -286,7 +286,7 @@ export default function MentorDashboardPage() {
                   className="
                     rounded-[5px]
                     border border-gray-200 dark:border-border
-                    bg-white dark:bg-elevated/80
+                    bg-surface
                     p-5
                     backdrop-blur-xl
                   "
@@ -420,7 +420,7 @@ export default function MentorDashboardPage() {
         {/* LEFT SIDE */}
         <div className="space-y-8 xl:col-span-2">
           {/* RECENT ENROLLMENTS */}
-          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-surface shadow-sm">
             <div className="flex items-center justify-between border-b border-border px-7 py-6">
               <div>
                 <h3 className="text-2xl font-black text-text">
@@ -510,7 +510,7 @@ export default function MentorDashboardPage() {
   className="
     rounded-[5px]
     border border-gray-200 dark:border-border
-    bg-white dark:bg-elevated/80
+    bg-surface
     p-8
     shadow-sm
     transition-all duration-300
@@ -645,7 +645,7 @@ export default function MentorDashboardPage() {
         {/* RIGHT SIDE */}
         <div className="space-y-8">
           {/* PENDING Q&A */}
-          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-10 shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-surface p-10 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-text">
                 Q&A Pending
@@ -694,7 +694,7 @@ export default function MentorDashboardPage() {
           </div>
 
           {/* RECENT ACTIVITY */}
-          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-3 shadow-sm">
+          <div className="rounded-[5px] border border-gray-200 dark:border-border bg-surface p-3 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-text">
                 Recent Activity

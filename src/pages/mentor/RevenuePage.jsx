@@ -344,7 +344,7 @@ export default function RevenuePage() {
             relative overflow-hidden
             rounded-[5px]
             border border-gray-200 dark:border-border
-            bg-white dark:bg-elevated/80
+            bg-surface
             p-8 sm:p-10
             shadow-sm
           "
@@ -483,7 +483,7 @@ export default function RevenuePage() {
         </div>
 
         {/* SIDE CARD */}
-        <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-6 shadow-sm">
+        <div className="rounded-[5px] border border-gray-200 dark:border-border bg-surface p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-black text-text">
@@ -577,7 +577,7 @@ export default function RevenuePage() {
           overflow-hidden
           rounded-[5px]
           border border-gray-200 dark:border-border
-          bg-white dark:bg-elevated/80
+          bg-surface
           shadow-sm
         "
       >
@@ -710,7 +710,7 @@ export default function RevenuePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* REVENUE BREAKDOWN */}
-        <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-6 shadow-sm">
+        <div className="rounded-[5px] border border-gray-200 dark:border-border bg-surface p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-black text-text">
@@ -772,7 +772,7 @@ export default function RevenuePage() {
         </div>
 
         {/* WITHDRAWAL TIMELINE */}
-        <div className="rounded-[5px] border border-gray-200 dark:border-border bg-white dark:bg-elevated/80 p-6 shadow-sm">
+        <div className="rounded-[5px] border border-gray-200 dark:border-border bg-surface p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-black text-text">

@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, BookOpen, PlayCircle } from "lucide-react";
+import { ArrowRight, BookOpen, Users } from "lucide-react";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
 import HeroBackdrop from "./HeroBackdrop";
@@ -118,22 +118,22 @@ export default function Hero() {
               className="mt-8 sm:mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
             >
               <Button
-                to="/signup"
+                to="/courses"
                 size="lg"
                 className="w-full sm:w-auto min-w-[180px] hover:-translate-y-0.5"
                 rightIcon={<ArrowRight size={18} />}
               >
-                Start free trial
+                Browse courses
               </Button>
 
               <Button
-                to="/demo"
+                to="/mentors"
                 variant="secondary"
                 size="lg"
                 className="w-full sm:w-auto min-w-[180px] hover:-translate-y-0.5"
-                leftIcon={<PlayCircle size={18} />}
+                leftIcon={<Users size={18} />}
               >
-                Watch demo
+                Meet our mentors
               </Button>
             </motion.div>
 

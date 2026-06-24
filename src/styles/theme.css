@@ -1,0 +1,61 @@
+/**
+ * Cloud Nexus — single source of truth for light / dark theme colors.
+ * Light: white (#ffffff) · Dark: black (#000000)
+ *
+ * Tailwind utilities: bg-page, bg-bg, bg-surface, bg-elevated, text-text, etc.
+ */
+
+:root,
+[data-theme="light"] {
+    --page-bg: #ffffff;
+    --bg: #ffffff;
+    --bg-solid: #ffffff;
+    --surface: #ffffff;
+    --elevated: #f5f6f8;
+    --border: #e5e7eb;
+    --border-strong: #cbd5e1;
+    --text: #0b1020;
+    --muted: #52607a;
+    --subtle: #8b95a8;
+    --primary: #8b61d2;
+    --primary-hover: #7a52c0;
+    --primary-soft: rgba(139, 97, 210, 0.1);
+    --accent: #7c3aed;
+    --accent-soft: rgba(124, 58, 237, 0.08);
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --shadow-card-value: 0 1px 2px rgba(11, 16, 32, 0.06), 0 8px 24px rgba(11, 16, 32, 0.06);
+    --shadow-elevated-value: 0 12px 40px rgba(11, 16, 32, 0.12);
+    --grid-line: rgba(11, 16, 32, 0.06);
+    --nav-fog: rgba(255, 255, 255, 0.88);
+    --nav-fog-mobile: rgba(255, 255, 255, 0.96);
+    --hero-base: #ffffff;
+}
+
+[data-theme="dark"] {
+    --page-bg: #000000;
+    --bg: #000000;
+    --bg-solid: #000000;
+    --surface: #111111;
+    --elevated: #1a1a1a;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text: #e5e7f0;
+    --muted: #9ca3b5;
+    --subtle: #6b7488;
+    --primary: #8b61d2;
+    --primary-hover: #9b74db;
+    --primary-soft: rgba(139, 97, 210, 0.14);
+    --accent: #a78bfa;
+    --accent-soft: rgba(167, 139, 250, 0.12);
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --shadow-card-value: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.35);
+    --shadow-elevated-value: 0 24px 60px rgba(0, 0, 0, 0.5);
+    --grid-line: rgba(255, 255, 255, 0.04);
+    --nav-fog: rgba(0, 0, 0, 0.88);
+    --nav-fog-mobile: rgba(0, 0, 0, 0.96);
+    --hero-base: #000000;
+}

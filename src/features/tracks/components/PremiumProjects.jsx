@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Code2, HeartPulse, ShoppingCart, Brain, BarChart3, Users, Layers, Rocket, Globe, Database, Sparkles } from 'lucide-react';
+import { pageBg } from '@/styles/theme';
 
 /* ─── 12 Real-world projects ─── */
 const ALL_PROJECTS = [
@@ -326,7 +327,7 @@ export default function PremiumProjects({ track }) {
 
   return (
     <section
-      style={{ background: '#000000', position: 'relative', overflow: 'hidden', padding: '60px 0 50px' }}
+      className={`relative overflow-hidden py-[60px] pb-[50px] ${pageBg}`}
       aria-labelledby="projects-heading"
     >
       {/* ─── Layered ambient atmosphere ─── */}

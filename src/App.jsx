@@ -27,6 +27,8 @@ const MentorDetailPage = lazy(() => import('@/pages/MentorDetailPage'));
 const MentorsListPage = lazy(() => import('@/pages/MentorsListPage'));
 const TrackDetailPage = lazy(() => import('@/pages/TrackDetailPage'));
 const TracksListPage = lazy(() => import('@/pages/TracksListPage'));
+const CoursesListPage = lazy(() => import('@/pages/CoursesListPage'));
+const CartPage = lazy(() => import('@/pages/CartPage'));
 const LessonPlayerPage = lazy(() => import('@/pages/LessonPlayerPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
@@ -136,6 +138,9 @@ function App() {
 
               <Route path="/tracks" element={<TracksListPage />} />
               <Route path="/tracks/:id" element={<TrackDetailPage />} />
+
+              <Route path="/courses" element={<CoursesListPage />} />
+              <Route path="/cart" element={<CartPage />} />
             </Route>
 
             {/* AUTH ROUTES */}
