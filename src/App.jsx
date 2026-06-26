@@ -80,9 +80,6 @@ const StudentLearnRedirect = lazy(() =>
 const NotificationsPage = lazy(() =>
   import('@/pages/student/NotificationsPage')
 );
-const QuizResultsPage = lazy(() =>
-  import('@/pages/student/QuizResultsPage')
-);
 const CourseReviewsPage = lazy(() =>
   import('@/pages/student/CourseReviewsPage')
 );
@@ -272,11 +269,6 @@ function App() {
                 <Route
                   path="profile"
                   element={<ProfilePage />}
-                />
-
-                <Route
-                  path="quiz"
-                  element={<QuizResultsPage />}
                 />
               </Route>
             </Route>

@@ -24,16 +24,14 @@ const BASE_NAV_LINKS = [
 ];
 
 const NAV_HEIGHT = 64;
+const LANDING_EXPLORE_SECTION = "#courses";
 const COURSES_CATALOG_ID = "#courses-catalog";
+const LANDING_HASH_SECTIONS = new Set([LANDING_EXPLORE_SECTION, "#contact"]);
 
-function getExploreHref(pathname) {
-  if (pathname === "/") return "#how-it-works";
-  if (pathname === "/courses") return COURSES_CATALOG_ID;
-  return "/courses";
-}
+const EXPLORE_LINK = { label: "Explore", href: LANDING_EXPLORE_SECTION };
 
-function buildNavLinks(pathname) {
-  return [{ label: "Explore", href: getExploreHref(pathname) }, ...BASE_NAV_LINKS];
+function buildNavLinks() {
+  return [EXPLORE_LINK, ...BASE_NAV_LINKS];
 }
 
 function collectSectionHrefs(links) {
@@ -59,8 +57,8 @@ export default function Navbar({
   const isCoursesPage = location.pathname === "/courses";
 
   const navLinks = useMemo(
-    () => navLinksProp ?? buildNavLinks(location.pathname),
-    [navLinksProp, location.pathname]
+    () => navLinksProp ?? buildNavLinks(),
+    [navLinksProp]
   );
 
   const navbarState = useSmartNavbar({
@@ -75,16 +73,32 @@ export default function Navbar({
   const scrollToSection = useCallback((href) => {
     if (!href?.startsWith("#")) return false;
     const ok = scrollSectionUtil(href, NAV_HEIGHT);
-    if (ok) setActiveSection(href);
+    if (ok) {
+      setActiveSection(href);
+      window.history.replaceState(null, "", href);
+    }
     return ok;
   }, []);
+
+  const scrollToSectionWhenReady = useCallback(
+    (href, attempts = 0) => {
+      const ok = scrollToSection(href);
+      if (ok) return true;
+      if (attempts >= 24) return false;
+      requestAnimationFrame(() => scrollToSectionWhenReady(href, attempts + 1));
+      return false;
+    },
+    [scrollToSection]
+  );
 
   const isLinkActive = (link) => {
     if (link.href?.startsWith("/")) {
       return location.pathname === link.href;
     }
-    if (isCoursesPage && link.href === COURSES_CATALOG_ID) {
-      return activeSection === COURSES_CATALOG_ID || window.scrollY < 120;
+    if (isHome && link.label === "Explore") {
+      return (
+        activeSection === LANDING_EXPLORE_SECTION || window.scrollY < 120
+      );
     }
     return isHome && link.href === activeSection;
   };
@@ -92,15 +106,6 @@ export default function Navbar({
   useEffect(() => {
     const handleScroll = () => {
       const scrollPos = window.scrollY + 120;
-
-      if (isCoursesPage) {
-        const catalog = document.querySelector(COURSES_CATALOG_ID);
-        if (catalog) {
-          const top = catalog.offsetTop;
-          setActiveSection(scrollPos >= top ? COURSES_CATALOG_ID : "");
-        }
-        return;
-      }
 
       if (!isHome) {
         setActiveSection("");
@@ -123,25 +128,33 @@ export default function Navbar({
     window.addEventListener("scroll", handleScroll);
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHome, isCoursesPage, navLinks]);
+  }, [isHome, navLinks]);
 
   useEffect(() => {
-    if (!isHome && !isCoursesPage) return;
+    if (!isHome) return;
     const target = pendingScrollRef.current;
     if (!target) return;
     requestAnimationFrame(() => {
-      scrollToSection(target);
+      scrollToSectionWhenReady(target);
       pendingScrollRef.current = null;
     });
-  }, [isHome, isCoursesPage, location.pathname, scrollToSection]);
+  }, [isHome, location.pathname, scrollToSectionWhenReady]);
+
+  useEffect(() => {
+    if (!isHome) return;
+    if (!location.hash) return;
+    requestAnimationFrame(() => {
+      scrollToSectionWhenReady(location.hash);
+    });
+  }, [isHome, location.hash, scrollToSectionWhenReady]);
 
   useEffect(() => {
     if (!isCoursesPage) return;
     if (location.hash !== COURSES_CATALOG_ID) return;
     requestAnimationFrame(() => {
-      scrollToSection(COURSES_CATALOG_ID);
+      scrollToSectionWhenReady(COURSES_CATALOG_ID);
     });
-  }, [isCoursesPage, location.hash, scrollToSection]);
+  }, [isCoursesPage, location.hash, scrollToSectionWhenReady]);
 
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
@@ -163,24 +176,21 @@ export default function Navbar({
       return;
     }
 
-    if (isCoursesPage) {
+    if (href?.startsWith("#")) {
+      if (isHome && LANDING_HASH_SECTIONS.has(href)) {
+        scrollToSection(href);
+        return;
+      }
+
+      if (LANDING_HASH_SECTIONS.has(href)) {
+        pendingScrollRef.current = href;
+        navigate("/");
+        return;
+      }
+
       scrollToSection(href);
       return;
     }
-
-    if (isHome) {
-      scrollToSection(href);
-      return;
-    }
-
-    if (href === COURSES_CATALOG_ID) {
-      navigate("/courses");
-      pendingScrollRef.current = COURSES_CATALOG_ID;
-      return;
-    }
-
-    pendingScrollRef.current = href;
-    navigate("/");
   };
 
   const isLandingTop = isHome && !isScrolled;

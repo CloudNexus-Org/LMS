@@ -85,7 +85,7 @@ export default function FAQ() {
   const [activeIndex, setActiveIndex] = useState(null);
 
   return (
-    <SectionShell>
+    <SectionShell id="faq">
       <Container size="default" className="!max-w-[1100px]">
         {/* HEADING */}
         <div className="text-center">

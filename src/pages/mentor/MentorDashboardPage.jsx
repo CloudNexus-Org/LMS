@@ -185,7 +185,7 @@ function MentorRevenuePieChart({ data, metric, chartKey, centerLabel, centerValu
             {active ? active.name.split(" ").slice(0, 2).join(" ") : centerLabel}
           </text>
         </svg>
-      </div>
+            </div>
 
       <ul className="dashboard-pie-chart-legend">
         {segments.map((slice, i) => (
@@ -600,7 +600,7 @@ export default function MentorDashboardPage() {
     [snapshot]
   );
 
-  return (
+              return (
     <motion.div
       className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4 pb-2"
       variants={shouldReduceMotion ? undefined : pageVariants}
@@ -625,7 +625,7 @@ export default function MentorDashboardPage() {
           <p className="dashboard-greeting-sub">
             Track students, revenue, and course performance from one place.
           </p>
-        </div>
+                  </div>
 
         <div className="dashboard-analytics-metrics min-w-0">
           <motion.div
@@ -636,7 +636,7 @@ export default function MentorDashboardPage() {
             <div className="min-w-0">
               <p className="dashboard-metric-value">+{snapshot.weeklyGrowth}%</p>
               <p className="dashboard-metric-label">Weekly growth</p>
-            </div>
+                </div>
           </motion.div>
           <motion.div
             className="dashboard-analytics-metric"
@@ -646,7 +646,7 @@ export default function MentorDashboardPage() {
             <div className="min-w-0">
               <p className="dashboard-metric-value">{snapshot.engagement}%</p>
               <p className="dashboard-metric-label">Engagement</p>
-            </div>
+          </div>
           </motion.div>
           <motion.div
             className="dashboard-analytics-chart col-span-2 sm:col-span-1"
@@ -655,7 +655,7 @@ export default function MentorDashboardPage() {
             <p className="dashboard-metric-label mb-1">Student trend</p>
             <MiniSparkline data={snapshot.trend} />
           </motion.div>
-        </div>
+      </div>
 
         <div className="dashboard-analytics-status w-full lg:w-auto">
           <p className="w-full text-center text-[11px] text-muted sm:w-auto sm:text-left lg:text-right">
@@ -681,7 +681,7 @@ export default function MentorDashboardPage() {
                 Create Course
               </Link>
             </motion.div>
-          </div>
+            </div>
         </div>
       </motion.section>
 
@@ -710,8 +710,8 @@ export default function MentorDashboardPage() {
                   <p className="text-lg font-bold leading-none text-text sm:text-xl">{item.count}</p>
                   <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-muted">
                     {item.title}
-                  </p>
-                </div>
+              </p>
+            </div>
               </div>
               <p className="mt-2 text-[11px] text-muted">{item.subtitle}</p>
             </MotionCard>
@@ -740,22 +740,22 @@ export default function MentorDashboardPage() {
                   <div className="flex min-w-0 items-center gap-2.5">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                       <Icon className="h-4 w-4" />
-                    </div>
+            </div>
                     <span className="truncate text-xs font-semibold text-text">{action.label}</span>
-                  </div>
+          </div>
                   <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 </motion.div>
-              );
-            })}
-          </div>
+    );
+  })}
+</div>
         </MotionCard>
 
         <MotionCard className="flex h-full flex-col p-4" delay={0.1}>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="dashboard-section-title">Course Completion</h2>
             <Activity className="h-4 w-4 text-primary" />
-          </div>
+              </div>
           <div className="space-y-3.5">
             {COURSE_PROGRESS.map((course, i) => (
               <motion.div
@@ -767,16 +767,16 @@ export default function MentorDashboardPage() {
                 <div className="mb-1 flex items-center justify-between gap-2">
                   <p className="truncate text-xs font-semibold text-text">{course.title}</p>
                   <span className="shrink-0 text-[11px] font-bold text-muted">{course.value}%</span>
-                </div>
+                          </div>
                 <AnimatedProgress value={course.value} color={course.color} delay={0.15 + i * 0.08} />
               </motion.div>
             ))}
-          </div>
+                          </div>
           <div className="mt-4 grid grid-cols-2 gap-2.5">
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">{avgCompletion}%</p>
               <p className="text-[11px] text-muted">Avg. completion</p>
-            </div>
+                        </div>
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">{snapshot.pendingQa}</p>
               <p className="text-[11px] text-muted">Pending Q&amp;A</p>
@@ -788,7 +788,7 @@ export default function MentorDashboardPage() {
           <div className="mb-3 flex items-center justify-between">
             <h2 className="dashboard-section-title">Recent Activity</h2>
             <Clock3 className="h-4 w-4 text-primary" />
-          </div>
+            </div>
           <div className="space-y-2">
             {ACTIVITIES.map((item, i) => {
               const Icon = item.icon;
@@ -803,7 +803,7 @@ export default function MentorDashboardPage() {
                 >
                   <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconColor}`}>
                     <Icon className="h-4 w-4" />
-                  </div>
+          </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-bold text-text">{item.title}</p>
                     <p className="text-[11px] text-muted">{item.desc}</p>
@@ -823,12 +823,12 @@ export default function MentorDashboardPage() {
       >
         <MotionCard className="flex min-h-0 flex-col p-4 lg:col-span-3" delay={0.05} hover={false}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div>
+    <div>
               <h2 className="dashboard-section-title">Student Engagement</h2>
               <p className="mt-0.5 text-[11px] text-muted">
                 Enrollments vs watch hours across your courses
-              </p>
-            </div>
+      </p>
+    </div>
             <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
               <span className="dashboard-status-live whitespace-nowrap">● Live data</span>
               <div className="dashboard-chart-tabs w-full sm:w-auto">
@@ -843,8 +843,8 @@ export default function MentorDashboardPage() {
                   </button>
                 ))}
               </div>
-            </div>
-          </div>
+    </div>
+  </div>
 
           <div className="mb-3 flex flex-wrap gap-3">
             <span className="dashboard-chart-legend dashboard-chart-legend-primary">Enrollments</span>
@@ -870,20 +870,20 @@ export default function MentorDashboardPage() {
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">{snapshot.newReviews}</p>
               <p className="text-[11px] text-muted">New reviews</p>
-            </div>
+        </div>
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">94%</p>
               <p className="text-[11px] text-muted">Completion rate</p>
-            </div>
+      </div>
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">3.2h</p>
               <p className="text-[11px] text-muted">Avg. watch time</p>
-            </div>
+  </div>
             <div className="dashboard-mini-stat">
               <p className="text-lg font-bold text-text">{snapshot.students.toLocaleString()}</p>
               <p className="text-[11px] text-muted">Total students</p>
-            </div>
-          </div>
+  </div>
+</div>
         </MotionCard>
 
         <MotionCard className="flex min-h-0 flex-col p-4 lg:col-span-2" delay={0.1} hover={false}>
@@ -891,9 +891,9 @@ export default function MentorDashboardPage() {
             <div>
               <h2 className="dashboard-section-title">Course Mix</h2>
               <p className="mt-0.5 text-[11px] text-muted">Share by course performance</p>
-            </div>
+              </div>
             <PieChart className="h-4 w-4 shrink-0 text-primary" />
-          </div>
+            </div>
 
           <div className="dashboard-chart-tabs mb-3 w-full">
             {[
@@ -909,7 +909,7 @@ export default function MentorDashboardPage() {
                 {tab.label}
               </button>
             ))}
-          </div>
+                  </div>
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -931,12 +931,12 @@ export default function MentorDashboardPage() {
           </AnimatePresence>
 
           <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
-            <div>
+                  <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted">
                 {pieTab === "revenue" ? "Gross revenue" : "Active learners"}
-              </p>
+                      </p>
               <p className="text-base font-bold text-text">{pieCenterValue}</p>
-            </div>
+                    </div>
             <Link
               to="/mentor/analytics"
               className="dashboard-admin-btn dashboard-admin-btn-outline shrink-0"
@@ -954,7 +954,7 @@ export default function MentorDashboardPage() {
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="dashboard-section-title">Action Items</h2>
             <span className="dashboard-trend dashboard-trend-down">{ACTION_ITEMS.length} pending</span>
-          </div>
+                  </div>
           <div className="space-y-2">
             {ACTION_ITEMS.map((item, i) => {
               const Icon = item.icon;
@@ -970,12 +970,12 @@ export default function MentorDashboardPage() {
                   <div className="flex min-w-0 flex-1 items-start gap-3">
                     <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconColor}`}>
                       <Icon className="h-4 w-4" />
-                    </div>
+                </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold text-text">{item.title}</p>
                       <p className="text-[11px] text-muted">{item.desc}</p>
-                    </div>
-                  </div>
+              </div>
+            </div>
                   <Link
                     to={item.action.to}
                     className={`dashboard-admin-btn dashboard-admin-btn-${item.action.variant} w-full shrink-0 sm:w-auto`}
@@ -992,7 +992,7 @@ export default function MentorDashboardPage() {
           <div className="border-b border-border p-4">
             <h2 className="dashboard-section-title">Recent Enrollments</h2>
             <p className="mt-0.5 text-[11px] text-muted">Latest students who joined</p>
-          </div>
+            </div>
           <div className="divide-y divide-border">
             {RECENT_ENROLLMENTS.map((row, i) => (
               <motion.div
@@ -1023,7 +1023,7 @@ export default function MentorDashboardPage() {
             >
               View all students <ChevronRight className="h-3.5 w-3.5" />
             </Link>
-          </div>
+                    </div>
         </MotionCard>
       </motion.section>
 
@@ -1040,14 +1040,14 @@ export default function MentorDashboardPage() {
               <div className="flex items-center gap-2 text-primary">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                   <Video className="h-3.5 w-3.5" />
-                </div>
+                    </div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.12em]">{item.date}</p>
-              </div>
+                  </div>
               <h3 className="mt-3 text-sm font-bold leading-snug text-text">{item.title}</h3>
               <p className="mt-1 text-xs text-muted">{item.subtitle}</p>
             </MotionCard>
           ))}
-        </div>
+            </div>
       </motion.section>
 
       {/* Top courses table */}
@@ -1091,13 +1091,13 @@ export default function MentorDashboardPage() {
                     <div className="flex items-center gap-1.5">
                       <Users className="h-3.5 w-3.5 text-muted" />
                       <span className="text-xs font-semibold">{course.students.toLocaleString()}</span>
-                    </div>
+      </div>
                   </td>
                   <td className="hidden md:table-cell">
                     <div className="flex items-center gap-1">
                       <Star className="h-3.5 w-3.5 fill-warning text-warning" />
                       <span className="text-xs font-semibold">{course.rating}</span>
-                    </div>
+    </div>
                   </td>
                   <td className="text-right">
                     <div className="flex items-center justify-end gap-1">

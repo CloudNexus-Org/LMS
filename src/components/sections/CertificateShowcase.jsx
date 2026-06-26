@@ -177,7 +177,7 @@ function Seal() {
 
 export default function CertificateShowcase() {
   return (
-    <SectionShell>
+    <SectionShell id="certificates">
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
           <SectionHeading

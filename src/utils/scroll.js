@@ -26,7 +26,10 @@ export function scrollToSection(target, offset = 0) {
   const el =
     typeof target === "string" ? document.querySelector(target) : target;
   if (!el) return false;
-  const top = Math.max(0, el.offsetTop - offset);
+  const top = Math.max(
+    0,
+    el.getBoundingClientRect().top + window.scrollY - offset
+  );
   window.scrollTo({
     top,
     behavior: prefersReducedMotion() ? "auto" : "smooth",
