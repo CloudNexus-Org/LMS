@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -28,7 +27,6 @@ export default function QuizPane({
   onPassed,
   onGoToQuizLesson,
 }) {
-  const navigate = useNavigate();
   const quiz = useMemo(() => getQuizForLesson(lessonId, trackId), [lessonId, trackId]);
   const best = quiz ? getBestAttempt(quiz.id) : null;
 
@@ -270,28 +268,16 @@ export default function QuizPane({
               {result.passed ? (
                 <button
                   type="button"
-                  onClick={() =>
-                    navigate("/student/quiz", {
-                      state: {
-                        quizId: quiz.id,
-                        title: quiz.title,
-                        passingScore: quiz.passingScore,
-                        ...result,
-                      },
-                    })
-                  }
+                  onClick={() => setPhase("intro")}
                   className="learn-quiz-btn learn-quiz-btn-primary"
                 >
-                  View full results
+                  Back to overview
                 </button>
               ) : (
                 <button type="button" onClick={startQuiz} className="learn-quiz-btn learn-quiz-btn-primary">
                   <RotateCcw className="h-4 w-4" /> Retake quiz
                 </button>
               )}
-              <button type="button" onClick={() => setPhase("intro")} className="learn-quiz-btn learn-quiz-btn-outline">
-                Back to overview
-              </button>
             </div>
           </motion.div>
         )}
