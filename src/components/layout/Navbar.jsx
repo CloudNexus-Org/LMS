@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 
 import ThemeToggle from "../ui/ThemeToggle";
 import CartButton from "../courses/CartButton";
+import ExploreMegaMenu, { MobileExploreAccordion } from "./ExploreMegaMenu";
 import { SHELL_MAX_WIDTH, SHELL_PADDING } from "../ui/Container";
 
 import cnlg from "@/assets/navbar/white.png";
@@ -26,16 +27,6 @@ const BASE_NAV_LINKS = [
 const NAV_HEIGHT = 64;
 const COURSES_CATALOG_ID = "#courses-catalog";
 
-function getExploreHref(pathname) {
-  if (pathname === "/") return "#how-it-works";
-  if (pathname === "/courses") return COURSES_CATALOG_ID;
-  return "/courses";
-}
-
-function buildNavLinks(pathname) {
-  return [{ label: "Explore", href: getExploreHref(pathname) }, ...BASE_NAV_LINKS];
-}
-
 function collectSectionHrefs(links) {
   return links
     .map((link) => link.href)
@@ -47,6 +38,7 @@ export default function Navbar({
   showAuthButtons = true,
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [logoFailed, setLogoFailed] = useState(false);
 
@@ -59,8 +51,8 @@ export default function Navbar({
   const isCoursesPage = location.pathname === "/courses";
 
   const navLinks = useMemo(
-    () => navLinksProp ?? buildNavLinks(location.pathname),
-    [navLinksProp, location.pathname]
+    () => navLinksProp ?? BASE_NAV_LINKS,
+    [navLinksProp]
   );
 
   const navbarState = useSmartNavbar({
@@ -88,6 +80,11 @@ export default function Navbar({
     }
     return isHome && link.href === activeSection;
   };
+
+  useEffect(() => {
+    setIsExploreOpen(false);
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -153,6 +150,7 @@ export default function Navbar({
   const handleNavClick = (e, href) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
+    setIsExploreOpen(false);
 
     if (href?.startsWith("/")) {
       if (location.pathname === href) {
@@ -186,9 +184,11 @@ export default function Navbar({
   const isLandingTop = isHome && !isScrolled;
 
   const linkClassName = (isActive) =>
-    `inline-flex items-center rounded-md px-3 py-2 text-[14px] font-normal tracking-[-0.01em] transition-colors duration-150 ${
+    `inline-flex h-10 items-center rounded-md px-3 text-[14px] font-normal tracking-[-0.01em] transition-colors duration-150 ${
       isActive ? "text-text" : "text-muted hover:text-text"
     }`;
+
+  const closeMobile = () => setIsMobileMenuOpen(false);
 
   return (
     <>
@@ -208,34 +208,43 @@ export default function Navbar({
         }`}
       >
         <div
-          className={`relative z-10 mx-auto flex h-16 w-full items-center ${SHELL_MAX_WIDTH} ${SHELL_PADDING}`}
+          className={`relative z-10 mx-auto flex h-16 w-full items-center justify-between gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:justify-normal ${SHELL_MAX_WIDTH} ${SHELL_PADDING}`}
         >
-          <Link
-            to="/"
-            onClick={() => {
-              setActiveSection("");
-              setIsMobileMenuOpen(false);
-            }}
-            className="relative z-10 flex shrink-0 items-center gap-2"
-          >
-            {!logoFailed ? (
-              <img
-                src={isDarkTheme ? cnlg : cnlg1}
-                alt="Cloud Nexus Logo"
-                className="h-[48px] w-auto object-contain sm:h-[54px] lg:h-[58px]"
-                width={180}
-                height={58}
-                decoding="async"
-                onError={() => setLogoFailed(true)}
-              />
-            ) : (
-              <span className="font-display text-lg font-bold tracking-tight text-text sm:text-xl">
-                Cloud Nexus
-              </span>
-            )}
-          </Link>
+          {/* Left: logo */}
+          <div className="flex min-w-0 items-center">
+            <Link
+              to="/"
+              onClick={() => {
+                setActiveSection("");
+                setIsMobileMenuOpen(false);
+                setIsExploreOpen(false);
+              }}
+              className="relative z-10 flex shrink-0 items-center"
+            >
+              {!logoFailed ? (
+                <img
+                  src={isDarkTheme ? cnlg : cnlg1}
+                  alt="Cloud Nexus Logo"
+                  className="h-10 w-auto object-contain sm:h-10 lg:h-11"
+                  width={180}
+                  height={44}
+                  decoding="async"
+                  onError={() => setLogoFailed(true)}
+                />
+              ) : (
+                <span className="font-display text-lg font-bold tracking-tight text-text sm:text-xl">
+                  Cloud Nexus
+                </span>
+              )}
+            </Link>
+          </div>
 
-          <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 lg:flex">
+          {/* Center: explore + nav links */}
+          <div className="hidden items-center justify-center gap-1 lg:flex lg:justify-self-center">
+            <ExploreMegaMenu
+              isOpen={isExploreOpen}
+              onOpenChange={setIsExploreOpen}
+            />
             {navLinks.map((link) => {
               const isActive = isLinkActive(link);
 
@@ -252,15 +261,16 @@ export default function Navbar({
             })}
           </div>
 
-          <div className="relative z-10 ml-auto flex items-center gap-2.5 sm:gap-3 lg:gap-4">
+          {/* Right: actions */}
+          <div className="relative z-10 flex shrink-0 items-center justify-end gap-2 sm:gap-2.5 lg:gap-3 lg:justify-self-end">
             <CartButton />
             <ThemeToggle className="hidden sm:inline-flex" />
 
             {showAuthButtons && (
-              <div className="hidden items-center lg:flex">
+              <div className="hidden h-10 items-center lg:flex">
                 <Link
                   to="/login"
-                  className="px-1 text-[14px] font-normal text-muted transition-colors hover:text-text"
+                  className="inline-flex h-10 items-center px-2 text-[14px] font-normal text-muted transition-colors hover:text-text"
                 >
                   Log in
                 </Link>
@@ -288,7 +298,7 @@ export default function Navbar({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -18 }}
               transition={{ duration: 0.3 }}
-              className="absolute left-0 top-16 z-40 w-full lg:hidden"
+              className="absolute left-0 top-16 z-40 max-h-[calc(100dvh-4rem)] w-full overflow-y-auto lg:hidden"
             >
               <div
                 className={`relative overflow-hidden rounded-b-2xl border-t backdrop-blur-2xl ${
@@ -307,6 +317,14 @@ export default function Navbar({
                     <ThemeToggle />
                   </div>
 
+                  <p className="mb-3 text-[12px] font-semibold uppercase tracking-wider text-subtle">
+                    Explore
+                  </p>
+                  <MobileExploreAccordion onNavigate={closeMobile} />
+
+                  <p className="mb-3 mt-6 text-[12px] font-semibold uppercase tracking-wider text-subtle">
+                    Navigation
+                  </p>
                   <div className="flex flex-col gap-2">
                     {navLinks.map((link, index) => {
                       const isActive = isLinkActive(link);
@@ -335,7 +353,7 @@ export default function Navbar({
                     <div className="mt-7 flex justify-center">
                       <Link
                         to="/login"
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={closeMobile}
                         className="text-[14px] font-normal text-muted transition-colors hover:text-text"
                       >
                         Log in

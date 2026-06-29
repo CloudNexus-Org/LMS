@@ -4,8 +4,6 @@ import {
   ArrowRight,
   Star,
   Clock3,
-  Users,
-  Layers3,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -14,7 +12,6 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
 import { featuredCourses } from '@/data/courses';
-import { tracks } from '@/data/tracks';
 
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
@@ -29,209 +26,66 @@ import {
 
 const EASE = [0.16, 1, 0.3, 1];
 
-// FIND TRACK
-function findTrackForCourse(courseId) {
-  return tracks.find((t) => t.courseIds.includes(courseId)) || tracks[0];
-}
-
-// PROFESSIONAL UNIQUE VARIANTS
-const CARD_VARIANTS = [
-  {
-    accent: "from-primary/25",
-    glow: "group-hover:shadow-[0_28px_60px_rgba(44,91,255,0.18)]",
-    ring: "group-hover:ring-primary/20",
-  },
-  {
-    accent: "from-accent/25",
-    glow: "group-hover:shadow-[0_28px_60px_rgba(124,58,237,0.16)]",
-    ring: "group-hover:ring-accent/20",
-  },
-  {
-    accent: "from-success/20",
-    glow: "group-hover:shadow-[0_28px_60px_rgba(5,150,105,0.14)]",
-    ring: "group-hover:ring-success/20",
-  },
-];
-
 const DIFFICULTY_STYLES = {
-  Beginner: "bg-success/15 text-success border-success/25",
-  Intermediate: "bg-primary-soft text-primary border-primary/25",
-  Advanced: "bg-accent-soft text-accent border-accent/25",
+  Beginner: "bg-success/90 text-white",
+  Intermediate: "bg-primary/90 text-white",
+  Advanced: "bg-accent/90 text-white",
 };
 
-// COURSE CARD
-function CourseCard({ course, index }) {
-  const track = findTrackForCourse(course.id);
-  const href = track ? `/tracks/${track.id}` : "/tracks";
-
-  const variant = CARD_VARIANTS[index % CARD_VARIANTS.length];
+// COURSE CARD — minimal, links to course detail
+function CourseCard({ course }) {
   const difficultyStyle =
     DIFFICULTY_STYLES[course.difficulty] || DIFFICULTY_STYLES.Intermediate;
 
   return (
     <motion.div
       className="group h-full"
-      whileHover={{ y: -6 }}
-      transition={{ duration: 0.35, ease: EASE }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.3, ease: EASE }}
     >
       <Link
-        to={href}
-        className={`
-          relative flex h-full min-h-[420px] flex-col overflow-hidden
-          rounded-lg border border-border/70 bg-surface/90
-          ring-1 ring-transparent backdrop-blur-xl
+        to={`/courses/${course.slug}`}
+        className="
+          flex h-full flex-col overflow-hidden rounded-xl
+          border border-border/70 bg-surface
           shadow-[var(--shadow-card-value)]
-          transition-all duration-500
-          hover:border-primary/25
-          ${variant.glow} ${variant.ring}
-        `}
+          transition-all duration-300
+          hover:border-primary/30
+          hover:shadow-[0_12px_32px_-12px_color-mix(in_srgb,var(--primary)_30%,transparent)]
+        "
       >
-        {/* Top accent line */}
-        <div
-          className="
-            absolute inset-x-0 top-0 z-10 h-[3px]
-            scale-x-0 bg-gradient-to-r from-transparent via-primary to-transparent
-            transition-transform duration-500 group-hover:scale-x-100
-          "
-          aria-hidden
-        />
-
-        {/* Corner glow */}
-        <div
-          className={`
-            pointer-events-none absolute -right-8 -top-8
-            h-36 w-36 rounded-full bg-gradient-to-br ${variant.accent} to-transparent
-            blur-3xl opacity-60 transition-opacity duration-500 group-hover:opacity-100
-          `}
-          aria-hidden
-        />
-
-        {/* IMAGE */}
-        <div className="relative p-4 pb-0">
-          <div className="relative h-[200px] overflow-hidden rounded-lg bg-elevated">
-            <img
-              src={course.image}
-              alt={course.title}
-              loading="lazy"
-              className="
-                h-full w-full object-cover
-                transition-transform duration-700 ease-out
-                group-hover:scale-110
-              "
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/5" />
-
-            {/* Difficulty badge */}
-            <div
-              className={`
-                absolute right-3 top-3 inline-flex items-center gap-1.5
-                rounded-lg border px-2.5 py-1
-                text-[10px] font-bold uppercase tracking-[0.14em]
-                backdrop-blur-md
-                ${difficultyStyle}
-              `}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-current" />
-              {course.difficulty}
-            </div>
-
-            {/* Rating overlay */}
-            <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/40 px-2.5 py-1 backdrop-blur-md">
-              <Star size={12} className="fill-warning text-warning" />
-              <span className="text-[12px] font-bold text-white">{course.rating}</span>
-            </div>
-          </div>
+        <div className="relative aspect-[16/10] overflow-hidden bg-elevated">
+          <img
+            src={course.image}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+          <span
+            className={`absolute right-2.5 top-2.5 rounded-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${difficultyStyle}`}
+          >
+            {course.difficulty}
+          </span>
+          <span className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 rounded-md bg-black/45 px-2 py-0.5 text-[11px] font-bold text-white backdrop-blur-sm">
+            <Star size={11} className="fill-warning text-warning" />
+            {course.rating}
+          </span>
         </div>
 
-        {/* CONTENT */}
-        <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-          <div>
-            <h4 className="font-display text-[20px] font-bold leading-tight tracking-tight text-text transition-colors duration-300 group-hover:text-primary">
-              {course.title}
-            </h4>
-            <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
-              By {course.professor}
-            </p>
-          </div>
-
-          {/* Meta stats */}
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            {[
-              { icon: Clock3, label: course.duration },
-              { icon: Layers3, label: `${course.modules} Mod` },
-              { icon: Users, label: course.enrolled },
-            ].map(({ icon: Icon, label }) => (
-              <div
-                key={label}
-                className="
-                  flex flex-col items-center gap-1 rounded-lg
-                  border border-border/50 bg-elevated/70 px-2 py-2.5
-                  transition-colors duration-300 group-hover:border-primary/20 group-hover:bg-primary-soft/40
-                "
-              >
-                <Icon size={13} className="text-primary" strokeWidth={2.5} />
-                <span className="text-center text-[10px] font-semibold leading-tight text-text">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Mini progress bar — LMS touch */}
-          <div className="mt-4">
-            <div className="mb-1.5 flex items-center justify-between text-[10px] font-medium">
-              <span className="text-muted">Course completion</span>
-              <span className="text-primary">
-                {Math.min(95, 55 + (index % 3) * 15)}%
-              </span>
-            </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-primary-soft">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-primary to-primary-hover transition-all duration-700 group-hover:w-[88%]"
-                style={{ width: `${Math.min(95, 55 + (index % 3) * 15)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Description */}
-          <p className="mt-4 flex-1 text-[13px] leading-relaxed text-muted line-clamp-2">
-            {course.description}
-          </p>
-
-          {/* Footer */}
-          <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/40 pt-4">
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="flex -space-x-2 shrink-0">
-                {[0, 1, 2].map((n) => (
-                  <img
-                    key={n}
-                    src={`https://i.pravatar.cc/40?img=${(index * 3 + n + 10) % 70}`}
-                    alt=""
-                    className="h-7 w-7 rounded-full border-2 border-surface object-cover"
-                    aria-hidden
-                  />
-                ))}
-              </div>
-              <span className="truncate text-[12px] text-muted">
-                <span className="font-semibold text-text">{course.enrolled}</span> enrolled
-              </span>
-            </div>
-
-            <span
-              className="
-                inline-flex h-9 shrink-0 items-center justify-center gap-1.5
-                rounded-lg bg-primary px-5
-                text-[13px] font-semibold text-white
-                transition-all duration-300
-                group-hover:bg-primary-hover group-hover:-translate-y-0.5
-              "
-            >
+        <div className="flex flex-1 flex-col gap-1.5 p-4">
+          <h4 className="line-clamp-2 font-display text-[16px] font-bold leading-snug tracking-tight text-text transition-colors group-hover:text-primary">
+            {course.title}
+          </h4>
+          <p className="truncate text-[12px] text-muted">{course.professor}</p>
+          <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-[12px]">
+            <span className="inline-flex items-center gap-1 text-muted">
+              <Clock3 size={12} className="text-primary" />
+              {course.duration}
+            </span>
+            <span className="inline-flex items-center gap-1 font-semibold text-primary">
               Explore
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-0.5"
-              />
+              <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
             </span>
           </div>
         </div>
@@ -385,12 +239,9 @@ export default function Courses() {
               {featuredCourses.map((course, i) => (
                 <div
                   key={course.id}
-                  className="flex-none w-full sm:w-80 md:w-[360px] lg:w-[380px]"
+                  className="flex-none w-full sm:w-[280px] md:w-[300px]"
                 >
-                  <CourseCard
-                    course={course}
-                    index={i}
-                  />
+                  <CourseCard course={course} />
                 </div>
               ))}
             </div>

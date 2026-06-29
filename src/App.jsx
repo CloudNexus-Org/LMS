@@ -28,6 +28,8 @@ const MentorsListPage = lazy(() => import('@/pages/MentorsListPage'));
 const TrackDetailPage = lazy(() => import('@/pages/TrackDetailPage'));
 const TracksListPage = lazy(() => import('@/pages/TracksListPage'));
 const CoursesListPage = lazy(() => import('@/pages/CoursesListPage'));
+const ExploreBrowsePage = lazy(() => import('@/pages/ExploreBrowsePage'));
+const CourseDetailPage = lazy(() => import('@/pages/CourseDetailPage'));
 const CartPage = lazy(() => import('@/pages/CartPage'));
 const LessonPlayerPage = lazy(() => import('@/pages/LessonPlayerPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
@@ -164,6 +166,10 @@ function App() {
               <Route path="/tracks/:id" element={<TrackDetailPage />} />
 
               <Route path="/courses" element={<CoursesListPage />} />
+              <Route path="/courses/:slug" element={<CourseDetailPage />} />
+
+              <Route path="/explore/:type" element={<ExploreBrowsePage />} />
+              <Route path="/explore/:type/:slug" element={<ExploreBrowsePage />} />
               <Route path="/cart" element={<CartPage />} />
             </Route>
 
