@@ -1692,9 +1692,12 @@
         letter-spacing: -0.02em;
     }
     
-     ::selection {
-        background: var(--primary-soft);
-        color: var(--text);
+    ::selection {
+        background-color: var(--selection-bg);
+    }
+
+    ::-moz-selection {
+        background-color: var(--selection-bg);
     }
     
      :focus-visible {

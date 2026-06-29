@@ -1,8 +1,20 @@
+import { ROLE_DASHBOARDS } from "@/protectedroutes/routePaths";
+
 export function getRouteAuthRole(path = "") {
   if (path.startsWith("/student")) return "student";
   if (path.startsWith("/mentor")) return "mentor";
   if (path.startsWith("/admin")) return "admin";
+  if (path.startsWith("/learn")) return "student";
   return null;
+}
+
+/** After login, only send users to routes their role may access */
+export function resolvePostLoginRedirect(requestedPath, userRole) {
+  const requiredRole = getRouteAuthRole(requestedPath);
+  if (requiredRole && requiredRole !== userRole) {
+    return ROLE_DASHBOARDS[userRole] || ROLE_DASHBOARDS.student;
+  }
+  return requestedPath;
 }
 
 export function canAccessRoute(isAuthenticated, userRole, requiredRole) {

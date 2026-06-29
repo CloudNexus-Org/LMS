@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -16,7 +16,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import useAuthStore from "@/store/useAuthStore";
+import useLogout from "@/hooks/useLogout";
 import Button from "@/components/ui/Button";
 
 const TABS = [
@@ -71,8 +71,7 @@ function Field({ label, value, span }) {
 }
 
 export default function ProfileSettingsPage() {
-  const navigate = useNavigate();
-  const logout = useAuthStore((s) => s.logout);
+  const logout = useLogout();
   const [activeTab, setActiveTab] = useState("general");
   const [isSaved, setIsSaved] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
@@ -101,7 +100,6 @@ export default function ProfileSettingsPage() {
   const handleLogout = () => {
     setLogoutOpen(false);
     logout();
-    navigate("/login", { replace: true });
   };
 
   return (

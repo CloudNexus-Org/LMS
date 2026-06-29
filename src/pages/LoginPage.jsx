@@ -12,6 +12,11 @@ import AuthPrimaryButton from "@/components/auth/AuthPrimaryButton";
 import AuthAutofillTrap from "@/components/auth/AuthAutofillTrap";
 import { authItemMotion } from "@/components/auth/authMotion";
 import useAuthStore from "@/store/useAuthStore";
+import { resolvePostLoginRedirect } from "@/lib/authNavigation";
+import {
+  authenticateDemoUser,
+  getDefaultDashboardForRole,
+} from "@/lib/demoCredentials";
 import {
   trimLoginValues,
   validateLoginField,
@@ -25,7 +30,8 @@ export default function LoginPage() {
   const location = useLocation();
   const login = useAuthStore((state) => state.login);
 
-  const redirectTo = location.state?.from || "/student/dashboard";
+  const redirectTo =
+    location.state?.from || getDefaultDashboardForRole("student");
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,6 +88,16 @@ export default function LoginPage() {
 
     if (!isValid) return;
 
+    const account = authenticateDemoUser(trimmed.email, trimmed.password);
+
+    if (!account) {
+      setErrors({
+        email: "",
+        password: "Invalid email or password. Use a demo account below.",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     setTimeout(() => {
@@ -89,16 +105,15 @@ export default function LoginPage() {
 
       login(
         {
-          username: trimmed.email,
-          email: trimmed.email,
-          fullName: trimmed.email,
-          role: "student",
+          ...account,
           rememberMe,
         },
         "mock-jwt-token"
       );
 
-      navigate(redirectTo, { replace: true });
+      navigate(resolvePostLoginRedirect(redirectTo, account.role), {
+        replace: true,
+      });
     }, 1200);
   };
 
@@ -188,11 +203,35 @@ export default function LoginPage() {
           Don&apos;t have an account yet?{" "}
           <Link
             to="/signup"
+            state={{ from: location.state?.from }}
             className="font-semibold text-primary transition-colors hover:text-primary-hover"
           >
             Sign Up
           </Link>
         </motion.p>
+
+        <motion.div
+          {...authItemMotion(0.34)}
+          className="mt-4 rounded-xl border border-border/80 bg-bg/60 p-3.5 text-left"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+            Demo credentials
+          </p>
+          <ul className="mt-2 space-y-1.5 text-[12px] text-muted">
+            <li>
+              <span className="font-medium text-text">Student:</span>{" "}
+              student@cloudnexus.com / password123
+            </li>
+            <li>
+              <span className="font-medium text-text">Mentor:</span>{" "}
+              mentor@cloudnexus.com / password123
+            </li>
+            <li>
+              <span className="font-medium text-text">Admin:</span>{" "}
+              admin@cloudnexus.com / password123
+            </li>
+          </ul>
+        </motion.div>
       </form>
     </AuthShell>
   );

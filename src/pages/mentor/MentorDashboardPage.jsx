@@ -526,6 +526,7 @@ function MiniSparkline({ data }) {
 export default function MentorDashboardPage() {
   const shouldReduceMotion = useReducedMotion();
   const [snapshot, setSnapshot] = useState(() => buildSnapshot());
+  const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [chartTab, setChartTab] = useState("week");
   const [pieTab, setPieTab] = useState("revenue");

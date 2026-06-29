@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
+import { ROUTES } from '@/protectedroutes/routePaths';
 import useCartStore from '@/store/useCartStore';
 
-export default function CartButton({ className = '', size = 20, to = '/cart' }) {
+export default function CartButton({
+  className = '',
+  size = 20,
+  to = ROUTES.cart,
+}) {
   const items = useCartStore((s) => s.items);
   const count = items.length;
 

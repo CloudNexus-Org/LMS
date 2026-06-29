@@ -13,6 +13,7 @@ import {
   Users,
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import { ROUTES } from '@/protectedroutes/routePaths';
 import useCartStore from '@/store/useCartStore';
 import useWishlistStore from '@/store/useWishlistStore';
 
@@ -31,7 +32,10 @@ export function getDiscountPercent(price, originalPrice) {
   return Math.round(((originalPrice - price) / originalPrice) * 100);
 }
 
-export default function CatalogCourseCard({ course, cartPath = '/cart' }) {
+export default function CatalogCourseCard({
+  course,
+  cartPath = ROUTES.cart,
+}) {
   const navigate = useNavigate();
   const addToCart = useCartStore((s) => s.addItem);
   const isInCart = useCartStore((s) => s.isInCart(course.id));

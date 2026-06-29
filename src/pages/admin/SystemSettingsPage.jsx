@@ -3,8 +3,9 @@ import {
   Settings, Shield, Globe, CreditCard, Bell, Save, Sparkles,
   Server, Mail, Zap, Lock, ChevronRight,
   Database, AlertTriangle, Check,
-  HardDrive
+  HardDrive, LogOut
 } from 'lucide-react';
+import useLogout from '@/hooks/useLogout';
 
 const NAV_ITEMS = [
   { id: 'general',       label: 'General',          icon: Settings },
@@ -58,6 +59,7 @@ function Section({ title, desc, icon: Icon, children }) {
 }
 
 export default function SystemSettingsPage() {
+  const logout = useLogout();
   const [activeTab, setActiveTab] = useState('general');
   const [saved, setSaved] = useState(false);
 
@@ -84,6 +86,10 @@ export default function SystemSettingsPage() {
   const handleSave = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -131,6 +137,15 @@ export default function SystemSettingsPage() {
               </button>
             );
           })}
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="mt-4 flex w-full items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm font-bold text-muted transition-all hover:border-danger/30 hover:bg-danger/5 hover:text-danger"
+          >
+            <LogOut className="h-4 w-4" />
+            Log out
+          </button>
 
           {/* Danger zone card */}
           <div className="mt-4 p-4 border border-danger/20 bg-danger/5 rounded-xl">

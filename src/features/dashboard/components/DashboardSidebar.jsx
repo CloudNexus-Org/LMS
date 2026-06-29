@@ -12,7 +12,9 @@ import {
   DollarSign,
   ShoppingBag,
   Star,
+  LogOut,
 } from 'lucide-react';
+import useLogout from '@/hooks/useLogout';
 
 const navConfig = {
   student: [
@@ -61,6 +63,12 @@ function NavItem({ link }) {
 
 export default function DashboardSidebar({ role, onClose }) {
   const links = navConfig[role] || navConfig.student;
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    onClose?.();
+    logout();
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -81,6 +89,17 @@ export default function DashboardSidebar({ role, onClose }) {
           <NavItem key={link.name} link={link} />
         ))}
       </nav>
+
+      <div className="shrink-0 border-t border-border p-4">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-muted transition-all duration-200 hover:bg-surface hover:text-text hover:shadow-sm"
+        >
+          <LogOut className="h-5 w-5" />
+          Log out
+        </button>
+      </div>
     </div>
   );
 }

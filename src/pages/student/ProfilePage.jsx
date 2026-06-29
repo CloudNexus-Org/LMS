@@ -282,7 +282,7 @@ function SectionHeader({ title, subtitle, badge }) {
       <div>
         <h2 className="dashboard-section-title text-base sm:text-lg">{title}</h2>
         {subtitle && <p className="profile-section-sub">{subtitle}</p>}
-      </div>
+              </div>
       {badge}
     </div>
   );
@@ -305,13 +305,13 @@ function DetailRow({ icon: Icon, label, value, href }) {
     <div className="profile-detail-row">
       <div className="profile-detail-icon">
         <Icon className="h-3.5 w-3.5" />
-      </div>
+            </div>
       <div className="min-w-0 flex-1">
         <p className="profile-detail-label">{label}</p>
         <p className="profile-detail-value truncate">{value}</p>
-      </div>
+            </div>
       {href && <ChevronRight className="h-4 w-4 shrink-0 text-subtle" />}
-    </div>
+          </div>
   );
 
   if (href) {
@@ -394,7 +394,7 @@ function PreferencesSection() {
               ))}
             </select>
             <ChevronDown className="profile-select-chevron" aria-hidden />
-          </div>
+              </div>
         </motion.div>
 
         <motion.div
@@ -423,9 +423,9 @@ function PreferencesSection() {
               ))}
             </select>
             <ChevronDown className="profile-select-chevron" aria-hidden />
-          </div>
+              </div>
         </motion.div>
-      </div>
+            </div>
     </Card>
   );
 }
@@ -587,7 +587,7 @@ function SkillsSection() {
                 <span>Done</span>
               </motion.button>
             )}
-          </div>
+                    </div>
         }
       />
 
@@ -639,22 +639,22 @@ function SkillsSection() {
                     aria-label="Edit skill name"
                     maxLength={40}
                   />
-                  <button
-                    type="button"
+                    <button
+                      type="button"
                     className="profile-skill-inline-btn profile-skill-inline-btn-save"
                     onClick={saveEdit}
                     aria-label="Save skill"
                   >
                     <CheckCircle2 className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
+                    </button>
+                <button
+                  type="button"
                     className="profile-skill-inline-btn"
                     onClick={cancelEdit}
                     aria-label="Cancel edit"
                   >
                     <X className="h-3.5 w-3.5" />
-                  </button>
+                </button>
                 </motion.div>
               ) : (
                 <motion.span
@@ -692,7 +692,7 @@ function SkillsSection() {
               )
             )}
           </AnimatePresence>
-        </div>
+              </div>
       )}
 
       <AnimatePresence>
@@ -851,7 +851,7 @@ export default function ProfilePage() {
               </button>
             );
           })}
-        </div>
+                </div>
       </motion.div>
 
       <AnimatePresence mode="wait">
@@ -897,7 +897,7 @@ export default function ProfilePage() {
                           animate="visible"
                         >
                           <label htmlFor={field.id}>{field.label}</label>
-                          <input
+                  <input
                             id={field.id}
                             type={field.type || "text"}
                             defaultValue={field.value}
@@ -987,7 +987,7 @@ export default function ProfilePage() {
                         <div className="min-w-0 flex-1">
                           <p className="text-[10px] font-semibold uppercase tracking-wide text-subtle">{row.label}</p>
                           <p className="truncate text-sm font-medium text-text">{row.value}</p>
-                        </div>
+                </div>
                       </motion.div>
                     ))}
                     <motion.div
@@ -1002,7 +1002,7 @@ export default function ProfilePage() {
                         Manage
                       </Link>
                     </motion.div>
-                  </div>
+              </div>
                 </Card>
 
                 <Card className="p-4 sm:p-5">
@@ -1175,8 +1175,8 @@ export default function ProfilePage() {
                           initial={{ width: 0 }}
                           animate={{ width: `${path.progress}%` }}
                           transition={{ delay: 0.2 + i * 0.12, duration: 0.8, ease: EASE }}
-                        />
-                      </div>
+                />
+              </div>
                     </motion.div>
                   ))}
                 </div>
@@ -1227,7 +1227,7 @@ export default function ProfilePage() {
                         >
                           <div className="profile-badge-icon-wrap">
                             <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-                          </div>
+                </div>
                           <span className="profile-badge-label">{badge.label}</span>
                           {badge.earned && <span className="profile-badge-glow" aria-hidden />}
                         </motion.div>
@@ -1250,21 +1250,21 @@ export default function ProfilePage() {
                       >
                         <div className="profile-cert-icon">
                           <Award className="h-5 w-5" />
-                        </div>
+              </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-semibold text-text">{cert.title}</p>
                           <p className="text-xs text-muted">
                             Issued {cert.issued} · ID {cert.credentialId}
                           </p>
-                        </div>
+          </div>
                         <Link to="/student/certificates" className="profile-cert-link">
                           View
                         </Link>
                       </motion.div>
                     ))}
-                  </div>
+        </div>
                 </Card>
-              </div>
+      </div>
 
               <Card className="p-4 sm:p-5 md:p-6">
                 <SectionHeader title="Quiz performance" subtitle="Recent assessment scores" />
@@ -1288,7 +1288,7 @@ export default function ProfilePage() {
                           animate={{ width: `${quiz.score}%` }}
                           transition={{ delay: 0.2 + i * 0.1, duration: 0.7, ease: EASE }}
                         />
-                      </div>
+    </div>
                     </motion.div>
                   ))}
                 </div>
