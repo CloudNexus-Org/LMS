@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -125,10 +125,16 @@ function AnimatedStatsCard({ children, delay = 0.12 }) {
 
 export default function CoursesListPage() {
   const shouldReduceMotion = useReducedMotion();
-  const [query, setQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const [level, setLevel] = useState('all');
   const [sort, setSort] = useState('featured');
   const [searchFocused, setSearchFocused] = useState(false);
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) setQuery(q);
+  }, [searchParams]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

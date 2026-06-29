@@ -27,6 +27,21 @@ const LEVEL_TONE = {
     "bg-[color:color-mix(in_oklab,var(--success)_12%,transparent)] text-success border border-[color:color-mix(in_oklab,var(--success)_25%,transparent)]",
 };
 
+const TRUST_ITEMS = [
+  "7-day free trial",
+  "No credit card required",
+  "Cancel anytime",
+];
+
+const trustBadgeVariants = {
+  hidden: { opacity: 0, y: 8 },
+  show: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: EASE, delay: 0.35 + i * 0.08 },
+  }),
+};
+
 /* ----------------------------------------------------------------------
    Small primitives
 ---------------------------------------------------------------------- */
@@ -76,7 +91,7 @@ export default function MentorDetailPage() {
   const portrait = mentor.avatar.replace("200?u=", "600?u=");
 
   return (
-    <div className="min-h-screen bg-bg text-text">
+    <div className="min-h-screen bg-page text-text">
 
 
       <main id="main" className="relative">
@@ -144,18 +159,36 @@ export default function MentorDetailPage() {
 
                 {/* CTAs */}
                 <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <Button
-                    size="lg"
-                    rightIcon={<ArrowRight size={16} />}
-                    href="#contact-mentor"
-                  >
-                    Book a session
-                  </Button>
+                  <div className="group/cta relative">
+                    <div
+                      aria-hidden
+                      className="absolute -inset-0.5 rounded-xl bg-primary/15 opacity-0 blur-sm transition-all duration-300 group-hover/cta:opacity-40"
+                    />
+                    <Button
+                      size="lg"
+                      className="relative"
+                      rightIcon={
+                        <ArrowRight
+                          size={16}
+                          className="transition-transform duration-200 group-hover/cta:translate-x-0.5"
+                        />
+                      }
+                      href="#contact-mentor"
+                    >
+                      Book a session
+                    </Button>
+                  </div>
                   <Button
                     size="lg"
                     variant="outline"
                     to="/tracks"
-                    rightIcon={<ArrowUpRight size={16} />}
+                    rightIcon={
+                      <ArrowUpRight
+                        size={16}
+                        className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    }
+                    className="group"
                   >
                     See their courses
                   </Button>
@@ -176,26 +209,35 @@ export default function MentorDetailPage() {
                   className="pointer-events-none absolute -inset-3 -z-10 rounded-[28px] bg-gradient-to-br from-primary/15 via-transparent to-accent/15 opacity-60 blur-2xl"
                 />
 
-                <figure className="relative mx-auto w-full max-w-[350px] overflow-hidden rounded-2xl border border-border bg-elevated shadow-[var(--shadow-card)]">
+                <figure className="group/portrait relative mx-auto w-full max-w-[350px] overflow-hidden rounded-2xl border border-border bg-elevated shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:shadow-[var(--shadow-elevated)]">
                   {/* Portrait — true square so faces stay framed */}
-                  <div className="relative h-[320px] w-full overflow-hidden">
+                  <div className="relative h-[280px] w-full overflow-hidden sm:h-[320px]">
                     <img
                       src={portrait}
                       alt={mentor.name}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/portrait:scale-[1.04]"
+                    />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover/portrait:opacity-100"
                     />
                     {/* Top-left rating chip */}
-                    <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-lg bg-white/95 px-2.5 py-1 text-[11.5px] font-semibold text-[#0b1020] shadow-sm">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, ease: EASE, delay: 0.2 }}
+                      className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-surface/95 px-2.5 py-1 text-[11.5px] font-semibold text-text shadow-sm backdrop-blur-sm"
+                    >
                       <Star
                         size={11}
-                        className="fill-current text-[#f59e0b]"
+                        className="fill-current text-warning"
                         aria-hidden
                       />
                       {mentor.rating}
-                      <span className="font-normal text-[#52607a]">
+                      <span className="font-normal text-muted">
                         ({mentor.reviews?.toLocaleString()})
                       </span>
-                    </div>
+                    </motion.div>
                   </div>
 
                   {/* Info strip below photo — proper card  (no overlap) */}
@@ -253,13 +295,18 @@ export default function MentorDetailPage() {
                 <div className="mt-10">
                   <Eyebrow>Specialties</Eyebrow>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {mentor.specialties.map((s) => (
-                      <span
+                    {mentor.specialties.map((s, i) => (
+                      <motion.span
                         key={s}
-                        className="inline-flex items-center rounded-lg border border-border/60 bg-elevated/50 px-3 py-1.5 text-[12.5px] font-medium text-muted transition-all duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+                        initial={{ opacity: 0, scale: 0.92 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.35, ease: EASE, delay: i * 0.04 }}
+                        whileHover={{ y: -2 }}
+                        className="inline-flex cursor-default items-center rounded-lg border border-border/60 bg-elevated/50 px-3 py-1.5 text-[12.5px] font-medium text-muted transition-colors duration-300 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
                       >
                         {s}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
                 </div>
@@ -289,7 +336,13 @@ export default function MentorDetailPage() {
 
               {/* Sticky quick facts */}
               <aside className="lg:sticky lg:top-24 lg:self-start">
-                <div className="rounded-2xl border border-border bg-elevated/60 p-5 backdrop-blur">
+                <motion.div
+                  initial={{ opacity: 0, x: 16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  className="rounded-2xl border border-border bg-elevated/60 p-5 backdrop-blur transition-all duration-300 hover:border-border-strong hover:shadow-[var(--shadow-card)]"
+                >
                   <Eyebrow>Quick facts</Eyebrow>
                   <dl className="mt-4 divide-y divide-border text-[13.5px]">
                     {[
@@ -318,13 +371,13 @@ export default function MentorDetailPage() {
                   <div className="group relative mt-5 w-full">
                     <div
                       aria-hidden
-                      className="absolute -inset-1 rounded-xl bg-primary/40 opacity-70 blur-xl transition-all duration-300 group-hover:bg-primary/50 group-hover:opacity-100"
+                      className="absolute -inset-0.5 rounded-xl bg-primary/20 opacity-0 blur-md transition-all duration-300 group-hover:opacity-40"
                     />
                     <Button
                       href="#contact-mentor"
                       size="md"
                       fullWidth
-                      className="relative w-full shadow-lg"
+                      className="relative w-full"
                       rightIcon={<ArrowRight size={14} />}
                     >
                       Request a session
@@ -333,7 +386,7 @@ export default function MentorDetailPage() {
                   <p className="mt-2.5 text-center text-[11.5px] text-subtle">
                     Cancel anytime · no card required
                   </p>
-                </div>
+                </motion.div>
               </aside>
             </div>
           </Container>
@@ -425,7 +478,7 @@ export default function MentorDetailPage() {
                           {e.period}
                         </span>
                       </div>
-                      <div className="mt-3 rounded-lg border border-border/40 bg-elevated/30 px-4 py-3 shadow-sm">
+                      <div className="mt-3 rounded-lg border border-border/40 bg-elevated/30 px-4 py-3 shadow-sm transition-all duration-300 hover:border-primary/25 hover:bg-elevated/50 hover:shadow-[0_8px_24px_-12px_rgba(var(--primary-rgb,139,97,210),0.2)]">
                         <p className="text-[14px] leading-relaxed text-muted">
                           {e.text}
                         </p>
@@ -513,30 +566,63 @@ export default function MentorDetailPage() {
         ========================================================== */}
         <section
           id="contact-mentor"
-          className="relative py-12 md:py-20"
+          className="relative scroll-mt-24 py-12 md:py-20"
           aria-labelledby="contact-mentor-title"
         >
           <Container size="lg">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
+              whileHover={{ y: -2 }}
+              viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.6, ease: EASE }}
-              className="group relative overflow-hidden rounded-[2rem] border border-gray-200 bg-white px-6 py-12 shadow-2xl md:px-14 md:py-16"
+              className="group relative overflow-hidden rounded-[2rem] border border-border bg-elevated/80 px-5 py-10 shadow-[var(--shadow-elevated)] backdrop-blur-sm sm:px-8 md:px-14 md:py-16"
             >
-              {/* Ambient premium glows */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 transition-opacity duration-500 group-hover:opacity-100" aria-hidden />
-              
+              {/* Animated gradient border shimmer */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute -left-20 -top-20 h-[400px] w-[400px] rounded-lg bg-primary/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-primary/30 group-hover:opacity-70"
-              />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -bottom-24 -right-16 h-[350px] w-[350px] rounded-lg bg-accent/20 opacity-50 blur-[100px] transition-all duration-700 group-hover:scale-110 group-hover:bg-accent/30 group-hover:opacity-70"
+                className="pointer-events-none absolute inset-0 rounded-[2rem] p-px opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                style={{
+                  background:
+                    "linear-gradient(135deg, color-mix(in srgb, var(--primary) 40%, transparent), transparent 40%, color-mix(in srgb, var(--accent) 35%, transparent))",
+                  WebkitMask:
+                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                }}
               />
 
-              <div className="relative z-10 grid items-center gap-10 md:grid-cols-[1fr_auto]">
+              {/* Ambient premium glows */}
+              <div
+                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8 opacity-60 transition-opacity duration-500 group-hover:opacity-100"
+                aria-hidden
+              />
+
+              <motion.div
+                aria-hidden
+                animate={{
+                  scale: [1, 1.08, 1],
+                  opacity: [0.35, 0.55, 0.35],
+                }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                className="pointer-events-none absolute -left-20 -top-20 h-[min(400px,80vw)] w-[min(400px,80vw)] rounded-lg bg-primary/25 blur-[100px]"
+              />
+              <motion.div
+                aria-hidden
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.3, 0.5, 0.3],
+                }}
+                transition={{
+                  duration: 9,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1.5,
+                }}
+                className="pointer-events-none absolute -bottom-24 -right-16 h-[min(350px,70vw)] w-[min(350px,70vw)] rounded-lg bg-accent/25 blur-[100px]"
+              />
+
+              <div className="relative z-10 grid items-center gap-8 lg:grid-cols-[1fr_auto] lg:gap-12">
                 <div className="max-w-2xl">
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
@@ -544,84 +630,92 @@ export default function MentorDetailPage() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.1 }}
                   >
-                    <Eyebrow className="!text-indigo-600 font-bold">1:1 Mentorship</Eyebrow>
+                    <Eyebrow className="!text-primary font-bold">
+                      1:1 Mentorship
+                    </Eyebrow>
                   </motion.div>
-                  
+
                   <motion.h2
                     id="contact-mentor-title"
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="mt-3 font-display text-[32px] font-bold leading-tight tracking-tight text-gray-900 sm:text-[36px] md:text-[42px]"
+                    className="mt-3 font-display text-[28px] font-bold leading-tight tracking-tight text-text sm:text-[36px] md:text-[42px]"
                   >
                     Ready to level up with{" "}
-                    <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                       {firstName}
                     </span>
                     ?
                   </motion.h2>
-                  
+
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="mt-4 max-w-[500px] text-[15.5px] leading-relaxed text-gray-600 md:text-[17px]"
+                    className="mt-4 max-w-[500px] text-[15px] leading-relaxed text-muted sm:text-[16px] md:text-[17px]"
                   >
-                    Book a 1:1 session, ask a technical question, or join one of their
-                    live cohorts. We&rsquo;ll match you to the format that fits your goals.
+                    Book a 1:1 session, ask a technical question, or join one of
+                    their live cohorts. We&rsquo;ll match you to the format that
+                    fits your goals.
                   </motion.p>
 
                   {/* trust line */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                  <motion.ul
+                    initial="hidden"
+                    whileInView="show"
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] font-medium text-gray-700"
+                    className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] font-medium text-muted"
                   >
-                    {[
-                      "7-day free trial",
-                      "No credit card required",
-                      "Cancel anytime",
-                    ].map((text) => (
-                      <div key={text} className="flex items-center gap-2.5">
-                        <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                    {TRUST_ITEMS.map((text, i) => (
+                      <motion.li
+                        key={text}
+                        custom={i}
+                        variants={trustBadgeVariants}
+                        className="flex items-center gap-2.5"
+                      >
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border border-[color:color-mix(in_oklab,var(--success)_30%,transparent)] bg-[color:color-mix(in_oklab,var(--success)_12%,transparent)] text-success">
                           <CheckCircle2 size={13} strokeWidth={2.5} aria-hidden />
-                        </div>
+                        </span>
                         {text}
-                      </div>
+                      </motion.li>
                     ))}
-                  </motion.div>
+                  </motion.ul>
                 </div>
-                
+
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="flex flex-col gap-4 sm:flex-row md:flex-col lg:flex-row"
+                  className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto lg:flex-col xl:flex-row"
                 >
-                  <div className="group/btn relative">
+                  <div className="group/btn relative w-full sm:w-auto lg:w-full xl:w-auto">
                     <div
-                      className="absolute -inset-1.5 rounded-xl bg-gradient-to-r from-primary to-accent opacity-40 blur-lg transition-all duration-300 group-hover/btn:opacity-80 group-hover/btn:blur-xl"
+                      className="absolute -inset-0.5 rounded-xl bg-primary/20 opacity-0 blur-md transition-all duration-300 group-hover/btn:opacity-50"
                       aria-hidden
                     />
                     <Button
                       to="/signup"
                       size="lg"
-                      className="relative w-full shadow-xl sm:w-auto md:w-full lg:w-auto"
-                      rightIcon={<ArrowRight size={16} className="transition-transform group-hover/btn:translate-x-1" />}
+                      className="relative w-full sm:min-w-[180px] lg:w-full xl:w-auto"
+                      rightIcon={
+                        <ArrowRight
+                          size={16}
+                          className="transition-transform duration-200 group-hover/btn:translate-x-0.5"
+                        />
+                      }
                     >
                       Get started
                     </Button>
                   </div>
                   <Button
                     to="/#contact"
-                    variant="outline"
+                    variant="secondary"
                     size="lg"
-                    className="w-full border-gray-300 bg-white !text-gray-900 transition-all hover:border-gray-400 hover:bg-gray-50 sm:w-auto md:w-full lg:w-auto"
+                    className="w-full sm:min-w-[180px] lg:w-full xl:w-auto"
                   >
                     Send a message
                   </Button>
@@ -662,7 +756,7 @@ export default function MentorDetailPage() {
                   >
                     <Link
                       to={`/mentors/${m.slug}`}
-                      className="group flex h-full flex-col rounded-2xl border border-border bg-elevated p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border-strong"
+                      className="group flex h-full flex-col rounded-2xl border border-border bg-elevated p-5 transition-all duration-200 hover:-translate-y-1 hover:border-border-strong hover:shadow-[var(--shadow-card)]"
                     >
                       <div className="flex items-center gap-3">
                         <img

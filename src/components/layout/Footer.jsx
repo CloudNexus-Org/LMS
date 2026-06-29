@@ -16,7 +16,7 @@ const FOOTER_COLUMNS = [
     title: "Courses",
     links: [
       { label: "Browse All Courses", to: "/courses" },
-      { label: "Categories", href: "#" },
+      { label: "Categories", to: "/explore/categories" },
       { label: "Certifications", to: "/student/certificates" },
       { label: "Live Classes", href: "#" },
       { label: "Free Courses", href: "#" },

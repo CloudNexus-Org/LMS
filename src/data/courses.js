@@ -6,6 +6,7 @@ import PYTHON from '@/assets/courses/image5.png';
 import GCP from '@/assets/courses/image6.png';
 import DOCKER from '@/assets/courses/image7.png';
 import KUBERNETES from '@/assets/courses/image8.png';
+import { tracks } from '@/data/tracks';
 
 export const featuredCourses = [{
         id: 1,
@@ -191,6 +192,11 @@ export function getCourseById(id) {
 
 export function getCourseBySlug(slug) {
     return featuredCourses.find((c) => c.slug === slug) ?? null;
+}
+
+/** Parent career track that includes this course, if any */
+export function findTrackForCourse(courseId) {
+    return tracks.find((t) => t.courseIds.includes(courseId)) ?? null;
 }
 
 /** Minimal shape stored in cart / wishlist */
