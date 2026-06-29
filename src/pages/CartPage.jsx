@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Container from '@/components/ui/Container';
+import { ROUTES } from '@/protectedroutes/routePaths';
+import useAuthStore from '@/store/useAuthStore';
 import useCartStore from '@/store/useCartStore';
 import { pageShell, themeCard } from '@/styles/theme';
 
@@ -20,6 +22,8 @@ function formatPrice(amount) {
 
 export default function CartPage() {
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const userRole = useAuthStore((s) => s.user?.role);
   const items = useCartStore((s) => s.items);
   const removeItem = useCartStore((s) => s.removeItem);
   const clearCart = useCartStore((s) => s.clearCart);
@@ -29,6 +33,25 @@ export default function CartPage() {
     (sum, item) => sum + (item.originalPrice - item.price),
     0
   );
+
+  const handleCheckout = () => {
+    if (!items.length) return;
+
+    const isStudent =
+      isAuthenticated && (userRole || 'student') === 'student';
+
+    if (isStudent) {
+      navigate(ROUTES.student.cart);
+      return;
+    }
+
+    navigate(ROUTES.login, {
+      state: { from: ROUTES.student.cart },
+    });
+  };
+
+  const isStudent =
+    isAuthenticated && (userRole || 'student') === 'student';
 
   return (
     <div className={pageShell}>
@@ -187,9 +210,9 @@ export default function CartPage() {
                   fullWidth
                   className="mt-6"
                   rightIcon={<ArrowRight size={16} />}
-                  onClick={() => navigate('/signup')}
+                  onClick={handleCheckout}
                 >
-                  Proceed to checkout
+                  {isStudent ? 'Proceed to checkout' : 'Login to buy'}
                 </Button>
 
                 <Button

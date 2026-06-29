@@ -1,183 +1,139 @@
-import { Link } from "react-router-dom";
-import { Mail } from "lucide-react";
-import ThemeToggle from "../components/ui/ThemeToggle";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
+
+import AuthShell from "@/components/auth/AuthShell";
+import AuthInput from "@/components/auth/AuthInput";
+import AuthPrimaryButton from "@/components/auth/AuthPrimaryButton";
+import AuthAutofillTrap from "@/components/auth/AuthAutofillTrap";
+import { authItemMotion } from "@/components/auth/authMotion";
+import {
+  trimForgotPasswordValues,
+  validateForgotPasswordField,
+  validateForgotPasswordForm,
+} from "@/lib/authValidation";
+
+const FORGOT_PASSWORD_FIELDS = ["email"];
 
 export default function ForgotPasswordPage() {
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [touched, setTouched] = useState({});
+
+  const [formData, setFormData] = useState({
+    email: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const isFormValid = useMemo(
+    () => validateForgotPasswordForm(formData).isValid,
+    [formData]
+  );
+
+  const setFieldError = (name, nextFormData) => {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateForgotPasswordField(name, nextFormData),
+    }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const nextFormData = { ...formData, [name]: value };
+    setFormData(nextFormData);
+
+    if (touched[name]) {
+      setFieldError(name, nextFormData);
+    } else if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setFieldError(name, formData);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const trimmed = trimForgotPasswordValues(formData);
+    const { errors: submitErrors, isValid } =
+      validateForgotPasswordForm(trimmed);
+
+    setTouched(
+      FORGOT_PASSWORD_FIELDS.reduce(
+        (acc, field) => ({ ...acc, [field]: true }),
+        {}
+      )
+    );
+    setErrors(submitErrors);
+
+    if (!isValid) return;
+
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate("/verify-otp", { state: { email: trimmed.email } });
+    }, 1200);
+  };
+
   return (
-    <section className="relative min-h-screen overflow-hidden bg-bg text-text transition-colors duration-300">
+    <AuthShell
+      title="Forgot Password"
+      subtitle="Enter your email address and we'll send you an OTP to reset your password"
+    >
+      <form
+        onSubmit={handleSubmit}
+        autoComplete="off"
+        className="relative space-y-3.5"
+        noValidate
+      >
+        <AuthAutofillTrap />
 
-      {/* CENTER GLOW */}
-      <div
-        className="
-          pointer-events-none absolute
-          left-1/2 top-1/2
-          h-[700px] w-[700px]
-          -translate-x-1/2 -translate-y-1/2
-          rounded-lg
-          bg-blue-500/10
-          blur-[170px]
-        "
-      />
+        <AuthInput
+          label="E-mail Address"
+          name="email"
+          type="email"
+          inputMode="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Enter email address"
+          required
+          error={errors.email}
+          delay={0.1}
+          inputProps={{ onBlur: handleBlur }}
+        />
 
-      {/* GRID */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 blueprint-grid opacity-40"
-      />
+        <AuthPrimaryButton delay={0.18} disabled={isLoading || !isFormValid}>
+          {isLoading ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              Sending OTP...
+            </>
+          ) : (
+            "Send OTP"
+          )}
+        </AuthPrimaryButton>
 
-      {/* THEME TOGGLE */}
-      <div className="absolute right-5 top-5 z-30">
-        <ThemeToggle />
-      </div>
-
-      {/* MAIN */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-5 py-10">
-
-        <div
-          className="
-            relative
-            w-full max-w-[520px]
-            h-[540px]
-            overflow-hidden
-            rounded-[5px]
-          "
+        <motion.p
+          {...authItemMotion(0.24)}
+          className="pt-0.5 text-center text-[13px] text-muted"
         >
-
-          {/* ANIMATED BORDER */}
-          <div className="absolute inset-[3px] rounded-[5px] p-[80px] overflow-hidden">
-
-            {/* rotating border glow */}
-            <div
-              className="
-                absolute
-                top-[-50%]
-                left-[-50%]
-                h-[200%]
-                w-[200%]
-                animate-[spin_6s_linear_infinite]
-                bg-[conic-gradient(from_0deg,transparent_0deg,transparent_300deg,rgba(59,130,246,0.95)_340deg,transparent_360deg)]
-              "
-            />
-
-            {/* INNER BOX */}
-            <div
-              className="
-                absolute inset-[3px]
-                rounded-[5px]
-                bg-elevated/95
-                backdrop-blur-xl
-                shadow-[0_30px_100px_rgba(0,0,0,0.35)]
-              "
-            />
-          </div>
-
-          {/* CONTENT */}
-          <div className="relative z-10 flex h-full flex-col justify-between p-10">
-
-            {/* TOP */}
-            <div>
-
-              {/* ICON */}
-              <div
-                className="
-                  mb-6 flex h-[80px] w-[80px]
-                  items-center justify-center
-                  rounded-lg
-                  bg-blue-500/10
-                  shadow-[0_0_40px_rgba(59,130,246,0.25)]
-                "
-              >
-                <Mail
-                  size={34}
-                  className="text-blue-400"
-                />
-              </div>
-
-              {/* TITLE */}
-              <h1 className="text-[40px] font-black tracking-[-0.04em]">
-                Forgot Password
-              </h1>
-
-              {/* DESCRIPTION */}
-              <p className="mt-3 text-[15px] leading-7 text-muted">
-                Enter your email address, and we'll send you OTP to reset your password.
-              </p>
-
-            </div>
-
-            {/* FORM */}
-            <form className="mt-8 flex flex-1 flex-col justify-between">
-
-              <div className="space-y-5">
-
-                {/* EMAIL */}
-                <div>
-
-                  <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.15em] text-subtle">
-                    Email Address
-                  </label>
-
-                  <div
-                    className="
-                      flex h-[58px] items-center
-                      rounded-[5px]
-                      border border-border
-                      bg-bg px-4
-                      transition
-                      focus-within:border-primary
-                      focus-within:ring-2
-                      focus-within:ring-primary/20
-                    "
-                  >
-
-                    <span className="mr-3 text-muted">
-                      @
-                    </span>
-
-                    <input
-                      type="email"
-                      placeholder="you@example.com"
-                      className="
-                        w-full bg-transparent
-                        text-[15px] text-text
-                        outline-none
-                        placeholder:text-subtle
-                      "
-                    />
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* BUTTON */}
-              <Link
-                to="/verify-otp"
-                className="
-                  mt-10
-                  flex h-[54px] w-full items-center justify-center
-                  rounded-[5px]
-                  bg-primary
-                  text-[14px] font-bold
-                  text-white
-                  shadow-[0_10px_40px_rgba(59,130,246,0.35)]
-                  transition duration-300
-                  hover:-translate-y-1
-                  hover:shadow-[0_20px_50px_rgba(59,130,246,0.45)]
-                "
-              >
-                Send OTP →
-              </Link>
-
-            </form>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
+          Remember your password?{" "}
+          <Link
+            to="/login"
+            className="font-semibold text-primary transition-colors hover:text-primary-hover"
+          >
+            Sign In
+          </Link>
+        </motion.p>
+      </form>
+    </AuthShell>
   );
 }

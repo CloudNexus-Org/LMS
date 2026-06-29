@@ -52,6 +52,12 @@ export function trimLoginValues(formData) {
   };
 }
 
+export function trimForgotPasswordValues(formData) {
+  return {
+    email: formData.email.trim(),
+  };
+}
+
 export function validateSignupForm(formData) {
   const values = trimSignupValues(formData);
   const errors = {
@@ -105,6 +111,40 @@ export function validateLoginField(name, formData) {
     default:
       return "";
   }
+}
+
+export function validateForgotPasswordForm(formData) {
+  const values = trimForgotPasswordValues(formData);
+  const errors = {
+    email: validateEmail(values.email),
+  };
+
+  return collectValidationResult(errors);
+}
+
+export function validateForgotPasswordField(name, formData) {
+  const values = trimForgotPasswordValues(formData);
+
+  switch (name) {
+    case "email":
+      return validateEmail(values.email);
+    default:
+      return "";
+  }
+}
+
+export function validateOtp(digits) {
+  const code = Array.isArray(digits) ? digits.join("") : String(digits ?? "");
+
+  if (!code) return "Please enter the 4-digit code";
+  if (code.length < 4) return "Please enter all 4 digits";
+  if (!/^\d{4}$/.test(code)) return "OTP must contain only numbers";
+
+  return "";
+}
+
+export function validateOtpForm(otp) {
+  return collectValidationResult({ otp: validateOtp(otp) });
 }
 
 function collectValidationResult(errors) {
