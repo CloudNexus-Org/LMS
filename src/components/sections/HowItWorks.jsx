@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Compass, Users, Award, Check } from "lucide-react";
-import { howItWorksSteps } from '@/data/howItWorks';
+import { howItWorksSteps as mockSteps } from '@/data/howItWorks';
+import { fetchHowItWorks } from '@/lib/api/catalogApi';
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Container from '@/components/ui/Container';
@@ -162,8 +163,15 @@ export default function HowItWorks() {
 
   const [activeStep, setActiveStep] = useState(0);
   const [isInView, setIsInView] = useState(false);
+  const [howItWorksSteps, setHowItWorksSteps] = useState(mockSteps);
   // Measured pixel Y centres of each step circle, relative to the <ol>.
   const [stepCentres, setStepCentres] = useState([]);
+
+  useEffect(() => {
+    fetchHowItWorks()
+      .then((data) => { if (data?.length) setHowItWorksSteps(data); })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const node = sectionRef.current;

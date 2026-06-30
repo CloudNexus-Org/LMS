@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -8,7 +8,8 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { mentors } from '@/data/mentors';
+import { mentors as mockMentors } from '@/data/mentors';
+import { fetchMentors } from '@/lib/api/mentorApi';
 
 
 import Container from '@/components/ui/Container';
@@ -135,6 +136,13 @@ export default function MentorsListPage() {
   const [activeTrack, setActiveTrack] = useState("All");
   const [availability, setAvailability] = useState("all");
   const [sort, setSort] = useState("featured");
+  const [mentors, setMentors] = useState(mockMentors);
+
+  useEffect(() => {
+    fetchMentors()
+      .then((data) => { if (data?.length) setMentors(data); })
+      .catch(() => {});
+  }, []);
 
   // Build the unique track list from data
   const tracks = useMemo(() => {

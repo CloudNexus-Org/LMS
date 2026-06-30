@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -17,10 +17,12 @@ import {
   Users,
 } from 'lucide-react';
 import {
-  featuredCourses,
+  featuredCourses as mockCourses,
   findTrackForCourse,
   getCourseBySlug,
 } from '@/data/courses';
+import { fetchCourseBySlug, fetchFeaturedCourses } from '@/lib/api/catalogApi';
+import { fetchCourseReviewSummary } from '@/lib/api/reviewApi';
 import Container from '@/components/ui/Container';
 import Button from '@/components/ui/Button';
 import CatalogCourseCard, {
@@ -43,7 +45,32 @@ const INCLUDES = [
 export default function CourseDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const course = useMemo(() => getCourseBySlug(slug), [slug]);
+  const [course, setCourse] = useState(null);
+  const [relatedCourses, setRelatedCourses] = useState(mockCourses);
+  const [reviewSummary, setReviewSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    Promise.all([
+      fetchCourseBySlug(slug).catch(() => getCourseBySlug(slug)),
+      fetchFeaturedCourses().catch(() => mockCourses),
+    ])
+      .then(([c, all]) => {
+        if (cancelled) return;
+        setCourse(c);
+        setRelatedCourses(all || mockCourses);
+        if (c?.id) {
+          fetchCourseReviewSummary(c.id)
+            .then((s) => !cancelled && setReviewSummary(s))
+            .catch(() => {});
+        }
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => { cancelled = true; };
+  }, [slug]);
+
   const track = useMemo(
     () => (course ? findTrackForCourse(course.id) : null),
     [course]
@@ -58,12 +85,20 @@ export default function CourseDetailPage() {
     course ? s.isInWishlist(course.id) : false
   );
 
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-muted">
+        Loading course…
+      </div>
+    );
+  }
+
   if (!course) {
     return <Navigate to="/courses" replace />;
   }
 
   const discount = getDiscountPercent(course.price, course.originalPrice);
-  const related = featuredCourses
+  const related = relatedCourses
     .filter((c) => c.id !== course.id)
     .slice(0, 4);
 

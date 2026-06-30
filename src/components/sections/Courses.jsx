@@ -11,7 +11,8 @@ import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
-import { featuredCourses } from '@/data/courses';
+import { featuredCourses as mockCourses } from '@/data/courses';
+import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
@@ -96,6 +97,7 @@ function CourseCard({ course }) {
 
 // MAIN COMPONENT
 export default function Courses() {
+  const [courses, setCourses] = useState(mockCourses);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
@@ -111,6 +113,12 @@ export default function Courses() {
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [, setScrollProgress] = useState(0);
   const [, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    fetchPublishedCourses()
+      .then((data) => { if (data?.length) setCourses(data); })
+      .catch(() => {});
+  }, []);
 
   const onScroll = useCallback(() => {
     if (!emblaApi) return;
@@ -236,7 +244,7 @@ export default function Courses() {
             onMouseLeave={() => emblaApi?.plugins()?.autoplay?.play()}
           >
             <div className="flex gap-4 px-4 md:gap-6 md:px-6">
-              {featuredCourses.map((course, i) => (
+              {courses.map((course, i) => (
                 <div
                   key={course.id}
                   className="flex-none w-full sm:w-[280px] md:w-[300px]"
@@ -260,7 +268,7 @@ export default function Courses() {
               ${sectionCta}
             `}
           >
-            Browse all {featuredCourses.length} courses
+            Browse all {courses.length} courses
 
             <ArrowRight
               size={15}

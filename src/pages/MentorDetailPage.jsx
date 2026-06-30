@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -13,6 +13,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { mentors, getMentorBySlug } from '@/data/mentors';
+import { fetchMentorBySlug } from '@/lib/api/mentorApi';
 
 
 import Container from '@/components/ui/Container';
@@ -78,7 +79,26 @@ function SectionTitle({ eyebrow, title, sub, eyebrowClassName }) {
 
 export default function MentorDetailPage() {
   const { slug } = useParams();
-  const mentor = useMemo(() => getMentorBySlug(slug), [slug]);
+  const [mentor, setMentor] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchMentorBySlug(slug)
+      .then((m) => !cancelled && setMentor(m))
+      .catch(() => !cancelled && setMentor(getMentorBySlug(slug)))
+      .finally(() => !cancelled && setLoading(false));
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-muted">
+        Loading mentor…
+      </div>
+    );
+  }
 
   if (!mentor) {
     return <Navigate to="/" replace />;

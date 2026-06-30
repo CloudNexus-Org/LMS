@@ -11,7 +11,8 @@ import {
   Target,
   X,
 } from 'lucide-react';
-import { featuredCourses } from '@/data/courses';
+import { featuredCourses as mockCourses } from '@/data/courses';
+import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import CatalogCourseCard from '@/components/courses/CatalogCourseCard';
 import CoursesHeroBackground, { COURSES_HERO_EASE } from '@/components/courses/CoursesHeroBackground';
 import Container from '@/components/ui/Container';
@@ -130,6 +131,17 @@ export default function CoursesListPage() {
   const [level, setLevel] = useState('all');
   const [sort, setSort] = useState('featured');
   const [searchFocused, setSearchFocused] = useState(false);
+  const [courses, setCourses] = useState(mockCourses);
+  const [apiError, setApiError] = useState(null);
+
+  useEffect(() => {
+    fetchPublishedCourses()
+      .then((data) => {
+        if (data?.length) setCourses(data);
+        setApiError(null);
+      })
+      .catch((err) => setApiError(err.message));
+  }, []);
 
   useEffect(() => {
     const q = searchParams.get('q');
@@ -138,7 +150,7 @@ export default function CoursesListPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let list = featuredCourses.filter((course) => {
+    let list = courses.filter((course) => {
       if (q) {
         const haystack = [course.title, course.professor, course.description, course.difficulty]
           .join(' ')
@@ -166,9 +178,9 @@ export default function CoursesListPage() {
         break;
     }
     return list;
-  }, [query, level, sort]);
+  }, [query, level, sort, courses]);
 
-  const totalEnrolled = featuredCourses.reduce(
+  const totalEnrolled = courses.reduce(
     (acc, c) => acc + parseEnrolled(c.enrolled),
     0
   );
@@ -275,7 +287,7 @@ export default function CoursesListPage() {
               </div>
 
               <AnimatedStatsCard delay={0.14}>
-                <HeroStat value={featuredCourses.length} label="Courses" delay={0.18} />
+                <HeroStat value={courses.length} label="Courses" delay={0.18} />
                 <div className="border-l border-border/60 pl-4">
                   <HeroStat
                     value={`${(totalEnrolled / 1000).toFixed(0)}k+`}
@@ -408,7 +420,7 @@ export default function CoursesListPage() {
                   transition={{ delay: 0.3 }}
                   className="mb-6 text-[13px] font-medium text-muted"
                 >
-                  Showing {filtered.length} of {featuredCourses.length} courses
+                  Showing {filtered.length} of {courses.length} courses
                 </motion.p>
                 <motion.div
                   key={`${query}-${level}-${sort}`}

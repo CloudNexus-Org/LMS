@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
 import Button from "@/components/ui/Button";
+import { fetchProfile, updateProfile } from "@/lib/api/userApi";
+import { logout as apiLogout } from "@/lib/api/authApi";
 
 const TABS = [
   { id: "general", label: "My Profile", icon: User },
@@ -72,13 +74,39 @@ function Field({ label, value, span }) {
 
 export default function ProfileSettingsPage() {
   const navigate = useNavigate();
-  const logout = useAuthStore((s) => s.logout);
+  const { user: authUser, token, refreshToken, logout, updateUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState("general");
   const [isSaved, setIsSaved] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [profile, setProfile] = useState(() => ({
+    ...PROFILE,
+    firstName: authUser?.fullName?.split(" ")[0] || PROFILE.firstName,
+    lastName: authUser?.fullName?.split(" ").slice(1).join(" ") || PROFILE.lastName,
+    email: authUser?.email || PROFILE.email,
+  }));
+
+  useEffect(() => {
+    if (!authUser?.id || !token) return;
+    fetchProfile(authUser, token)
+      .then((data) => {
+        if (!data) return;
+        const parts = (data.fullName || "").trim().split(/\s+/);
+        setProfile((prev) => ({
+          ...prev,
+          firstName: parts[0] || prev.firstName,
+          lastName: parts.slice(1).join(" ") || prev.lastName,
+          email: data.email || prev.email,
+          phone: data.phone || prev.phone,
+          bio: data.bio || prev.bio,
+          location: data.location || prev.location,
+          avatar: data.avatar || prev.avatar,
+        }));
+      })
+      .catch(() => {});
+  }, [authUser?.id, token]);
 
   useEffect(() => {
     if (!logoutOpen) return;
@@ -89,8 +117,24 @@ export default function ProfileSettingsPage() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [logoutOpen]);
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+
+    try {
+      if (authUser?.id && token) {
+        await updateProfile(authUser, token, {
+          fullName,
+          phone: profile.phone,
+          bio: profile.bio,
+          location: profile.location || profile.city,
+        });
+        updateUser({ fullName, email: profile.email });
+      }
+    } catch {
+      /* keep UI feedback even if API unavailable */
+    }
+
     setIsSaved(true);
     setEditingProfile(false);
     setEditingPersonal(false);
@@ -98,8 +142,13 @@ export default function ProfileSettingsPage() {
     setTimeout(() => setIsSaved(false), 3000);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setLogoutOpen(false);
+    try {
+      if (token) await apiLogout(token, refreshToken);
+    } catch {
+      /* proceed with local logout */
+    }
     logout();
     navigate("/login", { replace: true });
   };
@@ -206,16 +255,16 @@ export default function ProfileSettingsPage() {
                   ) : (
                     <div className="settings-profile-summary">
                       <img
-                        src={PROFILE.avatar}
-                        alt="Alex Chen"
+                        src={profile.avatar}
+                        alt={`${profile.firstName} ${profile.lastName}`}
                         className="settings-avatar"
                       />
                       <div>
                         <p className="settings-profile-name">
-                          {PROFILE.firstName} {PROFILE.lastName}
+                          {profile.firstName} {profile.lastName}
                         </p>
-                        <p className="settings-profile-meta">{PROFILE.role}</p>
-                        <p className="settings-profile-meta">{PROFILE.location}</p>
+                        <p className="settings-profile-meta">{profile.role}</p>
+                        <p className="settings-profile-meta">{profile.location}</p>
                       </div>
                     </div>
                   )}
@@ -235,7 +284,7 @@ export default function ProfileSettingsPage() {
                         <input
                           id="firstName"
                           type="text"
-                          defaultValue={PROFILE.firstName}
+                          defaultValue={profile.firstName}
                           className="settings-input"
                         />
                       </div>

@@ -7,6 +7,9 @@ import {
   Eye, CheckCircle2, Trash2, AlertTriangle,
 } from 'lucide-react';
 import { loadAdminUsers, saveAdminUsers, updateAdminUser, removeAdminUser, toggleUserBan, MENTOR_TRACK_OPTIONS } from '@/data/adminUsers';
+import useAuthStore from '@/store/useAuthStore';
+import { fetchUsers, updateUser, updateUserStatus, deleteUser as deleteUserApi } from '@/lib/api/userApi';
+import { parseApiError } from '@/lib/api/apiHelpers';
 
 const GRAD_COLORS = [
   'from-blue-500 to-cyan-400', 'from-emerald-500 to-lime-400',
@@ -30,7 +33,9 @@ const STATUS_CONFIG = {
 export default function UserManagementPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [users, setUsers] = useState(() => loadAdminUsers());
+  const { user: authUser, token } = useAuthStore();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -41,7 +46,22 @@ export default function UserManagementPage() {
 
   const persistUsers = (next) => {
     setUsers(next);
-    saveAdminUsers(next);
+  };
+
+  const reloadUsers = async () => {
+    if (!authUser || !token) {
+      setUsers(loadAdminUsers());
+      setLoading(false);
+      return;
+    }
+    try {
+      const data = await fetchUsers(authUser, token, { size: 200 });
+      setUsers(data.content?.length ? data.content : loadAdminUsers());
+    } catch {
+      setUsers(loadAdminUsers());
+    } finally {
+      setLoading(false);
+    }
   };
 
   const showToast = (message) => {
@@ -58,7 +78,7 @@ export default function UserManagementPage() {
     setSelectedUser(null);
   };
 
-  const handleSaveEdit = (e) => {
+  const handleSaveEdit = async (e) => {
     e.preventDefault();
     if (!editingUser) return;
 
@@ -83,45 +103,79 @@ export default function UserManagementPage() {
       return;
     }
 
-    const next = updateAdminUser(users, editingUser.id, {
-      name,
-      email,
-      role: editingUser.role,
-      status: editingUser.status,
-      professionalRole: editingUser.professionalRole,
-      company: editingUser.company,
-      trackLabel: editingUser.trackLabel,
-      location: editingUser.location,
-      bio: editingUser.bio,
-    });
-
-    persistUsers(next);
-    setEditingUser(null);
-    showToast(`${name} was updated successfully.`);
+    try {
+      if (authUser && token) {
+        const updated = await updateUser(authUser, token, editingUser.id, {
+          name,
+          email,
+          role: editingUser.role,
+          status: editingUser.status,
+          professionalRole: editingUser.professionalRole,
+          company: editingUser.company,
+          trackLabel: editingUser.trackLabel,
+          location: editingUser.location,
+          bio: editingUser.bio,
+        });
+        setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+      } else {
+        const next = updateAdminUser(users, editingUser.id, {
+          name,
+          email,
+          role: editingUser.role,
+          status: editingUser.status,
+          professionalRole: editingUser.professionalRole,
+          company: editingUser.company,
+          trackLabel: editingUser.trackLabel,
+          location: editingUser.location,
+          bio: editingUser.bio,
+        });
+        persistUsers(next);
+        saveAdminUsers(next);
+      }
+      setEditingUser(null);
+      showToast(`${name} was updated successfully.`);
+    } catch (err) {
+      showToast(parseApiError(err));
+    }
   };
 
-  const handleBanToggle = (user) => {
+  const handleBanToggle = async (user) => {
     if (user.role === 'Admin') {
       showToast('Admin accounts cannot be banned.');
       return;
     }
 
-    const next = toggleUserBan(users, user.id);
-    persistUsers(next);
+    const nextStatus = user.status === 'Banned' ? 'Active' : 'Banned';
 
-    const updated = next.find((u) => u.id === user.id);
-    if (selectedUser?.id === user.id) {
-      setSelectedUser(updated ?? null);
+    try {
+      if (authUser && token) {
+        const updated = await updateUserStatus(authUser, token, user.id, nextStatus);
+        setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+        if (selectedUser?.id === user.id) setSelectedUser(updated);
+        showToast(
+          updated.status === 'Banned'
+            ? `${user.name} has been banned.`
+            : `${user.name} has been unbanned.`
+        );
+        return;
+      }
+
+      const next = toggleUserBan(users, user.id);
+      persistUsers(next);
+      saveAdminUsers(next);
+      const updated = next.find((u) => u.id === user.id);
+      if (selectedUser?.id === user.id) setSelectedUser(updated ?? null);
+      showToast(
+        updated?.status === 'Banned'
+          ? `${user.name} has been banned.`
+          : `${user.name} has been unbanned.`
+      );
+    } catch (err) {
+      showToast(parseApiError(err));
     }
-
-    showToast(
-      updated?.status === 'Banned'
-        ? `${user.name} has been banned.`
-        : `${user.name} has been unbanned.`
-    );
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleteTarget) return;
 
     if (deleteTarget.role === 'Admin') {
@@ -130,14 +184,23 @@ export default function UserManagementPage() {
       return;
     }
 
-    const next = removeAdminUser(users, deleteTarget.id);
-    persistUsers(next);
+    try {
+      if (authUser && token) {
+        await deleteUserApi(authUser, token, deleteTarget.id);
+        setUsers((prev) => prev.filter((u) => u.id !== deleteTarget.id));
+      } else {
+        const next = removeAdminUser(users, deleteTarget.id);
+        persistUsers(next);
+        saveAdminUsers(next);
+      }
 
-    if (selectedUser?.id === deleteTarget.id) setSelectedUser(null);
-    if (editingUser?.id === deleteTarget.id) setEditingUser(null);
-
-    showToast(`${deleteTarget.name} was removed from the directory.`);
-    setDeleteTarget(null);
+      if (selectedUser?.id === deleteTarget.id) setSelectedUser(null);
+      if (editingUser?.id === deleteTarget.id) setEditingUser(null);
+      showToast(`${deleteTarget.name} was removed from the directory.`);
+      setDeleteTarget(null);
+    } catch (err) {
+      showToast(parseApiError(err));
+    }
   };
 
   const updateEditField = (field, value) => {
@@ -145,8 +208,8 @@ export default function UserManagementPage() {
   };
 
   useEffect(() => {
-    setUsers(loadAdminUsers());
-  }, [location.key]);
+    reloadUsers();
+  }, [location.key, authUser?.id, token]);
 
   useEffect(() => {
     if (!location.state?.mentorAdded) return;

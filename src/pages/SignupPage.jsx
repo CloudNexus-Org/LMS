@@ -13,6 +13,8 @@ import AuthAutofillTrap from "@/components/auth/AuthAutofillTrap";
 import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
 import { authItemMotion } from "@/components/auth/authMotion";
 import useAuthStore from "@/store/useAuthStore";
+import { register as apiRegister } from "@/lib/api/authApi";
+import { dashboardPathForRole, parseApiError } from "@/lib/api/apiHelpers";
 import {
   trimSignupValues,
   validateSignupField,
@@ -37,6 +39,7 @@ export default function SignupPage() {
   });
 
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
 
   const isFormValid = useMemo(
     () => validateSignupForm(formData).isValid,
@@ -92,22 +95,21 @@ export default function SignupPage() {
     if (!isValid) return;
 
     setIsLoading(true);
+    setSubmitError("");
 
-    setTimeout(() => {
+    try {
+      const { user, accessToken, refreshToken } = await apiRegister({
+        fullName: trimmed.name,
+        email: trimmed.email,
+        password: trimmed.password,
+      });
+      login(user, accessToken, refreshToken);
+      navigate(dashboardPathForRole(user.role));
+    } catch (err) {
+      setSubmitError(parseApiError(err));
+    } finally {
       setIsLoading(false);
-
-      login(
-        {
-          username: trimmed.name,
-          email: trimmed.email,
-          fullName: trimmed.name,
-          role: "student",
-        },
-        "mock-jwt-token"
-      );
-
-      navigate("/student/dashboard");
-    }, 1500);
+    }
   };
 
   return (
@@ -196,6 +198,23 @@ export default function SignupPage() {
             "Sign Up"
           )}
         </AuthPrimaryButton>
+
+        {submitError ? (
+          <motion.p
+            {...authItemMotion(0.3)}
+            className="text-center text-[12px] text-danger"
+          >
+            {submitError}
+            {submitError.includes("already registered") ? (
+              <>
+                {" "}
+                <Link to="/login" className="font-semibold text-primary hover:underline">
+                  Sign in
+                </Link>
+              </>
+            ) : null}
+          </motion.p>
+        ) : null}
 
         <motion.p
           {...authItemMotion(0.32)}

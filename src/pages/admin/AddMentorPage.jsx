@@ -10,9 +10,11 @@ import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
 import { authItemMotion } from "@/components/auth/authMotion";
 import {
   MENTOR_TRACK_OPTIONS,
-  addMentorToDirectory,
   loadAdminUsers,
 } from "@/data/adminUsers";
+import useAuthStore from "@/store/useAuthStore";
+import { createMentor } from "@/lib/api/userApi";
+import { parseApiError } from "@/lib/api/apiHelpers";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -31,10 +33,12 @@ const initialForm = {
 
 export default function AddMentorPage() {
   const navigate = useNavigate();
+  const { user, token } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,15 +88,31 @@ export default function AddMentorPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 900));
+    setSubmitError("");
 
-    const users = loadAdminUsers();
-    addMentorToDirectory(users, formData);
+    try {
+      if (user && token) {
+        await createMentor(user, token, {
+          fullName: formData.fullName.trim(),
+          username: formData.username.trim(),
+          email: formData.email.trim().toLowerCase(),
+          password: formData.password,
+          professionalRole: formData.professionalRole.trim(),
+          company: formData.company.trim(),
+          trackLabel: formData.trackLabel,
+          location: formData.location.trim(),
+          bio: formData.bio.trim(),
+        });
+      }
 
-    setIsLoading(false);
-    navigate("/admin/users", {
-      state: { mentorAdded: formData.fullName.trim() },
-    });
+      navigate("/admin/users", {
+        state: { mentorAdded: formData.fullName.trim() },
+      });
+    } catch (err) {
+      setSubmitError(parseApiError(err));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -328,6 +348,9 @@ export default function AddMentorPage() {
                   "Add mentor"
                 )}
               </AuthPrimaryButton>
+              {submitError ? (
+                <p className="mt-2 text-center text-[12px] text-danger">{submitError}</p>
+              ) : null}
             </div>
           </div>
         </form>

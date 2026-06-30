@@ -1,8 +1,47 @@
-import { Link } from "react-router-dom";
-import { Mail } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Loader2, Mail } from "lucide-react";
 import ThemeToggle from "../components/ui/ThemeToggle";
+import { forgotPassword } from "@/lib/api/authApi";
+import { parseApiError } from "@/lib/api/apiHelpers";
+
+const RESET_EMAIL_KEY = "lms-reset-email";
+
+export function getResetEmail() {
+  return sessionStorage.getItem(RESET_EMAIL_KEY) || "";
+}
+
+export function setResetEmail(email) {
+  sessionStorage.setItem(RESET_EMAIL_KEY, email);
+}
 
 export default function ForgotPasswordPage() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed || !/^\S+@\S+\.\S+$/.test(trimmed)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    try {
+      await forgotPassword(trimmed);
+      setResetEmail(trimmed);
+      navigate("/verify-otp");
+    } catch (err) {
+      setError(parseApiError(err));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <section className="relative min-h-screen overflow-hidden bg-bg text-text transition-colors duration-300">
 
@@ -106,7 +145,7 @@ export default function ForgotPasswordPage() {
             </div>
 
             {/* FORM */}
-            <form className="mt-8 flex flex-1 flex-col justify-between">
+            <form onSubmit={handleSubmit} className="mt-8 flex flex-1 flex-col justify-between" noValidate>
 
               <div className="space-y-5">
 
@@ -136,6 +175,8 @@ export default function ForgotPasswordPage() {
 
                     <input
                       type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       className="
                         w-full bg-transparent
@@ -147,16 +188,21 @@ export default function ForgotPasswordPage() {
 
                   </div>
 
+                  {error ? (
+                    <p className="mt-2 text-[13px] text-danger">{error}</p>
+                  ) : null}
+
                 </div>
 
               </div>
 
               {/* BUTTON */}
-              <Link
-                to="/verify-otp"
+              <button
+                type="submit"
+                disabled={isLoading}
                 className="
                   mt-10
-                  flex h-[54px] w-full items-center justify-center
+                  flex h-[54px] w-full items-center justify-center gap-2
                   rounded-[5px]
                   bg-primary
                   text-[14px] font-bold
@@ -165,10 +211,24 @@ export default function ForgotPasswordPage() {
                   transition duration-300
                   hover:-translate-y-1
                   hover:shadow-[0_20px_50px_rgba(59,130,246,0.45)]
+                  disabled:opacity-70 disabled:hover:translate-y-0
                 "
               >
-                Send OTP →
-              </Link>
+                {isLoading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send OTP →"
+                )}
+              </button>
+
+              <p className="mt-4 text-center text-[13px] text-muted">
+                <Link to="/login" className="font-semibold text-primary hover:underline">
+                  Back to sign in
+                </Link>
+              </p>
 
             </form>
 
