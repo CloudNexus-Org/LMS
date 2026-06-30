@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { BookOpen, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Star, CheckCircle2 } from "lucide-react";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
 import HeroBackdrop from "./HeroBackdrop";
@@ -44,8 +44,8 @@ export default function Hero() {
       <Container>
         <div
           className="
-            grid sm:min-h-screen items-center
-            pt-32 pb-10 sm:pt-32 sm:pb-20
+            grid lg:min-h-screen items-center
+            pt-28 pb-12 sm:pt-32 sm:pb-20
             md:py-24 lg:py-28
             lg:grid-cols-2 lg:gap-12 xl:gap-16
           "
@@ -60,11 +60,11 @@ export default function Hero() {
             <motion.div
               {...fadeUp(10, 0.05)}
               className="
-                inline-flex items-center gap-3.5
+                inline-flex items-center gap-3
                 rounded-lg border border-border
                 bg-surface/90 backdrop-blur-md
-                pl-2 pr-5 py-1.5
-                text-[14px] sm:text-[15px] font-semibold tracking-wide
+                pl-2 pr-4 py-1.5
+                text-[13px] sm:text-[14px] font-semibold tracking-wide
                 shadow-[var(--shadow-card-value)]
               "
             >
@@ -72,7 +72,7 @@ export default function Hero() {
                 {AVATARS.map((src, i) => (
                   <img
                     key={src}
-                    className="h-8 w-8 rounded-full border-2 border-surface object-cover bg-elevated ring-1 ring-border"
+                    className="h-7 w-7 rounded-full border-2 border-surface object-cover bg-elevated ring-1 ring-border"
                     src={src}
                     alt={`Learner ${i + 1}`}
                   />
@@ -88,9 +88,9 @@ export default function Hero() {
             <motion.h1
               {...fadeUp(2, 0.12, 0.6)}
               className="
-                hero-title mt-12 mb-12 max-w-[720px]
-                font-extrabold leading-[0.95] tracking-[-0.04em]
-                text-[42px] sm:text-[58px] md:text-[72px] lg:text-[88px]
+                hero-title mt-7 max-w-[680px]
+                font-extrabold leading-[1.02] tracking-[-0.035em]
+                text-[40px] sm:text-[54px] md:text-[64px] lg:text-[72px]
                 text-text
               "
             >
@@ -102,9 +102,9 @@ export default function Hero() {
             <motion.p
               {...fadeUp(10, 0.22)}
               className="
-                mt-12 mb-12 max-w-[580px]
-                text-[17px] leading-7
-                sm:text-[21px] sm:leading-8
+                mt-6 max-w-[540px]
+                text-[16px] leading-7
+                sm:text-[18px] sm:leading-8
                 text-muted
               "
             >
@@ -112,10 +112,38 @@ export default function Hero() {
               and full-stack development taught by expert mentors.
             </motion.p>
 
+            {/* Rating row */}
+            <motion.div
+              {...fadeUp(10, 0.3)}
+              className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3"
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={16}
+                      className="fill-warning text-warning"
+                    />
+                  ))}
+                </div>
+                <span className="text-[14px] font-bold text-text">4.8/5</span>
+                <span className="text-[13px] text-muted">rating</span>
+              </div>
+              <div className="hidden h-4 w-px bg-border sm:block" />
+              <div className="flex items-center gap-2 text-[13px] text-muted">
+                <CheckCircle2 size={16} className="text-success" />
+                <span>
+                  <span className="font-semibold text-text">200+</span> expert
+                  mentors
+                </span>
+              </div>
+            </motion.div>
+
             {/* Buttons */}
             <motion.div
               {...fadeUp(10, 0.38)}
-              className="mt-8 sm:mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
+              className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center"
             >
               <Button
                 to="/courses"
