@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  ArrowRight,
   BookOpen,
   CheckCircle2,
   Clock3,
@@ -326,7 +325,6 @@ function MyCourseCard({ course, index }) {
               "
             >
               {isCompleted ? "Review" : "Continue"}
-              <ArrowRight size={13} />
             </Link>
           </div>
         </div>
@@ -365,10 +363,9 @@ export default function MyCoursesPage() {
           </p>
           <Link
             to="/student/catalog"
-            className="mt-3 inline-flex items-center gap-1.5 text-[14px] font-medium text-primary transition-colors hover:text-primary-hover"
+            className="mt-3 inline-flex items-center justify-center text-[14px] font-medium text-primary transition-colors hover:text-primary-hover"
           >
             Browse new courses
-            <ArrowRight size={15} />
           </Link>
         </div>
 
@@ -420,14 +417,13 @@ export default function MyCoursesPage() {
             <Link
               to="/student/catalog"
               className="
-                inline-flex items-center gap-2 rounded-lg
+                inline-flex items-center justify-center rounded-lg
                 border border-border px-6 py-2.5
                 text-[14px] font-medium text-text
                 transition-colors hover:border-primary hover:text-primary
               "
             >
               Browse more courses
-              <ArrowRight size={15} />
             </Link>
           </div>
         </>

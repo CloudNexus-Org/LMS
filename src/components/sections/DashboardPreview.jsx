@@ -9,7 +9,6 @@ import {
   Play,
   CheckCircle2,
   Clock,
-  ArrowRight,
   Lock,
   Volume2,
   VolumeX,
@@ -440,13 +439,9 @@ export default function DashboardPreview() {
                       </div>
                       <button
                         type="button"
-                        className="group inline-flex items-center gap-1.5 rounded-lg border border-border bg-bg/60 px-3 py-1.5 text-[12px] font-semibold text-primary transition hover:border-primary hover:bg-primary-soft"
+                        className="inline-flex items-center justify-center rounded-lg border border-border bg-bg/60 px-3 py-1.5 text-[12px] font-semibold text-primary transition hover:border-primary hover:bg-primary-soft"
                       >
                         Continue
-                        <ArrowRight
-                          size={12}
-                          className="transition-transform group-hover:translate-x-0.5"
-                        />
                       </button>
                     </div>
                   </div>

@@ -5,7 +5,6 @@ import {
   ListChecks,
   Sparkles,
   Trophy,
-  ArrowRight,
   Clock3,
 } from "lucide-react";
 import { getAllPracticeQuizzes, getBestAttempt } from "@/data/quizzes";
@@ -114,10 +113,9 @@ export default function PracticeQuizzesPage() {
 
               <Link
                 to={`/learn/${quiz.trackId}/${quiz.lessonId}`}
-                className="review-cta review-cta-primary mt-4"
+                className="review-cta review-cta-primary mt-4 justify-center"
               >
                 {best ? "Retake quiz" : "Start quiz"}
-                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </motion.article>
           );

@@ -1,9 +1,5 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight,
-  Star,
-  Clock3,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -13,6 +9,7 @@ import Autoplay from "embla-carousel-autoplay";
 
 import { featuredCourses as mockCourses } from '@/data/courses';
 import { fetchPublishedCourses } from '@/lib/api/catalogApi';
+import FeaturedCourseCard from '@/components/courses/FeaturedCourseCard';
 
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
@@ -24,76 +21,6 @@ import {
   sectionCta,
   sectionTextDark,
 } from '@/styles/theme';
-
-const EASE = [0.16, 1, 0.3, 1];
-
-const DIFFICULTY_STYLES = {
-  Beginner: "bg-success/90 text-white",
-  Intermediate: "bg-primary/90 text-white",
-  Advanced: "bg-accent/90 text-white",
-};
-
-// COURSE CARD — minimal, links to course detail
-function CourseCard({ course }) {
-  const difficultyStyle =
-    DIFFICULTY_STYLES[course.difficulty] || DIFFICULTY_STYLES.Intermediate;
-
-  return (
-    <motion.div
-      className="group h-full"
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.3, ease: EASE }}
-    >
-      <Link
-        to={`/courses/${course.slug}`}
-        className="
-          flex h-full flex-col overflow-hidden rounded-xl
-          border border-border/70 bg-surface
-          shadow-[var(--shadow-card-value)]
-          transition-all duration-300
-          hover:border-primary/30
-          hover:shadow-[0_12px_32px_-12px_color-mix(in_srgb,var(--primary)_30%,transparent)]
-        "
-      >
-        <div className="relative aspect-[16/10] overflow-hidden bg-elevated">
-          <img
-            src={course.image}
-            alt=""
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-          <span
-            className={`absolute right-2.5 top-2.5 rounded-md px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${difficultyStyle}`}
-          >
-            {course.difficulty}
-          </span>
-          <span className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 rounded-md bg-black/45 px-2 py-0.5 text-[11px] font-bold text-white backdrop-blur-sm">
-            <Star size={11} className="fill-warning text-warning" />
-            {course.rating}
-          </span>
-        </div>
-
-        <div className="flex flex-1 flex-col gap-1.5 p-4">
-          <h4 className="line-clamp-2 font-display text-[16px] font-bold leading-snug tracking-tight text-text transition-colors group-hover:text-primary">
-            {course.title}
-          </h4>
-          <p className="truncate text-[12px] text-muted">{course.professor}</p>
-          <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-[12px]">
-            <span className="inline-flex items-center gap-1 text-muted">
-              <Clock3 size={12} className="text-primary" />
-              {course.duration}
-            </span>
-            <span className="inline-flex items-center gap-1 font-semibold text-primary">
-              Explore
-              <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
-            </span>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
 
 // MAIN COMPONENT
 export default function Courses() {
@@ -247,9 +174,9 @@ export default function Courses() {
               {courses.map((course, i) => (
                 <div
                   key={course.id}
-                  className="flex-none w-full sm:w-[280px] md:w-[300px]"
+                  className="flex-none w-full sm:w-[300px] md:w-[320px]"
                 >
-                  <CourseCard course={course} />
+                  <FeaturedCourseCard course={course} />
                 </div>
               ))}
             </div>
@@ -261,21 +188,14 @@ export default function Courses() {
           <Link
             to="/courses"
             className={`
-              group inline-flex items-center gap-2
+              inline-flex items-center justify-center
               rounded-lg px-7 py-3
-              text-[14px] font-semibold
+              text-[14px] font-semibold text-center
               transition-all duration-300 ease-out
               ${sectionCta}
             `}
           >
             Browse all {courses.length} courses
-
-            <ArrowRight
-              size={15}
-              className="
-                transition-all duration-300 ease-out
-              "
-            />
           </Link>
         </div>
       </Container>

@@ -3,7 +3,6 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
-  ArrowRight,
   Award,
   BookOpen,
   CheckCircle2,
@@ -207,13 +206,9 @@ export default function CourseDetailPage() {
                     </p>
                     <Link
                       to={`/tracks/${track.id}`}
-                      className="mt-2 group inline-flex items-center gap-2 font-display text-[17px] font-bold text-text transition-colors hover:text-primary"
+                      className="mt-2 font-display text-[17px] font-bold text-text transition-colors hover:text-primary"
                     >
                       {track.name}
-                      <ArrowRight
-                        size={16}
-                        className="transition-transform group-hover:translate-x-0.5"
-                      />
                     </Link>
                     <p className="mt-1 text-[13px] text-muted line-clamp-2">
                       {track.tagline}
@@ -312,7 +307,6 @@ export default function CourseDetailPage() {
                         size="lg"
                         fullWidth
                         onClick={handleBuyNow}
-                        rightIcon={<ArrowRight size={16} />}
                       >
                         Buy now
                       </Button>
@@ -382,10 +376,9 @@ export default function CourseDetailPage() {
                 </div>
                 <Link
                   to="/courses"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:text-primary-hover"
+                  className="inline-flex items-center justify-center text-[13px] font-semibold text-primary hover:text-primary-hover"
                 >
                   Browse all
-                  <ArrowRight size={14} />
                 </Link>
               </div>
 

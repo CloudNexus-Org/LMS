@@ -149,7 +149,6 @@ export default function Hero() {
                 to="/courses"
                 size="lg"
                 className="w-full sm:w-auto min-w-[180px] hover:-translate-y-0.5"
-                rightIcon={<ArrowRight size={18} />}
               >
                 Browse courses
               </Button>
