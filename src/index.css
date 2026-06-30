@@ -137,13 +137,13 @@
         display: flex;
         width: 100%;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         gap: 0.5rem;
         border-radius: 12px;
         border: 1px solid var(--border);
         background: color-mix(in srgb, var(--bg) 55%, transparent);
         padding: 0.65rem 0.875rem;
-        text-align: left;
+        text-align: center;
         transition: border-color 0.2s ease, background 0.2s ease;
     }
 
@@ -6416,7 +6416,7 @@
         margin-top: 1rem;
         height: 2.5rem;
         align-items: center;
-        gap: 0.375rem;
+        justify-content: center;
         border-radius: 0.625rem;
         border: 1px solid var(--border);
         background: var(--elevated);
@@ -6522,7 +6522,7 @@
     .learn-quiz-btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.375rem;
+        justify-content: center;
         border-radius: 0.625rem;
         padding: 0.55rem 1.125rem;
         font-size: 0.8125rem;

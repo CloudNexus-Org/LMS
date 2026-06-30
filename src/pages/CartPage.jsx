@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
-  ArrowRight,
   ShoppingBag,
   Trash2,
   X,
@@ -115,7 +114,7 @@ export default function CartPage() {
               <p className="mt-2 max-w-sm text-[14px] text-muted">
                 Browse our catalog and add courses you want to learn.
               </p>
-              <Button to="/courses" size="lg" className="mt-8" rightIcon={<ArrowRight size={16} />}>
+              <Button to="/courses" size="lg" className="mt-8">
                 Browse courses
               </Button>
             </motion.div>
@@ -209,7 +208,6 @@ export default function CartPage() {
                   size="lg"
                   fullWidth
                   className="mt-6"
-                  rightIcon={<ArrowRight size={16} />}
                   onClick={handleCheckout}
                 >
                   {isStudent ? 'Proceed to checkout' : 'Login to buy'}

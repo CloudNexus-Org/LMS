@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useSpring, useTransform, useInView } from "framer-motion";
 import {
   Award,
-  ArrowRight,
   BookOpen,
   CalendarDays,
   CheckCircle2,
@@ -1116,7 +1115,6 @@ export default function ProfilePage() {
                         </div>
                         <Link to={getResumeUrlForTrack(course.trackId)} className="profile-course-cta mt-4">
                           Continue learning
-                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                         </Link>
                       </div>
                     </motion.article>

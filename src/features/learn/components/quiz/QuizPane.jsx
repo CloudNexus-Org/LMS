@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  ArrowRight,
   CheckCircle2,
   Clock3,
   ListChecks,
@@ -125,11 +124,11 @@ export default function QuizPane({
             <div className="learn-quiz-actions">
               {showModuleLink && onGoToQuizLesson ? (
                 <button type="button" onClick={() => onGoToQuizLesson(quiz.lessonId)} className="learn-quiz-btn learn-quiz-btn-primary">
-                  Go to module quiz <ArrowRight className="h-4 w-4" />
+                  Go to module quiz
                 </button>
               ) : (
                 <button type="button" onClick={startQuiz} className="learn-quiz-btn learn-quiz-btn-primary">
-                  Start quiz <ArrowRight className="h-4 w-4" />
+                  Start quiz
                 </button>
               )}
               {best && !showModuleLink && (
@@ -199,7 +198,7 @@ export default function QuizPane({
                   onClick={() => setCurrentQ((c) => c + 1)}
                   className="learn-quiz-btn learn-quiz-btn-primary"
                 >
-                  Next <ArrowRight className="h-4 w-4" />
+                  Next
                 </button>
               ) : (
                 <button

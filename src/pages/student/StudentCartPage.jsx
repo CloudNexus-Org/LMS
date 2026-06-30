@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
-  ArrowRight,
   CheckCircle2,
   CreditCard,
   ShieldCheck,
@@ -130,7 +129,6 @@ export default function StudentCartPage() {
             to="/student/catalog"
             size="lg"
             className="mt-6"
-            rightIcon={<ArrowRight size={16} />}
           >
             Browse courses
           </Button>
@@ -230,7 +228,6 @@ export default function StudentCartPage() {
               fullWidth
               className="mt-5"
               leftIcon={<CreditCard size={16} />}
-              rightIcon={<ArrowRight size={16} />}
               onClick={handleCheckout}
               disabled={paying}
             >

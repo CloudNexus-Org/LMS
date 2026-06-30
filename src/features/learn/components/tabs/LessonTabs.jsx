@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   Download,
   MessagesSquare,
-  ArrowRight,
   ArrowUpRight,
   Target,
   User,
@@ -234,7 +233,6 @@ export function QAPane({ trackId, lessonId, lesson }) {
           className="learn-ask-btn mt-2"
         >
           {submitting ? "Posting…" : "Post question"}
-          <ArrowRight size={13} aria-hidden />
         </button>
       </form>
 

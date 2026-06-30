@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
-  ArrowRight,
   Award,
   BookOpen,
   Check,
@@ -1140,7 +1139,7 @@ export default function UploadCoursePage() {
                 )
               ) : (
                 <>
-                  Save & continue <ArrowRight className="h-4 w-4" />
+                  Save & continue
                 </>
               )}
             </button>

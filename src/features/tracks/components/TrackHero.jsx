@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight, Code2, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Code2, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 import Container from "@/components/ui/Container";
@@ -90,13 +90,11 @@ export default function TrackHero({ track }) {
 
             {/* buttons */}
             <div className="flex flex-wrap gap-4 mt-10">
-              <Link to="/signup" className={`rounded-full px-8 py-4 ${buttonPrimaryClass} transition-all font-bold flex items-center gap-2 text-[15px]`}>
+              <Link to="/signup" className={`rounded-full px-8 py-4 ${buttonPrimaryClass} transition-all font-bold flex items-center justify-center text-[15px]`}>
                 Buy Now
-                <ArrowRight size={18} />
               </Link>
-              <Link to={`/learn/${track?.id || 'cloud'}`} className={`rounded-full px-8 py-4 border ${buttonSecondaryClass} transition-all flex items-center gap-2 text-[15px] font-semibold`}>
+              <Link to={`/learn/${track?.id || 'cloud'}`} className={`rounded-full px-8 py-4 border ${buttonSecondaryClass} transition-all flex items-center justify-center text-[15px] font-semibold`}>
                 Learn More
-                <ArrowRight size={18} />
               </Link>
             </div>
           </motion.div>

@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight,
   ArrowUpRight,
   Star,
   Sparkles,
@@ -207,15 +206,6 @@ export default function TrackDetailPage() {
                       <h3 className="font-display text-[15.5px] font-bold tracking-tight text-text leading-snug transition-colors duration-300 group-hover:text-primary">
                         {outcome}
                       </h3>
-                    </div>
-
-                    {/* Minimalist Tech Arrow */}
-                    <div className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-bg/30 text-muted transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/[0.08] group-hover:text-primary">
-                      <ArrowRight
-                        size={14}
-                        className="transition-transform duration-300 group-hover:translate-x-0.5"
-                        aria-hidden
-                      />
                     </div>
                   </motion.div>
                 );

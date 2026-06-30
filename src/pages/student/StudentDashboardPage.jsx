@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import {
   Sparkles,
   CalendarDays,
-  ArrowRight,
   Activity,
   CheckCircle2,
   Clock3,
@@ -177,15 +176,14 @@ export default function StudentDashboardPage() {
               <Link
                 key={action.label}
                 to={action.getTo ? action.getTo() : action.to}
-                className="dashboard-action-btn group"
+                className="dashboard-action-btn group justify-center"
               >
-                <div className="flex min-w-0 items-center gap-2.5">
+                <div className="flex min-w-0 items-center justify-center gap-2.5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <PlayCircle className="h-4 w-4" />
                   </div>
                   <span className="truncate text-xs font-semibold text-text">{action.label}</span>
                 </div>
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
               </Link>
             ))}
           </div>

@@ -4,7 +4,6 @@ import { motion, AnimatePresence, useSpring, useTransform, useInView } from "fra
 import {
   Activity,
   AlertTriangle,
-  ArrowRight,
   BarChart2,
   BookOpen,
   CalendarDays,
@@ -474,7 +473,7 @@ export default function AdminProfilePage() {
                         <p className="truncate text-sm font-semibold text-text">{item.title}</p>
                         <p className="text-xs text-muted">{item.mentor} · {item.submitted} · {item.status}</p>
                       </div>
-                      <Link to="/admin/approvals" className="profile-course-cta shrink-0 text-xs">Review<ArrowRight className="h-3 w-3" /></Link>
+                      <Link to="/admin/approvals" className="profile-course-cta shrink-0 text-xs">Review</Link>
                     </motion.div>
                   ))}
                 </div>
@@ -490,12 +489,11 @@ export default function AdminProfilePage() {
                   const Icon = action.icon;
                   return (
                     <motion.div key={action.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-                      <Link to={action.to} className="dashboard-action-btn group flex h-full items-center justify-between rounded-xl border border-border bg-surface p-4">
-                        <div className="flex items-center gap-2.5">
+                      <Link to={action.to} className="dashboard-action-btn group flex h-full items-center justify-center rounded-xl border border-border bg-surface p-4">
+                        <div className="flex items-center justify-center gap-2.5">
                           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><Icon className="h-4 w-4" /></div>
                           <span className="text-sm font-semibold text-text">{action.label}</span>
                         </div>
-                        <ArrowRight className="h-3.5 w-3.5 text-muted transition-transform group-hover:translate-x-0.5" />
                       </Link>
                     </motion.div>
                   );

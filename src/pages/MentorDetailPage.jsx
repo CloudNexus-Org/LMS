@@ -3,7 +3,6 @@ import { Link, useParams, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
-  ArrowRight,
   ArrowUpRight,
   Star,
   GraduationCap,
@@ -187,12 +186,6 @@ export default function MentorDetailPage() {
                     <Button
                       size="lg"
                       className="relative"
-                      rightIcon={
-                        <ArrowRight
-                          size={16}
-                          className="transition-transform duration-200 group-hover/cta:translate-x-0.5"
-                        />
-                      }
                       href="#contact-mentor"
                     >
                       Book a session
@@ -202,12 +195,6 @@ export default function MentorDetailPage() {
                     size="lg"
                     variant="outline"
                     to="/tracks"
-                    rightIcon={
-                      <ArrowUpRight
-                        size={16}
-                        className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                      />
-                    }
                     className="group"
                   >
                     See their courses
@@ -398,7 +385,6 @@ export default function MentorDetailPage() {
                       size="md"
                       fullWidth
                       className="relative w-full"
-                      rightIcon={<ArrowRight size={14} />}
                     >
                       Request a session
                     </Button>
@@ -525,10 +511,9 @@ export default function MentorDetailPage() {
                 />
                 <Link
                   to="/tracks"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary transition-colors hover:text-primary-hover"
+                  className="inline-flex items-center justify-center text-[13px] font-semibold text-primary transition-colors hover:text-primary-hover"
                 >
                   Browse all tracks
-                  <ArrowRight size={14} aria-hidden />
                 </Link>
               </div>
 
@@ -721,12 +706,6 @@ export default function MentorDetailPage() {
                       to="/signup"
                       size="lg"
                       className="relative w-full sm:min-w-[180px] lg:w-full xl:w-auto"
-                      rightIcon={
-                        <ArrowRight
-                          size={16}
-                          className="transition-transform duration-200 group-hover/btn:translate-x-0.5"
-                        />
-                      }
                     >
                       Get started
                     </Button>
@@ -758,10 +737,9 @@ export default function MentorDetailPage() {
                 />
                 <Link
                   to="/mentors"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary hover:text-primary-hover"
+                  className="inline-flex items-center justify-center text-[13px] font-semibold text-primary hover:text-primary-hover"
                 >
                   See all
-                  <ArrowRight size={13} aria-hidden />
                 </Link>
               </div>
 
