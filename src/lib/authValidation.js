@@ -24,7 +24,13 @@ export function validateEmail(value) {
 export function validatePassword(value) {
   if (value == null || value.length === 0) return "Password is required";
   if (/^\s+$/.test(value)) return "Password is required";
-  if (value.length < 6) return "Password must be at least 6 characters long.";
+  if (value.length < 8) return "Password must be at least 8 characters long.";
+  return "";
+}
+
+export function validateLoginPassword(value) {
+  if (value == null || value.length === 0) return "Password is required";
+  if (/^\s+$/.test(value)) return "Password is required";
   return "";
 }
 
@@ -77,7 +83,7 @@ export function validateLoginForm(formData) {
   const values = trimLoginValues(formData);
   const errors = {
     email: validateEmail(values.email),
-    password: validatePassword(values.password),
+    password: validateLoginPassword(values.password),
   };
 
   return collectValidationResult(errors);
@@ -107,7 +113,7 @@ export function validateLoginField(name, formData) {
     case "email":
       return validateEmail(values.email);
     case "password":
-      return validatePassword(values.password);
+      return validateLoginPassword(values.password);
     default:
       return "";
   }

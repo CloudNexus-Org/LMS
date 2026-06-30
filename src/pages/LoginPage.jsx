@@ -12,11 +12,8 @@ import AuthPrimaryButton from "@/components/auth/AuthPrimaryButton";
 import AuthAutofillTrap from "@/components/auth/AuthAutofillTrap";
 import { authItemMotion } from "@/components/auth/authMotion";
 import useAuthStore from "@/store/useAuthStore";
-import { resolvePostLoginRedirect } from "@/lib/authNavigation";
-import {
-  authenticateDemoUser,
-  getDefaultDashboardForRole,
-} from "@/lib/demoCredentials";
+import { login as apiLogin } from "@/lib/api/authApi";
+import { dashboardPathForRole, parseApiError } from "@/lib/api/apiHelpers";
 import {
   trimLoginValues,
   validateLoginField,
@@ -44,6 +41,7 @@ export default function LoginPage() {
   });
 
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
 
   const isFormValid = useMemo(
     () => validateLoginForm(formData).isValid,
@@ -99,22 +97,21 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
+    setSubmitError("");
 
-    setTimeout(() => {
-      setIsLoading(false);
-
-      login(
-        {
-          ...account,
-          rememberMe,
-        },
-        "mock-jwt-token"
+    try {
+      const { user, accessToken, refreshToken } = await apiLogin(
+        trimmed.email,
+        trimmed.password,
+        rememberMe
       );
-
-      navigate(resolvePostLoginRedirect(redirectTo, account.role), {
-        replace: true,
-      });
-    }, 1200);
+      login(user, accessToken, refreshToken);
+      navigate(dashboardPathForRole(user.role));
+    } catch (err) {
+      setSubmitError(parseApiError(err));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -195,6 +192,15 @@ export default function LoginPage() {
             "Sign in"
           )}
         </AuthPrimaryButton>
+
+        {submitError ? (
+          <motion.p
+            {...authItemMotion(0.28)}
+            className="text-center text-[13px] text-danger"
+          >
+            {submitError}
+          </motion.p>
+        ) : null}
 
         <motion.p
           {...authItemMotion(0.3)}

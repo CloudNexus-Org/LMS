@@ -31,7 +31,11 @@ import {
   AlertCircle,
   Target,
   Languages,
+  Loader2,
 } from "lucide-react";
+import useAuthStore from "@/store/useAuthStore";
+import { submitCourseForApproval } from "@/lib/api/catalogApi";
+import { parseApiError } from "@/lib/api/apiHelpers";
 
 const EASE = [0.16, 1, 0.3, 1];
 const DRAFT_KEY = "lms-mentor-course-draft";
@@ -260,6 +264,7 @@ export default function UploadCoursePage() {
   const shouldReduceMotion = useReducedMotion();
   const fileInputRef = useRef(null);
   const draft = loadDraft();
+  const { user, token } = useAuthStore();
 
   const [step, setStep] = useState(draft?.step ?? 1);
   const [form, setForm] = useState({ ...INITIAL_FORM, ...draft?.form });
@@ -271,6 +276,8 @@ export default function UploadCoursePage() {
   const [errors, setErrors] = useState({});
   const [savedAt, setSavedAt] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const lessonCount = useMemo(
     () => modules.reduce((sum, m) => sum + m.lessons.length, 0),
@@ -340,10 +347,47 @@ export default function UploadCoursePage() {
     return Object.keys(next).length === 0;
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     if (!validateStep(step)) return;
-    if (step < STEPS.length) setStep((s) => s + 1);
-    else setSubmitted(true);
+    if (step < STEPS.length) {
+      setStep((s) => s + 1);
+      return;
+    }
+
+    if (!user || !token) {
+      setSubmitError("Please sign in as a mentor to submit your course.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const price =
+        pricingModel === "paid" ? parseFloat(customPrice || "0") : 0;
+
+      await submitCourseForApproval(user, token, {
+        title: form.title.trim(),
+        subtitle: form.subtitle?.trim() || "",
+        category: form.category,
+        level: form.level,
+        description: form.description.trim(),
+        outcomes: form.outcomes.filter((o) => o.trim()),
+        tags: form.tags,
+        modules: modules.length,
+        lessons: lessonCount,
+        pricingModel,
+        price: Number.isFinite(price) ? price : 0,
+        mentorName: user.fullName || user.username || user.email,
+      });
+
+      sessionStorage.removeItem(DRAFT_KEY);
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(parseApiError(err));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const goBack = () => setStep((s) => Math.max(1, s - 1));
@@ -1081,13 +1125,19 @@ export default function UploadCoursePage() {
             <button
               type="button"
               onClick={goNext}
-              disabled={step === STEPS.length && !allChecksPass}
+              disabled={(step === STEPS.length && !allChecksPass) || isSubmitting}
               className="upload-btn upload-btn-primary"
             >
               {step === STEPS.length ? (
-                <>
-                  <Zap className="h-4 w-4" /> Submit for review
-                </>
+                isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="h-4 w-4" /> Submit for review
+                  </>
+                )
               ) : (
                 <>
                   Save & continue <ArrowRight className="h-4 w-4" />
@@ -1095,6 +1145,9 @@ export default function UploadCoursePage() {
               )}
             </button>
           </div>
+          {submitError ? (
+            <p className="mt-2 text-center text-sm text-danger">{submitError}</p>
+          ) : null}
         </motion.div>
 
         <CoursePreviewPanel

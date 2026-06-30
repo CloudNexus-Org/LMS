@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   CheckSquare,
   XSquare,
@@ -13,6 +13,13 @@ import {
   Layers3,
 } from 'lucide-react';
 import { csvFilename, downloadCsvFromObjects } from '@/lib/exportCsv';
+import useAuthStore from '@/store/useAuthStore';
+import {
+  approveCourse,
+  fetchCourseApprovals,
+  rejectCourse,
+} from '@/lib/api/adminApi';
+import { parseApiError } from '@/lib/api/apiHelpers';
 
 const INITIAL_APPROVALS = [
   {
@@ -96,14 +103,53 @@ const STATUS_BADGE = {
 const FILTERS = ['All', 'Pending', 'Approved', 'Rejected'];
 
 export default function CourseApprovalsPage() {
+  const { user, token } = useAuthStore();
   const [approvals, setApprovals] = useState(INITIAL_APPROVALS);
   const [filter, setFilter] = useState('All');
   const [selected, setSelected] = useState(null);
+  const [actionError, setActionError] = useState('');
 
-  const approve = (id) =>
-    setApprovals((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'Approved' } : c)));
-  const reject = (id) =>
-    setApprovals((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'Rejected' } : c)));
+  useEffect(() => {
+    if (!user || !token) return;
+    const load = () =>
+      fetchCourseApprovals(user, token)
+        .then((list) => {
+          if (Array.isArray(list)) setApprovals(list);
+        })
+        .catch(() => {});
+    load();
+    const onFocus = () => load();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [user, token]);
+
+  const approve = async (id) => {
+    setActionError('');
+    try {
+      if (user && token) {
+        const updated = await approveCourse(user, token, id);
+        setApprovals((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      } else {
+        setApprovals((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'Approved' } : c)));
+      }
+    } catch (err) {
+      setActionError(parseApiError(err));
+    }
+  };
+
+  const reject = async (id) => {
+    setActionError('');
+    try {
+      if (user && token) {
+        const updated = await rejectCourse(user, token, id);
+        setApprovals((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      } else {
+        setApprovals((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'Rejected' } : c)));
+      }
+    } catch (err) {
+      setActionError(parseApiError(err));
+    }
+  };
 
   const filtered = filter === 'All' ? approvals : approvals.filter((c) => c.status === filter);
 

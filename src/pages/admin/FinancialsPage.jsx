@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   DollarSign,
   TrendingUp,
@@ -15,6 +15,8 @@ import {
   csvFilename,
   downloadMultiSectionCsv,
 } from "@/lib/exportCsv";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchFinancialSummary, fetchTransactions } from "@/lib/api/adminApi";
 
 const TRANSACTIONS = [
   {
@@ -103,12 +105,28 @@ function formatMoney(value) {
 }
 
 export default function FinancialsPage() {
+  const { user, token } = useAuthStore();
+  const [transactions, setTransactions] = useState(TRANSACTIONS);
+  const [summary, setSummary] = useState(null);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
 
+  useEffect(() => {
+    if (!user || !token) return;
+    Promise.all([
+      fetchTransactions(user, token),
+      fetchFinancialSummary(user, token),
+    ])
+      .then(([txList, sum]) => {
+        if (txList?.length) setTransactions(txList);
+        if (sum) setSummary(sum);
+      })
+      .catch(() => {});
+  }, [user, token]);
+
   const filtered = useMemo(
     () =>
-      TRANSACTIONS.filter((tx) => {
+      transactions.filter((tx) => {
         const q = search.toLowerCase();
         const matchQ =
           tx.id.toLowerCase().includes(q) ||
@@ -117,15 +135,15 @@ export default function FinancialsPage() {
         const matchType = typeFilter === "All" || tx.type === typeFilter;
         return matchQ && matchType;
       }),
-    [search, typeFilter]
+    [search, typeFilter, transactions]
   );
 
-  const sales = TRANSACTIONS.filter((t) => t.type === "Course Sale");
-  const payouts = TRANSACTIONS.filter((t) => t.type === "Mentor Payout");
-  const totalSales = 1248000;
-  const mentorPayouts = 819500;
-  const netRevenue = 428500;
-  const platformCut = totalSales - mentorPayouts;
+  const sales = transactions.filter((t) => t.type === "Course Sale");
+  const payouts = transactions.filter((t) => t.type === "Mentor Payout");
+  const totalSales = summary?.totalSales ?? 1248000;
+  const mentorPayouts = summary?.mentorPayouts ?? 819500;
+  const netRevenue = summary?.netRevenue ?? 428500;
+  const platformCut = summary?.platformCut ?? (totalSales - mentorPayouts);
 
   const stats = [
     {

@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { Star, Quote } from "lucide-react";
-import { testimonials } from "@/data/testimonials";
+import { testimonials as mockTestimonials } from "@/data/testimonials";
+import { fetchTestimonials } from "@/lib/api/catalogApi";
 
 import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
@@ -170,6 +172,14 @@ function ReviewCard({ item }) {
 }
 
 export default function TestimonialScroll() {
+  const [testimonials, setTestimonials] = useState(mockTestimonials);
+
+  useEffect(() => {
+    fetchTestimonials()
+      .then((data) => { if (data?.length) setTestimonials(data); })
+      .catch(() => {});
+  }, []);
+
   const firstRow = [...testimonials, ...testimonials];
 
   return (

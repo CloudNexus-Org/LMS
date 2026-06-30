@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Settings, Shield, Globe, CreditCard, Bell, Save, Sparkles,
   Server, Mail, Zap, Lock, ChevronRight,
   Database, AlertTriangle, Check,
   HardDrive
 } from 'lucide-react';
+import useAuthStore from '@/store/useAuthStore';
+import {
+  fetchAdminSettings,
+  mapSettingsToBackend,
+  mapSettingsToFrontend,
+  updateAdminSettings,
+} from '@/lib/api/adminApi';
+import { parseApiError } from '@/lib/api/apiHelpers';
 
 const NAV_ITEMS = [
   { id: 'general',       label: 'General',          icon: Settings },
@@ -58,8 +66,10 @@ function Section({ title, desc, icon: Icon, children }) {
 }
 
 export default function SystemSettingsPage() {
+  const { user, token } = useAuthStore();
   const [activeTab, setActiveTab] = useState('general');
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const [settings, setSettings] = useState({
     allowSignups: true,
@@ -79,11 +89,30 @@ export default function SystemSettingsPage() {
     maxVideoSize: 4096,
   });
 
+  useEffect(() => {
+    if (!user || !token) return;
+    fetchAdminSettings(user, token)
+      .then((backend) => {
+        if (backend && Object.keys(backend).length) {
+          setSettings((prev) => ({ ...prev, ...mapSettingsToFrontend(backend) }));
+        }
+      })
+      .catch(() => {});
+  }, [user, token]);
+
   const set = (key, val) => setSettings(prev => ({ ...prev, [key]: val }));
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+  const handleSave = async () => {
+    setSaveError('');
+    try {
+      if (user && token) {
+        await updateAdminSettings(user, token, mapSettingsToBackend(settings));
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setSaveError(parseApiError(err));
+    }
   };
 
   return (
@@ -106,6 +135,9 @@ export default function SystemSettingsPage() {
         >
           {saved ? <><Check className="h-4 w-4" /> Saved!</> : <><Save className="h-4 w-4" /> Save Changes</>}
         </button>
+        {saveError ? (
+          <p className="text-sm text-danger mt-2">{saveError}</p>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6">

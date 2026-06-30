@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-import { faqs } from '@/data/faq';
+import { faqs as mockFaqs } from '@/data/faq';
+import { fetchFaqs } from '@/lib/api/catalogApi';
 import SectionShell from "@/app/layouts/SectionShell";
 import Container from '@/components/ui/Container';
 
@@ -83,6 +84,13 @@ function FAQItem({ faq, isOpen, onToggle, id, index }) {
 
 export default function FAQ() {
   const [activeIndex, setActiveIndex] = useState(null);
+  const [faqs, setFaqs] = useState(mockFaqs);
+
+  useEffect(() => {
+    fetchFaqs()
+      .then((data) => { if (data?.length) setFaqs(data); })
+      .catch(() => {});
+  }, []);
 
   return (
     <SectionShell>

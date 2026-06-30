@@ -7,25 +7,28 @@ const useAuthStore = create(
       user: null,
       isAuthenticated: false,
       token: null,
+      refreshToken: null,
 
-      login: (userData, token) => set({
+      login: (userData, token, refreshToken = null) => set({
         user: userData,
         isAuthenticated: true,
-        token
+        token,
+        refreshToken,
       }),
 
       logout: () => set({
         user: null,
         isAuthenticated: false,
-        token: null
+        token: null,
+        refreshToken: null,
       }),
 
       updateUser: (updates) => set((state) => ({
-        user: state.user ? { ...state.user, ...updates } : null
-      }))
+        user: state.user ? { ...state.user, ...updates } : null,
+      })),
     }),
     {
-      name: 'cloud-nexus-auth', // unique name for localStorage key
+      name: 'cloud-nexus-auth',
     }
   )
 );
