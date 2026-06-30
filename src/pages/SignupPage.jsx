@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ROUTES } from "@/protectedroutes/routePaths";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
@@ -25,7 +26,10 @@ const SIGNUP_FIELDS = ["name", "email", "password", "confirmPassword"];
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const login = useAuthStore((state) => state.login);
+
+  const redirectTo = location.state?.from || ROUTES.student.dashboard;
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

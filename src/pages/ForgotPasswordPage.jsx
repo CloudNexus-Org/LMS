@@ -43,43 +43,46 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-bg text-text transition-colors duration-300">
+    <AuthShell
+      title="Forgot Password"
+      subtitle="Enter your email address and we'll send you an OTP to reset your password"
+    >
+      <form
+        onSubmit={handleSubmit}
+        autoComplete="off"
+        className="relative space-y-3.5"
+        noValidate
+      >
+        <AuthAutofillTrap />
 
-      {/* CENTER GLOW */}
-      <div
-        className="
-          pointer-events-none absolute
-          left-1/2 top-1/2
-          h-[700px] w-[700px]
-          -translate-x-1/2 -translate-y-1/2
-          rounded-lg
-          bg-blue-500/10
-          blur-[170px]
-        "
-      />
+        <AuthInput
+          label="E-mail Address"
+          name="email"
+          type="email"
+          inputMode="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Enter email address"
+          required
+          error={errors.email}
+          delay={0.1}
+          inputProps={{ onBlur: handleBlur }}
+        />
 
-      {/* GRID */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 blueprint-grid opacity-40"
-      />
+        <AuthPrimaryButton delay={0.18} disabled={isLoading || !isFormValid}>
+          {isLoading ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              Sending OTP...
+            </>
+          ) : (
+            "Send OTP"
+          )}
+        </AuthPrimaryButton>
 
-      {/* THEME TOGGLE */}
-      <div className="absolute right-5 top-5 z-30">
-        <ThemeToggle />
-      </div>
-
-      {/* MAIN */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-5 py-10">
-
-        <div
-          className="
-            relative
-            w-full max-w-[520px]
-            h-[540px]
-            overflow-hidden
-            rounded-[5px]
-          "
+        <motion.p
+          {...authItemMotion(0.24)}
+          className="pt-0.5 text-center text-[13px] text-muted"
         >
 
           {/* ANIMATED BORDER */}

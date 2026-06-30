@@ -92,7 +92,7 @@ const NOTIFICATIONS = [
     content: "You scored 92% on the Cloud Architecture Quiz. Review your answers and feedback.",
     time: "5 days ago",
     unread: false,
-    action: { label: "View results", to: "/student/quiz" },
+    action: { label: "View results", to: "/student/assignments" },
   },
   {
     id: 7,
@@ -155,7 +155,7 @@ const NOTIFICATIONS = [
     content: 'A new self-paced quiz is available for "Python for Data Engineering" — 15 questions, no time limit.',
     time: "4 days ago",
     unread: false,
-    action: { label: "Take quiz", to: "/student/quiz" },
+    action: { label: "Take quiz", to: "/student/assignments" },
   },
   {
     id: 14,

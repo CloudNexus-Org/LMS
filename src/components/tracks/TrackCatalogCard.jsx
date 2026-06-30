@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import useRequireStudentAuth from "@/hooks/useRequireStudentAuth";
+import { ROUTES } from "@/protectedroutes/routePaths";
 import {
   Calendar,
   Check,
@@ -42,6 +44,17 @@ export default function TrackCatalogCard({
   selected = false,
   onSelect,
 }) {
+  const navigate = useNavigate();
+  const requireStudentAuth = useRequireStudentAuth();
+  const paymentUrl = `${ROUTES.student.payment}?track=${track.id}`;
+
+  const handleBuyNow = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!requireStudentAuth(paymentUrl)) return;
+    navigate(paymentUrl);
+  };
+
   const accent = TRACK_COLOR_TINT[track.color] || TRACK_COLOR_TINT.primary;
   const Icon = track.icon;
   const isPayment = variant === "payment";
@@ -166,13 +179,13 @@ export default function TrackCatalogCard({
             )}
           </span>
         ) : (
-          <Link
-            to={`/student/payment?track=${track.id}`}
-            onClick={(e) => e.stopPropagation()}
+          <button
+            type="button"
+            onClick={handleBuyNow}
             className="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_2px_8px_-2px_var(--primary)] transition-all duration-200 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
             Buy Now
-          </Link>
+          </button>
         )}
       </div>
     </>

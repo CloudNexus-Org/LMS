@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
@@ -24,7 +24,11 @@ const LOGIN_FIELDS = ["email", "password"];
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const login = useAuthStore((state) => state.login);
+
+  const redirectTo =
+    location.state?.from || getDefaultDashboardForRole("student");
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +85,16 @@ export default function LoginPage() {
     setErrors(submitErrors);
 
     if (!isValid) return;
+
+    const account = authenticateDemoUser(trimmed.email, trimmed.password);
+
+    if (!account) {
+      setErrors({
+        email: "",
+        password: "Invalid email or password. Use a demo account below.",
+      });
+      return;
+    }
 
     setIsLoading(true);
     setSubmitError("");
@@ -195,11 +209,35 @@ export default function LoginPage() {
           Don&apos;t have an account yet?{" "}
           <Link
             to="/signup"
+            state={{ from: location.state?.from }}
             className="font-semibold text-primary transition-colors hover:text-primary-hover"
           >
             Sign Up
           </Link>
         </motion.p>
+
+        <motion.div
+          {...authItemMotion(0.34)}
+          className="mt-4 rounded-xl border border-border/80 bg-bg/60 p-3.5 text-left"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+            Demo credentials
+          </p>
+          <ul className="mt-2 space-y-1.5 text-[12px] text-muted">
+            <li>
+              <span className="font-medium text-text">Student:</span>{" "}
+              student@cloudnexus.com / password123
+            </li>
+            <li>
+              <span className="font-medium text-text">Mentor:</span>{" "}
+              mentor@cloudnexus.com / password123
+            </li>
+            <li>
+              <span className="font-medium text-text">Admin:</span>{" "}
+              admin@cloudnexus.com / password123
+            </li>
+          </ul>
+        </motion.div>
       </form>
     </AuthShell>
   );
