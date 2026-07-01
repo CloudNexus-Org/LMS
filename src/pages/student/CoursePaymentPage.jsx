@@ -10,11 +10,15 @@ import {
 import TrackCatalogCard from "@/components/tracks/TrackCatalogCard";
 import { getResumeUrlForTrack } from "@/features/learn/learningSession";
 import { tracks, formatTrackPrice, getTrackById } from "@/data/tracks";
+import useAuthStore from "@/store/useAuthStore";
+import { enrollInTrack } from "@/lib/api/enrollmentApi";
 
 const GST_RATE = 0.18;
 
 export default function CoursePaymentPage() {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [searchParams] = useSearchParams();
   const initialTrack = searchParams.get("track");
   const isSuccessView = searchParams.get("status") === "success";
@@ -40,7 +44,16 @@ export default function CoursePaymentPage() {
   const handlePay = async () => {
     if (!selected || paying) return;
     setPaying(true);
-    await new Promise((r) => setTimeout(r, 1200));
+    try {
+      if (user?.id && token) {
+        const courseId = selected.courseIds?.[0];
+        await enrollInTrack(user, token, { trackId: selected.id, courseId });
+      } else {
+        await new Promise((r) => setTimeout(r, 1200));
+      }
+    } catch {
+      await new Promise((r) => setTimeout(r, 800));
+    }
     setPaying(false);
     navigate(`/student/payment?track=${selected.id}&status=success`, { replace: true });
   };

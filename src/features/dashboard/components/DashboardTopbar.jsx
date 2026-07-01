@@ -1,16 +1,33 @@
 import { Menu, Search, Bell } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import Avatar from "@/components/ui/Avatar";
 import CartButton from "@/components/courses/CartButton";
 import useAuthStore from "@/store/useAuthStore";
+import { fetchUnreadCount, NOTIFICATIONS_CHANGED } from "@/lib/api/notificationApi";
 
 const STUDENT_AVATAR =
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80";
 
 export default function DashboardTopbar({ onMenuClick, role }) {
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
   const displayName = user?.fullName || user?.username || "Alex Chen";
+
+  useEffect(() => {
+    if (!user?.id || !token) return;
+    const refresh = () => {
+      fetchUnreadCount(user, token)
+        .then(setUnreadCount)
+        .catch(() => {});
+    };
+    refresh();
+    window.addEventListener(NOTIFICATIONS_CHANGED, refresh);
+    return () => window.removeEventListener(NOTIFICATIONS_CHANGED, refresh);
+  }, [user?.id, token, location.pathname]);
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-surface px-0 z-10 shadow-sm">
 
@@ -46,7 +63,9 @@ export default function DashboardTopbar({ onMenuClick, role }) {
           className="relative flex h-10 w-10 items-center justify-center rounded-full text-muted transition-colors hover:bg-bg hover:text-text"
         >
           <Bell className="h-5 w-5" />
-          <span className="absolute right-2 top-2 flex h-2 w-2 rounded-full bg-primary ring-2 ring-surface" />
+          {unreadCount > 0 && (
+            <span className="absolute right-2 top-2 flex h-2 w-2 rounded-full bg-primary ring-2 ring-surface" />
+          )}
         </Link>
 
         {/* DIVIDER */}

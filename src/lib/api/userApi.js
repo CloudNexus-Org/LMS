@@ -17,6 +17,14 @@ export async function updateProfile(user, token, payload) {
   return putJson(`${base}/api/users/profile`, payload, authHeaders(user, token));
 }
 
+export async function updateAvatar(user, token, avatarUrl) {
+  return patchJson(
+    `${base}/api/users/profile/avatar`,
+    { avatarUrl },
+    authHeaders(user, token)
+  );
+}
+
 export async function changePasswordViaProfile(user, token, payload) {
   return putJson(`${base}/api/users/profile/settings`, payload, authHeaders(user, token));
 }

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   Activity,
@@ -13,7 +13,8 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import { buildSnapshot, formatMentorCurrency } from "@/data/mentorDashboard";
+import { buildSnapshot, fetchMentorDashboardSnapshot, formatMentorCurrency } from "@/data/mentorDashboard";
+import useAuthStore from "@/store/useAuthStore";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -110,17 +111,26 @@ function AnimatedProgress({ value, color, delay = 0 }) {
 
 export default function AnalyticsPage() {
   const shouldReduceMotion = useReducedMotion();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [snapshot, setSnapshot] = useState(() => buildSnapshot());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [chartKey, setChartKey] = useState(0);
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    await new Promise((r) => setTimeout(r, 650));
-    setSnapshot(buildSnapshot());
-    setChartKey((k) => k + 1);
-    setIsRefreshing(false);
-  }, []);
+    try {
+      const next = await fetchMentorDashboardSnapshot({ user, token });
+      setSnapshot(next);
+      setChartKey((k) => k + 1);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [user, token]);
+
+  useEffect(() => {
+    handleRefresh();
+  }, [handleRefresh]);
 
   const kpis = useMemo(
     () => [

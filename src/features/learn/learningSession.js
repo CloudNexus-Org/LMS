@@ -8,12 +8,26 @@ const DEFAULT_TRACK_ID = "cloud";
 
 export function saveLastLearningSession({ trackId, lessonId, trackName, lessonTitle }) {
   if (!trackId || !lessonId) return;
-  setStoredJSON(SESSION_KEY, {
+  const payload = {
     trackId,
     lessonId,
     trackName: trackName || "",
     lessonTitle: lessonTitle || "",
     updatedAt: Date.now(),
+  };
+  setStoredJSON(SESSION_KEY, payload);
+
+  import("@/store/useAuthStore").then(({ default: useAuthStore }) => {
+    const { user, token } = useAuthStore.getState();
+    if (!user?.id || !token) return;
+    import("@/lib/api/learningApi").then(({ saveLearningSession }) => {
+      const numericLessonId = Number(lessonId);
+      saveLearningSession(user, token, {
+        trackId,
+        lastLessonId: Number.isNaN(numericLessonId) ? undefined : numericLessonId,
+        lastPositionSec: 0,
+      }).catch(() => {});
+    });
   });
 }
 

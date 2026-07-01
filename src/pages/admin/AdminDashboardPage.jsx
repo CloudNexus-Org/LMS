@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Users,
   DollarSign,
@@ -27,6 +27,8 @@ import {
   csvFilename,
   downloadMultiSectionCsv,
 } from "@/lib/exportCsv";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchAdminDashboard } from "@/lib/api/analyticsApi";
 
 function MiniSparkline({ data, className = "" }) {
   const w = 88;
@@ -340,7 +342,38 @@ function buildDashboardSnapshot(
   };
 }
 
+function mergeAdminDashboardApi(prev, apiData) {
+  if (!apiData || typeof apiData !== "object") return prev;
+
+  const merged = { ...prev, ...apiData };
+
+  if (Array.isArray(apiData.systemHealth)) {
+    merged.systemHealth = apiData.systemHealth.map((sh, index) => {
+      const baseItem =
+        BASE_SYSTEM_HEALTH.find((b) => b.label === sh.label) ||
+        BASE_SYSTEM_HEALTH[index] ||
+        BASE_SYSTEM_HEALTH[0];
+      return {
+        ...baseItem,
+        ...sh,
+        icon: baseItem.icon,
+      };
+    });
+  }
+
+  if (apiData.revenueData && typeof apiData.revenueData === "object") {
+    merged.revenueData = {
+      ...prev.revenueData,
+      ...apiData.revenueData,
+    };
+  }
+
+  return merged;
+}
+
 export default function AdminDashboardPage() {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [activeTab, setActiveTab] = useState("week");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [snapshot, setSnapshot] = useState(() => buildDashboardSnapshot());
@@ -349,13 +382,24 @@ export default function AdminDashboardPage() {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      setSnapshot(buildDashboardSnapshot());
+      if (user?.id && token) {
+        const data = await fetchAdminDashboard(user, token);
+        setSnapshot((prev) => mergeAdminDashboardApi(prev, data));
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 700));
+        setSnapshot(buildDashboardSnapshot());
+      }
       setChartKey((key) => key + 1);
+    } catch {
+      setSnapshot(buildDashboardSnapshot());
     } finally {
       setIsRefreshing(false);
     }
-  }, []);
+  }, [user, token]);
+
+  useEffect(() => {
+    handleRefresh();
+  }, [handleRefresh]);
 
   const kpis = useMemo(
     () => [
@@ -598,7 +642,7 @@ export default function AdminDashboardPage() {
             <span className="dashboard-chart-legend dashboard-chart-legend-primary">Sales</span>
             <span className="dashboard-chart-legend dashboard-chart-legend-success">Payouts</span>
           </div>
-          <RevenueLineChart key={chartKey} data={revenueData[activeTab]} />
+          <RevenueLineChart key={chartKey} data={revenueData[activeTab] ?? revenueData.week ?? []} />
         </Card>
 
         <Card className="flex h-full flex-col p-4">

@@ -1,12 +1,24 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Award } from "lucide-react";
 import { getCertificateById } from "@/data/certificates";
 import CertificateViewer from "@/features/certificates/CertificateViewer";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchCertificateById } from "@/lib/api/certificateApi";
 
 export default function CertificateDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const cert = getCertificateById(id);
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const [cert, setCert] = useState(() => getCertificateById(id));
+
+  useEffect(() => {
+    if (!user?.id || !token || !id) return;
+    fetchCertificateById(user, token, id)
+      .then((data) => { if (data) setCert(data); })
+      .catch(() => {});
+  }, [user?.id, token, id]);
 
   if (!cert) {
     return (

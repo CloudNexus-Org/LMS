@@ -18,8 +18,13 @@ import {
 } from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
 import Button from "@/components/ui/Button";
-import { fetchProfile, updateProfile } from "@/lib/api/userApi";
+import { fetchProfile, updateProfile, updateAvatar } from "@/lib/api/userApi";
 import { logout as apiLogout } from "@/lib/api/authApi";
+import {
+  fetchNotificationPreferences,
+  updateNotificationPreferences,
+} from "@/lib/api/notificationApi";
+import { uploadAvatar, resolveMediaUrl } from "@/lib/api/mediaApi";
 
 const TABS = [
   { id: "general", label: "My Profile", icon: User },
@@ -81,6 +86,8 @@ export default function ProfileSettingsPage() {
   const [editingPersonal, setEditingPersonal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [notificationPrefs, setNotificationPrefs] = useState(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [profile, setProfile] = useState(() => ({
     ...PROFILE,
     firstName: authUser?.fullName?.split(" ")[0] || PROFILE.firstName,
@@ -109,6 +116,13 @@ export default function ProfileSettingsPage() {
   }, [authUser?.id, token]);
 
   useEffect(() => {
+    if (activeTab !== "preferences" || !authUser?.id || !token) return;
+    fetchNotificationPreferences(authUser, token)
+      .then(setNotificationPrefs)
+      .catch(() => {});
+  }, [activeTab, authUser?.id, token]);
+
+  useEffect(() => {
     if (!logoutOpen) return;
     const onKeyDown = (e) => {
       if (e.key === "Escape") setLogoutOpen(false);
@@ -116,6 +130,35 @@ export default function ProfileSettingsPage() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [logoutOpen]);
+
+  const handleTogglePushNotifications = async () => {
+    if (!authUser?.id || !token) return;
+    const nextPushEnabled = !(notificationPrefs?.pushEnabled ?? true);
+    try {
+      const updated = await updateNotificationPreferences(authUser, token, {
+        pushEnabled: nextPushEnabled,
+      });
+      setNotificationPrefs(updated);
+    } catch {
+      // keep existing UI state on failure
+    }
+  };
+
+  const handleAvatarUpload = async (file) => {
+    if (!file || !authUser?.id || !token) return;
+    setUploadingAvatar(true);
+    try {
+      const uploaded = await uploadAvatar(authUser, token, file);
+      const avatarUrl = resolveMediaUrl(uploaded);
+      await updateAvatar(authUser, token, avatarUrl);
+      setProfile((prev) => ({ ...prev, avatar: avatarUrl }));
+      updateUser({ avatar: avatarUrl });
+    } catch {
+      /* keep current avatar */
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -240,9 +283,16 @@ export default function ProfileSettingsPage() {
                         <p className="mt-1 text-xs text-muted">
                           JPG, PNG or GIF. Maximum size of 800KB.
                         </p>
-                        <button type="button" className="settings-upload-link mt-2">
-                          Upload New Photo
-                        </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          id="avatar-upload"
+                          onChange={(e) => handleAvatarUpload(e.target.files?.[0])}
+                        />
+                        <label htmlFor="avatar-upload" className="settings-upload-link mt-2 cursor-pointer">
+                          {uploadingAvatar ? "Uploading…" : "Upload New Photo"}
+                        </label>
                         <button
                           type="button"
                           className="settings-edit-btn ml-3"
@@ -477,7 +527,10 @@ export default function ProfileSettingsPage() {
                   {
                     icon: Smartphone,
                     title: "Mobile Notifications",
-                    desc: "Receive course updates on your phone.",
+                    desc: (notificationPrefs?.pushEnabled ?? true)
+                      ? "Receive course updates on your phone."
+                      : "Push notifications are turned off on your phone.",
+                    onConfigure: handleTogglePushNotifications,
                   },
                 ].map((item) => {
                   const Icon = item.icon;
@@ -490,7 +543,11 @@ export default function ProfileSettingsPage() {
                           </div>
                           <p className="text-xs text-muted">{item.desc}</p>
                         </div>
-                        <button type="button" className="settings-edit-btn">
+                        <button
+                          type="button"
+                          className="settings-edit-btn"
+                          onClick={item.onConfigure}
+                        >
                           Configure
                         </button>
                       </div>

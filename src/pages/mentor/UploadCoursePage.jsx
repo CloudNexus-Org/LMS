@@ -33,7 +33,19 @@ import {
   Loader2,
 } from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
-import { submitCourseForApproval } from "@/lib/api/catalogApi";
+import {
+  fetchCourse,
+  fetchCourseDrafts,
+  submitCourseForApproval,
+  updateCoursePricing,
+} from "@/lib/api/contentApi";
+import {
+  courseToUiModules,
+  emitContentChanged,
+  ensureCourseOnServer,
+  syncCurriculumToBackend,
+} from "@/lib/api/contentSync";
+import { uploadCourseThumbnail, uploadVideo, resolveMediaUrl } from "@/lib/api/mediaApi";
 import { parseApiError } from "@/lib/api/apiHelpers";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -262,6 +274,7 @@ function CoursePreviewPanel({ form, modules, pricingModel, customPrice, thumbnai
 export default function UploadCoursePage() {
   const shouldReduceMotion = useReducedMotion();
   const fileInputRef = useRef(null);
+  const videoInputRef = useRef(null);
   const draft = loadDraft();
   const { user, token } = useAuthStore();
 
@@ -271,6 +284,11 @@ export default function UploadCoursePage() {
   const [pricingModel, setPricingModel] = useState(draft?.pricingModel ?? "paid");
   const [customPrice, setCustomPrice] = useState(draft?.customPrice ?? "89.99");
   const [thumbnailPreview, setThumbnailPreview] = useState(draft?.thumbnailPreview ?? null);
+  const [courseId, setCourseId] = useState(draft?.courseId ?? null);
+  const [thumbnailUrl, setThumbnailUrl] = useState(draft?.thumbnailUrl ?? null);
+  const [pendingThumbnailFile, setPendingThumbnailFile] = useState(null);
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const [uploadingVideos, setUploadingVideos] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [errors, setErrors] = useState({});
   const [savedAt, setSavedAt] = useState(null);
@@ -310,10 +328,57 @@ export default function UploadCoursePage() {
   const persistDraft = useCallback(() => {
     sessionStorage.setItem(
       DRAFT_KEY,
-      JSON.stringify({ step, form, modules, pricingModel, customPrice, thumbnailPreview })
+      JSON.stringify({
+        step,
+        form,
+        modules,
+        pricingModel,
+        customPrice,
+        thumbnailPreview,
+        courseId,
+        thumbnailUrl,
+      })
     );
     setSavedAt(new Date());
-  }, [step, form, modules, pricingModel, customPrice, thumbnailPreview]);
+  }, [step, form, modules, pricingModel, customPrice, thumbnailPreview, courseId, thumbnailUrl]);
+
+  useEffect(() => {
+    if (!user?.id || !token) return;
+    const id = draft?.courseId;
+    const load = id
+      ? fetchCourse(user, token, id)
+      : fetchCourseDrafts(user, token).then((list) => {
+          const latest = Array.isArray(list) ? list[0] : null;
+          return latest ? fetchCourse(user, token, latest.id) : null;
+        });
+    load
+      .then((course) => {
+        if (!course) return;
+        setCourseId(course.id);
+        if (course.thumbnailUrl) {
+          setThumbnailUrl(course.thumbnailUrl);
+          setThumbnailPreview(course.thumbnailUrl);
+        }
+        setForm((prev) => ({
+          ...prev,
+          title: course.title || prev.title,
+          subtitle: course.subtitle || prev.subtitle,
+          category: course.category || prev.category,
+          level: course.level || prev.level,
+          description: course.description || prev.description,
+          language: course.language || prev.language,
+          tags: course.tags?.length ? course.tags : prev.tags,
+          outcomes: course.outcomes?.length ? course.outcomes : prev.outcomes,
+          requirements: course.requirements || prev.requirements,
+        }));
+        if (course.pricingPlan) setPricingModel(course.pricingPlan);
+        if (course.price != null) setCustomPrice(String(course.price));
+        const uiModules = courseToUiModules(course);
+        if (uiModules?.length) setModules(uiModules);
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, token]);
 
   useEffect(() => {
     const timer = setTimeout(persistDraft, 600);
@@ -348,7 +413,29 @@ export default function UploadCoursePage() {
 
   const goNext = async () => {
     if (!validateStep(step)) return;
+
     if (step < STEPS.length) {
+      if (step === 1 && user?.id && token) {
+        try {
+          const saved = await ensureCourseOnServer(user, token, courseId, form, thumbnailUrl);
+          const id = saved?.id || saved?.courseId || courseId;
+          if (id) setCourseId(id);
+          if (pendingThumbnailFile && id) {
+            setUploadingThumbnail(true);
+            const uploaded = await uploadCourseThumbnail(user, token, pendingThumbnailFile, id);
+            const url = resolveMediaUrl(uploaded);
+            setThumbnailUrl(url);
+            setThumbnailPreview(url);
+            setPendingThumbnailFile(null);
+            await ensureCourseOnServer(user, token, id, form, url);
+          }
+        } catch (err) {
+          setSubmitError(parseApiError(err));
+          return;
+        } finally {
+          setUploadingThumbnail(false);
+        }
+      }
       setStep((s) => s + 1);
       return;
     }
@@ -362,23 +449,33 @@ export default function UploadCoursePage() {
     setSubmitError("");
 
     try {
+      const saved = await ensureCourseOnServer(user, token, courseId, form, thumbnailUrl);
+      let id = saved?.id || saved?.courseId || courseId;
+      if (!id) throw new Error("Could not create course draft");
+
+      if (pendingThumbnailFile) {
+        const uploaded = await uploadCourseThumbnail(user, token, pendingThumbnailFile, id);
+        const url = resolveMediaUrl(uploaded);
+        setThumbnailUrl(url);
+        setThumbnailPreview(url);
+        setPendingThumbnailFile(null);
+        await ensureCourseOnServer(user, token, id, form, url);
+      }
+
+      const synced = await syncCurriculumToBackend(user, token, id, modules);
+      setModules(synced);
+      setCourseId(id);
+
       const price =
         pricingModel === "paid" ? parseFloat(customPrice || "0") : 0;
 
-      await submitCourseForApproval(user, token, {
-        title: form.title.trim(),
-        subtitle: form.subtitle?.trim() || "",
-        category: form.category,
-        level: form.level,
-        description: form.description.trim(),
-        outcomes: form.outcomes.filter((o) => o.trim()),
-        tags: form.tags,
-        modules: modules.length,
-        lessons: lessonCount,
-        pricingModel,
+      await updateCoursePricing(user, token, id, {
+        pricingPlan: pricingModel,
         price: Number.isFinite(price) ? price : 0,
-        mentorName: user.fullName || user.username || user.email,
       });
+
+      await submitCourseForApproval(user, token, id);
+      emitContentChanged();
 
       sessionStorage.removeItem(DRAFT_KEY);
       setSubmitted(true);
@@ -391,11 +488,78 @@ export default function UploadCoursePage() {
 
   const goBack = () => setStep((s) => Math.max(1, s - 1));
 
-  const handleThumbnail = (file) => {
+  const handleThumbnail = async (file) => {
     if (!file || !file.type.startsWith("image/")) return;
     const reader = new FileReader();
     reader.onload = (e) => setThumbnailPreview(e.target.result);
     reader.readAsDataURL(file);
+    setPendingThumbnailFile(file);
+
+    if (!user?.id || !token) return;
+
+    try {
+      setUploadingThumbnail(true);
+      let id = courseId;
+      if (!id) {
+        const saved = await ensureCourseOnServer(user, token, null, form, null);
+        id = saved?.id || saved?.courseId;
+        if (id) setCourseId(id);
+      }
+      if (!id) return;
+
+      const uploaded = await uploadCourseThumbnail(user, token, file, id);
+      const url = resolveMediaUrl(uploaded);
+      setThumbnailUrl(url);
+      setThumbnailPreview(url);
+      setPendingThumbnailFile(null);
+      await ensureCourseOnServer(user, token, id, form, url);
+    } catch {
+      /* keep local preview; upload retries on submit */
+    } finally {
+      setUploadingThumbnail(false);
+    }
+  };
+
+  const handleBulkVideos = async (fileList) => {
+    if (!user?.id || !token || !fileList?.length) return;
+    const files = Array.from(fileList).filter((f) => f.type.startsWith("video/"));
+    if (!files.length) return;
+
+    setUploadingVideos(true);
+    try {
+      let id = courseId;
+      if (!id) {
+        const saved = await ensureCourseOnServer(user, token, null, form, thumbnailUrl);
+        id = saved?.id || saved?.courseId;
+        if (id) setCourseId(id);
+      }
+      if (!id) return;
+
+      const videoLessons = modules.flatMap((m) =>
+        m.lessons.filter((l) => l.type === "video" && !l.contentUrl).map((l) => ({ moduleId: m.id, lesson: l }))
+      );
+
+      const updatedModules = [...modules];
+      for (let i = 0; i < files.length && i < videoLessons.length; i++) {
+        const uploaded = await uploadVideo(user, token, files[i]);
+        const url = resolveMediaUrl(uploaded);
+        const { moduleId, lesson } = videoLessons[i];
+        const modIdx = updatedModules.findIndex((m) => m.id === moduleId);
+        if (modIdx >= 0) {
+          updatedModules[modIdx] = {
+            ...updatedModules[modIdx],
+            lessons: updatedModules[modIdx].lessons.map((l) =>
+              l.id === lesson.id ? { ...l, contentUrl: url, mediaFileId: uploaded.id } : l
+            ),
+          };
+        }
+      }
+      setModules(updatedModules);
+    } catch {
+      /* silent — user can retry */
+    } finally {
+      setUploadingVideos(false);
+    }
   };
 
   const addTag = () => {
@@ -838,13 +1002,34 @@ export default function UploadCoursePage() {
                     </div>
                   )}
 
-                  <div className="upload-dropzone upload-dropzone-compact">
+                  <div
+                    className="upload-dropzone upload-dropzone-compact"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => videoInputRef.current?.click()}
+                    onKeyDown={(e) => e.key === "Enter" && videoInputRef.current?.click()}
+                  >
+                    <input
+                      ref={videoInputRef}
+                      type="file"
+                      accept="video/*"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        handleBulkVideos(e.target.files);
+                        e.target.value = "";
+                      }}
+                    />
                     <Video className="h-6 w-6 text-accent" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-bold text-text">Bulk upload videos</p>
-                      <p className="text-xs text-muted">MP4, MOV · Auto-transcoded & captioned</p>
+                      <p className="text-sm font-bold text-text">
+                        {uploadingVideos ? "Uploading videos…" : "Bulk upload videos"}
+                      </p>
+                      <p className="text-xs text-muted">MP4, MOV · Attached to video lessons in order</p>
                     </div>
-                    <span className="upload-btn upload-btn-outline upload-btn-sm">Browse</span>
+                    <span className="upload-btn upload-btn-outline upload-btn-sm">
+                      {uploadingVideos ? <Loader2 className="h-4 w-4 animate-spin" /> : "Browse"}
+                    </span>
                   </div>
 
                   <div className="space-y-3">
