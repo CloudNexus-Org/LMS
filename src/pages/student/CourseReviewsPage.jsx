@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen,
@@ -17,6 +17,8 @@ import {
   loadStudentReviews,
   upsertCourseReview,
 } from "@/data/courseReviews";
+import useAuthStore from "@/store/useAuthStore";
+import { deleteReview, fetchMyReviews, submitReview, updateReview } from "@/lib/api/reviewApi";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -97,11 +99,38 @@ function StarDisplay({ rating, size = "sm" }) {
 }
 
 export default function CourseReviewsPage() {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [reviews, setReviews] = useState(() => loadStudentReviews());
   const [filter, setFilter] = useState("all");
   const [activeCourse, setActiveCourse] = useState(null);
   const [form, setForm] = useState({ rating: 0, title: "", body: "" });
   const [successId, setSuccessId] = useState(null);
+
+  useEffect(() => {
+    if (!user?.id || !token) return;
+    fetchMyReviews(user, token)
+      .then((list) => {
+        if (!list?.length) return;
+        const mapped = {};
+        list.forEach((r) => {
+          const courseId = r.courseId;
+          if (courseId != null) {
+            mapped[courseId] = {
+              courseId,
+              rating: r.rating,
+              title: r.title,
+              body: r.body || r.comment,
+              createdAt: r.createdAt,
+              helpful: r.helpful ?? 0,
+              reviewId: r.id,
+            };
+          }
+        });
+        setReviews((prev) => ({ ...prev, ...mapped }));
+      })
+      .catch(() => {});
+  }, [user?.id, token]);
 
   const stats = useMemo(() => getReviewStats(reviews, STUDENT_COURSES_FOR_REVIEW), [reviews]);
 
@@ -129,19 +158,38 @@ export default function CourseReviewsPage() {
     setForm({ rating: 0, title: "", body: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!activeCourse || form.rating < 1 || !form.title.trim() || !form.body.trim()) return;
 
     const next = upsertCourseReview(reviews, activeCourse.id, form);
     setReviews(next);
+
+    if (user?.id && token) {
+      const existing = reviews[activeCourse.id];
+      const body = { rating: form.rating, title: form.title, body: form.body };
+      try {
+        if (existing?.reviewId) {
+          await updateReview(user, token, existing.reviewId, body);
+        } else {
+          await submitReview(user, token, activeCourse.id, body);
+        }
+      } catch {
+        /* keep local state */
+      }
+    }
+
     setSuccessId(activeCourse.id);
     closeForm();
     setTimeout(() => setSuccessId(null), 2500);
   };
 
-  const handleDelete = (courseId) => {
+  const handleDelete = async (courseId) => {
+    const existing = reviews[courseId];
     setReviews(deleteCourseReview(reviews, courseId));
+    if (user?.id && token && existing?.reviewId) {
+      deleteReview(user, token, existing.reviewId).catch(() => {});
+    }
   };
 
   return (

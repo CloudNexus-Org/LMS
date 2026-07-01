@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, BookOpen, Sparkles } from 'lucide-react';
@@ -13,7 +13,7 @@ import {
   getExploreSectionItems,
 } from '@/data/exploreMenu';
 import { featuredCourses } from '@/data/courses';
-import { filterCoursesByExploreItem } from '@/lib/exploreFilters';
+import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import { pageShell } from '@/styles/theme';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -101,11 +101,21 @@ function ExploreHub({ type }) {
 function ExploreDetail({ type, slug }) {
   const shouldReduceMotion = useReducedMotion();
   const item = findExploreItem(type, slug);
+  const [catalog, setCatalog] = useState(featuredCourses);
+
+  useEffect(() => {
+    fetchPublishedCourses()
+      .then((data) => { if (data?.length) setCatalog(data); })
+      .catch(() => {});
+  }, []);
 
   const filtered = useMemo(() => {
-    if (!item?.keywords) return featuredCourses;
-    return filterCoursesByExploreItem(type, slug);
-  }, [type, slug, item]);
+    if (!item?.keywords) return catalog;
+    return catalog.filter((course) => {
+      const haystack = `${course.title} ${course.description} ${course.slug} ${course.professor}`.toLowerCase();
+      return item.keywords.some((kw) => haystack.includes(kw.toLowerCase()));
+    });
+  }, [type, slug, item, catalog]);
 
   if (!item) {
     return <Navigate to={explorePath(type)} replace />;
@@ -150,7 +160,7 @@ function ExploreDetail({ type, slug }) {
             </h1>
             <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
               {filtered.length} course{filtered.length !== 1 ? 's' : ''} matched for this topic.
-              {filtered.length < featuredCourses.length && ' Refine with search on the full catalog.'}
+              {filtered.length < catalog.length && ' Refine with search on the full catalog.'}
             </p>
           </motion.div>
 

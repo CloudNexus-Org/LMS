@@ -13,6 +13,8 @@ import {
   BookOpen,
 } from "lucide-react";
 import { useNotesAutosave } from "@/features/learn/hooks/useNotesAutosave";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchLessonQa, postLessonQuestion } from "@/lib/api/learningApi";
 import {
   getLessonResources,
   downloadResource,
@@ -21,6 +23,8 @@ import {
   addLessonQuestion,
   getReadingContent,
 } from "@/data/lessonContent";
+import { fetchLessonResources, fetchLessonTranscript } from "@/lib/api/contentApi";
+import { resolveMediaUrl } from "@/lib/api/mediaApi";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -112,7 +116,26 @@ export const NotesPane = memo(function NotesPane({ trackId, lessonId }) {
 });
 
 export function TranscriptPane({ lesson, onSeek }) {
-  const lines = getTranscriptLines(lesson);
+  const [lines, setLines] = useState(() => getTranscriptLines(lesson));
+
+  useEffect(() => {
+    setLines(getTranscriptLines(lesson));
+    const numericId = Number(lesson?.id);
+    if (Number.isNaN(numericId)) return;
+    fetchLessonTranscript(numericId)
+      .then((data) => {
+        if (data?.lines?.length) setLines(data.lines);
+        else if (data?.transcriptText) {
+          setLines(
+            data.transcriptText
+              .split("\n")
+              .map((text, i) => ({ t: `0:${String(i * 5).padStart(2, "0")}`, seconds: i * 5, text: text.trim() }))
+              .filter((l) => l.text)
+          );
+        }
+      })
+      .catch(() => {});
+  }, [lesson?.id]);
 
   return (
     <motion.div {...fadeIn} className="learn-pane">
@@ -137,12 +160,39 @@ export function TranscriptPane({ lesson, onSeek }) {
 }
 
 export function ResourcesPane({ lesson }) {
-  const resources = getLessonResources(lesson);
+  const [resources, setResources] = useState(() => getLessonResources(lesson));
   const [downloading, setDownloading] = useState(null);
   const [downloaded, setDownloaded] = useState({});
 
+  useEffect(() => {
+    setResources(getLessonResources(lesson));
+    const numericId = Number(lesson?.id);
+    if (Number.isNaN(numericId)) return;
+    fetchLessonResources(numericId)
+      .then((list) => {
+        if (!Array.isArray(list) || !list.length) return;
+        setResources(
+          list.map((r) => ({
+            id: r.id,
+            label: r.title || r.label,
+            meta: r.fileType || r.meta || "file",
+            type: r.type || (r.fileUrl?.startsWith("http") ? "link" : "file"),
+            url: resolveMediaUrl(r.fileUrl) || r.fileUrl,
+          }))
+        );
+      })
+      .catch(() => {});
+  }, [lesson?.id]);
+
   const handleDownload = async (resource) => {
     setDownloading(resource.id);
+    if (resource.url) {
+      window.open(resource.url, "_blank", "noopener,noreferrer");
+      setDownloading(null);
+      setDownloaded((prev) => ({ ...prev, [resource.id]: true }));
+      setTimeout(() => setDownloaded((prev) => ({ ...prev, [resource.id]: false })), 2000);
+      return;
+    }
     await new Promise((r) => setTimeout(r, 400));
     const ok = downloadResource(resource);
     setDownloading(null);
@@ -195,6 +245,8 @@ export function ResourcesPane({ lesson }) {
 }
 
 export function QAPane({ trackId, lessonId, lesson }) {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [threads, setThreads] = useState(() => loadLessonQA(trackId, lessonId));
   const [question, setQuestion] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -202,15 +254,32 @@ export function QAPane({ trackId, lessonId, lesson }) {
   useEffect(() => {
     setThreads(loadLessonQA(trackId, lessonId));
     setQuestion("");
+    const numericId = Number(lessonId);
+    if (!Number.isNaN(numericId)) {
+      fetchLessonQa(numericId)
+        .then((list) => { if (list?.length) setThreads(list); })
+        .catch(() => {});
+    }
   }, [trackId, lessonId]);
 
   const handleAsk = async (e) => {
     e.preventDefault();
     if (!question.trim()) return;
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 350));
-    const next = addLessonQuestion(trackId, lessonId, question);
-    setThreads(next);
+    const numericId = Number(lessonId);
+    try {
+      if (user?.id && token && !Number.isNaN(numericId)) {
+        const posted = await postLessonQuestion(user, token, numericId, question);
+        setThreads((prev) => [posted, ...prev]);
+      } else {
+        await new Promise((r) => setTimeout(r, 350));
+        const next = addLessonQuestion(trackId, lessonId, question);
+        setThreads(next);
+      }
+    } catch {
+      const next = addLessonQuestion(trackId, lessonId, question);
+      setThreads(next);
+    }
     setQuestion("");
     setSubmitting(false);
   };
@@ -272,7 +341,7 @@ export function QAPane({ trackId, lessonId, lesson }) {
 }
 
 export function ReadingPane({ lesson }) {
-  const content = getReadingContent(lesson);
+  const content = lesson?.readingContent || getReadingContent(lesson);
 
   return (
     <motion.div {...fadeIn} className="learn-pane space-y-4">

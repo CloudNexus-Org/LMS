@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Edit3, EyeOff, Plus, Users, Star, BarChart, Clock,
   ChevronDown, GripVertical, CheckCircle2,
@@ -7,8 +7,11 @@ import {
   AlertCircle, Download
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import useAuthStore from '@/store/useAuthStore';
+import { fetchCourseDrafts, publishCourse, fetchCourse } from '@/lib/api/contentApi';
+import { CONTENT_CHANGED, mapDraftToManageCourse } from '@/lib/api/contentSync';
 
-const COURSES = [
+const FALLBACK_COURSES = [
   {
     id: 1,
     title: 'Advanced State Management',
@@ -69,17 +72,78 @@ function LessonTypeIcon({ type }) {
 }
 
 export default function ManageLessonsPage() {
-  const [expandedCourse, setExpandedCourse] = useState(1);
+  const { user, token } = useAuthStore();
+  const [courses, setCourses] = useState(FALLBACK_COURSES);
+  const [loading, setLoading] = useState(false);
+  const [expandedCourse, setExpandedCourse] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
 
-  const totalStudents = COURSES.reduce((a, c) => a + c.students, 0);
-  const totalRevenue = '$12,480';
-  const avgRating = '4.85';
-  const published = COURSES.filter(c => c.status === 'Published').length;
+  const [courseDetails, setCourseDetails] = useState({});
 
-  const filtered = activeTab === 'all' ? COURSES :
-    activeTab === 'published' ? COURSES.filter(c => c.status === 'Published') :
-    COURSES.filter(c => c.status === 'Draft');
+  const loadCourses = useCallback(() => {
+    if (!user?.id || !token) return;
+    setLoading(true);
+    fetchCourseDrafts(user, token)
+      .then((list) => {
+        if (Array.isArray(list) && list.length) {
+          setCourses(list.map(mapDraftToManageCourse));
+          setExpandedCourse((prev) => prev ?? list[0]?.id ?? null);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [user?.id, token]);
+
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
+
+  useEffect(() => {
+    const onChange = () => loadCourses();
+    window.addEventListener(CONTENT_CHANGED, onChange);
+    return () => window.removeEventListener(CONTENT_CHANGED, onChange);
+  }, [loadCourses]);
+
+  const handleExpand = async (courseId) => {
+    const next = expandedCourse === courseId ? null : courseId;
+    setExpandedCourse(next);
+    if (next && user?.id && token && !courseDetails[courseId]?.lessons?.length) {
+      try {
+        const full = await fetchCourse(user, token, courseId);
+        const mapped = mapDraftToManageCourse(full);
+        setCourseDetails((prev) => ({ ...prev, [courseId]: mapped }));
+      } catch {
+        /* keep summary */
+      }
+    }
+  };
+
+  const handlePublish = async (courseId) => {
+    if (!user?.id || !token) return;
+    try {
+      await publishCourse(user, token, courseId);
+      loadCourses();
+    } catch {
+      /* keep UI state */
+    }
+  };
+
+  const totalStudents = courses.reduce((a, c) => a + c.students, 0);
+  const totalRevenue = courses.some((c) => c.revenue !== '$0')
+    ? courses.reduce((sum, c) => sum + parseFloat(String(c.revenue).replace(/[$,]/g, '') || 0), 0)
+    : 0;
+  const avgRating =
+    courses.filter((c) => c.rating > 0).length > 0
+      ? (
+          courses.filter((c) => c.rating > 0).reduce((a, c) => a + c.rating, 0) /
+          courses.filter((c) => c.rating > 0).length
+        ).toFixed(2)
+      : '—';
+  const published = courses.filter((c) => c.status === 'Published').length;
+
+  const filtered = activeTab === 'all' ? courses :
+    activeTab === 'published' ? courses.filter(c => c.status === 'Published') :
+    courses.filter(c => c.status === 'Draft' || c.status === 'Pending');
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
@@ -156,7 +220,7 @@ export default function ManageLessonsPage() {
     },
     {
       label: 'Total Revenue',
-      value: totalRevenue,
+      value: totalRevenue > 0 ? `$${totalRevenue.toLocaleString()}` : '$0',
       icon: TrendingUp,
       color: 'text-emerald-500',
       bg: 'bg-emerald-500/10',
@@ -176,7 +240,7 @@ export default function ManageLessonsPage() {
     },
     {
       label: 'Published',
-      value: `${published}/${COURSES.length}`,
+      value: `${published}/${courses.length}`,
       icon: Globe,
       color: 'text-violet-500',
       bg: 'bg-violet-500/10',
@@ -288,7 +352,7 @@ export default function ManageLessonsPage() {
       {/* ── FILTER TABS ── */}
       <div className="flex items-center gap-1 bg-bg border border-border rounded-[5px] p-1 w-fit">
         {[
-          { key: 'all', label: `All Courses (${COURSES.length})` },
+          { key: 'all', label: `All Courses (${courses.length})` },
           { key: 'published', label: 'Published' },
           { key: 'draft', label: 'Drafts' },
         ].map(tab => (
@@ -306,14 +370,20 @@ export default function ManageLessonsPage() {
       <div className="space-y-4">
         {filtered.map((course) => {
           const isExpanded = expandedCourse === course.id;
+          const detail = courseDetails[course.id];
+          const lessons = detail?.lessons?.length ? detail.lessons : course.lessons;
           return (
             <div key={course.id} className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden transition-all duration-300">
 
               {/* Course Header Row */}
               <div className="flex items-center gap-5 p-5">
                 {/* Thumbnail */}
-                <div className={`h-16 w-20 rounded-[5px] ${course.thumbnail} flex-shrink-0 flex items-center justify-center shadow-sm`}>
-                  <BookOpen className="h-7 w-7 text-white/80" />
+                <div className={`h-16 w-20 rounded-[5px] ${course.thumbnailClass || course.thumbnail || ''} flex-shrink-0 flex items-center justify-center shadow-sm overflow-hidden`}>
+                  {course.thumbnail && course.thumbnail.startsWith('http') ? (
+                    <img src={course.thumbnail} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <BookOpen className="h-7 w-7 text-white/80" />
+                  )}
                 </div>
 
                 {/* Info */}
@@ -383,7 +453,7 @@ export default function ManageLessonsPage() {
                     <EyeOff className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => setExpandedCourse(isExpanded ? null : course.id)}
+                    onClick={() => handleExpand(course.id)}
                     className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-text hover:bg-bg transition-all"
                   >
                     <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
@@ -395,14 +465,14 @@ export default function ManageLessonsPage() {
               {isExpanded && (
                 <div className="border-t border-border">
                   <div className="px-5 py-3 bg-bg/50 flex items-center justify-between">
-                    <p className="text-xs font-bold text-muted uppercase tracking-wider">{course.lessons.length} Lessons</p>
+                    <p className="text-xs font-bold text-muted uppercase tracking-wider">{lessons.length} Lessons</p>
                     <button className="flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
                       <Plus className="h-3.5 w-3.5" /> Add Lesson
                     </button>
                   </div>
 
                   <div className="divide-y divide-border">
-                    {course.lessons.map((lesson, idx) => (
+                    {lessons.map((lesson, idx) => (
                       <div key={lesson.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-bg/40 transition-colors group">
                         <GripVertical className="h-4 w-4 text-border group-hover:text-muted transition-colors cursor-grab flex-shrink-0" />
 

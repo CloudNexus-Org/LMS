@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -29,6 +29,7 @@ import {
   formatMentorCurrency,
   toTopCoursesTable,
 } from "@/data/mentorDashboard";
+import useAuthStore from "@/store/useAuthStore";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -524,6 +525,8 @@ function MiniSparkline({ data }) {
 
 export default function MentorDashboardPage() {
   const shouldReduceMotion = useReducedMotion();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [snapshot, setSnapshot] = useState(() => buildSnapshot());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(() => new Date());
@@ -534,14 +537,18 @@ export default function MentorDashboardPage() {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const next = await fetchMentorDashboardSnapshot();
+      const next = await fetchMentorDashboardSnapshot({ user, token });
       setSnapshot(next);
       setLastUpdated(new Date());
       setChartKey((key) => key + 1);
     } finally {
       setIsRefreshing(false);
     }
-  }, []);
+  }, [user, token]);
+
+  useEffect(() => {
+    handleRefresh();
+  }, [handleRefresh]);
 
   const topCourses = useMemo(
     () => (snapshot.courseList ? toTopCoursesTable(snapshot.courseList) : []),

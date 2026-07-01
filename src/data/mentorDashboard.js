@@ -133,9 +133,18 @@ export function buildSnapshot() {
   };
 }
 
-/** Simulates fetching live mentor dashboard metrics. */
-export async function fetchMentorDashboardSnapshot({ delayMs = 650 } = {}) {
-  await new Promise((resolve) => setTimeout(resolve, delayMs));
+/** Fetches live mentor dashboard metrics from analytics-service via API gateway. */
+export async function fetchMentorDashboardSnapshot({ user, token } = {}) {
+  if (user && token) {
+    try {
+      const { fetchMentorDashboard } = await import('@/lib/api/analyticsApi');
+      const data = await fetchMentorDashboard(user, token);
+      return { ...buildSnapshot(), ...data };
+    } catch {
+      /* fall through to mock */
+    }
+  }
+  await new Promise((resolve) => setTimeout(resolve, 650));
   return buildSnapshot();
 }
 

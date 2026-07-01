@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Clock,
@@ -10,6 +10,8 @@ import {
   PlayCircle,
   Star,
 } from "lucide-react";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchNotes, fetchBookmarks } from "@/lib/api/learningApi";
 
 const MOCK_NOTES = [
   {
@@ -35,7 +37,23 @@ const MOCK_NOTES = [
 ];
 
 export default function NotesAndBookmarksPage() {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const [notes, setNotes] = useState(MOCK_NOTES);
   const [activeNote, setActiveNote] = useState(MOCK_NOTES[0]);
+
+  useEffect(() => {
+    if (!user?.id || !token) return;
+    Promise.all([fetchNotes(user, token), fetchBookmarks(user, token)])
+      .then(([noteList, bookmarkList]) => {
+        const merged = [...(noteList || []), ...(bookmarkList || [])];
+        if (merged.length) {
+          setNotes(merged);
+          setActiveNote(merged[0]);
+        }
+      })
+      .catch(() => {});
+  }, [user?.id, token]);
 
   return (
     <div className="relative min-h-[calc(100vh-120px)] overflow-hidden">
@@ -229,7 +247,7 @@ export default function NotesAndBookmarksPage() {
 
             {/* NOTES LIST */}
             <div className="flex-1 overflow-y-auto">
-              {MOCK_NOTES.map((note) => {
+              {notes.map((note) => {
                 const isActive = activeNote?.id === note.id;
 
                 return (

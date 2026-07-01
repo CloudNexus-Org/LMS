@@ -21,6 +21,8 @@ import {
   Keyboard,
 } from "lucide-react";
 import { getTrackById, getLessonsByTrack } from "@/data/tracks";
+import { fetchTrackLessons, fetchLesson } from "@/lib/api/contentApi";
+import { resolveMediaUrl } from "@/lib/api/mediaApi";
 import { getMentorBySlug } from "@/data/mentors";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { VideoPlayer } from "@/features/learn/components/player/VideoPlayer";
@@ -88,11 +90,46 @@ export default function LessonPlayerPage() {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
   const track = useMemo(() => getTrackById(trackId), [trackId]);
-  const lessons = useMemo(() => getLessonsByTrack(trackId), [trackId]);
 
-  const initialLesson = lessonId
-    ? lessons.find((l) => l.id === lessonId) || lessons[0]
+  const [apiLessons, setApiLessons] = useState(null);
+  const [lessonDetail, setLessonDetail] = useState(null);
+  const [videoSrc, setVideoSrc] = useState(VIDEO_SRC);
+
+  useEffect(() => {
+    if (!trackId) return;
+    fetchTrackLessons(trackId)
+      .then((list) => {
+        if (list?.length) setApiLessons(list);
+      })
+      .catch(() => {});
+  }, [trackId]);
+
+  const lessons = useMemo(() => {
+    if (apiLessons?.length) return apiLessons;
+    return getLessonsByTrack(trackId);
+  }, [apiLessons, trackId]);
+
+  const routeLesson = lessonId
+    ? lessons.find((l) => String(l.id) === String(lessonId)) || lessons[0]
     : lessons[0];
+
+  const displayLesson = lessonDetail || routeLesson;
+
+  useEffect(() => {
+    const id = routeLesson?.id;
+    setLessonDetail(null);
+    setVideoSrc(VIDEO_SRC);
+    if (!id) return;
+    fetchLesson(id)
+      .then((detail) => {
+        if (!detail) return;
+        setLessonDetail(detail);
+        if (detail.contentUrl) {
+          setVideoSrc(resolveMediaUrl(detail.contentUrl) || detail.contentUrl);
+        }
+      })
+      .catch(() => {});
+  }, [routeLesson?.id]);
 
   const {
     completedMap: completed,
@@ -121,34 +158,34 @@ export default function LessonPlayerPage() {
   }, [track, lessonId, lessons, trackId, navigate]);
 
   useEffect(() => {
-    if (!track || !initialLesson) return;
+    if (!track || !displayLesson) return;
     saveLastLearningSession({
       trackId,
-      lessonId: initialLesson.id,
+      lessonId: displayLesson.id,
       trackName: track.name,
-      lessonTitle: initialLesson.title,
+      lessonTitle: displayLesson.title,
     });
-  }, [track, trackId, initialLesson]);
+  }, [track, trackId, displayLesson]);
 
   useEffect(() => {
     setDrawerOpen(false);
-    if (initialLesson?.type === "quiz") setActiveTab("quiz");
-    else if (initialLesson?.type === "reading") setActiveTab("overview");
+    if (displayLesson?.type === "quiz") setActiveTab("quiz");
+    else if (displayLesson?.type === "reading") setActiveTab("overview");
     else setActiveTab("overview");
-  }, [initialLesson?.id, initialLesson?.type]);
+  }, [displayLesson?.id, displayLesson?.type]);
 
   if (!track) return <Navigate to="/tracks" replace />;
-  if (!initialLesson) return <Navigate to={`/tracks/${trackId}`} replace />;
+  if (!displayLesson) return <Navigate to={`/tracks/${trackId}`} replace />;
 
-  const idx = lessons.findIndex((l) => l.id === initialLesson.id);
+  const idx = lessons.findIndex((l) => String(l.id) === String(displayLesson.id));
   const prev = idx > 0 ? lessons[idx - 1] : null;
   const next = idx < lessons.length - 1 ? lessons[idx + 1] : null;
-  const isDone = completed[initialLesson.id];
-  const TypeIcon = TYPE_ICON[initialLesson.type] || PlayCircle;
+  const isDone = completed[displayLesson.id];
+  const TypeIcon = TYPE_ICON[displayLesson.type] || PlayCircle;
 
   const mentor = track.leadMentorSlug ? getMentorBySlug(track.leadMentorSlug) : null;
 
-  const onToggleComplete = () => toggleLessonComplete(initialLesson.id);
+  const onToggleComplete = () => toggleLessonComplete(displayLesson.id);
 
   const onPickLesson = (l) => {
     setDrawerOpen(false);
@@ -161,11 +198,11 @@ export default function LessonPlayerPage() {
   };
 
   const onQuizPassed = () => {
-    markLessonComplete(initialLesson.id);
+    markLessonComplete(displayLesson.id);
   };
 
   const onCompleteAndNext = () => {
-    markLessonComplete(initialLesson.id);
+    markLessonComplete(displayLesson.id);
     if (next) onPickLesson(next);
   };
 
@@ -201,7 +238,7 @@ export default function LessonPlayerPage() {
             <div className="min-w-0 flex-1">
               <p className="learn-breadcrumb">{track.name}</p>
               <p className="learn-lesson-meta truncate">
-                Lesson {idx + 1} of {lessons.length} · {initialLesson.title}
+                Lesson {idx + 1} of {lessons.length} · {displayLesson.title}
               </p>
             </div>
           </div>
@@ -239,30 +276,30 @@ export default function LessonPlayerPage() {
           {/* Left column */}
           <div className="learn-content min-w-0">
             <motion.div
-              key={initialLesson.id}
+              key={displayLesson.id}
               initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, ease: EASE }}
             >
-              {initialLesson.type === "quiz" ? (
+              {displayLesson.type === "quiz" ? (
                 <div className="learn-player-shell learn-quiz-shell dashboard-card p-4 sm:p-6">
                   <QuizPane
                     trackId={trackId}
-                    lessonId={initialLesson.id}
-                    lesson={initialLesson}
+                    lessonId={displayLesson.id}
+                    lesson={displayLesson}
                     isQuizLesson
                     onPassed={onQuizPassed}
                   />
                 </div>
-              ) : initialLesson.type === "reading" ? (
+              ) : displayLesson.type === "reading" ? (
                 <div className="learn-player-shell dashboard-card p-4 sm:p-6">
-                  <ReadingPane lesson={initialLesson} />
+                  <ReadingPane lesson={displayLesson} />
                 </div>
               ) : (
                 <div className="learn-player-shell">
                   <VideoPlayer
-                    src={VIDEO_SRC}
-                    lesson={initialLesson}
+                    src={videoSrc}
+                    lesson={displayLesson}
                     onEnded={onCompleteAndNext}
                     onRegisterSeek={registerSeek}
                   />
@@ -273,17 +310,17 @@ export default function LessonPlayerPage() {
               <div className="learn-lesson-header">
                 <div className="min-w-0 flex-1">
                   <div className="learn-lesson-chips">
-                    <span className="learn-chip">{initialLesson.courseTitle}</span>
+                    <span className="learn-chip">{displayLesson.courseTitle}</span>
                     <span className="learn-chip learn-chip-primary">
                       <TypeIcon size={11} aria-hidden />
-                      {TYPE_LABEL[initialLesson.type]}
+                      {TYPE_LABEL[displayLesson.type]}
                     </span>
                     <span className="learn-chip">
                       <Clock3 size={11} aria-hidden />
-                      {initialLesson.duration}
+                      {displayLesson.duration}
                     </span>
                   </div>
-                  <h1 className="learn-title">{initialLesson.title}</h1>
+                  <h1 className="learn-title">{displayLesson.title}</h1>
                 </div>
 
                 <motion.button
@@ -306,7 +343,7 @@ export default function LessonPlayerPage() {
                 </motion.button>
               </div>
 
-              {initialLesson.type === "video" && (
+              {displayLesson.type === "video" && (
                 <div className="learn-shortcuts hidden md:flex">
                   <Keyboard size={13} className="text-muted" />
                   <span>
@@ -349,37 +386,37 @@ export default function LessonPlayerPage() {
               <div className="learn-tab-panel dashboard-card">
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={`${initialLesson.id}-${activeTab}`}
+                    key={`${displayLesson.id}-${activeTab}`}
                     initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={shouldReduceMotion ? undefined : { opacity: 0, y: -6 }}
                     transition={{ duration: 0.28, ease: EASE }}
                   >
                     {activeTab === "overview" && (
-                      <OverviewPane lesson={initialLesson} mentor={mentor} />
+                      <OverviewPane lesson={displayLesson} mentor={mentor} />
                     )}
                     {activeTab === "notes" && (
-                      <NotesPane trackId={trackId} lessonId={initialLesson.id} />
+                      <NotesPane trackId={trackId} lessonId={displayLesson.id} />
                     )}
-                    {activeTab === "transcript" && initialLesson.type === "video" && (
-                      <TranscriptPane lesson={initialLesson} onSeek={handleTranscriptSeek} />
+                    {activeTab === "transcript" && displayLesson.type === "video" && (
+                      <TranscriptPane lesson={displayLesson} onSeek={handleTranscriptSeek} />
                     )}
-                    {activeTab === "transcript" && initialLesson.type !== "video" && (
+                    {activeTab === "transcript" && displayLesson.type !== "video" && (
                       <p className="text-sm text-muted">Transcript is available for video lessons.</p>
                     )}
                     {activeTab === "resources" && (
-                      <ResourcesPane lesson={initialLesson} />
+                      <ResourcesPane lesson={displayLesson} />
                     )}
-                    {activeTab === "quiz" && initialLesson.type !== "quiz" && (
+                    {activeTab === "quiz" && displayLesson.type !== "quiz" && (
                       <QuizPane
                         trackId={trackId}
-                        lessonId={initialLesson.id}
-                        lesson={initialLesson}
+                        lessonId={displayLesson.id}
+                        lesson={displayLesson}
                         onGoToQuizLesson={onGoToQuizLesson}
                         onPassed={onQuizPassed}
                       />
                     )}
-                    {activeTab === "quiz" && initialLesson.type === "quiz" && (
+                    {activeTab === "quiz" && displayLesson.type === "quiz" && (
                       <p className="text-sm text-muted">
                         Take the quiz in the player above. Your best score is saved automatically.
                       </p>
@@ -387,8 +424,8 @@ export default function LessonPlayerPage() {
                     {activeTab === "qa" && (
                       <QAPane
                         trackId={trackId}
-                        lessonId={initialLesson.id}
-                        lesson={initialLesson}
+                        lessonId={displayLesson.id}
+                        lesson={displayLesson}
                       />
                     )}
                   </motion.div>
@@ -451,7 +488,7 @@ export default function LessonPlayerPage() {
               <SidebarOutline
                 track={track}
                 lessons={lessons}
-                currentId={initialLesson.id}
+                currentId={displayLesson.id}
                 completedMap={completed}
                 onPick={onPickLesson}
               />
@@ -501,7 +538,7 @@ export default function LessonPlayerPage() {
               <SidebarOutline
                 track={track}
                 lessons={lessons}
-                currentId={initialLesson.id}
+                currentId={displayLesson.id}
                 completedMap={completed}
                 onPick={onPickLesson}
                 onClose={() => setDrawerOpen(false)}

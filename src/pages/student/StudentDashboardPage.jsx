@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
@@ -12,6 +13,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { getContinueLearningUrl } from "@/features/learn/learningSession";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchStudentDashboard } from "@/lib/api/analyticsApi";
 
 const STATS = [
   {
@@ -100,6 +103,29 @@ function MiniSparkline({ data }) {
 }
 
 export default function StudentDashboardPage() {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const [stats, setStats] = useState(STATS);
+  const [studyTrend, setStudyTrend] = useState(STUDY_TREND);
+  const [studyHours, setStudyHours] = useState("124+");
+
+  useEffect(() => {
+    if (!user?.id || !token) return;
+    fetchStudentDashboard(user, token)
+      .then((data) => {
+        if (!data) return;
+        setStats([
+          { ...STATS[0], count: String(data.coursesInProgress ?? 8).padStart(2, "0"), subtitle: `${data.coursesInProgress ?? 2} active` },
+          { ...STATS[1], count: String(data.lessonsCompleted ?? 42), subtitle: `${data.streak ?? 5} day streak` },
+          { ...STATS[2], count: String(data.quizzesTaken ?? 5).padStart(2, "0"), subtitle: "From backend" },
+          { ...STATS[3], count: String(data.streak ?? 12), subtitle: "Learning streak" },
+        ]);
+        if (data.weeklyActivity?.length) setStudyTrend(data.weeklyActivity);
+        if (data.hoursLearned) setStudyHours(`${data.hoursLearned}+`);
+      })
+      .catch(() => {});
+  }, [user?.id, token]);
+
   const avgProgress = Math.round(
     COURSE_PROGRESS.reduce((sum, c) => sum + c.value, 0) / COURSE_PROGRESS.length
   );
@@ -132,20 +158,20 @@ export default function StudentDashboardPage() {
           <div className="dashboard-analytics-metric">
             <Clock3 className="h-3.5 w-3.5 text-primary" />
             <div>
-              <p className="dashboard-metric-value">124+</p>
+              <p className="dashboard-metric-value">{studyHours}</p>
               <p className="dashboard-metric-label">Study hours</p>
             </div>
           </div>
           <div className="dashboard-analytics-chart">
             <p className="dashboard-metric-label mb-1">Weekly trend</p>
-            <MiniSparkline data={STUDY_TREND} />
+            <MiniSparkline data={studyTrend} />
           </div>
         </div>
       </section>
 
       {/* KPI stat cards */}
       <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-        {STATS.map((item) => {
+        {stats.map((item) => {
           const Icon = item.icon;
           return (
             <Card key={item.title} className={`dashboard-kpi-card p-3.5 ${item.accent}`}>

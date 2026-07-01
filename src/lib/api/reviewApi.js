@@ -1,5 +1,6 @@
-import { API, DEV_USER } from './config';
+import { API } from './config';
 import { deleteJson, getJson, postJson, putJson } from './http';
+import { authHeaders } from './apiHelpers';
 
 const base = API.base;
 
@@ -22,29 +23,29 @@ export async function fetchCourseReviewSummary(courseId) {
   return getJson(`${base}/api/reviews/courses/${courseId}/summary`);
 }
 
-export async function fetchMyReviews(userId = DEV_USER.studentId) {
-  const list = await getJson(`${base}/api/reviews/me`, { 'X-User-Id': userId });
-  return list.map(mapReview);
+export async function fetchMyReviews(user, token) {
+  const list = await getJson(`${base}/api/reviews/me`, authHeaders(user, token));
+  return (list || []).map(mapReview);
 }
 
-export async function submitReview(courseId, body, userId = DEV_USER.studentId) {
+export async function submitReview(user, token, courseId, body) {
   return mapReview(
-    await postJson(`${base}/api/reviews/courses/${courseId}`, body, { 'X-User-Id': userId })
+    await postJson(`${base}/api/reviews/courses/${courseId}`, body, authHeaders(user, token))
   );
 }
 
-export async function updateReview(reviewId, body, userId = DEV_USER.studentId) {
+export async function updateReview(user, token, reviewId, body) {
   return mapReview(
-    await putJson(`${base}/api/reviews/${reviewId}`, body, { 'X-User-Id': userId })
+    await putJson(`${base}/api/reviews/${reviewId}`, body, authHeaders(user, token))
   );
 }
 
-export async function deleteReview(reviewId, userId = DEV_USER.studentId) {
-  return deleteJson(`${base}/api/reviews/${reviewId}`, { 'X-User-Id': userId });
+export async function deleteReview(user, token, reviewId) {
+  return deleteJson(`${base}/api/reviews/${reviewId}`, authHeaders(user, token));
 }
 
-export async function markReviewHelpful(reviewId, userId = DEV_USER.studentId) {
+export async function markReviewHelpful(user, token, reviewId) {
   return mapReview(
-    await postJson(`${base}/api/reviews/${reviewId}/helpful`, {}, { 'X-User-Id': userId })
+    await postJson(`${base}/api/reviews/${reviewId}/helpful`, {}, authHeaders(user, token))
   );
 }

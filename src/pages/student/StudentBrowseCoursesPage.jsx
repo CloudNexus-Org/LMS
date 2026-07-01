@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { featuredCourses } from '@/data/courses';
+import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import CatalogCourseCard from '@/components/courses/CatalogCourseCard';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -73,10 +74,17 @@ export default function StudentBrowseCoursesPage() {
   const [level, setLevel] = useState('all');
   const [sort, setSort] = useState('featured');
   const [searchFocused, setSearchFocused] = useState(false);
+  const [courses, setCourses] = useState(featuredCourses);
+
+  useEffect(() => {
+    fetchPublishedCourses()
+      .then((data) => { if (data?.length) setCourses(data); })
+      .catch(() => {});
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let list = featuredCourses.filter((course) => {
+    let list = courses.filter((course) => {
       if (q) {
         const haystack = [course.title, course.professor, course.description, course.difficulty]
           .join(' ')
@@ -105,9 +113,9 @@ export default function StudentBrowseCoursesPage() {
         break;
     }
     return list;
-  }, [query, category, level, sort]);
+  }, [query, category, level, sort, courses]);
 
-  const totalEnrolled = featuredCourses.reduce(
+  const totalEnrolled = courses.reduce(
     (acc, c) => acc + parseEnrolled(c.enrolled),
     0
   );
@@ -161,7 +169,7 @@ export default function StudentBrowseCoursesPage() {
         <div className="flex shrink-0 items-center">
           <div className="dashboard-card grid grid-cols-3 gap-4 px-4 py-3 sm:min-w-[300px]">
             <div className="text-center">
-              <p className="font-display text-xl font-bold text-text">{featuredCourses.length}</p>
+              <p className="font-display text-xl font-bold text-text">{courses.length}</p>
               <p className="text-[9px] font-bold uppercase tracking-wider text-muted">Courses</p>
             </div>
             <div className="border-l border-border text-center">
@@ -322,7 +330,7 @@ export default function StudentBrowseCoursesPage() {
       ) : (
         <>
           <p className="text-[13px] font-medium text-muted">
-            Showing {filtered.length} of {featuredCourses.length} courses
+            Showing {filtered.length} of {courses.length} courses
           </p>
           <motion.div
             key={`${query}-${category}-${level}-${sort}`}

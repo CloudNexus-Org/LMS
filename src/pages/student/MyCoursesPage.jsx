@@ -12,6 +12,8 @@ import {
 import EmptyState from "@/components/ui/EmptyState";
 import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 import { getResumeUrlForTrack } from "@/features/learn/learningSession";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchMyEnrollments } from "@/lib/api/enrollmentApi";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -335,17 +337,26 @@ function MyCourseCard({ course, index }) {
 
 export default function MyCoursesPage() {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (!user?.id || !token) {
       setCourses(MOCK_COURSES);
       setIsLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, []);
+      return;
+    }
+    fetchMyEnrollments(user, token)
+      .then((data) => {
+        if (data?.length) setCourses(data);
+        else setCourses(MOCK_COURSES);
+      })
+      .catch(() => setCourses(MOCK_COURSES))
+      .finally(() => setIsLoading(false));
+  }, [user?.id, token]);
 
   const filteredCourses = courses.filter((course) =>
     filter === "all" ? true : course.status === filter

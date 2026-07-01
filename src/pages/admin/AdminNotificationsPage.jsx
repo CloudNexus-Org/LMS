@@ -19,6 +19,14 @@ import {
   UserPlus,
   Zap,
 } from "lucide-react";
+import useAuthStore from "@/store/useAuthStore";
+import {
+  deleteNotification as deleteNotificationApi,
+  emitNotificationsChanged,
+  fetchMyNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+} from "@/lib/api/notificationApi";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -209,8 +217,17 @@ function AnimatedNumber({ value }) {
 }
 
 export default function AdminNotificationsPage() {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [filter, setFilter] = useState("all");
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
+
+  useEffect(() => {
+    if (!user?.id || !token) return;
+    fetchMyNotifications(user, token)
+      .then((data) => setNotifications(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, [user?.id, token]);
 
   const unreadCount = notifications.filter((n) => n.unread).length;
   const criticalCount = notifications.filter((n) => n.priority === "critical").length;
@@ -223,16 +240,31 @@ export default function AdminNotificationsPage() {
 
   const markAllRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+    if (user?.id && token) {
+      markAllNotificationsRead(user, token)
+        .then(() => emitNotificationsChanged())
+        .catch(() => {});
+    }
   };
 
   const markRead = (id) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, unread: false } : n))
     );
+    if (user?.id && token) {
+      markNotificationRead(user, token, id)
+        .then(() => emitNotificationsChanged())
+        .catch(() => {});
+    }
   };
 
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
+    if (user?.id && token) {
+      deleteNotificationApi(user, token, id)
+        .then(() => emitNotificationsChanged())
+        .catch(() => {});
+    }
   };
 
   const stats = [
@@ -464,7 +496,11 @@ export default function AdminNotificationsPage() {
                       </div>
 
                       {note.action && (
-                        <Link to={note.action.to} className="notif-item-cta group">
+                        <Link
+                          to={note.action.to}
+                          className="notif-item-cta group"
+                          onClick={() => { if (note.unread) markRead(note.id); }}
+                        >
                           {note.action.label}
                           <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                         </Link>

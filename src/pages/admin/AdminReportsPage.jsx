@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   csvFilename,
   downloadMultiSectionCsv,
@@ -17,6 +17,8 @@ import {
   Search,
   X,
 } from "lucide-react";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchAdminDashboard } from "@/lib/api/analyticsApi";
 
 const KPI_BASE = {
   revenue: 428.5,
@@ -125,8 +127,26 @@ const GEO_DATA = [
 const PERIOD_MULTIPLIER = { month: 0.18, quarter: 0.42, year: 1 };
 
 export default function AdminReportsPage() {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [period, setPeriod] = useState("year");
   const [search, setSearch] = useState("");
+  const [kpiBase, setKpiBase] = useState(KPI_BASE);
+
+  useEffect(() => {
+    if (!user?.id || !token) return;
+    fetchAdminDashboard(user, token)
+      .then((data) => {
+        if (!data) return;
+        setKpiBase((prev) => ({
+          ...prev,
+          revenue: parseFloat(String(data.mrrLabel || "").replace(/[^\d.]/g, "")) || prev.revenue,
+          users: data.activeLearners ?? prev.users,
+          completion: data.completionGrowth ?? prev.completion,
+        }));
+      })
+      .catch(() => {});
+  }, [user?.id, token]);
 
   const multiplier = PERIOD_MULTIPLIER[period];
 
@@ -134,7 +154,7 @@ export default function AdminReportsPage() {
     () => [
       {
         label: "Total revenue",
-        value: `$${(KPI_BASE.revenue * multiplier).toFixed(1)}k`,
+        value: `$${(kpiBase.revenue * multiplier).toFixed(1)}k`,
         meta: "+24% vs prior period",
         metaTone: "success",
         icon: DollarSign,
@@ -142,7 +162,7 @@ export default function AdminReportsPage() {
       },
       {
         label: "New users",
-        value: Math.round(KPI_BASE.users * multiplier).toLocaleString(),
+        value: Math.round(kpiBase.users * multiplier).toLocaleString(),
         meta: "+18% growth",
         metaTone: "success",
         icon: Users,
@@ -150,7 +170,7 @@ export default function AdminReportsPage() {
       },
       {
         label: "Courses published",
-        value: Math.round(KPI_BASE.courses * multiplier),
+        value: Math.round(kpiBase.courses * multiplier),
         meta: "+42 this period",
         metaTone: "muted",
         icon: BookOpen,
@@ -158,14 +178,14 @@ export default function AdminReportsPage() {
       },
       {
         label: "Avg completion",
-        value: `${KPI_BASE.completion}%`,
+        value: `${kpiBase.completion}%`,
         meta: "+5% improvement",
         metaTone: "success",
         icon: Award,
         iconColor: "text-warning",
       },
     ],
-    [multiplier]
+    [multiplier, kpiBase]
   );
 
   const filteredCourses = useMemo(() => {
