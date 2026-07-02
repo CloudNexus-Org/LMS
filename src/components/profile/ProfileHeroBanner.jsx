@@ -36,6 +36,10 @@ const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
   const [cropperMode, setCropperMode] = useState("avatar");
   const [editMenuOpen, setEditMenuOpen] = useState(false);
 
+  useEffect(() => {
+    setAvatarImage(profile.avatar || null);
+  }, [profile.avatar]);
+
   const fullName = `${profile.firstName} ${profile.lastName}`;
   const initials = `${profile.firstName?.[0] ?? ""}${profile.lastName?.[0] ?? ""}`.toUpperCase();
   const hasAvatar = Boolean(avatarImage);
@@ -262,7 +266,9 @@ const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12, duration: 0.4, ease: EASE }}
           >
-            <p className="profile-hero-headline">{profile.headline}</p>
+            {profile.headline ? (
+              <p className="profile-hero-headline">{profile.headline}</p>
+            ) : null}
 
             <div className="profile-hero-name-row">
               <h1 className="profile-hero-name">{fullName}</h1>
@@ -292,7 +298,9 @@ const ProfileHeroBanner = forwardRef(function ProfileHeroBanner(
               )}
             </div>
 
-            <p className="profile-hero-bio">{profile.bio}</p>
+            {profile.bio ? (
+              <p className="profile-hero-bio">{profile.bio}</p>
+            ) : null}
 
             <div className="profile-hero-meta profile-hero-meta-linkedin">
               <span>
