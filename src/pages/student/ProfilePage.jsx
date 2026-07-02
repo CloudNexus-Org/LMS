@@ -29,6 +29,8 @@ import {
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import ProfileHeroBanner from "@/components/profile/ProfileHeroBanner";
 import { getResumeUrlForTrack } from "@/features/learn/learningSession";
+import useStudentProfileData from "@/hooks/useStudentProfileData";
+import { buildProfileFormPayload } from "@/lib/profile/profileMapper";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -74,30 +76,29 @@ const tabContent = {
   },
 };
 
-const PROFILE = {
-  firstName: "Alex",
-  lastName: "Chen",
-  username: "@alexchen",
-  email: "alex.chen@example.com",
-  phone: "+1 (415) 555-0192",
-  headline: "Aspiring Cloud Engineer",
-  bio: "Frontend developer learning advanced cloud architecture and scalable system design.",
-  location: "San Francisco, CA",
-  timezone: "Pacific Time (PT)",
+const PROFILE_DEFAULT = {
+  firstName: "",
+  lastName: "",
+  username: "@student",
+  email: "",
+  phone: "",
+  headline: "",
+  bio: "",
+  location: "",
+  timezone: "UTC",
   language: "English",
-  memberSince: "March 2024",
-  lastActive: "2 hours ago",
-  plan: "Student Pro",
-  avatar:
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+  memberSince: "—",
+  lastActive: "—",
+  plan: "Student",
+  avatar: null,
   cover: "/assets/profile-cover-default.svg",
   verified: true,
-  twoFactorEnabled: true,
-  streak: 12,
+  twoFactorEnabled: false,
+  streak: 0,
   social: {
-    github: "github.com/alexchen",
-    linkedin: "linkedin.com/in/alexchen",
-    portfolio: "alexchen.dev",
+    github: "",
+    linkedin: "",
+    portfolio: "",
   },
 };
 
@@ -250,6 +251,15 @@ const TABS = [
   { id: "achievements", label: "Achievements", icon: Trophy },
 ];
 
+const STAT_ICONS = {
+  Courses: BookOpen,
+  "Study hours": Clock3,
+  Certificates: Award,
+  "Avg. progress": Trophy,
+  "Lessons done": CheckCircle2,
+  "Quiz score": Star,
+};
+
 const ACTIVITY_ICONS = {
   lesson: BookOpen,
   badge: Award,
@@ -331,10 +341,15 @@ function DetailRow({ icon: Icon, label, value, href }) {
   return content;
 }
 
-function PreferencesSection() {
-  const [timezone, setTimezone] = useState(PROFILE.timezone);
-  const [language, setLanguage] = useState(PROFILE.language);
+function PreferencesSection({ timezone: initialTimezone, language: initialLanguage }) {
+  const [timezone, setTimezone] = useState(initialTimezone || PROFILE_DEFAULT.timezone);
+  const [language, setLanguage] = useState(initialLanguage || PROFILE_DEFAULT.language);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setTimezone(initialTimezone || PROFILE_DEFAULT.timezone);
+    setLanguage(initialLanguage || PROFILE_DEFAULT.language);
+  }, [initialTimezone, initialLanguage]);
 
   const markSaved = () => {
     setSaved(true);
@@ -429,8 +444,8 @@ function PreferencesSection() {
   );
 }
 
-function SkillsSection() {
-  const [skills, setSkills] = useState(INITIAL_SKILLS);
+function SkillsSection({ initialSkills = [] }) {
+  const [skills, setSkills] = useState(initialSkills);
   const [isEditing, setIsEditing] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newSkill, setNewSkill] = useState("");
@@ -774,13 +789,61 @@ export default function ProfilePage() {
   const heroRef = useRef(null);
   const [activeTab, setActiveTab] = useState("overview");
   const [isSaved, setIsSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    headline: "",
+    phone: "",
+    location: "",
+    email: "",
+    bio: "",
+  });
+
+  const {
+    loading,
+    profile,
+    stats,
+    coursesInProgress,
+    completedCourses,
+    certificates,
+    dashboard,
+    saveProfile,
+  } = useStudentProfileData();
+
+  useEffect(() => {
+    setForm({
+      firstName: profile.firstName || "",
+      lastName: profile.lastName || "",
+      username: profile.username || "",
+      headline: profile.headline || "",
+      phone: profile.phone || "",
+      location: profile.location || "",
+      email: profile.email || "",
+      bio: profile.bio || "",
+    });
+  }, [profile]);
 
   const earnedBadges = BADGES.filter((b) => b.earned).length;
+  const displayStats = stats.length ? stats : STATS;
+  const streak = dashboard?.streak || profile.streak || 0;
 
-  const handleQuickSave = (e) => {
+  const handleQuickSave = async (e) => {
     e.preventDefault();
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
+    setSaveError("");
+    try {
+      const ok = await saveProfile(buildProfileFormPayload(form));
+      if (!ok) throw new Error("Not signed in");
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 3000);
+    } catch {
+      setSaveError("Could not save profile. Try again from Settings.");
+    }
+  };
+
+  const updateForm = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
   return (
@@ -791,14 +854,14 @@ export default function ProfilePage() {
       animate="visible"
     >
       <motion.div variants={item}>
-        <ProfileHeroBanner ref={heroRef} profile={PROFILE} showEditProfile={false} />
+        <ProfileHeroBanner ref={heroRef} profile={{ ...profile, streak }} showEditProfile={false} showStreak={streak > 0} />
       </motion.div>
 
       {/* Stats */}
       <motion.section className="profile-stats-wrap" variants={item}>
         <div className="profile-stats-scroll profile-stats-6">
-          {STATS.map((stat, i) => {
-            const Icon = stat.icon;
+          {displayStats.map((stat, i) => {
+            const Icon = stat.icon || STAT_ICONS[stat.label] || BookOpen;
             return (
               <motion.div
                 key={stat.label}
@@ -880,12 +943,12 @@ export default function ProfilePage() {
                   <form onSubmit={handleQuickSave} className="mt-4 space-y-4">
                     <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                       {[
-                        { id: "first", label: "First name", value: PROFILE.firstName },
-                        { id: "last", label: "Last name", value: PROFILE.lastName },
-                        { id: "username", label: "Username", value: PROFILE.username },
-                        { id: "headline", label: "Professional headline", value: PROFILE.headline },
-                        { id: "phone", label: "Phone number", value: PROFILE.phone, type: "tel" },
-                        { id: "location", label: "Location", value: PROFILE.location },
+                        { id: "first", label: "First name", field: "firstName" },
+                        { id: "last", label: "Last name", field: "lastName" },
+                        { id: "username", label: "Username", field: "username" },
+                        { id: "headline", label: "Professional headline", field: "headline" },
+                        { id: "phone", label: "Phone number", field: "phone", type: "tel" },
+                        { id: "location", label: "Location", field: "location" },
                       ].map((field, i) => (
                         <motion.div
                           key={field.id}
@@ -899,7 +962,8 @@ export default function ProfilePage() {
                           <input
                             id={field.id}
                             type={field.type || "text"}
-                            defaultValue={field.value}
+                            value={form[field.field]}
+                            onChange={updateForm(field.field)}
                             className="profile-input"
                           />
                         </motion.div>
@@ -908,13 +972,17 @@ export default function ProfilePage() {
 
                     <motion.div className="profile-field" variants={listItem} initial="hidden" animate="visible" custom={6}>
                       <label htmlFor="email">Email address</label>
-                      <input id="email" type="email" defaultValue={PROFILE.email} className="profile-input" />
+                      <input id="email" type="email" value={form.email} readOnly className="profile-input opacity-80" />
                     </motion.div>
 
                     <motion.div className="profile-field" variants={listItem} initial="hidden" animate="visible" custom={7}>
                       <label htmlFor="bio">Bio</label>
-                      <textarea id="bio" rows={3} defaultValue={PROFILE.bio} className="profile-input profile-textarea" />
+                      <textarea id="bio" rows={3} value={form.bio} onChange={updateForm("bio")} className="profile-input profile-textarea" />
                     </motion.div>
+
+                    {saveError ? (
+                      <p className="text-sm text-danger">{saveError}</p>
+                    ) : null}
 
                     <AnimatePresence>
                       {isSaved && (
@@ -951,16 +1019,25 @@ export default function ProfilePage() {
                   </form>
                 </Card>
 
-                <PreferencesSection />
+                <PreferencesSection timezone={profile.timezone} language={profile.language} />
 
-                <SkillsSection />
+                <SkillsSection initialSkills={[]} />
 
                 <Card className="p-4 sm:p-5 md:p-6">
                   <SectionHeader title="Social & portfolio" subtitle="Links shown on your public profile" />
                   <div className="mt-4 space-y-2">
-                    <DetailRow icon={FaGithub} label="GitHub" value={PROFILE.social.github} href={`https://${PROFILE.social.github}`} />
-                    <DetailRow icon={FaLinkedinIn} label="LinkedIn" value={PROFILE.social.linkedin} href={`https://${PROFILE.social.linkedin}`} />
-                    <DetailRow icon={Link2} label="Portfolio" value={PROFILE.social.portfolio} href={`https://${PROFILE.social.portfolio}`} />
+                    {profile.social.github ? (
+                      <DetailRow icon={FaGithub} label="GitHub" value={profile.social.github} href={`https://${profile.social.github}`} />
+                    ) : null}
+                    {profile.social.linkedin ? (
+                      <DetailRow icon={FaLinkedinIn} label="LinkedIn" value={profile.social.linkedin} href={`https://${profile.social.linkedin}`} />
+                    ) : null}
+                    {profile.social.portfolio ? (
+                      <DetailRow icon={Link2} label="Portfolio" value={profile.social.portfolio} href={`https://${profile.social.portfolio}`} />
+                    ) : null}
+                    {!profile.social.github && !profile.social.linkedin && !profile.social.portfolio ? (
+                      <p className="text-sm text-muted">Add social links from Settings to show them on your public profile.</p>
+                    ) : null}
                   </div>
                 </Card>
               </div>
@@ -970,10 +1047,10 @@ export default function ProfilePage() {
                   <SectionHeader title="Account summary" />
                   <div className="mt-3 space-y-2.5">
                     {[
-                      { icon: Zap, label: "Plan", value: PROFILE.plan },
-                      { icon: Mail, label: "Email", value: PROFILE.email },
-                      { icon: CalendarDays, label: "Member since", value: PROFILE.memberSince },
-                      { icon: Clock3, label: "Last active", value: PROFILE.lastActive },
+                      { icon: Zap, label: "Plan", value: profile.plan },
+                      { icon: Mail, label: "Email", value: profile.email },
+                      { icon: CalendarDays, label: "Member since", value: profile.memberSince },
+                      { icon: Clock3, label: "Last active", value: profile.lastActive },
                     ].map((row, i) => (
                       <motion.div
                         key={row.label}
@@ -990,13 +1067,13 @@ export default function ProfilePage() {
                       </motion.div>
                     ))}
                     <motion.div
-                      className={`profile-security-badge ${PROFILE.twoFactorEnabled ? "profile-security-on" : ""}`}
+                      className={`profile-security-badge ${profile.twoFactorEnabled ? "profile-security-on" : ""}`}
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.35 }}
                     >
                       <Shield className="h-4 w-4" />
-                      <span>{PROFILE.twoFactorEnabled ? "2FA enabled" : "2FA disabled"}</span>
+                      <span>{profile.twoFactorEnabled ? "2FA enabled" : "2FA disabled"}</span>
                       <Link to="/student/settings" className="ml-auto text-xs font-semibold text-primary hover:underline">
                         Manage
                       </Link>
@@ -1061,9 +1138,9 @@ export default function ProfilePage() {
             <div className="space-y-4">
               <div className="profile-learning-summary">
                 {[
-                  { label: "In progress", value: COURSES_IN_PROGRESS.length, icon: BookOpen },
-                  { label: "Completed", value: COMPLETED_COURSES.length, icon: CheckCircle2 },
-                  { label: "Learning paths", value: LEARNING_PATHS.length, icon: GraduationCap },
+                  { label: "In progress", value: coursesInProgress.length, icon: BookOpen },
+                  { label: "Completed", value: completedCourses.length, icon: CheckCircle2 },
+                  { label: "Learning paths", value: coursesInProgress.length + completedCourses.length, icon: GraduationCap },
                 ].map((s, i) => (
                   <motion.div
                     key={s.label}
@@ -1082,7 +1159,7 @@ export default function ProfilePage() {
               <div>
                 <SectionHeader title="In progress" subtitle="Continue where you left off" />
                 <div className="mt-3 grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {COURSES_IN_PROGRESS.map((course, i) => (
+                  {coursesInProgress.length ? coursesInProgress.map((course, i) => (
                     <motion.article
                       key={course.id}
                       className="profile-course-card dashboard-card group"
@@ -1118,14 +1195,16 @@ export default function ProfilePage() {
                         </Link>
                       </div>
                     </motion.article>
-                  ))}
+                  )) : (
+                    <p className="col-span-full text-sm text-muted">No courses in progress. Browse the catalog to enroll.</p>
+                  )}
                 </div>
               </div>
 
               <Card className="p-4 sm:p-5 md:p-6">
                 <SectionHeader title="Completed courses" subtitle="Your finished learning" />
                 <div className="mt-4 space-y-2">
-                  {COMPLETED_COURSES.map((course, i) => (
+                  {completedCourses.length ? completedCourses.map((course, i) => (
                     <motion.div
                       key={course.id}
                       className="profile-completed-row"
@@ -1145,14 +1224,17 @@ export default function ProfilePage() {
                       </div>
                       <span className="profile-grade-badge">{course.grade}</span>
                     </motion.div>
-                  ))}
+                  )) : (
+                    <p className="text-sm text-muted">No completed courses yet.</p>
+                  )}
                 </div>
               </Card>
 
+              {coursesInProgress.length > 0 ? (
               <Card className="p-4 sm:p-5 md:p-6">
                 <SectionHeader title="Learning paths" subtitle="Structured multi-course tracks" />
                 <div className="mt-4 space-y-3">
-                  {LEARNING_PATHS.map((path, i) => (
+                  {coursesInProgress.map((path, i) => (
                     <motion.div
                       key={path.id}
                       className="profile-path-row"
@@ -1165,7 +1247,7 @@ export default function ProfilePage() {
                         <span className="text-xs font-bold text-primary">{path.progress}%</span>
                       </div>
                       <p className="mt-0.5 text-xs text-muted">
-                        {path.completed} of {path.modules} modules complete
+                        {path.lessonsLeft} lessons remaining
                       </p>
                       <div className="profile-progress-track mt-2">
                         <motion.div
@@ -1179,6 +1261,7 @@ export default function ProfilePage() {
                   ))}
                 </div>
               </Card>
+              ) : null}
             </div>
           )}
 
@@ -1188,8 +1271,8 @@ export default function ProfilePage() {
               <div className="profile-learning-summary">
                 {[
                   { label: "Badges earned", value: earnedBadges, icon: Trophy },
-                  { label: "Certificates", value: CERTIFICATES.length, icon: Award },
-                  { label: "Avg. quiz", value: "88%", icon: Star },
+                  { label: "Certificates", value: certificates.length, icon: Award },
+                  { label: "Avg. quiz", value: dashboard?.quizAvg ? `${dashboard.quizAvg}%` : "—", icon: Star },
                 ].map((s, i) => (
                   <motion.div
                     key={s.label}
@@ -1237,7 +1320,7 @@ export default function ProfilePage() {
                 <Card className="p-4 sm:p-5 md:p-6">
                   <SectionHeader title="Certificates" subtitle="Verified credentials" />
                   <div className="mt-4 space-y-2 sm:space-y-3">
-                    {CERTIFICATES.map((cert, i) => (
+                    {certificates.length ? certificates.map((cert, i) => (
                       <motion.div
                         key={cert.id}
                         className="profile-cert-row"
@@ -1255,11 +1338,13 @@ export default function ProfilePage() {
                             Issued {cert.issued} · ID {cert.credentialId}
                           </p>
                         </div>
-                        <Link to="/student/certificates" className="profile-cert-link">
+                        <Link to={`/student/certificates/${cert.id}`} className="profile-cert-link">
                           View
                         </Link>
                       </motion.div>
-                    ))}
+                    )) : (
+                      <p className="text-sm text-muted">Complete a course to earn your first certificate.</p>
+                    )}
                   </div>
                 </Card>
               </div>

@@ -14,7 +14,14 @@ export async function fetchProfile(user, token) {
 }
 
 export async function updateProfile(user, token, payload) {
-  return putJson(`${base}/api/users/profile`, payload, authHeaders(user, token));
+  return putJson(`${base}/api/users/profile`, {
+    fullName: payload.fullName,
+    phone: payload.phone,
+    bio: payload.bio,
+    location: payload.location,
+    username: payload.username,
+    professionalRole: payload.professionalRole,
+  }, authHeaders(user, token));
 }
 
 export async function updateAvatar(user, token, avatarUrl) {
