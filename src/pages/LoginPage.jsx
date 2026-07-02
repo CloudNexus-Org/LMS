@@ -27,9 +27,6 @@ export default function LoginPage() {
   const location = useLocation();
   const login = useAuthStore((state) => state.login);
 
-  const redirectTo =
-    location.state?.from || getDefaultDashboardForRole("student");
-
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -86,16 +83,6 @@ export default function LoginPage() {
 
     if (!isValid) return;
 
-    const account = authenticateDemoUser(trimmed.email, trimmed.password);
-
-    if (!account) {
-      setErrors({
-        email: "",
-        password: "Invalid email or password. Use a demo account below.",
-      });
-      return;
-    }
-
     setIsLoading(true);
     setSubmitError("");
 
@@ -106,7 +93,7 @@ export default function LoginPage() {
         rememberMe
       );
       login(user, accessToken, refreshToken);
-      navigate(dashboardPathForRole(user.role));
+      navigate(location.state?.from || dashboardPathForRole(user.role));
     } catch (err) {
       setSubmitError(parseApiError(err));
     } finally {
@@ -226,15 +213,15 @@ export default function LoginPage() {
           <ul className="mt-2 space-y-1.5 text-[12px] text-muted">
             <li>
               <span className="font-medium text-text">Student:</span>{" "}
-              student@cloudnexus.com / password123
+              alex.chen@example.com / Password123!
             </li>
             <li>
               <span className="font-medium text-text">Mentor:</span>{" "}
-              mentor@cloudnexus.com / password123
+              arjan@cloudnexus.com / Password123!
             </li>
             <li>
               <span className="font-medium text-text">Admin:</span>{" "}
-              admin@cloudnexus.com / password123
+              admin@cloudnexus.com / Password123!
             </li>
           </ul>
         </motion.div>
