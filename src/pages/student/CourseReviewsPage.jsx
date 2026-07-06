@@ -11,13 +11,14 @@ import {
   X,
 } from "lucide-react";
 import {
-  STUDENT_COURSES_FOR_REVIEW,
   deleteCourseReview,
   getReviewStats,
   loadStudentReviews,
   upsertCourseReview,
 } from "@/data/courseReviews";
 import useAuthStore from "@/store/useAuthStore";
+import { fetchMyEnrollments } from "@/lib/api/enrollmentApi";
+import { mapEnrollmentToReviewCourse } from "@/lib/student/studentMappers";
 import { deleteReview, fetchMyReviews, submitReview, updateReview } from "@/lib/api/reviewApi";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -102,10 +103,24 @@ export default function CourseReviewsPage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const [reviews, setReviews] = useState(() => loadStudentReviews());
+  const [courses, setCourses] = useState([]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [activeCourse, setActiveCourse] = useState(null);
   const [form, setForm] = useState({ rating: 0, title: "", body: "" });
   const [successId, setSuccessId] = useState(null);
+
+  useEffect(() => {
+    if (!user?.id || !token) {
+      setCourses([]);
+      setCoursesLoading(false);
+      return;
+    }
+    fetchMyEnrollments(user, token)
+      .then((list) => setCourses((list || []).map(mapEnrollmentToReviewCourse)))
+      .catch(() => setCourses([]))
+      .finally(() => setCoursesLoading(false));
+  }, [user?.id, token]);
 
   useEffect(() => {
     if (!user?.id || !token) return;
@@ -132,16 +147,16 @@ export default function CourseReviewsPage() {
       .catch(() => {});
   }, [user?.id, token]);
 
-  const stats = useMemo(() => getReviewStats(reviews, STUDENT_COURSES_FOR_REVIEW), [reviews]);
+  const stats = useMemo(() => getReviewStats(reviews, courses), [reviews, courses]);
 
   const filteredCourses = useMemo(() => {
-    return STUDENT_COURSES_FOR_REVIEW.filter((course) => {
+    return courses.filter((course) => {
       const hasReview = Boolean(reviews[course.id]);
       if (filter === "pending") return !hasReview;
       if (filter === "reviewed") return hasReview;
       return true;
     });
-  }, [filter, reviews]);
+  }, [filter, reviews, courses]);
 
   const openReviewForm = (course) => {
     const existing = reviews[course.id];
@@ -251,7 +266,7 @@ export default function CourseReviewsPage() {
           {FILTERS.map((tab) => {
             const count =
               tab.id === "all"
-                ? STUDENT_COURSES_FOR_REVIEW.length
+                ? courses.length
                 : tab.id === "pending"
                   ? stats.pendingCount
                   : stats.reviewedCount;
@@ -290,8 +305,16 @@ export default function CourseReviewsPage() {
               exit={{ opacity: 0, scale: 0.96 }}
             >
               <CheckCircle2 className="h-10 w-10 text-success" />
-              <h3 className="mt-3 text-base font-bold text-text">All caught up!</h3>
-              <p className="mt-1 text-sm text-muted">No courses in this filter.</p>
+              <h3 className="mt-3 text-base font-bold text-text">
+                {coursesLoading ? "Loading courses…" : courses.length ? "All caught up!" : "No enrolled courses"}
+              </h3>
+              <p className="mt-1 text-sm text-muted">
+                {coursesLoading
+                  ? "Fetching your enrollments…"
+                  : courses.length
+                    ? "No courses in this filter."
+                    : "Enroll in a course to leave a review."}
+              </p>
             </motion.div>
           ) : (
             filteredCourses.map((course, i) => {

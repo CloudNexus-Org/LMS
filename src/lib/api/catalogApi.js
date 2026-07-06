@@ -1,5 +1,5 @@
 import { API } from './config';
-import { getJson, postJson } from './http';
+import { deleteJson, getJson, postJson, putJson } from './http';
 import { authHeaders } from './apiHelpers';
 
 const base = API.base;
@@ -76,4 +76,14 @@ export async function fetchHowItWorks() {
 /** Mentor submits course → creates PENDING course + admin approval queue entry */
 export async function submitCourseForApproval(user, token, payload) {
   return postJson(`${base}/api/catalog/courses/submit`, payload, authHeaders(user, token));
+}
+
+/** Mentor updates a pending/draft catalog listing */
+export async function updateCatalogCourse(user, token, courseId, payload) {
+  return putJson(`${base}/api/catalog/courses/${courseId}`, payload, authHeaders(user, token));
+}
+
+/** Mentor deletes own non-published catalog course (cascades skills/outcomes links) */
+export async function deleteCatalogCourse(user, token, courseId) {
+  return deleteJson(`${base}/api/catalog/courses/${courseId}`, authHeaders(user, token));
 }

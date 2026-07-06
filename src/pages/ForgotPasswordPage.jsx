@@ -12,6 +12,7 @@ import { forgotPassword } from "@/lib/api/authApi";
 import { parseApiError } from "@/lib/api/apiHelpers";
 
 const RESET_EMAIL_KEY = "lms-reset-email";
+const RESET_OTP_KEY = "lms-reset-otp";
 
 export function getResetEmail() {
   return sessionStorage.getItem(RESET_EMAIL_KEY) || "";
@@ -19,6 +20,23 @@ export function getResetEmail() {
 
 export function setResetEmail(email) {
   sessionStorage.setItem(RESET_EMAIL_KEY, email);
+}
+
+export function getResetOtp() {
+  return sessionStorage.getItem(RESET_OTP_KEY) || "";
+}
+
+export function setResetOtp(otp) {
+  if (otp) {
+    sessionStorage.setItem(RESET_OTP_KEY, otp);
+  } else {
+    sessionStorage.removeItem(RESET_OTP_KEY);
+  }
+}
+
+export function clearResetSession() {
+  sessionStorage.removeItem(RESET_EMAIL_KEY);
+  sessionStorage.removeItem(RESET_OTP_KEY);
 }
 
 export default function ForgotPasswordPage() {
@@ -40,8 +58,9 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
     setError("");
     try {
-      await forgotPassword(trimmed);
+      const result = await forgotPassword(trimmed);
       setResetEmail(trimmed);
+      setResetOtp(result?.otp || "");
       navigate("/verify-otp");
     } catch (err) {
       setError(parseApiError(err));

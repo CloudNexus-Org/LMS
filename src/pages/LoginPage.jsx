@@ -39,6 +39,7 @@ export default function LoginPage() {
 
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
+  const successMessage = location.state?.message || "";
 
   const isFormValid = useMemo(
     () => validateLoginForm(formData).isValid,
@@ -179,6 +180,16 @@ export default function LoginPage() {
             "Sign in"
           )}
         </AuthPrimaryButton>
+
+        {successMessage ? (
+          <motion.p
+            {...authItemMotion(0.27)}
+            className="text-center text-[13px] text-success"
+            role="status"
+          >
+            {successMessage}
+          </motion.p>
+        ) : null}
 
         {submitError ? (
           <motion.p

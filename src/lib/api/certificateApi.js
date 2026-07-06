@@ -1,8 +1,11 @@
 import { API } from './config';
 import { getJson, postJson } from './http';
 import { authHeaders } from './apiHelpers';
+import { finishTrackLearning } from './enrollmentApi';
 
 const base = API.base;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export function mapCertificate(c) {
   if (!c) return null;
@@ -15,6 +18,7 @@ export function mapCertificate(c) {
     recipient: c.recipient,
     verifyLink: c.verifyLink,
     track: c.track,
+    trackId: c.trackId,
     mentor: c.mentor,
     status: c.status || 'verified',
   };
@@ -23,6 +27,21 @@ export function mapCertificate(c) {
 export async function fetchMyCertificates(user, token) {
   const list = await getJson(`${base}/api/certificates/me`, authHeaders(user, token));
   return (list || []).map(mapCertificate);
+}
+
+/** Mark track finished and wait for Kafka-issued certificate, then return it. */
+export async function claimTrackCertificate(user, token, trackId) {
+  if (!user?.id || !token || !trackId) return null;
+
+  await finishTrackLearning(user, token, trackId).catch(() => {});
+
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    if (attempt > 0) await sleep(600);
+    const list = await fetchMyCertificates(user, token);
+    const cert = list.find((c) => c.trackId === trackId);
+    if (cert) return cert;
+  }
+  return null;
 }
 
 export async function fetchCertificateById(user, token, certificateId) {

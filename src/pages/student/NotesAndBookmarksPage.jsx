@@ -13,34 +13,11 @@ import {
 import useAuthStore from "@/store/useAuthStore";
 import { fetchNotes, fetchBookmarks } from "@/lib/api/learningApi";
 
-const MOCK_NOTES = [
-  {
-    id: 1,
-    courseTitle: "Advanced State Management",
-    lessonTitle: "Intro to React Query",
-    timestamp: "03:45",
-    content:
-      "React query invalidates queries automatically in the background.\n\nUse `queryClient.invalidateQueries([\"todos\"])` to trigger refetch. This is extremely important for optimistic UI updates in our dashboard systems.",
-    date: "2 hours ago",
-    category: "Frontend",
-  },
-  {
-    id: 2,
-    courseTitle: "Cloud Architecture Patterns",
-    lessonTitle: "Microservices vs Monolith",
-    timestamp: "12:20",
-    content:
-      "Remember: Eventual consistency is a tradeoff. Saga pattern is crucial here. We should consider using Kafka for event streaming if we scale beyond 100k requests/min.",
-    date: "3 days ago",
-    category: "Cloud",
-  },
-];
-
 export default function NotesAndBookmarksPage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
-  const [notes, setNotes] = useState(MOCK_NOTES);
-  const [activeNote, setActiveNote] = useState(MOCK_NOTES[0]);
+  const [notes, setNotes] = useState([]);
+  const [activeNote, setActiveNote] = useState(null);
 
   useEffect(() => {
     if (!user?.id || !token) return;

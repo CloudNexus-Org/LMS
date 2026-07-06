@@ -76,7 +76,7 @@ export function loadStudentReviews() {
   } catch {
     /* ignore */
   }
-  return { ...SEED_REVIEWS };
+  return {};
 }
 
 export function saveStudentReviews(reviews) {

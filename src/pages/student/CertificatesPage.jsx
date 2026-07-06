@@ -7,7 +7,6 @@ import {
   Download,
   Eye,
 } from "lucide-react";
-import { MOCK_CERTS } from "@/data/certificates";
 import CertificateDocument from "@/features/certificates/CertificateDocument";
 import { downloadCertificatePdf } from "@/features/certificates/downloadCertificatePdf";
 import useAuthStore from "@/store/useAuthStore";
@@ -98,13 +97,13 @@ function CertificateListCard({ cert }) {
 export default function CertificatesPage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
-  const [certs, setCerts] = useState(MOCK_CERTS);
+  const [certs, setCerts] = useState([]);
 
   useEffect(() => {
     if (!user?.id || !token) return;
     fetchMyCertificates(user, token)
-      .then((data) => { if (data?.length) setCerts(data); })
-      .catch(() => {});
+      .then((data) => setCerts(data || []))
+      .catch(() => setCerts([]));
   }, [user?.id, token]);
 
   const totalHours = certs.reduce((sum, cert) => {

@@ -4,8 +4,32 @@ import { authHeaders } from './apiHelpers';
 
 const base = API.base;
 
+/** Turn API markdown or object reading content into pane shape */
+export function normalizeReadingContent(raw, lesson = {}) {
+  if (raw && typeof raw === 'object' && Array.isArray(raw.sections)) {
+    return raw;
+  }
+  if (typeof raw === 'string' && raw.trim()) {
+    const paragraphs = raw.split(/\n\n+/).filter(Boolean);
+    const sections = paragraphs.map((block) => {
+      const lines = block.split('\n');
+      const heading = lines[0].replace(/^#+\s*/, '').trim();
+      const body = lines.slice(1).join('\n').trim();
+      return body ? { heading, body } : { heading, body: lines[0].replace(/^#+\s*/, '') };
+    });
+    return {
+      title: lesson.title || 'Reading',
+      courseTitle: lesson.courseTitle || '',
+      duration: lesson.duration || '',
+      sections: sections.length ? sections : [{ heading: 'Content', body: raw }],
+    };
+  }
+  return null;
+}
+
 export function mapLesson(n) {
   if (!n) return null;
+  const readingContent = normalizeReadingContent(n.readingContent, n);
   return {
     id: n.id,
     moduleId: n.moduleId,
@@ -17,8 +41,9 @@ export function mapLesson(n) {
     durationMin: n.durationMin,
     order: n.orderIndex ?? n.order,
     orderIndex: n.orderIndex,
+    courseIndex: n.courseIndex ?? 0,
     contentUrl: n.contentUrl,
-    readingContent: n.readingContent,
+    readingContent,
     summary: n.summary,
     free: n.free ?? n.previewFree,
     previewFree: n.previewFree,
@@ -31,6 +56,10 @@ export async function createCourseDraft(user, token, payload) {
 
 export async function updateCourse(user, token, courseId, payload) {
   return putJson(`${base}/api/content/courses/${courseId}`, payload, authHeaders(user, token));
+}
+
+export async function deleteCourse(user, token, courseId) {
+  return deleteJson(`${base}/api/content/courses/${courseId}`, authHeaders(user, token));
 }
 
 export async function fetchCourse(user, token, courseId) {
@@ -87,7 +116,9 @@ export async function fetchTrackLessons(trackId) {
 }
 
 export async function fetchLesson(lessonId) {
-  return mapLesson(await getJson(`${base}/api/content/lessons/${lessonId}`));
+  const id = String(lessonId ?? '');
+  if (!/^\d+$/.test(id)) return null;
+  return mapLesson(await getJson(`${base}/api/content/lessons/${id}`));
 }
 
 export async function fetchLessonResources(lessonId) {

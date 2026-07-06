@@ -20,8 +20,9 @@ import {
   PanelRightOpen,
   Keyboard,
 } from "lucide-react";
-import { getTrackById, getLessonsByTrack } from "@/data/tracks";
+import { getTrackById } from "@/data/tracks";
 import { fetchTrackLessons, fetchLesson } from "@/lib/api/contentApi";
+import { mergeTrackLessons, apiLessonCount } from "@/features/learn/mergeTrackLessons";
 import { resolveMediaUrl } from "@/lib/api/mediaApi";
 import { getMentorBySlug } from "@/data/mentors";
 import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -38,6 +39,8 @@ import {
 import QuizPane from "@/features/learn/components/quiz/QuizPane";
 import { useCourseProgress } from "@/features/learn/hooks/useCourseProgress";
 import { saveLastLearningSession } from "@/features/learn/learningSession";
+import useAuthStore from "@/store/useAuthStore";
+import { claimTrackCertificate } from "@/lib/api/certificateApi";
 
 const EASE = [0.16, 1, 0.3, 1];
 const VIDEO_SRC = "/videos/how-it-works.mp4";
@@ -88,12 +91,15 @@ function ProgressRing({ pct, size = 40 }) {
 export default function LessonPlayerPage() {
   const { trackId, lessonId } = useParams();
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const shouldReduceMotion = useReducedMotion();
   const track = useMemo(() => getTrackById(trackId), [trackId]);
 
   const [apiLessons, setApiLessons] = useState(null);
   const [lessonDetail, setLessonDetail] = useState(null);
   const [videoSrc, setVideoSrc] = useState(VIDEO_SRC);
+  const [claimingCert, setClaimingCert] = useState(false);
 
   useEffect(() => {
     if (!trackId) return;
@@ -104,22 +110,32 @@ export default function LessonPlayerPage() {
       .catch(() => {});
   }, [trackId]);
 
-  const lessons = useMemo(() => {
-    if (apiLessons?.length) return apiLessons;
-    return getLessonsByTrack(trackId);
-  }, [apiLessons, trackId]);
+  const lessons = useMemo(
+    () => mergeTrackLessons(trackId, apiLessons),
+    [apiLessons, trackId]
+  );
 
-  const routeLesson = lessonId
-    ? lessons.find((l) => String(l.id) === String(lessonId)) || lessons[0]
-    : lessons[0];
+  const progressTotal = apiLessonCount(apiLessons) || lessons.length;
+
+  const routeLesson = useMemo(() => {
+    if (!lessons.length) return null;
+    if (!lessonId) return lessons[0];
+    const byId = lessons.find((l) => String(l.id) === String(lessonId));
+    if (byId) return byId;
+    const orderIdx = Number(lessonId);
+    if (!Number.isNaN(orderIdx) && orderIdx >= 1 && orderIdx <= lessons.length) {
+      return lessons[orderIdx - 1];
+    }
+    return lessons[0];
+  }, [lessons, lessonId]);
 
   const displayLesson = lessonDetail || routeLesson;
 
   useEffect(() => {
-    const id = routeLesson?.id;
+    const id = routeLesson?.apiId ?? routeLesson?.id;
     setLessonDetail(null);
     setVideoSrc(VIDEO_SRC);
-    if (!id) return;
+    if (!id || !/^\d+$/.test(String(id))) return;
     fetchLesson(id)
       .then((detail) => {
         if (!detail) return;
@@ -137,7 +153,8 @@ export default function LessonPlayerPage() {
     progressPct,
     toggleLessonComplete,
     markLessonComplete,
-  } = useCourseProgress({ trackId, lessons });
+    trackComplete,
+  } = useCourseProgress({ trackId, lessons, progressTotal });
 
   const [activeTab, setActiveTab] = useState("overview");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -189,7 +206,7 @@ export default function LessonPlayerPage() {
 
   const onPickLesson = (l) => {
     setDrawerOpen(false);
-    navigate(`/learn/${trackId}/${l.id}`);
+    navigate(`/learn/${trackId}/${l.id}`, { replace: false });
   };
 
   const onGoToQuizLesson = (quizLessonId) => {
@@ -201,8 +218,28 @@ export default function LessonPlayerPage() {
     markLessonComplete(displayLesson.id);
   };
 
+  const onClaimCertificate = async () => {
+    if (claimingCert) return;
+    if (!isDone) markLessonComplete(displayLesson.id);
+    setClaimingCert(true);
+    try {
+      const cert = await claimTrackCertificate(user, token, trackId);
+      navigate(cert?.id ? `/student/certificates/${cert.id}` : "/student/certificates");
+    } catch {
+      navigate("/student/certificates");
+    } finally {
+      setClaimingCert(false);
+    }
+  };
+
   const onCompleteAndNext = () => {
+    const isLastRequired =
+      progressTotal > 0 &&
+      lessons.slice(0, progressTotal).some(
+        (l, i, arr) => String(l.id) === String(displayLesson.id) && i === arr.length - 1
+      );
     markLessonComplete(displayLesson.id);
+    if (trackComplete || isLastRequired) return;
     if (next) onPickLesson(next);
   };
 
@@ -252,7 +289,7 @@ export default function LessonPlayerPage() {
               <div className="hidden lg:block">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-muted">Progress</p>
                 <p className="text-xs font-bold text-text">
-                  {doneCount}/{lessons.length} lessons
+                  {doneCount}/{progressTotal} lessons
                 </p>
               </div>
             </div>
@@ -451,7 +488,23 @@ export default function LessonPlayerPage() {
                   <div />
                 )}
 
-                {next ? (
+                {trackComplete ? (
+                  <motion.button
+                    type="button"
+                    onClick={onClaimCertificate}
+                    disabled={claimingCert}
+                    whileHover={{ y: -2 }}
+                    className="learn-nav-card learn-nav-card-done"
+                  >
+                    <Award size={18} className="shrink-0 text-success" />
+                    <div className="min-w-0 text-right">
+                      <p className="learn-nav-label text-success">Track complete</p>
+                      <p className="learn-nav-title">
+                        {claimingCert ? "Preparing certificate…" : "Claim your certificate"}
+                      </p>
+                    </div>
+                  </motion.button>
+                ) : next ? (
                   <motion.button
                     type="button"
                     onClick={onCompleteAndNext}
@@ -464,20 +517,7 @@ export default function LessonPlayerPage() {
                     </div>
                     <ChevronRight size={16} className="shrink-0 text-primary" />
                   </motion.button>
-                ) : (
-                  <motion.button
-                    type="button"
-                    onClick={() => navigate(`/tracks/${trackId}`)}
-                    whileHover={{ y: -2 }}
-                    className="learn-nav-card learn-nav-card-done"
-                  >
-                    <Award size={18} className="shrink-0 text-success" />
-                    <div className="min-w-0 text-right">
-                      <p className="learn-nav-label text-success">Track complete</p>
-                      <p className="learn-nav-title">Claim your certificate</p>
-                    </div>
-                  </motion.button>
-                )}
+                ) : null}
               </div>
             </motion.div>
           </div>
@@ -495,7 +535,7 @@ export default function LessonPlayerPage() {
               <div className="learn-sidebar-footer">
                 <div className="flex items-center justify-between text-xs text-muted">
                   <span>
-                    <span className="font-bold text-text">{doneCount}</span> / {lessons.length} done
+                    <span className="font-bold text-text">{doneCount}</span> / {progressTotal} done
                   </span>
                   <span className="font-bold text-primary">{progressPct}%</span>
                 </div>
@@ -506,6 +546,17 @@ export default function LessonPlayerPage() {
                     transition={{ duration: 0.5, ease: EASE }}
                   />
                 </div>
+                {trackComplete && (
+                  <button
+                    type="button"
+                    onClick={onClaimCertificate}
+                    disabled={claimingCert}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-[12px] font-semibold text-success transition-colors hover:bg-success/15 disabled:opacity-60"
+                  >
+                    <Award size={14} aria-hidden />
+                    {claimingCert ? "Preparing…" : "Claim certificate"}
+                  </button>
+                )}
               </div>
             </div>
           </aside>
@@ -546,7 +597,7 @@ export default function LessonPlayerPage() {
               <div className="learn-sidebar-footer">
                 <div className="flex items-center justify-between text-xs text-muted">
                   <span>
-                    <span className="font-bold text-text">{doneCount}</span> / {lessons.length} done
+                    <span className="font-bold text-text">{doneCount}</span> / {progressTotal} done
                   </span>
                   <span className="font-bold text-primary">{progressPct}%</span>
                 </div>
@@ -556,6 +607,17 @@ export default function LessonPlayerPage() {
                     style={{ width: `${progressPct}%` }}
                   />
                 </div>
+                {trackComplete && (
+                  <button
+                    type="button"
+                    onClick={onClaimCertificate}
+                    disabled={claimingCert}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-[12px] font-semibold text-success transition-colors hover:bg-success/15 disabled:opacity-60"
+                  >
+                    <Award size={14} aria-hidden />
+                    {claimingCert ? "Preparing…" : "Claim certificate"}
+                  </button>
+                )}
               </div>
             </motion.div>
           </>
