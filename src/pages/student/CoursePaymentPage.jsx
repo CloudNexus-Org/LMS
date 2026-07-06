@@ -12,6 +12,7 @@ import { getResumeUrlForTrack } from "@/features/learn/learningSession";
 import { tracks, formatTrackPrice, getTrackById } from "@/data/tracks";
 import useAuthStore from "@/store/useAuthStore";
 import { enrollInTrack } from "@/lib/api/enrollmentApi";
+import { parseApiError } from "@/lib/api/apiHelpers";
 
 const GST_RATE = 0.18;
 
@@ -27,6 +28,7 @@ export default function CoursePaymentPage() {
 
   const [selectedId, setSelectedId] = useState(validInitial);
   const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState("");
 
   const selected = useMemo(
     () => getTrackById(selectedId) || tracks[0],
@@ -43,19 +45,27 @@ export default function CoursePaymentPage() {
 
   const handlePay = async () => {
     if (!selected || paying) return;
-    setPaying(true);
-    try {
-      if (user?.id && token) {
-        const courseId = selected.courseIds?.[0];
-        await enrollInTrack(user, token, { trackId: selected.id, courseId });
-      } else {
-        await new Promise((r) => setTimeout(r, 1200));
-      }
-    } catch {
-      await new Promise((r) => setTimeout(r, 800));
+    if (!user?.id || !token) {
+      setPayError("Please sign in to complete payment.");
+      return;
     }
-    setPaying(false);
-    navigate(`/student/payment?track=${selected.id}&status=success`, { replace: true });
+
+    setPaying(true);
+    setPayError("");
+
+    try {
+      const courseId = selected.courseIds?.[0];
+      await enrollInTrack(user, token, { trackId: selected.id, courseId });
+      navigate(`/student/payment?track=${selected.id}&status=success`, { replace: true });
+    } catch (err) {
+      if (err?.status === 409) {
+        navigate(`/student/payment?track=${selected.id}&status=success`, { replace: true });
+        return;
+      }
+      setPayError(parseApiError(err) || "Payment failed. Please try again.");
+    } finally {
+      setPaying(false);
+    }
   };
 
   if (isSuccessView) {
@@ -189,6 +199,10 @@ export default function CoursePaymentPage() {
               <CreditCard size={16} aria-hidden />
               {paying ? "Processing…" : "Pay now"}
             </button>
+
+            {payError ? (
+              <p className="text-center text-[13px] font-medium text-danger">{payError}</p>
+            ) : null}
 
             <p className="flex items-center justify-center gap-1.5 text-[12px] text-muted">
               <ShieldCheck size={13} className="text-success" aria-hidden />

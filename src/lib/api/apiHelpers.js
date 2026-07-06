@@ -96,6 +96,9 @@ export function parseApiError(err) {
     if (parsed.status === 403 || status === 403) {
       return 'Your account is inactive. Contact support.';
     }
+    if (parsed.status === 404 || status === 404) {
+      return parsed.message || 'Account not found.';
+    }
     if (parsed.status === 429 || status === 429) {
       return 'Too many failed attempts. Please try again later.';
     }
@@ -104,6 +107,7 @@ export function parseApiError(err) {
     if (status === 409) return 'This email is already registered. Please sign in instead.';
     if (status === 401) return 'Invalid email or password.';
     if (status === 403) return 'Your account is inactive. Contact support.';
+    if (status === 404) return 'Account not found.';
     if (status === 429) return 'Too many failed attempts. Please try again later.';
     return msg || 'Something went wrong';
   }

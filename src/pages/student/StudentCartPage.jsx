@@ -12,6 +12,9 @@ import {
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import useCartStore from '@/store/useCartStore';
+import useAuthStore from '@/store/useAuthStore';
+import { findTrackForCourse } from '@/data/courses';
+import { enrollPurchasedItems } from '@/lib/api/enrollmentApi';
 
 const EASE = [0.16, 1, 0.3, 1];
 const GST_RATE = 0.18;
@@ -21,12 +24,15 @@ function formatPrice(amount) {
 }
 
 export default function StudentCartPage() {
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const items = useCartStore((s) => s.items);
   const removeItem = useCartStore((s) => s.removeItem);
   const clearCart = useCartStore((s) => s.clearCart);
   const subtotal = useCartStore((s) => s.total());
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
 
   const savings = items.reduce(
     (sum, item) => sum + Math.max(0, (item.originalPrice || 0) - item.price),
@@ -37,11 +43,40 @@ export default function StudentCartPage() {
 
   const handleCheckout = async () => {
     if (!items.length || paying) return;
+    if (!user?.id || !token) {
+      setCheckoutError('Please sign in again to complete your purchase.');
+      return;
+    }
+
     setPaying(true);
-    await new Promise((r) => setTimeout(r, 1400));
-    clearCart();
-    setPaying(false);
-    setSuccess(true);
+    setCheckoutError('');
+
+    try {
+      const { enrolled, skipped, failed } = await enrollPurchasedItems(
+        user,
+        token,
+        items,
+        findTrackForCourse
+      );
+
+      if (!enrolled.length && !skipped.length) {
+        const message = failed.map((f) => f.error).filter(Boolean).join(' ') || 'Enrollment failed.';
+        throw new Error(message);
+      }
+
+      if (failed.length) {
+        setCheckoutError(
+          `Some courses could not be enrolled: ${failed.map((f) => f.item?.title || 'Course').join(', ')}`
+        );
+      }
+
+      clearCart();
+      setSuccess(true);
+    } catch (err) {
+      setCheckoutError(err.message || 'Checkout failed. Please try again.');
+    } finally {
+      setPaying(false);
+    }
   };
 
   if (success) {
@@ -222,6 +257,10 @@ export default function StudentCartPage() {
               <ShieldCheck size={14} className="shrink-0 text-success" />
               Secure checkout · 7-day money-back guarantee
             </div>
+
+            {checkoutError ? (
+              <p className="mt-4 text-[13px] font-medium text-danger">{checkoutError}</p>
+            ) : null}
 
             <Button
               size="lg"

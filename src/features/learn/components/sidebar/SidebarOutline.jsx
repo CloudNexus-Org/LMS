@@ -47,16 +47,35 @@ export const SidebarOutline = memo(function SidebarOutline({
     }
     return Array.from(m.entries()).map(([key, items]) => {
       const [, title] = key.split("::");
-      return { title, items };
+      const courseIndex = items[0]?.courseIndex ?? 0;
+      return { title, items, courseIndex };
     });
   }, [lessons]);
 
-  const current = lessons.find((l) => l.id === currentId);
-  const [openCourse, setOpenCourse] = useState(current?.courseIndex ?? 0);
+  const current = lessons.find((l) => String(l.id) === String(currentId));
+  const [collapsed, setCollapsed] = useState(() => new Set());
 
   useEffect(() => {
-    if (current != null) setOpenCourse(current.courseIndex ?? 0);
-  }, [current?.courseIndex, currentId]);
+    if (current != null) {
+      setCollapsed((prev) => {
+        const next = new Set(prev);
+        const gi = grouped.findIndex((g) =>
+          g.items.some((l) => String(l.id) === String(currentId))
+        );
+        if (gi >= 0) next.delete(gi);
+        return next;
+      });
+    }
+  }, [currentId, grouped]);
+
+  const toggleSection = (gi) => {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(gi)) next.delete(gi);
+      else next.add(gi);
+      return next;
+    });
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -82,16 +101,16 @@ export const SidebarOutline = memo(function SidebarOutline({
 
       <div className="learn-sidebar-scroll flex-1 overflow-y-auto">
         {grouped.map((g, gi) => {
-          const isOpen = openCourse === gi;
+          const isOpen = !collapsed.has(gi);
           const courseLessons = g.items;
           const doneInCourse = courseLessons.filter((l) => completedMap[l.id]).length;
           const sectionPct = Math.round((doneInCourse / courseLessons.length) * 100);
 
           return (
-            <div key={g.title} className="learn-section">
+            <div key={`${g.courseIndex}-${g.title}`} className="learn-section">
               <button
                 type="button"
-                onClick={() => setOpenCourse(isOpen ? -1 : gi)}
+                onClick={() => toggleSection(gi)}
                 aria-expanded={isOpen}
                 className="learn-section-header"
               >
@@ -125,7 +144,7 @@ export const SidebarOutline = memo(function SidebarOutline({
                     className="overflow-hidden"
                   >
                     {courseLessons.map((l) => {
-                      const isActive = l.id === currentId;
+                      const isActive = String(l.id) === String(currentId);
                       const isDone = !!completedMap[l.id];
                       const Icon = TYPE_ICON[l.type] || PlayCircle;
 
@@ -133,7 +152,14 @@ export const SidebarOutline = memo(function SidebarOutline({
                         <li key={l.id}>
                           <button
                             type="button"
-                            onClick={() => onPick(l)}
+                            onClick={() => {
+                              setCollapsed((prev) => {
+                                const next = new Set(prev);
+                                next.delete(gi);
+                                return next;
+                              });
+                              onPick(l);
+                            }}
                             aria-current={isActive ? "true" : undefined}
                             className={`learn-lesson-row ${isActive ? "learn-lesson-row-active" : ""}`}
                           >
@@ -150,11 +176,7 @@ export const SidebarOutline = memo(function SidebarOutline({
                               )}
                             </span>
                             <span className="min-w-0 flex-1">
-                              <span
-                                className={`learn-lesson-name ${isDone ? "line-through opacity-70" : ""}`}
-                              >
-                                {l.title}
-                              </span>
+                              <span className="learn-lesson-name">{l.title}</span>
                               <span className="learn-lesson-meta-row">
                                 <Icon size={10} aria-hidden />
                                 {TYPE_LABEL[l.type]}

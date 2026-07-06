@@ -7,7 +7,7 @@ import {
   resetPassword,
   verifyOtp,
 } from "@/lib/api/authApi";
-import { getResetEmail } from "@/pages/ForgotPasswordPage";
+import { clearResetSession, getResetEmail, getResetOtp, setResetOtp } from "@/pages/ForgotPasswordPage";
 import { parseApiError } from "@/lib/api/apiHelpers";
 
 const OTP_LENGTH = 6;
@@ -15,6 +15,7 @@ const OTP_LENGTH = 6;
 export default function OtpVerificationPage() {
   const navigate = useNavigate();
   const email = getResetEmail();
+  const devOtp = getResetOtp();
 
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
   const [step, setStep] = useState("verify");
@@ -77,6 +78,7 @@ export default function OtpVerificationPage() {
     setError("");
     try {
       await resetPassword(email, otpCode, newPassword);
+      clearResetSession();
       navigate("/login", { state: { message: "Password reset successfully. Please sign in." } });
     } catch (err) {
       setError(parseApiError(err));
@@ -90,7 +92,8 @@ export default function OtpVerificationPage() {
     setIsLoading(true);
     setError("");
     try {
-      await resendOtp(email);
+      const result = await resendOtp(email);
+      if (result?.otp) setResetOtp(result.otp);
       setMessage("A new code was sent to your email.");
     } catch (err) {
       setError(parseApiError(err));
@@ -203,6 +206,11 @@ export default function OtpVerificationPage() {
                   ? `Enter the ${OTP_LENGTH}-digit verification code sent to your email address.`
                   : "Create a strong password for your account."}
               </p>
+              {step === "verify" && devOtp ? (
+                <p className="mt-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-[13px] text-primary">
+                  Dev mode: your verification code is <strong className="font-mono tracking-widest">{devOtp}</strong>
+                </p>
+              ) : null}
             </div>
 
             {step === "verify" ? (

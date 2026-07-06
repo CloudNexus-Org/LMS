@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Edit3, EyeOff, Plus, Users, Star, BarChart, Clock,
+  Edit3, Plus, Users, Star, BarChart, Clock,
   ChevronDown, GripVertical, CheckCircle2,
   Video, FileText, Lock, Eye, Trash2,
   TrendingUp, ArrowUpRight, BookOpen, Globe,
@@ -8,8 +8,9 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
-import { fetchCourseDrafts, publishCourse, fetchCourse } from '@/lib/api/contentApi';
+import { fetchCourseDrafts, publishCourse, fetchCourse, deleteCourse, deleteLesson } from '@/lib/api/contentApi';
 import { CONTENT_CHANGED, mapDraftToManageCourse } from '@/lib/api/contentSync';
+import { parseApiError } from '@/lib/api/apiHelpers';
 
 const FALLBACK_COURSES = [
   {
@@ -125,6 +126,40 @@ export default function ManageLessonsPage() {
       loadCourses();
     } catch {
       /* keep UI state */
+    }
+  };
+
+  const handleDeleteCourse = async (course) => {
+    if (!user?.id || !token) return;
+    if (course.status === 'Published') {
+      window.alert('Published courses cannot be deleted. Contact admin if you need it removed.');
+      return;
+    }
+    if (!window.confirm(`Delete "${course.title}"? This will remove all modules and lessons.`)) return;
+    try {
+      await deleteCourse(user, token, course.id);
+      setCourseDetails((prev) => {
+        const next = { ...prev };
+        delete next[course.id];
+        return next;
+      });
+      setExpandedCourse(null);
+      loadCourses();
+    } catch (err) {
+      window.alert(parseApiError(err) || 'Could not delete course');
+    }
+  };
+
+  const handleDeleteLesson = async (courseId, lessonId) => {
+    if (!user?.id || !token) return;
+    if (!window.confirm('Delete this lesson?')) return;
+    try {
+      await deleteLesson(user, token, courseId, lessonId);
+      const full = await fetchCourse(user, token, courseId);
+      setCourseDetails((prev) => ({ ...prev, [courseId]: mapDraftToManageCourse(full) }));
+      loadCourses();
+    } catch (err) {
+      window.alert(parseApiError(err) || 'Could not delete lesson');
     }
   };
 
@@ -446,12 +481,23 @@ export default function ManageLessonsPage() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all">
+                  <Link
+                    to={`/mentor/upload?courseId=${course.id}`}
+                    className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-all"
+                    title="Edit course"
+                  >
                     <Edit3 className="h-4 w-4" />
-                  </button>
-                  <button className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all">
-                    <EyeOff className="h-4 w-4" />
-                  </button>
+                  </Link>
+                  {course.status !== 'Published' && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCourse(course)}
+                      className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all"
+                      title="Delete course"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                   <button
                     onClick={() => handleExpand(course.id)}
                     className="h-9 w-9 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-text hover:bg-bg transition-all"
@@ -506,7 +552,12 @@ export default function ManageLessonsPage() {
                             <button className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 transition-all">
                               <Edit3 className="h-3.5 w-3.5" />
                             </button>
-                            <button className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 transition-all">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteLesson(course.id, lesson.id)}
+                              className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 transition-all"
+                              title="Delete lesson"
+                            >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           </div>

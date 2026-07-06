@@ -47,134 +47,6 @@ const FILTERS = [
   { id: "completed", label: "Completed" },
 ];
 
-const MOCK_COURSES = [
-  {
-    id: 1,
-    trackId: "cloud",
-    title: "AWS Solution Architect",
-    image:
-      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop",
-    progress: 65,
-    status: "in-progress",
-    totalLessons: 42,
-    completedLessons: 27,
-    badge: "Intermediate",
-    instructor: "Dr. Arjan Singh",
-    rating: "4.8",
-    duration: "24 Hours",
-    modules: "12 Mod",
-    description:
-      "Master EC2, S3, and Lambda to build highly scalable and fault-tolerant cloud infrastructures.",
-  },
-  {
-    id: 2,
-    trackId: "ai",
-    title: "Azure Generative AI",
-    image:
-      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1600&auto=format&fit=crop",
-    progress: 100,
-    status: "completed",
-    totalLessons: 50,
-    completedLessons: 50,
-    badge: "Advanced",
-    instructor: "Sarah Jenkins",
-    rating: "4.9",
-    duration: "18 Hours",
-    modules: "9 Mod",
-    description:
-      "Dive deep into generative models, neural networks, and machine learning integration on Azure.",
-  },
-  {
-    id: 3,
-    trackId: "fullstack",
-    title: "Modern JavaScript",
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop",
-    progress: 12,
-    status: "in-progress",
-    totalLessons: 30,
-    completedLessons: 4,
-    badge: "Beginner",
-    instructor: "Prof. David Miller",
-    rating: "4.7",
-    duration: "30 Hours",
-    modules: "15 Mod",
-    description:
-      "Build robust frontend applications with ES6+, async patterns, and scalable architecture.",
-  },
-  {
-    id: 4,
-    trackId: "backend",
-    title: "High Performance Go",
-    image:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1600&auto=format&fit=crop",
-    progress: 40,
-    status: "in-progress",
-    totalLessons: 36,
-    completedLessons: 14,
-    badge: "Intermediate",
-    instructor: "Ken Thompson Jr.",
-    rating: "4.6",
-    duration: "15 Hours",
-    modules: "8 Mod",
-    description:
-      "Learn concurrency patterns and build lightning-fast microservices using Go.",
-  },
-  {
-    id: 5,
-    trackId: "data",
-    title: "Python for Data Engineering",
-    image:
-      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop",
-    progress: 100,
-    status: "completed",
-    totalLessons: 60,
-    completedLessons: 60,
-    badge: "Beginner",
-    instructor: "Dr. Angela Yu",
-    rating: "4.8",
-    duration: "40 Hours",
-    modules: "20 Mod",
-    description:
-      "Automate data pipelines and process large-scale datasets with Python.",
-  },
-  {
-    id: 6,
-    trackId: "cloud",
-    title: "GCP Cloud Engineering",
-    image:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop",
-    progress: 28,
-    status: "in-progress",
-    totalLessons: 38,
-    completedLessons: 11,
-    badge: "Intermediate",
-    instructor: "Michael Chang",
-    rating: "4.5",
-    duration: "20 Hours",
-    modules: "10 Mod",
-    description:
-      "Leverage Google Cloud for big data, networking, and high-performance computing.",
-  },
-  {
-    id: 7,
-    trackId: "devops",
-    title: "Docker Essentials",
-    image:
-      "https://images.unsplash.com/photo-1605745341112-85968b19335b?q=80&w=1600&auto=format&fit=crop",
-    progress: 82,
-    status: "in-progress",
-    totalLessons: 24,
-    completedLessons: 20,
-    badge: "Intermediate",
-    instructor: "James Wilson",
-    rating: "4.9",
-    duration: "10 Hours",
-    modules: "6 Mod",
-    description:
-      "Package applications consistently and optimize CI/CD pipelines with Docker.",
-  },
-];
 
 function MyCourseCard({ course, index }) {
   const variant = CARD_VARIANTS[index % CARD_VARIANTS.length];
@@ -317,7 +189,11 @@ function MyCourseCard({ course, index }) {
             )}
 
             <Link
-              to={getResumeUrlForTrack(course.trackId)}
+              to={
+                isCompleted
+                  ? `/learn/${course.trackId}/1`
+                  : getResumeUrlForTrack(course.trackId)
+              }
               className="
                 inline-flex h-8 shrink-0 items-center justify-center gap-1
                 rounded-lg bg-primary px-3.5
@@ -345,16 +221,13 @@ export default function MyCoursesPage() {
 
   useEffect(() => {
     if (!user?.id || !token) {
-      setCourses(MOCK_COURSES);
+      setCourses([]);
       setIsLoading(false);
       return;
     }
     fetchMyEnrollments(user, token)
-      .then((data) => {
-        if (data?.length) setCourses(data);
-        else setCourses(MOCK_COURSES);
-      })
-      .catch(() => setCourses(MOCK_COURSES))
+      .then((data) => setCourses(data || []))
+      .catch(() => setCourses([]))
       .finally(() => setIsLoading(false));
   }, [user?.id, token]);
 

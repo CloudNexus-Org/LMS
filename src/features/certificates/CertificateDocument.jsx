@@ -37,8 +37,8 @@ function MiniQR() {
 
 function Signature({ d, label }) {
   return (
-    <div className="flex min-w-0 flex-col items-center">
-      <svg viewBox="0 0 80 26" className="h-4 w-full max-w-[80px]" aria-hidden="true">
+    <div className="cert-signature">
+      <svg viewBox="0 0 80 26" className="cert-signature-line" aria-hidden="true">
         <path
           d={d}
           stroke="currentColor"
@@ -46,20 +46,17 @@ function Signature({ d, label }) {
           strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
-          className="text-text"
         />
       </svg>
-      <span className="mt-0.5 w-full border-t border-border pt-1 text-center text-[7px] font-semibold uppercase tracking-[0.14em] text-subtle">
-        {label}
-      </span>
+      <span className="cert-signature-label">{label}</span>
     </div>
   );
 }
 
 function Seal({ sealPathId }) {
   return (
-    <div className="relative h-12 w-12 shrink-0 sm:h-14 sm:w-14">
-      <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
+    <div className="cert-seal">
+      <svg viewBox="0 0 100 100" className="cert-seal-ring" aria-hidden="true">
         <defs>
           <path id={sealPathId} d="M 50 50 m -38 0 a 38 38 0 1 1 76 0 a 38 38 0 1 1 -76 0" />
         </defs>
@@ -69,10 +66,9 @@ function Seal({ sealPathId }) {
           <textPath href={`#${sealPathId}`}>OFFICIAL · VERIFIED · CLOUD NEXUS · </textPath>
         </text>
       </svg>
-      <div className="absolute inset-[8px] flex items-center justify-center rounded-lg border border-primary/50 bg-primary-soft shadow-sm">
-        <ShieldCheck size={16} className="text-primary" strokeWidth={2} />
+      <div className="cert-seal-center">
+        <ShieldCheck size={18} className="text-primary" strokeWidth={2} />
       </div>
-      <span aria-hidden="true" className="absolute inset-0 rounded-lg bg-primary/10 blur-[4px]" />
     </div>
   );
 }
@@ -83,63 +79,45 @@ export default function CertificateDocument({ cert, className = "" }) {
 
   return (
     <figure
-      className={`certificate-paper cert-document relative isolate aspect-[1.4] w-full overflow-hidden rounded-[20px] border border-border bg-elevated p-4 text-text shadow-sm ${className}`}
+      className={`certificate-paper cert-document ${className}`}
       data-certificate-id={cert.id}
     >
-      <div className="pointer-events-none absolute inset-2 rounded-xl border border-primary/20" />
-      <div className="pointer-events-none absolute inset-[10px] rounded-lg border border-primary/10" />
+      <div className="cert-frame cert-frame-outer" />
+      <div className="cert-frame cert-frame-inner" />
 
-      <CornerOrnament className="pointer-events-none absolute left-3 top-3 h-3.5 w-3.5 text-primary" />
-      <CornerOrnament className="pointer-events-none absolute right-3 top-3 h-3.5 w-3.5 -scale-x-100 text-primary" />
-      <CornerOrnament className="pointer-events-none absolute bottom-3 left-3 h-3.5 w-3.5 -scale-y-100 text-primary" />
-      <CornerOrnament className="pointer-events-none absolute bottom-3 right-3 h-3.5 w-3.5 -scale-100 text-primary" />
+      <CornerOrnament className="cert-corner cert-corner-tl" />
+      <CornerOrnament className="cert-corner cert-corner-tr" />
+      <CornerOrnament className="cert-corner cert-corner-bl" />
+      <CornerOrnament className="cert-corner cert-corner-br" />
 
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.03]">
-        <Award size={180} className="text-primary" strokeWidth={1} />
+      <div className="cert-watermark" aria-hidden="true">
+        <Award size={180} strokeWidth={1} />
       </div>
 
-      <div className="absolute -top-1.5 right-3 z-30 inline-flex items-center gap-1 rounded-lg border border-success/30 bg-elevated px-2 py-0.5 shadow-sm">
-        <BadgeCheck size={9} className="text-success" />
-        <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-success">Verified</span>
+      <div className="cert-verified-badge">
+        <BadgeCheck size={11} className="text-success" />
+        <span>Verified</span>
       </div>
 
-      <div className="relative z-10 flex h-full flex-col items-center text-center">
-        <div className="flex flex-col items-center">
-          <div className="flex items-center gap-1 text-primary">
-            <Award size={13} strokeWidth={2.2} />
-            <span className="font-display text-[8px] font-bold tracking-[0.32em] text-text sm:text-[9px]">
-              CLOUD NEXUS ACADEMY
-            </span>
-            <Award size={13} strokeWidth={2.2} className="-scale-x-100" />
+      <div className="cert-layout">
+        <header className="cert-header">
+          <div className="cert-academy-row">
+            <Award size={16} strokeWidth={2.2} />
+            <span className="cert-academy-name">Cloud Nexus Academy</span>
+            <Award size={16} strokeWidth={2.2} className="cert-academy-icon-mirror" />
           </div>
-
-          <div className="mt-1.5 flex items-center gap-1.5">
-            <span className="block h-px w-6 bg-gradient-to-r from-transparent to-border sm:w-8" />
-            <span className="text-[5px] text-primary">◆</span>
-            <span className="block h-px w-6 bg-gradient-to-l from-transparent to-border sm:w-8" />
+          <div className="cert-header-divider" aria-hidden="true">
+            <span className="cert-header-line" />
+            <span className="cert-header-diamond">◆</span>
+            <span className="cert-header-line cert-header-line-reverse" />
           </div>
+          <p className="cert-header-subtitle">Certificate of Completion · {year}</p>
+        </header>
 
-          <span className="mt-1 text-[7px] font-semibold uppercase tracking-[0.28em] text-subtle sm:text-[8px]">
-            Certificate of Completion · {year}
-          </span>
-        </div>
-
-        <div className="mt-2.5 flex flex-col items-center">
-          <p className="font-display text-[9px] italic text-muted">This is to certify that</p>
-
-          <h3
-            className="mt-0.5 font-display text-[20px] font-extrabold italic leading-tight tracking-tight text-text sm:text-[22px]"
-            style={{
-              backgroundImage: "linear-gradient(180deg, var(--text) 60%, var(--primary) 140%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            {cert.recipient}
-          </h3>
-
-          <svg viewBox="0 0 220 8" className="mt-0.5 h-1.5 w-32 sm:w-40" aria-hidden="true">
+        <section className="cert-body">
+          <p className="cert-intro">This is to certify that</p>
+          <h3 className="cert-recipient">{cert.recipient}</h3>
+          <svg viewBox="0 0 220 8" className="cert-name-underline" aria-hidden="true">
             <path
               d="M 4 4 Q 55 -2, 110 4 T 216 4"
               stroke="var(--primary)"
@@ -148,39 +126,36 @@ export default function CertificateDocument({ cert, className = "" }) {
               fill="none"
             />
           </svg>
-
-          <p className="mt-1.5 font-display text-[9px] italic text-muted">has successfully completed</p>
-          <h4 className="mt-0.5 inline-flex items-center gap-1 font-display text-[12px] font-bold tracking-tight text-primary sm:text-[13px]">
-            <Sparkles size={10} className="text-primary/70" strokeWidth={2.4} />
+          <p className="cert-completed-label">has successfully completed</p>
+          <h4 className="cert-course-title">
+            <Sparkles size={14} className="cert-sparkle" strokeWidth={2.4} />
             {cert.title}
-            <Sparkles size={10} className="text-primary/70" strokeWidth={2.4} />
+            <Sparkles size={14} className="cert-sparkle" strokeWidth={2.4} />
           </h4>
-          <p className="mt-0.5 max-w-[90%] text-[8px] leading-relaxed text-subtle sm:text-[9px]">
-            {cert.description}
-          </p>
-        </div>
+          {cert.description ? <p className="cert-course-desc">{cert.description}</p> : null}
+        </section>
 
-        <div className="mt-auto grid w-full grid-cols-[auto_1fr_auto] items-end gap-2 pt-2 sm:gap-3 sm:pt-3">
-          <Seal sealPathId={sealPathId} />
-
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <Signature d="M 4 18 C 10 6, 18 4, 26 14 S 42 24, 50 12 Q 60 6, 76 14" label="Director" />
-            <Signature d="M 4 16 Q 14 4, 24 14 T 44 16 Q 56 22, 76 12" label="Lead Mentor" />
-          </div>
-
-          <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded border border-border bg-surface p-1 shadow-sm sm:h-12 sm:w-12">
-            <div className="h-6 w-6 sm:h-7 sm:w-7">
-              <MiniQR />
+        <footer className="cert-footer">
+          <div className="cert-footer-band">
+            <Seal sealPathId={sealPathId} />
+            <div className="cert-signatures">
+              <Signature d="M 4 18 C 10 6, 18 4, 26 14 S 42 24, 50 12 Q 60 6, 76 14" label="Director" />
+              <Signature d="M 4 16 Q 14 4, 24 14 T 44 16 Q 56 22, 76 12" label="Lead Mentor" />
             </div>
-            <span className="text-[5px] font-mono uppercase tracking-wider text-subtle">Verify</span>
+            <div className="cert-qr-block">
+              <div className="cert-qr-code">
+                <MiniQR />
+              </div>
+              <span className="cert-qr-label">Verify</span>
+            </div>
           </div>
-        </div>
 
-        <div className="mt-1.5 flex w-full items-center justify-between gap-1 border-t border-border/60 pt-1 text-[7px] sm:text-[8px]">
-          <span className="font-mono font-semibold text-text">{cert.id}</span>
-          <span className="hidden font-mono text-subtle sm:inline">{cert.verifyLink}</span>
-          <span className="font-mono text-subtle">{cert.issueDate}</span>
-        </div>
+          <div className="cert-meta-row">
+            <span className="cert-meta-id">{cert.id}</span>
+            <span className="cert-meta-link">{cert.verifyLink}</span>
+            <span className="cert-meta-date">{cert.issueDate}</span>
+          </div>
+        </footer>
       </div>
     </figure>
   );

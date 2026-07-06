@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   AlertCircle,
@@ -9,6 +9,8 @@ import {
   Upload,
 } from "lucide-react";
 import { PENDING_ASSIGNMENTS } from "@/data/assignments";
+import { getEnrolledTrackIds } from "@/lib/student/studentMappers";
+import useStudentEnrollments from "@/hooks/useStudentEnrollments";
 
 const PRIORITY_STYLES = {
   high: "bg-danger/10 text-danger border-danger/20",
@@ -114,8 +116,20 @@ function AssignmentCard({ assignment, onSubmit }) {
 }
 
 export default function PendingAssignmentsPage() {
-  const [pending, setPending] = useState(PENDING_ASSIGNMENTS);
+  const { loading, enrollments } = useStudentEnrollments();
+  const trackIds = useMemo(() => getEnrolledTrackIds(enrollments), [enrollments]);
+
+  const eligibleAssignments = useMemo(
+    () => PENDING_ASSIGNMENTS.filter((a) => trackIds.includes(a.trackId)),
+    [trackIds]
+  );
+
+  const [pending, setPending] = useState([]);
   const [submitted, setSubmitted] = useState([]);
+
+  useEffect(() => {
+    setPending(eligibleAssignments);
+  }, [eligibleAssignments]);
 
   const handleSubmit = (id) => {
     const item = pending.find((a) => a.id === id);
@@ -130,10 +144,31 @@ export default function PendingAssignmentsPage() {
           Pending Assignments
         </h1>
         <p className="mt-1 text-[15px] text-muted">
-          Review due work and submit before the deadline.
+          Assignments for your enrolled courses only.
         </p>
       </div>
 
+      {loading ? (
+        <p className="text-center text-sm text-muted">Loading your courses…</p>
+      ) : null}
+
+      {!loading && !trackIds.length ? (
+        <div className="dashboard-card flex flex-col items-center justify-center px-6 py-16 text-center">
+          <h2 className="text-lg font-bold text-text">No enrolled courses</h2>
+          <p className="mt-2 max-w-md text-[14px] text-muted">
+            Enroll in a track to see related assignments here.
+          </p>
+          <Link
+            to="/student/catalog"
+            className="mt-5 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-primary-hover"
+          >
+            Browse catalog
+          </Link>
+        </div>
+      ) : null}
+
+      {!loading && trackIds.length > 0 ? (
+        <>
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="dashboard-card cert-summary-card">
           <p className="cert-summary-value">{pending.length}</p>
@@ -187,6 +222,8 @@ export default function PendingAssignmentsPage() {
           </div>
         </section>
       )}
+        </>
+      ) : null}
 
       {submitted.length > 0 ? (
         <section className="space-y-3">

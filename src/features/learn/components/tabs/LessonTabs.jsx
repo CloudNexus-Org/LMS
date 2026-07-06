@@ -341,33 +341,43 @@ export function QAPane({ trackId, lessonId, lesson }) {
 }
 
 export function ReadingPane({ lesson }) {
-  const content = lesson?.readingContent || getReadingContent(lesson);
+  const content =
+    (lesson?.readingContent && typeof lesson.readingContent === 'object'
+      ? lesson.readingContent
+      : null) || getReadingContent(lesson);
+  const sections = Array.isArray(content?.sections) ? content.sections : [];
 
   return (
     <motion.div {...fadeIn} className="learn-pane space-y-4">
       <div className="learn-reading-header">
         <BookOpen className="h-5 w-5 text-primary" />
         <div>
-          <p className="text-sm font-bold text-text">{content.title}</p>
-          <p className="text-xs text-muted">{content.duration} read · {content.courseTitle}</p>
+          <p className="text-sm font-bold text-text">{content?.title || lesson?.title}</p>
+          <p className="text-xs text-muted">
+            {content?.duration || lesson?.duration || ''} read · {content?.courseTitle || lesson?.courseTitle || ''}
+          </p>
         </div>
       </div>
-      {content.sections.map((section) => (
-        <div key={section.heading}>
-          <p className="learn-pane-label">{section.heading}</p>
-          {section.body && <p className="learn-pane-text">{section.body}</p>}
-          {section.bullets && (
-            <ul className="mt-2 space-y-1.5">
-              {section.bullets.map((b) => (
-                <li key={b} className="flex items-start gap-2 text-sm text-muted">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                  {b}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      ))}
+      {sections.length === 0 ? (
+        <p className="learn-pane-text text-muted">No reading content available for this lesson yet.</p>
+      ) : (
+        sections.map((section) => (
+          <div key={section.heading}>
+            <p className="learn-pane-label">{section.heading}</p>
+            {section.body && <p className="learn-pane-text">{section.body}</p>}
+            {section.bullets && (
+              <ul className="mt-2 space-y-1.5">
+                {section.bullets.map((b) => (
+                  <li key={b} className="flex items-start gap-2 text-sm text-muted">
+                    <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))
+      )}
     </motion.div>
   );
 }

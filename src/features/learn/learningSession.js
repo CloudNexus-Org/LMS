@@ -35,32 +35,58 @@ export function getLastLearningSession() {
   return getStoredJSON(SESSION_KEY, null);
 }
 
+function numericProgressUrls(trackId, completed) {
+  const doneIds = Object.keys(completed)
+    .filter((k) => completed[k] && /^\d+$/.test(String(k)))
+    .map(Number)
+    .sort((a, b) => a - b);
+
+  if (!doneIds.length) return null;
+
+  const total = getStoredJSON(`${progressKey(trackId)}:total`, null);
+
+  if (total && doneIds.length >= total) {
+    return `/learn/${trackId}/1`;
+  }
+
+  const next = doneIds[doneIds.length - 1] + 1;
+  if (total && next <= total) {
+    return `/learn/${trackId}/${next}`;
+  }
+  if (!total) {
+    return `/learn/${trackId}/${next}`;
+  }
+  return `/learn/${trackId}/1`;
+}
+
 export function getResumeUrlForTrack(trackId) {
   const track = getTrackById(trackId);
-  const lessons = getLessonsByTrack(trackId);
-  if (!track || !lessons.length) return `/learn/${trackId}`;
+  if (!track) return `/learn/${trackId}`;
 
   const session = getLastLearningSession();
-  if (session?.trackId === trackId && lessons.some((l) => l.id === session.lessonId)) {
+  if (session?.trackId === trackId && session.lessonId != null) {
     return `/learn/${trackId}/${session.lessonId}`;
   }
 
   const completed = getStoredJSON(progressKey(trackId), {});
+  const apiUrl = numericProgressUrls(trackId, completed);
+  if (apiUrl) return apiUrl;
+
+  const lessons = getLessonsByTrack(trackId);
+  if (!lessons.length) return `/learn/${trackId}`;
+
   const nextLesson = lessons.find((l) => !completed[l.id]) || lessons[0];
   return `/learn/${trackId}/${nextLesson.id}`;
 }
 
 export function getContinueLearningUrl() {
   const session = getLastLearningSession();
+  if (session?.trackId && session.lessonId != null) {
+    return `/learn/${session.trackId}/${session.lessonId}`;
+  }
+
   if (session?.trackId) {
-    const track = getTrackById(session.trackId);
-    const lessons = getLessonsByTrack(session.trackId);
-    if (track && lessons.length) {
-      if (session.lessonId && lessons.some((l) => l.id === session.lessonId)) {
-        return `/learn/${session.trackId}/${session.lessonId}`;
-      }
-      return getResumeUrlForTrack(session.trackId);
-    }
+    return getResumeUrlForTrack(session.trackId);
   }
 
   return getResumeUrlForTrack(DEFAULT_TRACK_ID);
