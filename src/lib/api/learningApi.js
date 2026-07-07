@@ -121,3 +121,9 @@ export async function postLessonQuestion(user, token, lessonId, question) {
   );
   return mapQaThread(q);
 }
+
+/** Unanswered student questions across lessons (mentor dashboard). */
+export async function fetchPendingQaCount(user, token) {
+  const data = await getJson(`${base}/api/learning/mentor/qa/pending`, authHeaders(user, token));
+  return data?.count ?? 0;
+}

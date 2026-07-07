@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -12,7 +12,6 @@ import {
   MessageSquare,
   Activity,
   Clock3,
-  CalendarDays,
   Sparkles,
   ChevronRight,
   Flame,
@@ -24,12 +23,11 @@ import {
   PieChart,
 } from "lucide-react";
 import {
-  buildSnapshot,
-  fetchMentorDashboardSnapshot,
   formatMentorCurrency,
-  toTopCoursesTable,
 } from "@/data/mentorDashboard";
-import useAuthStore from "@/store/useAuthStore";
+import { toTopCoursesTable } from "@/lib/mentor/mentorMappers";
+import useMentorDashboardData from "@/hooks/useMentorDashboardData";
+import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -59,38 +57,24 @@ const itemVariants = {
   },
 };
 
-const COURSE_PROGRESS = [
-  { title: "Cloud Architecture Patterns", value: 88, color: "bg-primary" },
-  { title: "Advanced State Management", value: 72, color: "bg-success" },
-  { title: "React Performance Patterns", value: 54, color: "bg-warning" },
-];
-
-const RECENT_ENROLLMENTS = [
-  { name: "Alex Chen", initials: "AC", course: "Advanced State Management", time: "2h ago", amount: "$89.99" },
-  { name: "Sarah Miller", initials: "SM", course: "Cloud Architecture Patterns", time: "5h ago", amount: "$129.99" },
-  { name: "James Wilson", initials: "JW", course: "Cloud Architecture Patterns", time: "1d ago", amount: "$129.99" },
-  { name: "Emily Davis", initials: "ED", course: "React Performance Patterns", time: "2d ago", amount: "$79.99" },
-];
-
-const ACTIVITIES = [
-  { title: "New 5-star review", desc: "React Performance Patterns", icon: Star, iconBg: "bg-warning/10", iconColor: "text-warning", time: "14m" },
-  { title: "Course trending", desc: "Cloud Architecture Patterns", icon: Flame, iconBg: "bg-warning/10", iconColor: "text-warning", time: "1h" },
-  { title: "Live session reminder", desc: "Q&A at 7:00 PM today", icon: CalendarDays, iconBg: "bg-primary/10", iconColor: "text-primary", time: "3h" },
-  { title: "New enrollment", desc: "Sarah Miller joined your course", icon: Users, iconBg: "bg-success/10", iconColor: "text-success", time: "5h" },
-];
-
-const UPCOMING = [
-  { date: "Today", title: "Live Q&A Session", subtitle: "Cloud Architecture · 7:00 PM" },
-  { date: "Tomorrow", title: "Course Review Call", subtitle: "Platform QA feedback" },
-  { date: "Friday", title: "Student Office Hours", subtitle: "React Performance track" },
-  { date: "Monday", title: "New Cohort Kickoff", subtitle: "Advanced State Management" },
-];
-
 const QUICK_ACTIONS = [
   { label: "Upload Course", icon: Upload, to: "/mentor/upload" },
   { label: "Manage Lessons", icon: BookOpen, to: "/mentor/lessons" },
   { label: "View Analytics", icon: BarChart2, to: "/mentor/analytics" },
 ];
+
+const ACTION_ICONS = {
+  message: MessageSquare,
+  book: BookOpen,
+  dollar: DollarSign,
+};
+
+const ACTIVITY_ICONS = {
+  users: Users,
+  message: MessageSquare,
+  star: Star,
+  flame: Flame,
+};
 
 function polarToCartesian(cx, cy, radius, angleDeg) {
   const rad = ((angleDeg - 90) * Math.PI) / 180;
@@ -137,6 +121,18 @@ function MentorRevenuePieChart({ data, metric, chartKey, centerLabel, centerValu
   const innerR = 54;
   const segments = useMemo(() => buildPieSegments(data), [data]);
   const active = activeId ? segments.find((s) => s.id === activeId) : null;
+
+  if (!data?.length) {
+    return (
+      <div className="dashboard-pie-chart flex flex-1 flex-col items-center justify-center py-8 text-center">
+        <PieChart className="mb-2 h-8 w-8 text-muted opacity-40" />
+        <p className="text-sm font-semibold text-text">No course data yet</p>
+        <p className="mt-1 max-w-[220px] text-[11px] text-muted">
+          Publish courses and enroll students to see revenue and enrollment breakdown.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-pie-chart">
@@ -211,33 +207,6 @@ function MentorRevenuePieChart({ data, metric, chartKey, centerLabel, centerValu
   );
 }
 
-const ACTION_ITEMS = [
-  {
-    icon: MessageSquare,
-    iconBg: "bg-warning/10",
-    iconColor: "text-warning",
-    title: "12 Q&A threads need replies",
-    desc: "Students are waiting for answers on Cloud Architecture.",
-    action: { label: "Reply now", to: "/mentor/notifications", variant: "primary" },
-  },
-  {
-    icon: BookOpen,
-    iconBg: "bg-primary/10",
-    iconColor: "text-primary",
-    title: "2 lessons pending review",
-    desc: "Upload drafts need your final approval before publishing.",
-    action: { label: "Review", to: "/mentor/lessons", variant: "outline" },
-  },
-  {
-    icon: DollarSign,
-    iconBg: "bg-success/10",
-    iconColor: "text-success",
-    title: "May payout processing",
-    desc: "$4,250.00 estimated — available May 1, 2026.",
-    action: { label: "View revenue", to: "/mentor/analytics", variant: "outline" },
-  },
-];
-
 function buildSmoothPath(coords) {
   if (coords.length < 2) return "";
   let d = `M ${coords[0].x},${coords[0].y}`;
@@ -260,6 +229,19 @@ function buildAreaPath(coords, baseline) {
 
 function MentorEngagementLineChart({ data, animate = true }) {
   const shouldReduceMotion = useReducedMotion();
+
+  if (!data?.length || data.length < 2) {
+    return (
+      <div className="dashboard-line-chart flex min-h-[200px] flex-col items-center justify-center py-8 text-center">
+        <Activity className="mb-2 h-8 w-8 text-muted opacity-40" />
+        <p className="text-sm font-semibold text-text">No engagement data yet</p>
+        <p className="mt-1 max-w-[280px] text-[11px] text-muted">
+          Enrollments and watch hours will appear here once students start learning.
+        </p>
+      </div>
+    );
+  }
+
   const width = 640;
   const height = 200;
   const pad = { top: 28, right: 52, bottom: 32, left: 8 };
@@ -498,12 +480,13 @@ function MiniSparkline({ data }) {
   const shouldReduceMotion = useReducedMotion();
   const w = 88;
   const h = 28;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
+  const safe = (data?.length ? data : [0]).map((v) => Number(v) || 0);
+  const max = Math.max(...safe, 1);
+  const min = Math.min(...safe, 0);
   const range = max - min || 1;
-  const points = data
+  const points = safe
     .map((v, i) => {
-      const x = (i / (data.length - 1)) * w;
+      const x = safe.length > 1 ? (i / (safe.length - 1)) * w : w / 2;
       const y = h - ((v - min) / range) * h;
       return `${x},${y}`;
     })
@@ -525,11 +508,8 @@ function MiniSparkline({ data }) {
 
 export default function MentorDashboardPage() {
   const shouldReduceMotion = useReducedMotion();
-  const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
-  const [snapshot, setSnapshot] = useState(() => buildSnapshot());
+  const { loading, snapshot, reload, displayName, lastUpdated } = useMentorDashboardData();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const [chartTab, setChartTab] = useState("week");
   const [pieTab, setPieTab] = useState("revenue");
   const [chartKey, setChartKey] = useState(0);
@@ -537,18 +517,12 @@ export default function MentorDashboardPage() {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const next = await fetchMentorDashboardSnapshot({ user, token });
-      setSnapshot(next);
-      setLastUpdated(new Date());
+      await reload();
       setChartKey((key) => key + 1);
     } finally {
       setIsRefreshing(false);
     }
-  }, [user, token]);
-
-  useEffect(() => {
-    handleRefresh();
-  }, [handleRefresh]);
+  }, [reload]);
 
   const topCourses = useMemo(
     () => (snapshot.courseList ? toTopCoursesTable(snapshot.courseList) : []),
@@ -561,9 +535,12 @@ export default function MentorDashboardPage() {
       ? formatMentorCurrency(snapshot.totalRevenue)
       : snapshot.totalStudents?.toLocaleString() ?? "0";
 
-  const avgCompletion = Math.round(
-    COURSE_PROGRESS.reduce((sum, c) => sum + c.value, 0) / COURSE_PROGRESS.length
-  );
+  const courseProgress = snapshot.courseProgress ?? [];
+  const avgCompletion = snapshot.avgCompletion ?? 0;
+  const actionItems = snapshot.actionItems ?? [];
+  const activities = snapshot.activities ?? [];
+  const recentEnrollments = snapshot.recentEnrollments ?? [];
+  const upcomingSessions = snapshot.upcomingSessions ?? [];
 
   const kpis = useMemo(
     () => [
@@ -607,6 +584,14 @@ export default function MentorDashboardPage() {
     [snapshot]
   );
 
+  if (loading) {
+    return (
+      <div className="dashboard-page mx-auto w-full max-w-[1320px]">
+        <DashboardGridSkeleton />
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4 pb-2"
@@ -627,7 +612,7 @@ export default function MentorDashboardPage() {
             Mentor hub
           </motion.span>
           <p className="dashboard-greeting text-base sm:text-lg">
-            Welcome back, <span className="text-primary">Dr. Sarah</span>
+            Welcome back, <span className="text-primary">{displayName}</span>
           </p>
           <p className="dashboard-greeting-sub">
             Track students, revenue, and course performance from one place.
@@ -763,7 +748,7 @@ export default function MentorDashboardPage() {
             <Activity className="h-4 w-4 text-primary" />
           </div>
           <div className="space-y-3.5">
-            {COURSE_PROGRESS.map((course, i) => (
+            {courseProgress.length ? courseProgress.map((course, i) => (
               <motion.div
                 key={course.title}
                 initial={{ opacity: 0, y: 8 }}
@@ -776,7 +761,9 @@ export default function MentorDashboardPage() {
                 </div>
                 <AnimatedProgress value={course.value} color={course.color} delay={0.15 + i * 0.08} />
               </motion.div>
-            ))}
+            )) : (
+              <p className="text-xs text-muted">No student progress yet. Enrollments will appear here.</p>
+            )}
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2.5">
             <div className="dashboard-mini-stat">
@@ -796,11 +783,11 @@ export default function MentorDashboardPage() {
             <Clock3 className="h-4 w-4 text-primary" />
           </div>
           <div className="space-y-2">
-            {ACTIVITIES.map((item, i) => {
-              const Icon = item.icon;
+            {activities.length ? activities.map((item, i) => {
+              const Icon = ACTIVITY_ICONS[item.icon] || Users;
               return (
                 <motion.div
-                  key={item.title}
+                  key={`${item.title}-${i}`}
                   className="dashboard-recent-row"
                   initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -817,7 +804,9 @@ export default function MentorDashboardPage() {
                   <span className="shrink-0 text-[10px] font-medium text-muted">{item.time}</span>
                 </motion.div>
               );
-            })}
+            }) : (
+              <p className="text-xs text-muted">No recent activity yet.</p>
+            )}
           </div>
         </MotionCard>
       </motion.section>
@@ -867,7 +856,7 @@ export default function MentorDashboardPage() {
             >
               <MentorEngagementLineChart
                 key={chartKey}
-                data={snapshot.chartData[chartTab]}
+                data={snapshot.chartData?.[chartTab] ?? []}
               />
             </motion.div>
           </AnimatePresence>
@@ -878,11 +867,11 @@ export default function MentorDashboardPage() {
               <p className="text-[11px] text-muted">New reviews</p>
             </div>
             <div className="dashboard-mini-stat">
-              <p className="text-lg font-bold text-text">94%</p>
+              <p className="text-lg font-bold text-text">{snapshot.completionRate ?? avgCompletion}%</p>
               <p className="text-[11px] text-muted">Completion rate</p>
             </div>
             <div className="dashboard-mini-stat">
-              <p className="text-lg font-bold text-text">3.2h</p>
+              <p className="text-lg font-bold text-text">{snapshot.avgWatchHours ?? 0}h</p>
               <p className="text-[11px] text-muted">Avg. watch time</p>
             </div>
             <div className="dashboard-mini-stat">
@@ -959,11 +948,11 @@ export default function MentorDashboardPage() {
         <MotionCard className="flex h-full flex-col p-4 xl:col-span-2" delay={0.05} hover={false}>
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="dashboard-section-title">Action Items</h2>
-            <span className="dashboard-trend dashboard-trend-down">{ACTION_ITEMS.length} pending</span>
+            <span className="dashboard-trend dashboard-trend-down">{actionItems.length} pending</span>
           </div>
           <div className="space-y-2">
-            {ACTION_ITEMS.map((item, i) => {
-              const Icon = item.icon;
+            {actionItems.length ? actionItems.map((item, i) => {
+              const Icon = ACTION_ICONS[item.icon] || MessageSquare;
               return (
                 <motion.div
                   key={item.title}
@@ -990,7 +979,9 @@ export default function MentorDashboardPage() {
                   </Link>
                 </motion.div>
               );
-            })}
+            }) : (
+              <p className="text-xs text-muted">You&apos;re all caught up — no pending actions.</p>
+            )}
           </div>
         </MotionCard>
 
@@ -1000,7 +991,7 @@ export default function MentorDashboardPage() {
             <p className="mt-0.5 text-[11px] text-muted">Latest students who joined</p>
           </div>
           <div className="divide-y divide-border">
-            {RECENT_ENROLLMENTS.map((row, i) => (
+            {recentEnrollments.length ? recentEnrollments.map((row, i) => (
               <motion.div
                 key={`${row.name}-${row.time}`}
                 className="flex items-center gap-3 p-3"
@@ -1020,7 +1011,9 @@ export default function MentorDashboardPage() {
                   <p className="text-[10px] text-muted">{row.time}</p>
                 </div>
               </motion.div>
-            ))}
+            )) : (
+              <div className="p-6 text-center text-xs text-muted">No enrollments yet.</div>
+            )}
           </div>
           <div className="border-t border-border p-3">
             <Link
@@ -1036,8 +1029,9 @@ export default function MentorDashboardPage() {
       {/* Upcoming sessions */}
       <motion.section variants={sectionVariants}>
         <h2 className="dashboard-section-title mb-3">Upcoming Sessions</h2>
+        {upcomingSessions.length ? (
         <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 xl:grid-cols-4">
-          {UPCOMING.map((item, i) => (
+          {upcomingSessions.map((item, i) => (
             <MotionCard
               key={item.title}
               delay={0.05 + i * 0.05}
@@ -1054,6 +1048,9 @@ export default function MentorDashboardPage() {
             </MotionCard>
           ))}
         </div>
+        ) : (
+          <p className="dashboard-card p-4 text-sm text-muted">No scheduled sessions. Live sessions can be added from your calendar.</p>
+        )}
       </motion.section>
 
       {/* Top courses table */}
@@ -1082,7 +1079,7 @@ export default function MentorDashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {topCourses.map((course, i) => (
+              {topCourses.length ? topCourses.map((course, i) => (
                 <motion.tr
                   key={course.name}
                   initial={{ opacity: 0, y: 6 }}
@@ -1116,7 +1113,13 @@ export default function MentorDashboardPage() {
                     </div>
                   </td>
                 </motion.tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-sm text-muted">
+                    No published courses yet. Upload a course to see performance here.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

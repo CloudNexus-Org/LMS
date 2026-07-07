@@ -6,10 +6,19 @@ import {
   UserCheck, UserX, Download, Clock,
   Eye, CheckCircle2, Trash2, AlertTriangle,
 } from 'lucide-react';
-import { loadAdminUsers, saveAdminUsers, updateAdminUser, removeAdminUser, toggleUserBan, MENTOR_TRACK_OPTIONS } from '@/data/adminUsers';
+import { countJoinedThisMonth } from '@/lib/admin/adminMappers';
+import {
+  loadAdminUsers,
+  saveAdminUsers,
+  updateAdminUser,
+  removeAdminUser,
+  toggleUserBan,
+  MENTOR_TRACK_OPTIONS,
+} from '@/data/adminUsers';
 import useAuthStore from '@/store/useAuthStore';
 import { fetchUsers, updateUser, updateUserStatus, deleteUser as deleteUserApi } from '@/lib/api/userApi';
 import { parseApiError } from '@/lib/api/apiHelpers';
+import { csvFilename, downloadCsvFromObjects } from '@/lib/exportCsv';
 
 const GRAD_COLORS = [
   'from-blue-500 to-cyan-400', 'from-emerald-500 to-lime-400',
@@ -50,15 +59,15 @@ export default function UserManagementPage() {
 
   const reloadUsers = async () => {
     if (!authUser || !token) {
-      setUsers(loadAdminUsers());
+      setUsers([]);
       setLoading(false);
       return;
     }
     try {
-      const data = await fetchUsers(authUser, token, { size: 200 });
-      setUsers(data.content?.length ? data.content : loadAdminUsers());
+      const data = await fetchUsers(authUser, token, { size: 500 });
+      setUsers(data.content || []);
     } catch {
-      setUsers(loadAdminUsers());
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -233,13 +242,14 @@ export default function UserManagementPage() {
   const active = users.filter(u => u.status === 'Active').length;
   const banned = users.filter(u => u.status === 'Banned').length;
   const mentors = users.filter(u => u.role === 'Mentor').length;
+  const newThisMonth = countJoinedThisMonth(users);
 
   const stats = [
     {
       label: 'Total users',
       value: total,
-      meta: '+284 this month',
-      metaTone: 'success',
+      meta: newThisMonth > 0 ? `${newThisMonth} added this month` : 'Directory total',
+      metaTone: newThisMonth > 0 ? 'success' : 'muted',
       icon: Users,
       iconColor: 'text-primary',
     },
@@ -283,7 +293,7 @@ export default function UserManagementPage() {
         { header: 'Last Active', key: 'lastActive' },
         { header: 'Total Spend', key: 'spend' },
       ],
-      USERS
+      filtered
     );
   };
 

@@ -133,19 +133,50 @@ export function buildSnapshot() {
   };
 }
 
-/** Fetches live mentor dashboard metrics from analytics-service via API gateway. */
+/** Fetches live mentor dashboard metrics — delegates to API sources via hook/mappers. */
 export async function fetchMentorDashboardSnapshot({ user, token } = {}) {
-  if (user && token) {
-    try {
-      const { fetchMentorDashboard } = await import('@/lib/api/analyticsApi');
-      const data = await fetchMentorDashboard(user, token);
-      return { ...buildSnapshot(), ...data };
-    } catch {
-      /* fall through to mock */
-    }
+  const { buildMentorDashboardSnapshot } = await import('@/lib/mentor/mentorMappers');
+  if (!user?.id || !token) {
+    return buildMentorDashboardSnapshot({});
   }
-  await new Promise((resolve) => setTimeout(resolve, 650));
-  return buildSnapshot();
+  try {
+    const [
+      { fetchMentorHubDashboard, fetchMyMentorStudents, fetchMyMentorProfile },
+      { fetchMentorDashboard, fetchMentorRevenue },
+      { fetchCourseDrafts },
+      { fetchPendingQaCount },
+    ] = await Promise.all([
+      import('@/lib/api/mentorApi'),
+      import('@/lib/api/analyticsApi'),
+      import('@/lib/api/contentApi'),
+      import('@/lib/api/learningApi'),
+    ]);
+
+    const [hub, students, analytics, revenueWeek, revenueMonth, drafts, profile, pendingQa] =
+      await Promise.all([
+        fetchMentorHubDashboard(user, token).catch(() => null),
+        fetchMyMentorStudents(user, token).catch(() => []),
+        fetchMentorDashboard(user, token).catch(() => null),
+        fetchMentorRevenue(user, token, 'week').catch(() => null),
+        fetchMentorRevenue(user, token, 'month').catch(() => null),
+        fetchCourseDrafts(user, token).catch(() => []),
+        fetchMyMentorProfile(user, token).catch(() => null),
+        fetchPendingQaCount(user, token).catch(() => 0),
+      ]);
+
+    return buildMentorDashboardSnapshot({
+      hub,
+      students: Array.isArray(students) ? students : [],
+      analytics,
+      revenueWeek,
+      revenueMonth,
+      drafts: Array.isArray(drafts) ? drafts : [],
+      profile,
+      pendingQa: typeof pendingQa === 'number' ? pendingQa : pendingQa?.count ?? 0,
+    });
+  } catch {
+    return buildMentorDashboardSnapshot({});
+  }
 }
 
 export function formatMentorCurrency(value) {

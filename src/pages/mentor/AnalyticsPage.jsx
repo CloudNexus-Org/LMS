@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   Activity,
+  BarChart2,
   DollarSign,
   Download,
   Eye,
@@ -13,8 +14,11 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import { buildSnapshot, fetchMentorDashboardSnapshot, formatMentorCurrency } from "@/data/mentorDashboard";
+import { formatMentorCurrency } from "@/data/mentorDashboard";
+import { fetchMentorStudents } from "@/lib/api/analyticsApi";
+import useMentorDashboardData from "@/hooks/useMentorDashboardData";
 import useAuthStore from "@/store/useAuthStore";
+import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -33,39 +37,7 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: EASE } },
 };
 
-const ENROLLMENT_BARS = [
-  { label: "Jan", value: 480, height: 40, growth: "+12%" },
-  { label: "Feb", value: 720, height: 65, growth: "+24%" },
-  { label: "Mar", value: 540, height: 45, growth: "+8%" },
-  { label: "Apr", value: 1100, height: 80, growth: "+32%" },
-  { label: "May", value: 1600, height: 100, growth: "+48%" },
-  { label: "Jun", value: 1200, height: 85, growth: "+26%" },
-];
-
-const TOP_COURSES = [
-  { name: "Cloud Architecture Patterns", revenue: 28400, share: 42 },
-  { name: "Advanced State Management", revenue: 19850, share: 29 },
-  { name: "React Performance Patterns", revenue: 14200, share: 21 },
-];
-
-const PAYOUTS = [
-  { id: "PO-2026-05", date: "May 1", amount: "$4,250", status: "Processing" },
-  { id: "PO-2026-04", date: "Apr 1", amount: "$3,890", status: "Paid" },
-  { id: "PO-2026-03", date: "Mar 1", amount: "$4,010", status: "Paid" },
-];
-
-const AUDIENCE = [
-  { country: "India", pct: 48 },
-  { country: "United States", pct: 24 },
-  { country: "Germany", pct: 14 },
-  { country: "Canada", pct: 9 },
-];
-
-const REVENUE_MIX = [
-  { label: "Course sales", pct: 72, color: "bg-primary" },
-  { label: "Subscriptions", pct: 18, color: "bg-success" },
-  { label: "Affiliate", pct: 10, color: "bg-warning" },
-];
+const REVENUE_MIX_COLORS = ["bg-primary", "bg-success", "bg-warning"];
 
 function MotionCard({ className = "", children, delay = 0, hover = true }) {
   const shouldReduceMotion = useReducedMotion();
@@ -109,38 +81,151 @@ function AnimatedProgress({ value, color, delay = 0 }) {
   );
 }
 
+function EmptyBlock({ icon: Icon, title, desc }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-10 text-center">
+      <Icon className="mb-2 h-8 w-8 text-muted opacity-40" />
+      <p className="text-sm font-semibold text-text">{title}</p>
+      <p className="mt-1 max-w-[260px] text-[11px] text-muted">{desc}</p>
+    </div>
+  );
+}
+
 export default function AnalyticsPage() {
   const shouldReduceMotion = useReducedMotion();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
-  const [snapshot, setSnapshot] = useState(() => buildSnapshot());
+  const { loading, snapshot, reload } = useMentorDashboardData();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [chartKey, setChartKey] = useState(0);
+  const [studentInsights, setStudentInsights] = useState(null);
 
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
+  const loadInsights = useCallback(async () => {
+    if (!user?.id || !token) {
+      setStudentInsights(null);
+      return;
+    }
     try {
-      const next = await fetchMentorDashboardSnapshot({ user, token });
-      setSnapshot(next);
-      setChartKey((k) => k + 1);
-    } finally {
-      setIsRefreshing(false);
+      const data = await fetchMentorStudents(user, token);
+      setStudentInsights(data);
+    } catch {
+      setStudentInsights(null);
     }
   }, [user, token]);
 
   useEffect(() => {
-    handleRefresh();
-  }, [handleRefresh]);
+    loadInsights();
+  }, [loadInsights]);
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([reload(), loadInsights()]);
+      setChartKey((k) => k + 1);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [reload, loadInsights]);
+
+  const hasActivity = snapshot.students > 0 || snapshot.courses > 0 || snapshot.revenue > 0;
+
+  const enrollmentBars = useMemo(() => {
+    const points = snapshot.chartData?.month?.length
+      ? snapshot.chartData.month
+      : snapshot.chartData?.week ?? [];
+    if (!points.length) return [];
+    const maxVal = Math.max(...points.map((p) => p.enrollments ?? 0), 1);
+    return points.map((p) => ({
+      label: p.label,
+      value: p.enrollments ?? 0,
+      height: Math.max(4, Math.round(((p.enrollments ?? 0) / maxVal) * 100)),
+    }));
+  }, [snapshot.chartData]);
+
+  const topCourses = useMemo(() => {
+    const list = snapshot.courseList ?? [];
+    const total = snapshot.totalRevenue || list.reduce((sum, c) => sum + (c.revenue ?? 0), 0);
+    return list.slice(0, 5).map((course) => ({
+      name: course.name,
+      revenue: course.revenue ?? 0,
+      share: total > 0 ? Math.round(((course.revenue ?? 0) * 1000) / total) / 10 : 0,
+    }));
+  }, [snapshot.courseList, snapshot.totalRevenue]);
+
+  const revenueMix = useMemo(() => {
+    const mix = snapshot.revenueMix ?? [];
+    if (!mix.length) return [];
+    return mix.map((row, i) => ({
+      label: row.name,
+      pct: row.share ?? 0,
+      color: REVENUE_MIX_COLORS[i % REVENUE_MIX_COLORS.length],
+    }));
+  }, [snapshot.revenueMix]);
+
+  const audience = useMemo(() => {
+    const regions = studentInsights?.topRegions ?? [];
+    if (!regions.length) return [];
+    const total = regions.reduce((sum, r) => sum + (r.students ?? 0), 0) || 1;
+    return regions.map((r) => ({
+      country: r.region,
+      pct: Math.round(((r.students ?? 0) * 1000) / total) / 10,
+    }));
+  }, [studentInsights]);
+
+  const conversionRate = useMemo(() => {
+    if (!hasActivity || !snapshot.engagement) return "0%";
+    return `${snapshot.engagement}%`;
+  }, [hasActivity, snapshot.engagement]);
 
   const kpis = useMemo(
     () => [
-      { title: "Course views", count: "14.2k", subtitle: "+24% this month", icon: Eye, iconBg: "bg-primary/10", iconColor: "text-primary", accent: "dashboard-kpi-primary" },
-      { title: "Conversion", count: "8.4%", subtitle: "+1.2% vs last month", icon: Activity, iconBg: "bg-success/10", iconColor: "text-success", accent: "dashboard-kpi-success" },
-      { title: "Active students", count: snapshot.students.toLocaleString(), subtitle: `+${snapshot.weeklyGrowth}% weekly`, icon: Users, iconBg: "bg-warning/10", iconColor: "text-warning", accent: "dashboard-kpi-warning" },
-      { title: "Monthly earnings", count: `$${snapshot.revenue.toLocaleString()}`, subtitle: "Payout Jun 1", icon: Wallet, iconBg: "bg-accent-soft", iconColor: "text-accent", accent: "dashboard-kpi-accent" },
+      {
+        title: "Course views",
+        count: hasActivity ? snapshot.students.toLocaleString() : "0",
+        subtitle: hasActivity ? `+${snapshot.weeklyGrowth}% this week` : "No views yet",
+        icon: Eye,
+        iconBg: "bg-primary/10",
+        iconColor: "text-primary",
+        accent: "dashboard-kpi-primary",
+      },
+      {
+        title: "Conversion",
+        count: conversionRate,
+        subtitle: hasActivity ? "Based on engagement" : "No enrollments yet",
+        icon: Activity,
+        iconBg: "bg-success/10",
+        iconColor: "text-success",
+        accent: "dashboard-kpi-success",
+      },
+      {
+        title: "Active students",
+        count: snapshot.students.toLocaleString(),
+        subtitle: `+${snapshot.weeklyGrowth}% weekly`,
+        icon: Users,
+        iconBg: "bg-warning/10",
+        iconColor: "text-warning",
+        accent: "dashboard-kpi-warning",
+      },
+      {
+        title: "Monthly earnings",
+        count: `$${snapshot.revenue.toLocaleString()}`,
+        subtitle: hasActivity ? "From your courses" : "No earnings yet",
+        icon: Wallet,
+        iconBg: "bg-accent-soft",
+        iconColor: "text-accent",
+        accent: "dashboard-kpi-accent",
+      },
     ],
-    [snapshot]
+    [snapshot, hasActivity, conversionRate]
   );
+
+  if (loading) {
+    return (
+      <div className="dashboard-page mx-auto w-full max-w-[1320px]">
+        <DashboardGridSkeleton />
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -236,58 +321,68 @@ export default function AnalyticsPage() {
       </motion.section>
 
       {/* Performance content */}
-      <motion.div
-        key={chartKey}
-        variants={sectionVariants}
-        className="space-y-3"
-      >
-        {/* Enrollment + top courses */}
+      <motion.div key={chartKey} variants={sectionVariants} className="space-y-3">
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
           <MotionCard className="p-3.5 lg:col-span-3" delay={0.05} hover={false}>
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h2 className="dashboard-section-title">Enrollment trend</h2>
-                <p className="text-[10px] text-muted">Last 6 months</p>
+                <p className="text-[10px] text-muted">Recent activity</p>
               </div>
               <span className="dashboard-status-live text-[10px]">● Live</span>
             </div>
-            <div className="flex h-[168px] items-end justify-between gap-1.5 border-b border-border pb-6 sm:gap-2">
-              {ENROLLMENT_BARS.map((bar, i) => (
-                <div key={bar.label} className="group flex flex-1 flex-col items-center min-w-0">
-                  <div className="relative flex h-[130px] w-full items-end justify-center">
-                    <div className="absolute -top-7 z-10 hidden whitespace-nowrap rounded-md border border-border bg-surface px-1.5 py-0.5 text-[9px] font-bold text-text group-hover:block">
-                      {bar.value.toLocaleString()} · {bar.growth}
+            {enrollmentBars.length ? (
+              <div className="flex h-[168px] items-end justify-between gap-1.5 border-b border-border pb-6 sm:gap-2">
+                {enrollmentBars.map((bar, i) => (
+                  <div key={bar.label} className="group flex flex-1 flex-col items-center min-w-0">
+                    <div className="relative flex h-[130px] w-full items-end justify-center">
+                      <div className="absolute -top-7 z-10 hidden whitespace-nowrap rounded-md border border-border bg-surface px-1.5 py-0.5 text-[9px] font-bold text-text group-hover:block">
+                        {bar.value.toLocaleString()}
+                      </div>
+                      <AnimatedBar height={bar.height} delay={0.08 + i * 0.06} className="bg-gradient-to-t from-primary to-accent" />
                     </div>
-                    <AnimatedBar height={bar.height} delay={0.08 + i * 0.06} className="bg-gradient-to-t from-primary to-accent" />
+                    <span className="mt-1.5 text-[9px] font-bold uppercase tracking-wider text-muted">{bar.label}</span>
                   </div>
-                  <span className="mt-1.5 text-[9px] font-bold uppercase tracking-wider text-muted">{bar.label}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyBlock
+                icon={BarChart2}
+                title="No enrollment data yet"
+                desc="Publish courses and enroll students to see trends here."
+              />
+            )}
           </MotionCard>
 
           <MotionCard className="p-3.5 lg:col-span-2" delay={0.08}>
             <h2 className="dashboard-section-title mb-2">Top courses</h2>
-            <div className="space-y-2.5">
-              {TOP_COURSES.map((course, i) => (
-                <motion.div
-                  key={course.name}
-                  initial={{ opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.06, duration: 0.3, ease: EASE }}
-                >
-                  <div className="mb-0.5 flex items-center justify-between gap-2">
-                    <p className="truncate text-[11px] font-semibold text-text">{course.name}</p>
-                    <span className="shrink-0 text-[11px] font-bold text-success">{formatMentorCurrency(course.revenue)}</span>
-                  </div>
-                  <AnimatedProgress value={course.share} color="bg-primary" delay={0.12 + i * 0.06} />
-                </motion.div>
-              ))}
-            </div>
+            {topCourses.length ? (
+              <div className="space-y-2.5">
+                {topCourses.map((course, i) => (
+                  <motion.div
+                    key={course.name}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + i * 0.06, duration: 0.3, ease: EASE }}
+                  >
+                    <div className="mb-0.5 flex items-center justify-between gap-2">
+                      <p className="truncate text-[11px] font-semibold text-text">{course.name}</p>
+                      <span className="shrink-0 text-[11px] font-bold text-success">{formatMentorCurrency(course.revenue)}</span>
+                    </div>
+                    <AnimatedProgress value={course.share} color="bg-primary" delay={0.12 + i * 0.06} />
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <EmptyBlock
+                icon={TrendingUp}
+                title="No course performance yet"
+                desc="Your top earning courses will appear here."
+              />
+            )}
           </MotionCard>
         </div>
 
-        {/* Earnings snapshot — from revenue section */}
         <MotionCard className="p-3.5" delay={0.1} hover={false}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
@@ -300,13 +395,15 @@ export default function AnalyticsPage() {
               >
                 ${snapshot.revenue.toLocaleString()}.00
               </motion.p>
-              <p className="mt-0.5 text-[10px] text-muted">Next payout · Jun 1, 2026</p>
+              <p className="mt-0.5 text-[10px] text-muted">
+                {hasActivity ? "Earnings from your published courses" : "No payouts until you earn revenue"}
+              </p>
             </div>
             <div className="grid grid-cols-3 gap-2 sm:max-w-[360px] sm:flex-1">
               {[
-                { label: "Lifetime", value: "$42.8k" },
-                { label: "Pending", value: "$2,140" },
-                { label: "Refund", value: "1.8%" },
+                { label: "Lifetime", value: formatMentorCurrency(snapshot.totalRevenue) },
+                { label: "Pending", value: "$0" },
+                { label: "Courses", value: String(snapshot.courses) },
               ].map((s, i) => (
                 <motion.div
                   key={s.label}
@@ -323,115 +420,116 @@ export default function AnalyticsPage() {
           </div>
         </MotionCard>
 
-        {/* Audience + revenue mix + ratings */}
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           <MotionCard className="p-3.5" delay={0.12}>
             <div className="mb-2 flex items-center justify-between">
               <h2 className="dashboard-section-title">Audience</h2>
               <Globe className="h-3.5 w-3.5 text-primary" />
             </div>
-            <div className="space-y-2">
-              {AUDIENCE.map((row, i) => (
-                <motion.div
-                  key={row.country}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 + i * 0.05, duration: 0.3, ease: EASE }}
-                >
-                  <div className="mb-0.5 flex justify-between text-[11px]">
-                    <span className="font-semibold text-text">{row.country}</span>
-                    <span className="font-bold text-primary">{row.pct}%</span>
-                  </div>
-                  <AnimatedProgress value={row.pct} color="bg-primary" delay={0.1 + i * 0.05} />
-                </motion.div>
-              ))}
-            </div>
+            {audience.length ? (
+              <div className="space-y-2">
+                {audience.map((row, i) => (
+                  <motion.div
+                    key={row.country}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.08 + i * 0.05, duration: 0.3, ease: EASE }}
+                  >
+                    <div className="mb-0.5 flex justify-between text-[11px]">
+                      <span className="font-semibold text-text">{row.country}</span>
+                      <span className="font-bold text-primary">{row.pct}%</span>
+                    </div>
+                    <AnimatedProgress value={row.pct} color="bg-primary" delay={0.1 + i * 0.05} />
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <EmptyBlock
+                icon={Globe}
+                title="No audience data yet"
+                desc="Student geography will appear once learners enroll."
+              />
+            )}
           </MotionCard>
 
           <MotionCard className="p-3.5" delay={0.14}>
             <h2 className="dashboard-section-title mb-2">Revenue mix</h2>
-            <div className="space-y-2">
-              {REVENUE_MIX.map((row, i) => (
-                <motion.div
-                  key={row.label}
-                  initial={{ opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.08 + i * 0.05, duration: 0.3, ease: EASE }}
-                >
-                  <div className="mb-0.5 flex justify-between text-[11px]">
-                    <span className="font-semibold text-text">{row.label}</span>
-                    <span className="font-bold text-primary">{row.pct}%</span>
-                  </div>
-                  <AnimatedProgress value={row.pct} color={row.color} delay={0.1 + i * 0.05} />
-                </motion.div>
-              ))}
-            </div>
+            {revenueMix.length ? (
+              <div className="space-y-2">
+                {revenueMix.map((row, i) => (
+                  <motion.div
+                    key={row.label}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.08 + i * 0.05, duration: 0.3, ease: EASE }}
+                  >
+                    <div className="mb-0.5 flex justify-between text-[11px]">
+                      <span className="font-semibold text-text">{row.label}</span>
+                      <span className="font-bold text-primary">{row.pct}%</span>
+                    </div>
+                    <AnimatedProgress value={row.pct} color={row.color} delay={0.1 + i * 0.05} />
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <EmptyBlock
+                icon={DollarSign}
+                title="No revenue breakdown yet"
+                desc="Course revenue share will show here after sales."
+              />
+            )}
           </MotionCard>
 
           <MotionCard className="p-3.5 text-center md:col-span-2 xl:col-span-1" delay={0.16}>
             <h2 className="dashboard-section-title mb-0.5">Ratings</h2>
-            <p className="text-[10px] text-muted">{snapshot.newReviews}+ reviews</p>
+            <p className="text-[10px] text-muted">{snapshot.newReviews} reviews</p>
             <motion.p
               className="mt-2 text-4xl font-black text-text"
               initial={{ scale: 0.92, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.15, type: "spring", stiffness: 220, damping: 20 }}
             >
-              {snapshot.rating}
+              {snapshot.rating || 0}
             </motion.p>
             <div className="mt-2 flex justify-center gap-0.5 text-warning">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-3.5 w-3.5 fill-warning text-warning" />
+                <Star
+                  key={i}
+                  className={`h-3.5 w-3.5 ${i < Math.round(snapshot.rating) ? "fill-warning text-warning" : "text-border"}`}
+                />
               ))}
             </div>
           </MotionCard>
         </div>
 
-        {/* Payout history — compact from revenue section */}
         <MotionCard className="overflow-hidden p-0" delay={0.18} hover={false}>
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-3.5 py-2.5">
             <div>
               <h2 className="dashboard-section-title">Recent payouts</h2>
-              <p className="text-[10px] text-muted">Last 3 transactions</p>
+              <p className="text-[10px] text-muted">Transaction history</p>
             </div>
-            <button type="button" className="dashboard-header-btn dashboard-header-btn-outline !h-8 !px-2.5 text-[11px]">
+            <button
+              type="button"
+              disabled={!hasActivity}
+              className="dashboard-header-btn dashboard-header-btn-outline !h-8 !px-2.5 text-[11px] disabled:opacity-50"
+            >
               <Download className="h-3 w-3" />
               Export
             </button>
           </div>
-          <div className="divide-y divide-border">
-            {PAYOUTS.map((row, i) => (
-              <motion.div
-                key={row.id}
-                className="flex items-center justify-between gap-2 px-3.5 py-2.5"
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + i * 0.05, duration: 0.3, ease: EASE }}
-              >
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-text">{row.date}</p>
-                  <p className="truncate text-[10px] text-muted">{row.id}</p>
-                </div>
-                <div className="shrink-0 text-right">
-                  <p className="text-xs font-bold text-success">{row.amount}</p>
-                  <span className={`text-[9px] font-bold uppercase ${row.status === "Paid" ? "text-success" : "text-warning"}`}>
-                    {row.status}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {hasActivity && snapshot.revenue > 0 ? (
+            <div className="divide-y divide-border px-3.5 py-2.5">
+              <p className="text-xs text-muted">Payout details will appear here once processed.</p>
+            </div>
+          ) : (
+            <EmptyBlock
+              icon={Wallet}
+              title="No payouts yet"
+              desc="Earn revenue from course sales to see payout history."
+            />
+          )}
         </MotionCard>
       </motion.div>
-
-      {/*
-        Revenue tab section — commented out; key widgets merged above.
-        <AnimatePresence mode="wait">
-          {tab === "revenue" && (
-            ... balance card, payment method, monthly revenue chart ...
-          )}
-        </AnimatePresence>
-      */}
     </motion.div>
   );
 }
