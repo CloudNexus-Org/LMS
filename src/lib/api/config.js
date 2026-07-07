@@ -10,5 +10,5 @@ export const API = {
 
 export const DEV_USER = {
   studentId: import.meta.env.VITE_STUDENT_USER_ID || '201',
-  mentorId: import.meta.env.VITE_MENTOR_USER_ID || '101',
+  mentorId: import.meta.env.VITE_MENTOR_USER_ID || '2',
 };

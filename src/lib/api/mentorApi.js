@@ -1,5 +1,6 @@
 import { API, DEV_USER } from './config';
 import { getJson, putJson } from './http';
+import { authHeaders } from './apiHelpers';
 
 const base = API.base;
 
@@ -29,8 +30,17 @@ export async function fetchMentorCourses(slug) {
   return getJson(`${base}/api/mentors/${slug}/courses`);
 }
 
-export async function fetchMyMentorProfile(userId = DEV_USER.mentorId) {
-  return mapMentor(await getJson(`${base}/api/mentors/me/profile`, { 'X-User-Id': userId }));
+export async function fetchMyMentorProfile(user, token) {
+  const headers = user && token ? authHeaders(user, token) : { 'X-User-Id': String(DEV_USER.mentorId) };
+  return mapMentor(await getJson(`${base}/api/mentors/me/profile`, headers));
+}
+
+export async function fetchMentorHubDashboard(user, token) {
+  return getJson(`${base}/api/mentors/me/dashboard`, authHeaders(user, token));
+}
+
+export async function fetchMyMentorStudents(user, token) {
+  return getJson(`${base}/api/mentors/me/students`, authHeaders(user, token));
 }
 
 export async function updateMentorProfile(body, userId = DEV_USER.mentorId) {

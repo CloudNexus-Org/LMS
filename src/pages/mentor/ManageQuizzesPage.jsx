@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -8,14 +7,15 @@ import {
   Sparkles,
   Edit3,
   CheckCircle2,
+  BookOpen,
 } from "lucide-react";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchCourse, fetchCourseDrafts } from "@/lib/api/contentApi";
 import {
   loadMentorQuizzes,
   upsertMentorQuiz,
   deleteMentorQuiz,
-  getAllPracticeQuizzes,
 } from "@/data/quizzes";
-import { getTrackById, getLessonsByTrack } from "@/data/tracks";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -29,7 +29,7 @@ const EMPTY_QUESTION = {
 
 const EMPTY_QUIZ = {
   title: "",
-  trackId: "cloud",
+  trackId: "",
   lessonId: "",
   passingScore: 70,
   timeLimitMinutes: null,
@@ -37,23 +37,81 @@ const EMPTY_QUIZ = {
 };
 
 export default function ManageQuizzesPage() {
+  const { user, token } = useAuthStore();
   const [quizzes, setQuizzes] = useState(() => loadMentorQuizzes());
+  const [courseQuizzes, setCourseQuizzes] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [loadingCourses, setLoadingCourses] = useState(true);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(null);
 
-  const platformQuizzes = useMemo(() => getAllPracticeQuizzes(), []);
-  const tracks = useMemo(
-    () => ["cloud", "ai", "fullstack"].map((id) => getTrackById(id)).filter(Boolean),
-    []
-  );
+  const loadCourseQuizzes = useCallback(async () => {
+    if (!user?.id || !token) {
+      setCourseQuizzes([]);
+      setCourses([]);
+      setLoadingCourses(false);
+      return;
+    }
+    setLoadingCourses(true);
+    try {
+      const list = await fetchCourseDrafts(user, token);
+      const drafts = Array.isArray(list) ? list : [];
+      setCourses(drafts);
+
+      const quizRows = [];
+      for (const summary of drafts) {
+        const full = await fetchCourse(user, token, summary.id).catch(() => null);
+        if (!full?.modules?.length) continue;
+        for (const mod of full.modules) {
+          for (const lesson of mod.lessons || []) {
+            if ((lesson.type || "").toLowerCase() === "quiz") {
+              quizRows.push({
+                id: `course-${full.id}-lesson-${lesson.id}`,
+                title: lesson.title || "Quiz lesson",
+                courseTitle: full.title || "Course",
+                moduleTitle: mod.title || "Module",
+                questionCount: lesson.durationMin ? `${lesson.durationMin} min` : "Quiz",
+              });
+            }
+          }
+        }
+      }
+      setCourseQuizzes(quizRows);
+    } catch {
+      setCourseQuizzes([]);
+      setCourses([]);
+    } finally {
+      setLoadingCourses(false);
+    }
+  }, [user?.id, token]);
+
+  useEffect(() => {
+    loadCourseQuizzes();
+  }, [loadCourseQuizzes]);
+
+  const trackOptions = useMemo(() => {
+    const fromCourses = courses
+      .map((c) => ({ id: String(c.id), name: c.title || `Course ${c.id}` }))
+      .filter((c) => c.name);
+    return fromCourses.length ? fromCourses : [{ id: "", name: "No courses yet" }];
+  }, [courses]);
 
   const lessonOptions = useMemo(() => {
     if (!form?.trackId) return [];
-    return getLessonsByTrack(form.trackId).filter((l) => l.type === "quiz");
-  }, [form?.trackId]);
+    return courseQuizzes
+      .filter((q) => q.id.startsWith(`course-${form.trackId}-`))
+      .map((q) => ({
+        id: q.id.replace(`course-${form.trackId}-lesson-`, ""),
+        title: q.title,
+      }));
+  }, [form?.trackId, courseQuizzes]);
 
   const openCreate = () => {
-    setForm({ ...EMPTY_QUIZ, id: `mentor-quiz-${Date.now()}` });
+    setForm({
+      ...EMPTY_QUIZ,
+      id: `mentor-quiz-${Date.now()}`,
+      trackId: trackOptions[0]?.id ?? "",
+    });
     setEditing(true);
   };
 
@@ -113,7 +171,6 @@ export default function ManageQuizzesPage() {
         </button>
       </section>
 
-      {/* Mentor quizzes */}
       <section className="dashboard-card p-4 sm:p-5">
         <h2 className="font-display text-lg font-bold text-text">Your custom quizzes</h2>
         <p className="mt-1 text-sm text-muted">{quizzes.length} published by you</p>
@@ -153,24 +210,39 @@ export default function ManageQuizzesPage() {
         )}
       </section>
 
-      {/* Platform quizzes reference */}
       <section className="dashboard-card p-4 sm:p-5">
-        <h2 className="font-display text-lg font-bold text-text">Platform quizzes</h2>
-        <p className="mt-1 text-sm text-muted">Auto-generated per module — {platformQuizzes.length} available</p>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
-          {platformQuizzes.slice(0, 6).map((q) => (
-            <div key={q.id} className="learn-outcome-item !flex-row items-center justify-between">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-text">{q.title}</p>
-                <p className="text-xs text-muted">{q.trackName} · {q.questions.length} Q</p>
+        <h2 className="font-display text-lg font-bold text-text">Course quizzes</h2>
+        <p className="mt-1 text-sm text-muted">
+          Quiz lessons from your courses — {courseQuizzes.length} found
+        </p>
+
+        {loadingCourses ? (
+          <div className="mt-6 h-24 animate-pulse rounded-lg bg-bg" />
+        ) : courseQuizzes.length === 0 ? (
+          <div className="learn-quiz-empty mt-6">
+            <BookOpen className="h-8 w-8 text-muted opacity-50" />
+            <p className="mt-2 font-bold text-text">No quiz lessons yet</p>
+            <p className="text-sm text-muted">
+              Add quiz-type lessons in your course curriculum to see them here.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {courseQuizzes.map((q) => (
+              <div key={q.id} className="learn-outcome-item !flex-row items-center justify-between">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-text">{q.title}</p>
+                  <p className="text-xs text-muted">
+                    {q.courseTitle} · {q.moduleTitle} · {q.questionCount}
+                  </p>
+                </div>
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
               </div>
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Editor modal */}
       <AnimatePresence>
         {editing && form && (
           <motion.div
@@ -206,14 +278,15 @@ export default function ManageQuizzesPage() {
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="block">
-                    <span className="upload-label">Track</span>
+                    <span className="upload-label">Course</span>
                     <select
                       className="upload-input upload-select"
                       value={form.trackId}
                       onChange={(e) => setForm({ ...form, trackId: e.target.value, lessonId: "" })}
+                      disabled={!trackOptions[0]?.id}
                     >
-                      {tracks.map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
+                      {trackOptions.map((t) => (
+                        <option key={t.id || "none"} value={t.id}>{t.name}</option>
                       ))}
                     </select>
                   </label>
@@ -223,6 +296,7 @@ export default function ManageQuizzesPage() {
                       className="upload-input upload-select"
                       value={form.lessonId}
                       onChange={(e) => setForm({ ...form, lessonId: e.target.value })}
+                      disabled={!lessonOptions.length}
                     >
                       <option value="">Select quiz lesson…</option>
                       {lessonOptions.map((l) => (

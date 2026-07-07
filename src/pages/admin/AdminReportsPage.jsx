@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
   csvFilename,
   downloadMultiSectionCsv,
@@ -17,8 +17,8 @@ import {
   Search,
   X,
 } from "lucide-react";
-import useAuthStore from "@/store/useAuthStore";
-import { fetchAdminDashboard } from "@/lib/api/analyticsApi";
+import useAdminReportsData from "@/hooks/useAdminReportsData";
+import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 
 const KPI_BASE = {
   revenue: 428.5,
@@ -127,26 +127,28 @@ const GEO_DATA = [
 const PERIOD_MULTIPLIER = { month: 0.18, quarter: 0.42, year: 1 };
 
 export default function AdminReportsPage() {
-  const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
+  const { loading, snapshot } = useAdminReportsData();
   const [period, setPeriod] = useState("year");
   const [search, setSearch] = useState("");
-  const [kpiBase, setKpiBase] = useState(KPI_BASE);
 
-  useEffect(() => {
-    if (!user?.id || !token) return;
-    fetchAdminDashboard(user, token)
-      .then((data) => {
-        if (!data) return;
-        setKpiBase((prev) => ({
-          ...prev,
-          revenue: parseFloat(String(data.mrrLabel || "").replace(/[^\d.]/g, "")) || prev.revenue,
-          users: data.activeLearners ?? prev.users,
-          completion: data.completionGrowth ?? prev.completion,
-        }));
-      })
-      .catch(() => {});
-  }, [user?.id, token]);
+  const kpiBase = {
+    revenue: snapshot.revenue || 0,
+    users: snapshot.users || 0,
+    courses: snapshot.courses || 0,
+    completion: snapshot.completion || 0,
+  };
+
+  const topCoursesData = snapshot.topCourses || [];
+  const topMentorsData = (snapshot.topMentors || []).map((m, i) => ({
+    ...m,
+    avatar: (m.name || "M").slice(0, 2).toUpperCase(),
+    grad: TOP_MENTORS[i % TOP_MENTORS.length]?.grad || "from-blue-500 to-cyan-400",
+    revenue: m.revenue || "—",
+    courses: m.courses ?? 0,
+    trackLabel: m.trackLabel || "—",
+  }));
+  const categoriesData = snapshot.categories?.length ? snapshot.categories : [];
+  const geographyData = snapshot.geography?.length ? snapshot.geography : [];
 
   const multiplier = PERIOD_MULTIPLIER[period];
 
@@ -155,7 +157,9 @@ export default function AdminReportsPage() {
       {
         label: "Total revenue",
         value: `$${(kpiBase.revenue * multiplier).toFixed(1)}k`,
-        meta: "+24% vs prior period",
+        meta: snapshot.revenueReport?.length
+          ? `${snapshot.revenueReport.length} days tracked`
+          : "From analytics API",
         metaTone: "success",
         icon: DollarSign,
         iconColor: "text-success",
@@ -163,7 +167,7 @@ export default function AdminReportsPage() {
       {
         label: "New users",
         value: Math.round(kpiBase.users * multiplier).toLocaleString(),
-        meta: "+18% growth",
+        meta: `${kpiBase.users.toLocaleString()} in directory`,
         metaTone: "success",
         icon: Users,
         iconColor: "text-primary",
@@ -171,7 +175,9 @@ export default function AdminReportsPage() {
       {
         label: "Courses published",
         value: Math.round(kpiBase.courses * multiplier),
-        meta: "+42 this period",
+        meta: snapshot.coursesPublishedMeta
+          ? `${snapshot.coursesPublishedMeta} enrollments (30d)`
+          : "Published in catalog",
         metaTone: "muted",
         icon: BookOpen,
         iconColor: "text-accent",
@@ -179,7 +185,7 @@ export default function AdminReportsPage() {
       {
         label: "Avg completion",
         value: `${kpiBase.completion}%`,
-        meta: "+5% improvement",
+        meta: kpiBase.completion > 0 ? "From course metrics" : "No completion data yet",
         metaTone: "success",
         icon: Award,
         iconColor: "text-warning",
@@ -190,11 +196,19 @@ export default function AdminReportsPage() {
 
   const filteredCourses = useMemo(() => {
     const q = search.toLowerCase();
-    return TOP_COURSES.filter(
+    return topCoursesData.filter(
       (c) =>
-        c.name.toLowerCase().includes(q) || c.mentor.toLowerCase().includes(q)
+        c.name.toLowerCase().includes(q) || (c.mentor || "").toLowerCase().includes(q)
     );
-  }, [search]);
+  }, [search, topCoursesData]);
+
+  if (loading) {
+    return (
+      <div className="dashboard-page mx-auto w-full max-w-[1320px]">
+        <DashboardGridSkeleton cards={6} />
+      </div>
+    );
+  }
 
   const handleExport = () => {
     downloadMultiSectionCsv(csvFilename(`reports-${period}`), [
@@ -216,7 +230,7 @@ export default function AdminReportsPage() {
       {
         title: "Top Performing Courses",
         headers: ["Rank", "Course", "Mentor", "Students", "Rating", "Revenue", "Growth"],
-        rows: TOP_COURSES.map((c) => [
+        rows: topCoursesData.map((c) => [
           c.rank,
           c.name,
           c.mentor,
@@ -229,7 +243,7 @@ export default function AdminReportsPage() {
       {
         title: "Top Mentors",
         headers: ["Mentor", "Courses", "Students", "Revenue", "Rating"],
-        rows: TOP_MENTORS.map((m) => [
+        rows: topMentorsData.map((m) => [
           m.name,
           m.courses,
           m.students,
@@ -313,7 +327,10 @@ export default function AdminReportsPage() {
             <BookOpen className="h-4 w-4 text-muted" />
           </div>
           <div className="space-y-4">
-            {CATEGORIES.map((cat) => (
+            {categoriesData.length === 0 ? (
+              <p className="text-sm text-muted">No category data from approvals yet.</p>
+            ) : (
+            categoriesData.map((cat) => (
               <div key={cat.name}>
                 <div className="mb-1.5 flex justify-between text-sm">
                   <span className="text-xs font-bold text-text">{cat.name}</span>
@@ -326,7 +343,8 @@ export default function AdminReportsPage() {
                   />
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </div>
 
@@ -335,11 +353,14 @@ export default function AdminReportsPage() {
             <Globe className="h-4 w-4 text-muted" />
             <div>
               <h2 className="dashboard-section-title">User Geography</h2>
-              <p className="mt-0.5 text-[11px] text-muted">Active learners by region</p>
+              <p className="mt-0.5 text-[11px] text-muted">Active users by location</p>
             </div>
           </div>
           <div className="space-y-3">
-            {GEO_DATA.map((geo) => (
+            {geographyData.length === 0 ? (
+              <p className="text-sm text-muted">No location data in user profiles yet.</p>
+            ) : (
+            geographyData.map((geo) => (
               <div key={geo.region}>
                 <div className="mb-1 flex justify-between">
                   <span className="text-xs font-bold text-muted">{geo.region}</span>
@@ -352,7 +373,8 @@ export default function AdminReportsPage() {
                   />
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </div>
       </div>
@@ -457,7 +479,7 @@ export default function AdminReportsPage() {
 
         <div className="flex items-center justify-between border-t border-border bg-bg/30 px-5 py-3">
           <p className="text-xs font-bold text-muted">
-            Showing {filteredCourses.length} of {TOP_COURSES.length} courses
+            Showing {filteredCourses.length} of {topCoursesData.length} courses
           </p>
           <button
             type="button"
@@ -484,7 +506,7 @@ export default function AdminReportsPage() {
           </button>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {TOP_MENTORS.map((mentor) => (
+          {topMentorsData.map((mentor) => (
             <div
               key={mentor.name}
               className="rounded-xl border border-border bg-bg/50 p-4 transition-all duration-200 hover:border-primary/25"

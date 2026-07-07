@@ -3,17 +3,10 @@ import {
   Users, Search, Mail, MoreVertical,
   Sparkles, TrendingUp, Activity,
   BookOpen, Clock, Download, X,
-  ArrowUpRight, Award, BarChart2, ChevronRight
+  ChevronRight, Award, BarChart2
 } from 'lucide-react';
-
-const STUDENTS = [
-  { id: 1, name: 'Alex Chen', email: 'alex.chen@example.com', avatar: 'AC', enrolled: 'Advanced State Management', progress: 85, lastActive: '2 hours ago', status: 'Active', joined: 'Jan 12, 2026', grade: 'A', messages: 3 },
-  { id: 2, name: 'Sarah Miller', email: 'sarah.m@example.com', avatar: 'SM', enrolled: 'Cloud Architecture', progress: 32, lastActive: '5 hours ago', status: 'Active', joined: 'Feb 3, 2026', grade: 'B+', messages: 0 },
-  { id: 3, name: 'James Wilson', email: 'j.wilson@example.com', avatar: 'JW', enrolled: 'Cloud Architecture', progress: 100, lastActive: '1 day ago', status: 'Completed', joined: 'Dec 8, 2025', grade: 'A+', messages: 1 },
-  { id: 4, name: 'Emily Davis', email: 'emily.d@example.com', avatar: 'ED', enrolled: 'Advanced State Management', progress: 12, lastActive: '3 days ago', status: 'Inactive', joined: 'Mar 20, 2026', grade: 'C', messages: 0 },
-  { id: 5, name: 'Raj Patel', email: 'raj.p@example.com', avatar: 'RP', enrolled: 'Advanced State Management', progress: 60, lastActive: '1 hour ago', status: 'Active', joined: 'Feb 14, 2026', grade: 'B', messages: 2 },
-  { id: 6, name: 'Mia Johansson', email: 'mia.j@example.com', avatar: 'MJ', enrolled: 'Cloud Architecture', progress: 75, lastActive: '4 hours ago', status: 'Active', joined: 'Jan 28, 2026', grade: 'A-', messages: 0 },
-];
+import useMentorStudentsData from '@/hooks/useMentorStudentsData';
+import { Skeleton } from '@/components/ui/Skeletons';
 
 const GRAD_COLORS = [
   'from-blue-500 to-cyan-400',
@@ -31,11 +24,12 @@ const STATUS_CONFIG = {
 };
 
 export default function StudentsPage() {
+  const { loading, rows: students, total, active, completed, avgProgress } = useMentorStudentsData();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  const filtered = STUDENTS.filter(s => {
+  const filtered = students.filter(s => {
     const matchSearch = s.name.toLowerCase().includes(search.toLowerCase()) ||
       s.email.toLowerCase().includes(search.toLowerCase()) ||
       s.enrolled.toLowerCase().includes(search.toLowerCase());
@@ -43,9 +37,23 @@ export default function StudentsPage() {
     return matchSearch && matchFilter;
   });
 
-  const active = STUDENTS.filter(s => s.status === 'Active').length;
-  const completed = STUDENTS.filter(s => s.status === 'Completed').length;
-  const avgProgress = Math.round(STUDENTS.reduce((a, s) => a + s.progress, 0) / STUDENTS.length);
+  if (loading) {
+    return (
+      <div className="space-y-8 max-w-7xl mx-auto">
+        <div className="space-y-3">
+          <Skeleton className="h-8 w-48" rounded="rounded-xl" />
+          <Skeleton className="h-10 w-72" rounded="rounded-xl" />
+          <Skeleton className="h-4 w-96" rounded="rounded-md" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-24" rounded="rounded-[5px]" />
+          ))}
+        </div>
+        <Skeleton className="h-[420px]" rounded="rounded-2xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
@@ -109,11 +117,10 @@ export default function StudentsPage() {
   {[
     {
       label: 'Total Students',
-      value: STUDENTS.length,
+      value: total,
       icon: Users,
       color: 'text-blue-500',
       bg: 'bg-blue-500/10',
-      trend: '+12%',
       line: 'bg-blue-500/20',
       hover: 'hover:border-blue-500/20',
     },
@@ -123,7 +130,6 @@ export default function StudentsPage() {
       icon: Activity,
       color: 'text-emerald-500',
       bg: 'bg-emerald-500/10',
-      trend: '',
       line: 'bg-emerald-500/20',
       hover: 'hover:border-emerald-500/20',
     },
@@ -133,7 +139,6 @@ export default function StudentsPage() {
       icon: Award,
       color: 'text-violet-500',
       bg: 'bg-violet-500/10',
-      trend: '',
       line: 'bg-violet-500/20',
       hover: 'hover:border-violet-500/20',
     },
@@ -143,7 +148,6 @@ export default function StudentsPage() {
       icon: TrendingUp,
       color: 'text-orange-500',
       bg: 'bg-orange-500/10',
-      trend: '+5%',
       line: 'bg-orange-500/20',
       hover: 'hover:border-orange-500/20',
     },
@@ -217,30 +221,6 @@ export default function StudentsPage() {
                 {kpi.label}
               </p>
             </div>
-
-            {/* TREND */}
-            {kpi.trend && (
-              <div
-                className="
-                  ml-auto
-                  flex items-center gap-1
-
-                  rounded-[5px]
-
-                  bg-emerald-500/10
-
-                  px-2 py-1
-
-                  text-[10px]
-                  font-black
-
-                  text-emerald-500
-                "
-              >
-                <ArrowUpRight className="h-3 w-3" />
-                {kpi.trend}
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -401,7 +381,7 @@ export default function StudentsPage() {
 
         {/* Table footer */}
         <div className="px-5 py-3 border-t border-border bg-bg/30 flex items-center justify-between">
-          <p className="text-xs font-bold text-muted">Showing {filtered.length} of {STUDENTS.length} students</p>
+          <p className="text-xs font-bold text-muted">Showing {filtered.length} of {total} students</p>
           <div className="flex items-center gap-1">
             {[1, 2, 3].map(p => (
               <button key={p} className={`h-7 w-7 rounded-lg text-xs font-bold transition-all ${p === 1 ? 'bg-primary text-white' : 'text-muted hover:bg-bg hover:text-text border border-border'}`}>{p}</button>
