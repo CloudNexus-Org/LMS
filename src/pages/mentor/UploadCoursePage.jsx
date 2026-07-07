@@ -49,7 +49,7 @@ import { uploadCourseThumbnail, uploadVideo, resolveMediaUrl } from "@/lib/api/m
 import { parseApiError } from "@/lib/api/apiHelpers";
 
 const EASE = [0.16, 1, 0.3, 1];
-const DRAFT_KEY = "lms-mentor-course-draft";
+const DRAFT_KEY = "lms-mentor-course-draft-v2";
 
 const STEPS = [
   { id: 1, label: "Course Info", icon: BookOpen, desc: "Basic details" },
@@ -103,27 +103,6 @@ const PRICING_PLANS = [
 
 const SUGGESTED_PRICES = ["29.99", "49.99", "69.99", "89.99", "129.99"];
 
-const DEFAULT_MODULES = [
-  {
-    id: 1,
-    title: "Introduction",
-    open: true,
-    lessons: [
-      { id: 101, title: "Welcome & course overview", type: "video", free: true, duration: "8:00" },
-      { id: 102, title: "Setup & prerequisites", type: "video", free: true, duration: "12:00" },
-    ],
-  },
-  {
-    id: 2,
-    title: "Core concepts",
-    open: true,
-    lessons: [
-      { id: 201, title: "Deep dive into fundamentals", type: "video", free: false, duration: "24:00" },
-      { id: 202, title: "Knowledge check quiz", type: "quiz", free: false, duration: "10 Q" },
-    ],
-  },
-];
-
 const INITIAL_FORM = {
   title: "",
   subtitle: "",
@@ -133,7 +112,7 @@ const INITIAL_FORM = {
   outcomes: ["", "", ""],
   requirements: "",
   language: "English",
-  tags: ["React", "TypeScript"],
+  tags: [],
 };
 
 const pageVariants = {
@@ -280,9 +259,9 @@ export default function UploadCoursePage() {
 
   const [step, setStep] = useState(draft?.step ?? 1);
   const [form, setForm] = useState({ ...INITIAL_FORM, ...draft?.form });
-  const [modules, setModules] = useState(draft?.modules ?? DEFAULT_MODULES);
+  const [modules, setModules] = useState(draft?.modules ?? []);
   const [pricingModel, setPricingModel] = useState(draft?.pricingModel ?? "paid");
-  const [customPrice, setCustomPrice] = useState(draft?.customPrice ?? "89.99");
+  const [customPrice, setCustomPrice] = useState(draft?.customPrice ?? "");
   const [thumbnailPreview, setThumbnailPreview] = useState(draft?.thumbnailPreview ?? null);
   const [courseId, setCourseId] = useState(draft?.courseId ?? null);
   const [thumbnailUrl, setThumbnailUrl] = useState(draft?.thumbnailUrl ?? null);

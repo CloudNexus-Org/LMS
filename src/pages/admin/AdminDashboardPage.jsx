@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Users,
   DollarSign,
@@ -27,18 +27,19 @@ import {
   csvFilename,
   downloadMultiSectionCsv,
 } from "@/lib/exportCsv";
-import useAuthStore from "@/store/useAuthStore";
-import { fetchAdminDashboard } from "@/lib/api/analyticsApi";
+import useAdminDashboardData from "@/hooks/useAdminDashboardData";
+import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 
 function MiniSparkline({ data, className = "" }) {
   const w = 88;
   const h = 28;
-  const max = Math.max(...data);
-  const min = Math.min(...data);
+  const safe = (data?.length ? data : [0]).map((v) => Number(v) || 0);
+  const max = Math.max(...safe, 1);
+  const min = Math.min(...safe, 0);
   const range = max - min || 1;
-  const points = data
+  const points = safe
     .map((v, i) => {
-      const x = (i / (data.length - 1)) * w;
+      const x = safe.length > 1 ? (i / (safe.length - 1)) * w : w / 2;
       const y = h - ((v - min) / range) * h;
       return `${x},${y}`;
     })
@@ -93,6 +94,24 @@ function buildAreaPath(coords, baseline) {
 }
 
 function RevenueLineChart({ data }) {
+  const rows = (data || []).map((d) => ({
+    month: d?.month ?? d?.label ?? "—",
+    s: Number(d?.s ?? d?.sales ?? 0) || 0,
+    m: Number(d?.m ?? d?.payouts ?? 0) || 0,
+  }));
+
+  if (rows.length < 2) {
+    return (
+      <div className="dashboard-line-chart flex min-h-[200px] flex-col items-center justify-center py-8 text-center">
+        <BarChart2 className="mb-2 h-8 w-8 text-muted opacity-40" />
+        <p className="text-sm font-semibold text-text">No revenue data yet</p>
+        <p className="mt-1 max-w-[280px] text-[11px] text-muted">
+          Revenue trends will appear once course sales and payouts are recorded.
+        </p>
+      </div>
+    );
+  }
+
   const width = 640;
   const height = 200;
   const pad = { top: 28, right: 52, bottom: 32, left: 8 };
@@ -100,8 +119,8 @@ function RevenueLineChart({ data }) {
   const chartH = height - pad.top - pad.bottom;
   const baseline = pad.top + chartH;
 
-  const sales = data.map((d) => d.s);
-  const payouts = data.map((d) => d.m);
+  const sales = rows.map((d) => d.s);
+  const payouts = rows.map((d) => d.m);
   const max = Math.max(...sales, ...payouts, 1);
   const min = Math.min(...sales, ...payouts, 0);
   const range = max - min || 1;
@@ -171,7 +190,7 @@ function RevenueLineChart({ data }) {
 
         {salesCoords.map((pt, i) => (
           <circle
-            key={`sales-${data[i].month}`}
+            key={`sales-${rows[i].month}`}
             cx={pt.x}
             cy={pt.y}
             r={i === salesCoords.length - 1 ? 4.5 : 2.5}
@@ -181,7 +200,7 @@ function RevenueLineChart({ data }) {
 
         {payoutCoords.map((pt, i) => (
           <circle
-            key={`payout-${data[i].month}`}
+            key={`payout-${rows[i].month}`}
             cx={pt.x}
             cy={pt.y}
             r={i === payoutCoords.length - 1 ? 4 : 2}
@@ -204,7 +223,7 @@ function RevenueLineChart({ data }) {
           {lastPayouts}k
         </text>
 
-        {data.map((d, i) => (
+        {rows.map((d, i) => (
           <text
             key={d.month}
             x={salesCoords[i].x}
@@ -371,35 +390,51 @@ function mergeAdminDashboardApi(prev, apiData) {
   return merged;
 }
 
+function enrichActionItems(items) {
+  return (items || []).map((item) => {
+    if (item.title?.includes("Payout")) {
+      return {
+        ...item,
+        type: "row",
+        icon: DollarSign,
+        iconBg: "bg-success/10",
+        iconColor: "text-success",
+      };
+    }
+    if (item.title?.includes("Course")) {
+      return {
+        ...item,
+        type: "row",
+        icon: CheckSquare,
+        iconBg: "bg-primary/10",
+        iconColor: "text-primary",
+      };
+    }
+    return {
+      ...item,
+      type: "row",
+      icon: Activity,
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary",
+    };
+  });
+}
+
 export default function AdminDashboardPage() {
-  const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
+  const { loading, snapshot, reload } = useAdminDashboardData();
   const [activeTab, setActiveTab] = useState("week");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [snapshot, setSnapshot] = useState(() => buildDashboardSnapshot());
   const [chartKey, setChartKey] = useState(0);
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      if (user?.id && token) {
-        const data = await fetchAdminDashboard(user, token);
-        setSnapshot((prev) => mergeAdminDashboardApi(prev, data));
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, 700));
-        setSnapshot(buildDashboardSnapshot());
-      }
+      await reload();
       setChartKey((key) => key + 1);
-    } catch {
-      setSnapshot(buildDashboardSnapshot());
     } finally {
       setIsRefreshing(false);
     }
-  }, [user, token]);
-
-  useEffect(() => {
-    handleRefresh();
-  }, [handleRefresh]);
+  }, [reload]);
 
   const kpis = useMemo(
     () => [
@@ -448,52 +483,22 @@ export default function AdminDashboardPage() {
 
   const revenueData = snapshot.revenueData;
   const revenueTrend = snapshot.revenueTrend;
-  const systemHealth = snapshot.systemHealth;
+  const systemHealth = useMemo(
+    () =>
+      (snapshot.systemHealth?.length ? snapshot.systemHealth : BASE_SYSTEM_HEALTH).map(
+        (sh, index) => {
+          const baseItem =
+            BASE_SYSTEM_HEALTH.find((b) => b.label === sh.label) ||
+            BASE_SYSTEM_HEALTH[index] ||
+            BASE_SYSTEM_HEALTH[0];
+          return { ...baseItem, ...sh, icon: baseItem.icon };
+        }
+      ),
+    [snapshot.systemHealth]
+  );
 
-  const topCourses = [
-    { name: "AWS Cloud Architect Pro", mentor: "Sarah Chen", students: 2840, rating: 4.9, revenue: "$28,400", trend: "up" },
-    { name: "Kubernetes & DevOps Mastery", mentor: "Liam Carter", students: 2210, rating: 4.8, revenue: "$22,100", trend: "up" },
-    { name: "React & Next.js Complete", mentor: "Priya Nair", students: 1985, rating: 4.7, revenue: "$19,850", trend: "up" },
-    { name: "Python for Data Science", mentor: "Omar Hassan", students: 1740, rating: 4.6, revenue: "$17,400", trend: "down" },
-    { name: "System Design at Scale", mentor: "Yuki Tanaka", students: 1320, rating: 4.8, revenue: "$13,200", trend: "up" },
-  ];
-
-  const quickActions = [
-    { label: "Review Courses", icon: BookOpen, to: "/admin/approvals" },
-    { label: "Manage Users", icon: Users, to: "/admin/users" },
-    { label: "View Reports", icon: BarChart2, to: "/admin/reports" },
-    { label: "Financials", icon: DollarSign, to: "/admin/revenue" },
-  ];
-
-  const actionItems = [
-    {
-      type: "alert",
-      icon: AlertTriangle,
-      iconBg: "bg-warning/10",
-      iconColor: "text-warning",
-      title: "High Server Load Detected",
-      desc: "DB CPU hit 85% in us-east-1. Auto-scaling initiated.",
-      action: { label: "Acknowledge", variant: "warning" },
-    },
-    {
-      type: "row",
-      icon: CheckSquare,
-      iconBg: "bg-primary/10",
-      iconColor: "text-primary",
-      title: "14 Courses Awaiting Review",
-      desc: "Mentor submissions need QA approval before publishing.",
-      action: { label: "Review Now", to: "/admin/approvals", variant: "primary" },
-    },
-    {
-      type: "row",
-      icon: DollarSign,
-      iconBg: "bg-success/10",
-      iconColor: "text-success",
-      title: "Monthly Mentor Payouts Pending",
-      desc: "$42,500 across 18 mentors needs authorization.",
-      action: { label: "Authorize", to: "/admin/revenue", variant: "outline" },
-    },
-  ];
+  const topCourses = snapshot.topCourses?.length ? snapshot.topCourses : [];
+  const actionItems = enrichActionItems(snapshot.actionItems);
 
   const handleExportDashboard = () => {
     const weekRevenue = snapshot.revenueData.week;
@@ -532,6 +537,21 @@ export default function AdminDashboardPage() {
       },
     ]);
   };
+
+  const quickActions = [
+    { label: "Review Courses", icon: BookOpen, to: "/admin/approvals" },
+    { label: "Manage Users", icon: Users, to: "/admin/users" },
+    { label: "View Reports", icon: BarChart2, to: "/admin/reports" },
+    { label: "Financials", icon: DollarSign, to: "/admin/revenue" },
+  ];
+
+  if (loading) {
+    return (
+      <div className="dashboard-page mx-auto w-full max-w-[1320px]">
+        <DashboardGridSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
@@ -682,7 +702,9 @@ export default function AdminDashboardPage() {
         <Card className="flex h-full flex-col p-4 xl:col-span-2">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="dashboard-section-title">Action Items</h2>
-            <span className="dashboard-trend dashboard-trend-down">3 pending</span>
+            <span className="dashboard-trend dashboard-trend-down">
+              {snapshot.pendingApprovals} pending
+            </span>
           </div>
           <div className="space-y-2">
             {actionItems.map((item) => {
@@ -773,7 +795,14 @@ export default function AdminDashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {topCourses.map((course, i) => (
+              {topCourses.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-sm text-muted">
+                    No course performance data yet.
+                  </td>
+                </tr>
+              ) : (
+                topCourses.map((course, i) => (
                 <tr key={course.name}>
                   <td className="text-muted">{i + 1}</td>
                   <td>
@@ -803,7 +832,7 @@ export default function AdminDashboardPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

@@ -20,6 +20,7 @@ import {
   rejectCourse,
 } from '@/lib/api/adminApi';
 import { parseApiError } from '@/lib/api/apiHelpers';
+import { Skeleton } from '@/components/ui/Skeletons';
 
 const INITIAL_APPROVALS = [
   {
@@ -104,19 +105,26 @@ const FILTERS = ['All', 'Pending', 'Approved', 'Rejected'];
 
 export default function CourseApprovalsPage() {
   const { user, token } = useAuthStore();
-  const [approvals, setApprovals] = useState(INITIAL_APPROVALS);
+  const [approvals, setApprovals] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [selected, setSelected] = useState(null);
   const [actionError, setActionError] = useState('');
 
   useEffect(() => {
-    if (!user || !token) return;
-    const load = () =>
-      fetchCourseApprovals(user, token)
+    if (!user || !token) {
+      setLoading(false);
+      return;
+    }
+    const load = () => {
+      setLoading(true);
+      return fetchCourseApprovals(user, token)
         .then((list) => {
           if (Array.isArray(list)) setApprovals(list);
         })
-        .catch(() => {});
+        .catch(() => setApprovals([]))
+        .finally(() => setLoading(false));
+    };
     load();
     const onFocus = () => load();
     window.addEventListener('focus', onFocus);
@@ -208,6 +216,10 @@ export default function CourseApprovalsPage() {
 
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
+      {loading ? (
+        <Skeleton className="h-[520px] w-full rounded-2xl" />
+      ) : (
+      <>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-[32px] font-bold tracking-tight text-text sm:text-[36px]">
@@ -389,6 +401,9 @@ export default function CourseApprovalsPage() {
             </article>
           ))}
         </div>
+      )}
+
+      </>
       )}
 
       {selected && (

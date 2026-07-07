@@ -3,69 +3,16 @@ import {
   Edit3, Plus, Users, Star, BarChart, Clock,
   ChevronDown, GripVertical, CheckCircle2,
   Video, FileText, Lock, Eye, Trash2,
-  TrendingUp, ArrowUpRight, BookOpen, Globe,
+  TrendingUp, BookOpen, Globe,
   AlertCircle, Download
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { fetchCourseDrafts, publishCourse, fetchCourse, deleteCourse, deleteLesson } from '@/lib/api/contentApi';
+import { fetchMentorHubDashboard } from '@/lib/api/mentorApi';
+import { fetchMentorDashboard } from '@/lib/api/analyticsApi';
 import { CONTENT_CHANGED, mapDraftToManageCourse } from '@/lib/api/contentSync';
 import { parseApiError } from '@/lib/api/apiHelpers';
-
-const FALLBACK_COURSES = [
-  {
-    id: 1,
-    title: 'Advanced State Management',
-    status: 'Published',
-    category: 'Frontend Engineering',
-    students: 842,
-    rating: 4.8,
-    reviews: 214,
-    revenue: '$8,420',
-    completionRate: 68,
-    thumbnail: 'bg-gradient-to-br from-blue-500 to-cyan-400',
-    lessons: [
-      { id: 1, title: 'Introduction to State Patterns', type: 'video', duration: '12:40', free: true, published: true },
-      { id: 2, title: 'Redux Deep Dive', type: 'video', duration: '28:15', free: false, published: true },
-      { id: 3, title: 'Zustand vs Jotai', type: 'video', duration: '18:22', free: false, published: true },
-      { id: 4, title: 'Module Quiz', type: 'quiz', duration: '15 Q', free: false, published: true },
-      { id: 5, title: 'Advanced Context Patterns', type: 'video', duration: '22:08', free: false, published: false },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Cloud Architecture Patterns',
-    status: 'Published',
-    category: 'Cloud & DevOps',
-    students: 406,
-    rating: 4.9,
-    reviews: 98,
-    revenue: '$4,060',
-    completionRate: 54,
-    thumbnail: 'bg-gradient-to-br from-violet-500 to-fuchsia-400',
-    lessons: [
-      { id: 1, title: 'Cloud Fundamentals', type: 'video', duration: '10:30', free: true, published: true },
-      { id: 2, title: 'Microservices Architecture', type: 'video', duration: '32:10', free: false, published: true },
-      { id: 3, title: 'Event-Driven Design', type: 'video', duration: '24:45', free: false, published: true },
-    ],
-  },
-  {
-    id: 3,
-    title: 'Rust for Frontend Devs',
-    status: 'Draft',
-    category: 'Systems Programming',
-    students: 0,
-    rating: 0,
-    reviews: 0,
-    revenue: '$0',
-    completionRate: 0,
-    thumbnail: 'bg-gradient-to-br from-orange-500 to-yellow-400',
-    lessons: [
-      { id: 1, title: 'Why Rust for Web?', type: 'video', duration: '8:20', free: true, published: false },
-      { id: 2, title: 'WebAssembly Basics', type: 'video', duration: '20:10', free: false, published: false },
-    ],
-  },
-];
 
 function LessonTypeIcon({ type }) {
   if (type === 'quiz') return <FileText className="h-3.5 w-3.5" />;
@@ -74,24 +21,48 @@ function LessonTypeIcon({ type }) {
 
 export default function ManageLessonsPage() {
   const { user, token } = useAuthStore();
-  const [courses, setCourses] = useState(FALLBACK_COURSES);
-  const [loading, setLoading] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
+  const [summary, setSummary] = useState({
+    totalStudents: 0,
+    totalRevenue: 0,
+    avgRating: 0,
+  });
 
   const [courseDetails, setCourseDetails] = useState({});
 
   const loadCourses = useCallback(() => {
-    if (!user?.id || !token) return;
+    if (!user?.id || !token) {
+      setCourses([]);
+      setSummary({ totalStudents: 0, totalRevenue: 0, avgRating: 0 });
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    fetchCourseDrafts(user, token)
-      .then((list) => {
-        if (Array.isArray(list) && list.length) {
-          setCourses(list.map(mapDraftToManageCourse));
-          setExpandedCourse((prev) => prev ?? list[0]?.id ?? null);
-        }
+    Promise.all([
+      fetchCourseDrafts(user, token).catch(() => []),
+      fetchMentorHubDashboard(user, token).catch(() => null),
+      fetchMentorDashboard(user, token).catch(() => null),
+    ])
+      .then(([list, hub, analytics]) => {
+        const mapped = Array.isArray(list) ? list.map(mapDraftToManageCourse) : [];
+        setCourses(mapped);
+        setExpandedCourse((prev) => {
+          if (prev != null && mapped.some((c) => c.id === prev)) return prev;
+          return mapped[0]?.id ?? null;
+        });
+        setSummary({
+          totalStudents: hub?.totalStudents ?? analytics?.students ?? 0,
+          totalRevenue: analytics?.revenue ?? 0,
+          avgRating: hub?.rating ?? analytics?.rating ?? 0,
+        });
       })
-      .catch(() => {})
+      .catch(() => {
+        setCourses([]);
+        setSummary({ totalStudents: 0, totalRevenue: 0, avgRating: 0 });
+      })
       .finally(() => setLoading(false));
   }, [user?.id, token]);
 
@@ -163,22 +134,30 @@ export default function ManageLessonsPage() {
     }
   };
 
-  const totalStudents = courses.reduce((a, c) => a + c.students, 0);
-  const totalRevenue = courses.some((c) => c.revenue !== '$0')
-    ? courses.reduce((sum, c) => sum + parseFloat(String(c.revenue).replace(/[$,]/g, '') || 0), 0)
-    : 0;
+  const totalStudents = summary.totalStudents;
+  const totalRevenue = summary.totalRevenue;
   const avgRating =
-    courses.filter((c) => c.rating > 0).length > 0
-      ? (
-          courses.filter((c) => c.rating > 0).reduce((a, c) => a + c.rating, 0) /
-          courses.filter((c) => c.rating > 0).length
-        ).toFixed(2)
-      : '—';
+    summary.avgRating > 0 ? Number(summary.avgRating).toFixed(2) : '—';
   const published = courses.filter((c) => c.status === 'Published').length;
 
   const filtered = activeTab === 'all' ? courses :
     activeTab === 'published' ? courses.filter(c => c.status === 'Published') :
     courses.filter(c => c.status === 'Draft' || c.status === 'Pending');
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-7xl space-y-8 animate-in fade-in duration-300">
+        <div className="h-24 rounded-[5px] bg-surface border border-border animate-pulse" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-24 rounded-[5px] bg-surface border border-border animate-pulse" />
+          ))}
+        </div>
+        <div className="h-12 w-64 rounded-[5px] bg-surface border border-border animate-pulse" />
+        <div className="h-40 rounded-[5px] bg-surface border border-border animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
@@ -249,7 +228,6 @@ export default function ManageLessonsPage() {
       icon: Users,
       color: 'text-blue-500',
       bg: 'bg-blue-500/10',
-      trend: '+12%',
       line: 'bg-blue-500/20',
       hover: 'hover:border-blue-500/20',
     },
@@ -259,7 +237,6 @@ export default function ManageLessonsPage() {
       icon: TrendingUp,
       color: 'text-emerald-500',
       bg: 'bg-emerald-500/10',
-      trend: '+18%',
       line: 'bg-emerald-500/20',
       hover: 'hover:border-emerald-500/20',
     },
@@ -269,7 +246,6 @@ export default function ManageLessonsPage() {
       icon: Star,
       color: 'text-orange-500',
       bg: 'bg-orange-500/10',
-      trend: '+0.1',
       line: 'bg-orange-500/20',
       hover: 'hover:border-orange-500/20',
     },
@@ -279,7 +255,6 @@ export default function ManageLessonsPage() {
       icon: Globe,
       color: 'text-violet-500',
       bg: 'bg-violet-500/10',
-      trend: '',
       line: 'bg-violet-500/20',
       hover: 'hover:border-violet-500/20',
     },
@@ -353,30 +328,6 @@ export default function ManageLessonsPage() {
                 {kpi.label}
               </p>
             </div>
-
-            {/* TREND */}
-            {kpi.trend && (
-              <div
-                className="
-                  ml-auto
-                  flex items-center gap-1
-
-                  rounded-[5px]
-
-                  bg-emerald-500/10
-
-                  px-2 py-1
-
-                  text-[10px]
-                  font-black
-
-                  text-emerald-500
-                "
-              >
-                <ArrowUpRight className="h-3 w-3" />
-                {kpi.trend}
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -596,8 +547,14 @@ export default function ManageLessonsPage() {
       {filtered.length === 0 && (
         <div className="text-center py-20 bg-surface border border-border rounded-[5px]">
           <BookOpen className="h-14 w-14 mx-auto text-muted opacity-30 mb-4" />
-          <p className="font-bold text-text">No courses in this category</p>
-          <p className="text-sm text-muted mt-1">Create your first course to get started.</p>
+          <p className="font-bold text-text">
+            {courses.length === 0 ? 'No courses yet' : 'No courses in this category'}
+          </p>
+          <p className="text-sm text-muted mt-1">
+            {courses.length === 0
+              ? 'Create your first course to start building your curriculum.'
+              : 'Try a different filter or create a new course.'}
+          </p>
           <Link to="/mentor/upload" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-[5px] font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
             <Plus className="h-4 w-4" /> Create Course
           </Link>

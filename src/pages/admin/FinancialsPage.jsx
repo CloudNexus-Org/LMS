@@ -17,63 +17,7 @@ import {
 } from "@/lib/exportCsv";
 import useAuthStore from "@/store/useAuthStore";
 import { fetchFinancialSummary, fetchTransactions } from "@/lib/api/adminApi";
-
-const TRANSACTIONS = [
-  {
-    id: "TX-9281",
-    type: "Course Sale",
-    amount: 89.99,
-    cut: 26.99,
-    date: "10 mins ago",
-    student: "Alex Chen",
-    course: "Advanced State Management",
-  },
-  {
-    id: "TX-9280",
-    type: "Course Sale",
-    amount: 129.99,
-    cut: 38.99,
-    date: "1 hour ago",
-    student: "Sarah Miller",
-    course: "Cloud Architecture Patterns",
-  },
-  {
-    id: "PO-4091",
-    type: "Mentor Payout",
-    amount: -4250,
-    cut: null,
-    date: "Yesterday",
-    student: "Priya Nair",
-    course: "Monthly payout",
-  },
-  {
-    id: "TX-9279",
-    type: "Refund",
-    amount: -89.99,
-    cut: -26.99,
-    date: "Yesterday",
-    student: "James Wilson",
-    course: "React Performance Patterns",
-  },
-  {
-    id: "TX-9278",
-    type: "Course Sale",
-    amount: 79.99,
-    cut: 23.99,
-    date: "2 days ago",
-    student: "Emily Davis",
-    course: "System Design Fundamentals",
-  },
-  {
-    id: "PO-4090",
-    type: "Mentor Payout",
-    amount: -3180,
-    cut: null,
-    date: "3 days ago",
-    student: "Sarah Chen",
-    course: "Monthly payout",
-  },
-];
+import { Skeleton } from "@/components/ui/Skeletons";
 
 const TYPE_FILTERS = ["All", "Course Sale", "Mentor Payout", "Refund"];
 
@@ -106,22 +50,31 @@ function formatMoney(value) {
 
 export default function FinancialsPage() {
   const { user, token } = useAuthStore();
-  const [transactions, setTransactions] = useState(TRANSACTIONS);
+  const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
 
   useEffect(() => {
-    if (!user || !token) return;
+    if (!user || !token) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     Promise.all([
       fetchTransactions(user, token),
       fetchFinancialSummary(user, token),
     ])
       .then(([txList, sum]) => {
-        if (txList?.length) setTransactions(txList);
+        setTransactions(Array.isArray(txList) ? txList : []);
         if (sum) setSummary(sum);
       })
-      .catch(() => {});
+      .catch(() => {
+        setTransactions([]);
+        setSummary(null);
+      })
+      .finally(() => setLoading(false));
   }, [user, token]);
 
   const filtered = useMemo(
@@ -140,16 +93,21 @@ export default function FinancialsPage() {
 
   const sales = transactions.filter((t) => t.type === "Course Sale");
   const payouts = transactions.filter((t) => t.type === "Mentor Payout");
-  const totalSales = summary?.totalSales ?? 1248000;
-  const mentorPayouts = summary?.mentorPayouts ?? 819500;
-  const netRevenue = summary?.netRevenue ?? 428500;
-  const platformCut = summary?.platformCut ?? (totalSales - mentorPayouts);
+
+  const computedSales = sales.reduce((sum, t) => sum + Math.max(0, Number(t.amount) || 0), 0);
+  const computedPayouts = payouts.reduce((sum, t) => sum + Math.abs(Number(t.amount) || 0), 0);
+  const computedCut = sales.reduce((sum, t) => sum + Math.max(0, Number(t.cut) || 0), 0);
+
+  const totalSales = summary?.totalSales ?? computedSales;
+  const mentorPayouts = summary?.mentorPayouts ?? computedPayouts;
+  const netRevenue = summary?.netRevenue ?? (computedCut || Math.max(0, computedSales - computedPayouts));
+  const platformCut = summary?.platformCut ?? (computedCut || netRevenue);
 
   const stats = [
     {
       label: "Net platform revenue",
       value: `$${(netRevenue / 1000).toFixed(1)}k`,
-      meta: "+24% vs last year",
+      meta: `${transactions.length} ledger entries`,
       metaTone: "success",
       icon: DollarSign,
       iconColor: "text-success",
@@ -157,7 +115,7 @@ export default function FinancialsPage() {
     {
       label: "Total sales",
       value: `$${(totalSales / 1000).toFixed(0)}k`,
-      meta: `${sales.length} recent transactions`,
+      meta: `${sales.length} course sale${sales.length === 1 ? '' : 's'} in ledger`,
       metaTone: "muted",
       icon: TrendingUp,
       iconColor: "text-primary",
@@ -165,7 +123,7 @@ export default function FinancialsPage() {
     {
       label: "Mentor payouts",
       value: `$${(mentorPayouts / 1000).toFixed(1)}k`,
-      meta: `${Math.round((mentorPayouts / totalSales) * 100)}% of gross sales`,
+      meta: totalSales > 0 ? `${Math.round((mentorPayouts / totalSales) * 100)}% of gross sales` : 'No sales yet',
       metaTone: "muted",
       icon: Wallet,
       iconColor: "text-accent",
@@ -173,7 +131,7 @@ export default function FinancialsPage() {
     {
       label: "Platform cut",
       value: `$${(platformCut / 1000).toFixed(1)}k`,
-      meta: `${Math.round((platformCut / totalSales) * 100)}% margin`,
+      meta: totalSales > 0 ? `${Math.round((platformCut / totalSales) * 100)}% margin` : '—',
       metaTone: "muted",
       icon: Receipt,
       iconColor: "text-warning",
@@ -186,7 +144,7 @@ export default function FinancialsPage() {
         title: "Platform Financials Summary",
         headers: ["Metric", "Value", "Notes"],
         rows: [
-          ["Net Platform Revenue (YTD)", netRevenue, "+24% vs last year"],
+          ["Net Platform Revenue (YTD)", netRevenue, `${transactions.length} transactions`],
           ["Total Sales", totalSales, `${sales.length} course sales in ledger`],
           ["Mentor Payouts", mentorPayouts, `${Math.round((mentorPayouts / totalSales) * 100)}% of gross`],
           ["Platform Cut", platformCut, `${Math.round((platformCut / totalSales) * 100)}% margin`],
@@ -203,7 +161,7 @@ export default function FinancialsPage() {
           "Platform Cut",
           "Date",
         ],
-        rows: TRANSACTIONS.map((tx) => [
+        rows: transactions.map((tx) => [
           tx.id,
           tx.type,
           tx.student,
@@ -218,6 +176,10 @@ export default function FinancialsPage() {
 
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
+      {loading ? (
+        <Skeleton className="h-[480px] w-full rounded-2xl" />
+      ) : (
+      <>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-[32px] font-bold tracking-tight text-text sm:text-[36px]">
@@ -396,7 +358,7 @@ export default function FinancialsPage() {
 
         <div className="flex items-center justify-between border-t border-border bg-bg/30 px-5 py-3">
           <p className="text-xs font-bold text-muted">
-            Showing {filtered.length} of {TRANSACTIONS.length} transactions
+            Showing {filtered.length} of {transactions.length} transactions
           </p>
           <div className="flex items-center gap-1">
             {[1, 2, 3].map((p) => (
@@ -415,6 +377,8 @@ export default function FinancialsPage() {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }
