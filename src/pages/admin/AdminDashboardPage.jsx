@@ -266,130 +266,6 @@ function Card({ className = "", children }) {
   return <div className={`dashboard-card ${className}`}>{children}</div>;
 }
 
-const BASE_REVENUE_TREND = [60, 75, 65, 90, 80, 100, 95, 115, 108, 124];
-
-const BASE_REVENUE_DATA = {
-  week: [
-    { month: "Mon", s: 42, m: 18 },
-    { month: "Tue", s: 58, m: 28 },
-    { month: "Wed", s: 75, m: 35 },
-    { month: "Thu", s: 62, m: 30 },
-    { month: "Fri", s: 88, m: 45 },
-    { month: "Sat", s: 70, m: 38 },
-    { month: "Sun", s: 55, m: 25 },
-  ],
-  month: [
-    { month: "W1", s: 40, m: 20 },
-    { month: "W2", s: 60, m: 35 },
-    { month: "W3", s: 80, m: 50 },
-    { month: "W4", s: 100, m: 70 },
-  ],
-  year: [
-    { month: "Q1", s: 40, m: 20 },
-    { month: "Q2", s: 60, m: 35 },
-    { month: "Q3", s: 80, m: 50 },
-    { month: "Q4", s: 100, m: 70 },
-  ],
-};
-
-const BASE_SYSTEM_HEALTH = [
-  { label: "API Uptime", value: 99.9, color: "var(--success)", icon: Wifi, status: "Operational" },
-  { label: "DB Load", value: 68, color: "var(--warning)", icon: HardDrive, status: "Moderate" },
-  { label: "CPU Usage", value: 42, color: "var(--primary)", icon: Cpu, status: "Normal" },
-  { label: "CDN Health", value: 95, color: "var(--success)", icon: Server, status: "Healthy" },
-];
-
-function jitterValue(value, spread = 0.08) {
-  const next = Math.round(value * (1 + (Math.random() * 2 - 1) * spread));
-  return Math.max(1, next);
-}
-
-function jitterDecimal(value, spread = 0.06) {
-  const next = value * (1 + (Math.random() * 2 - 1) * spread);
-  return +Math.max(0, next).toFixed(1);
-}
-
-const DEFAULT_PLATFORM_STATE = {
-  users: Array.from({ length: 8 }, () => ({ role: "Student", status: "Active" })),
-  courseSubmissions: [
-    { status: "Pending" },
-    { status: "Pending" },
-    { status: "Approved" },
-  ],
-  enrollments: [],
-};
-
-function buildDashboardSnapshot(
-  platformState = DEFAULT_PLATFORM_STATE
-) {
-  const { users, courseSubmissions, enrollments } = platformState;
-  const pendingApprovals = courseSubmissions.filter((c) => c.status === "Pending").length;
-  const approvedCount = courseSubmissions.filter((c) => c.status === "Approved").length;
-  const activeStudents = users.filter(
-    (u) => u.role === "Student" && u.status === "Active"
-  ).length;
-  const mrr = 118000 + enrollments.length * 3200 + approvedCount * 1800;
-
-  return {
-    mrrGrowth: jitterDecimal(15.2, 0.04),
-    activeLearners: 12000 + activeStudents * 312 + enrollments.length * 48,
-    learnerGrowth: jitterDecimal(5.4, 0.05),
-    mrrLabel: `$${(mrr / 1000).toFixed(1)}k`,
-    completions: 3600 + enrollments.length * 120 + approvedCount * 45,
-    completionGrowth: jitterDecimal(8.7, 0.05),
-    pendingApprovals,
-    resolvedToday: Math.min(approvedCount, 2),
-    revenueTrend: BASE_REVENUE_TREND.map((v) => jitterValue(v, 0.1)),
-    revenueData: Object.fromEntries(
-      Object.entries(BASE_REVENUE_DATA).map(([key, points]) => [
-        key,
-        points.map((point) => ({
-          ...point,
-          s: jitterValue(point.s, 0.12),
-          m: jitterValue(point.m, 0.12),
-        })),
-      ])
-    ),
-    systemHealth: BASE_SYSTEM_HEALTH.map((item) => ({
-      ...item,
-      value:
-        item.label === "API Uptime" || item.label === "CDN Health"
-          ? +jitterDecimal(item.value, 0.002).toFixed(1)
-          : jitterValue(item.value, 0.08),
-    })),
-    newUsersToday: 240 + activeStudents * 3,
-  };
-}
-
-function mergeAdminDashboardApi(prev, apiData) {
-  if (!apiData || typeof apiData !== "object") return prev;
-
-  const merged = { ...prev, ...apiData };
-
-  if (Array.isArray(apiData.systemHealth)) {
-    merged.systemHealth = apiData.systemHealth.map((sh, index) => {
-      const baseItem =
-        BASE_SYSTEM_HEALTH.find((b) => b.label === sh.label) ||
-        BASE_SYSTEM_HEALTH[index] ||
-        BASE_SYSTEM_HEALTH[0];
-      return {
-        ...baseItem,
-        ...sh,
-        icon: baseItem.icon,
-      };
-    });
-  }
-
-  if (apiData.revenueData && typeof apiData.revenueData === "object") {
-    merged.revenueData = {
-      ...prev.revenueData,
-      ...apiData.revenueData,
-    };
-  }
-
-  return merged;
-}
-
 function enrichActionItems(items) {
   return (items || []).map((item) => {
     if (item.title?.includes("Payout")) {
@@ -483,19 +359,11 @@ export default function AdminDashboardPage() {
 
   const revenueData = snapshot.revenueData;
   const revenueTrend = snapshot.revenueTrend;
-  const systemHealth = useMemo(
-    () =>
-      (snapshot.systemHealth?.length ? snapshot.systemHealth : BASE_SYSTEM_HEALTH).map(
-        (sh, index) => {
-          const baseItem =
-            BASE_SYSTEM_HEALTH.find((b) => b.label === sh.label) ||
-            BASE_SYSTEM_HEALTH[index] ||
-            BASE_SYSTEM_HEALTH[0];
-          return { ...baseItem, ...sh, icon: baseItem.icon };
-        }
-      ),
-    [snapshot.systemHealth]
-  );
+  const systemHealthIcons = { Wifi, HardDrive, Cpu, Server };
+  const systemHealth = (snapshot.systemHealth || []).map((sh) => ({
+    ...sh,
+    icon: systemHealthIcons[sh.icon] || Server,
+  }));
 
   const topCourses = snapshot.topCourses?.length ? snapshot.topCourses : [];
   const actionItems = enrichActionItems(snapshot.actionItems);
@@ -743,8 +611,15 @@ export default function AdminDashboardPage() {
         <Card className="flex h-full flex-col p-4">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="dashboard-section-title">System Health</h2>
-            <span className="dashboard-status-live">● All systems go</span>
+            {systemHealth.length > 0 ? (
+              <span className="dashboard-status-live">● All systems go</span>
+            ) : null}
           </div>
+          {systemHealth.length === 0 ? (
+            <p className="text-sm text-muted">
+              Live infrastructure metrics are not configured yet. Service status will appear here once monitoring is connected.
+            </p>
+          ) : (
           <div className="space-y-3">
             {systemHealth.map((sh) => {
               const Icon = sh.icon;
@@ -769,6 +644,7 @@ export default function AdminDashboardPage() {
               );
             })}
           </div>
+          )}
         </Card>
       </section>
 

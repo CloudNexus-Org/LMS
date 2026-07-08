@@ -220,7 +220,7 @@ export default function AdminNotificationsPage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const [filter, setFilter] = useState("all");
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     if (!user?.id || !token) return;

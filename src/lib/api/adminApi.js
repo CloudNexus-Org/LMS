@@ -46,6 +46,7 @@ export async function fetchTransactions(user, token, params = {}) {
     date: tx.date,
     student: tx.student,
     course: tx.course,
+    createdAt: tx.createdAt,
   }));
 }
 

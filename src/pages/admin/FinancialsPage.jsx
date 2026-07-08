@@ -103,10 +103,17 @@ export default function FinancialsPage() {
   const netRevenue = summary?.netRevenue ?? (computedCut || Math.max(0, computedSales - computedPayouts));
   const platformCut = summary?.platformCut ?? (computedCut || netRevenue);
 
+  const payoutShareLabel =
+    totalSales > 0
+      ? `${Math.round((mentorPayouts / totalSales) * 100)}% of gross sales`
+      : mentorPayouts > 0
+        ? 'No course sales in ledger'
+        : 'No payouts yet';
+
   const stats = [
     {
       label: "Net platform revenue",
-      value: `$${(netRevenue / 1000).toFixed(1)}k`,
+      value: netRevenue >= 1000 ? `$${(netRevenue / 1000).toFixed(1)}k` : `$${netRevenue.toFixed(0)}`,
       meta: `${transactions.length} ledger entries`,
       metaTone: "success",
       icon: DollarSign,
@@ -114,7 +121,7 @@ export default function FinancialsPage() {
     },
     {
       label: "Total sales",
-      value: `$${(totalSales / 1000).toFixed(0)}k`,
+      value: totalSales >= 1000 ? `$${(totalSales / 1000).toFixed(1)}k` : `$${totalSales.toFixed(0)}`,
       meta: `${sales.length} course sale${sales.length === 1 ? '' : 's'} in ledger`,
       metaTone: "muted",
       icon: TrendingUp,
@@ -122,15 +129,15 @@ export default function FinancialsPage() {
     },
     {
       label: "Mentor payouts",
-      value: `$${(mentorPayouts / 1000).toFixed(1)}k`,
-      meta: totalSales > 0 ? `${Math.round((mentorPayouts / totalSales) * 100)}% of gross sales` : 'No sales yet',
+      value: mentorPayouts >= 1000 ? `$${(mentorPayouts / 1000).toFixed(1)}k` : `$${mentorPayouts.toFixed(0)}`,
+      meta: payoutShareLabel,
       metaTone: "muted",
       icon: Wallet,
       iconColor: "text-accent",
     },
     {
       label: "Platform cut",
-      value: `$${(platformCut / 1000).toFixed(1)}k`,
+      value: platformCut >= 1000 ? `$${(platformCut / 1000).toFixed(1)}k` : `$${platformCut.toFixed(0)}`,
       meta: totalSales > 0 ? `${Math.round((platformCut / totalSales) * 100)}% margin` : '—',
       metaTone: "muted",
       icon: Receipt,

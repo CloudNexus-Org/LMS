@@ -20,115 +20,15 @@ import {
 import useAdminReportsData from "@/hooks/useAdminReportsData";
 import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
 
-const KPI_BASE = {
-  revenue: 428.5,
-  users: 12482,
-  courses: 284,
-  completion: 63,
-};
-
-const TOP_COURSES = [
-  {
-    rank: 1,
-    name: "AWS Cloud Architect Pro",
-    mentor: "Sarah Chen",
-    students: 2840,
-    revenue: "$28,400",
-    rating: 4.9,
-    growth: "+22%",
-    up: true,
-  },
-  {
-    rank: 2,
-    name: "Kubernetes & DevOps Mastery",
-    mentor: "Liam Carter",
-    students: 2210,
-    revenue: "$22,100",
-    rating: 4.8,
-    growth: "+18%",
-    up: true,
-  },
-  {
-    rank: 3,
-    name: "React & Next.js Complete",
-    mentor: "Priya Nair",
-    students: 1985,
-    revenue: "$19,850",
-    rating: 4.7,
-    growth: "+15%",
-    up: true,
-  },
-  {
-    rank: 4,
-    name: "Python for Data Science",
-    mentor: "Omar Hassan",
-    students: 1740,
-    revenue: "$17,400",
-    rating: 4.6,
-    growth: "-3%",
-    up: false,
-  },
-  {
-    rank: 5,
-    name: "System Design at Scale",
-    mentor: "Yuki Tanaka",
-    students: 1320,
-    revenue: "$13,200",
-    rating: 4.8,
-    growth: "+12%",
-    up: true,
-  },
+const MENTOR_GRADIENTS = [
+  "from-blue-500 to-cyan-400",
+  "from-violet-500 to-fuchsia-400",
+  "from-emerald-500 to-lime-400",
 ];
-
-const TOP_MENTORS = [
-  {
-    name: "Sarah Chen",
-    courses: 4,
-    students: 5840,
-    revenue: "$58,400",
-    rating: 4.9,
-    avatar: "SC",
-    grad: "from-blue-500 to-cyan-400",
-  },
-  {
-    name: "Liam Carter",
-    courses: 3,
-    students: 4210,
-    revenue: "$42,100",
-    rating: 4.8,
-    avatar: "LC",
-    grad: "from-violet-500 to-fuchsia-400",
-  },
-  {
-    name: "Priya Nair",
-    courses: 5,
-    students: 3985,
-    revenue: "$39,850",
-    rating: 4.7,
-    avatar: "PN",
-    grad: "from-emerald-500 to-lime-400",
-  },
-];
-
-const CATEGORIES = [
-  { name: "Cloud & DevOps", share: 45, color: "bg-primary", text: "text-primary" },
-  { name: "Frontend Engineering", share: 30, color: "bg-success", text: "text-success" },
-  { name: "Backend & Systems", share: 15, color: "bg-warning", text: "text-warning" },
-  { name: "Data & AI", share: 10, color: "bg-accent", text: "text-accent" },
-];
-
-const GEO_DATA = [
-  { region: "North America", pct: 42, color: "bg-primary" },
-  { region: "Europe", pct: 28, color: "bg-accent" },
-  { region: "Asia Pacific", pct: 20, color: "bg-success" },
-  { region: "Rest of World", pct: 10, color: "bg-warning" },
-];
-
-const PERIOD_MULTIPLIER = { month: 0.18, quarter: 0.42, year: 1 };
 
 export default function AdminReportsPage() {
-  const { loading, snapshot } = useAdminReportsData();
   const [period, setPeriod] = useState("year");
+  const { loading, snapshot } = useAdminReportsData(period);
   const [search, setSearch] = useState("");
 
   const kpiBase = {
@@ -142,7 +42,7 @@ export default function AdminReportsPage() {
   const topMentorsData = (snapshot.topMentors || []).map((m, i) => ({
     ...m,
     avatar: (m.name || "M").slice(0, 2).toUpperCase(),
-    grad: TOP_MENTORS[i % TOP_MENTORS.length]?.grad || "from-blue-500 to-cyan-400",
+    grad: MENTOR_GRADIENTS[i % MENTOR_GRADIENTS.length],
     revenue: m.revenue || "—",
     courses: m.courses ?? 0,
     trackLabel: m.trackLabel || "—",
@@ -150,23 +50,21 @@ export default function AdminReportsPage() {
   const categoriesData = snapshot.categories?.length ? snapshot.categories : [];
   const geographyData = snapshot.geography?.length ? snapshot.geography : [];
 
-  const multiplier = PERIOD_MULTIPLIER[period];
-
   const stats = useMemo(
     () => [
       {
         label: "Total revenue",
-        value: `$${(kpiBase.revenue * multiplier).toFixed(1)}k`,
+        value: kpiBase.revenue > 0 ? `$${kpiBase.revenue.toFixed(1)}k` : "$0",
         meta: snapshot.revenueReport?.length
           ? `${snapshot.revenueReport.length} days tracked`
-          : "From analytics API",
+          : "No revenue in selected period",
         metaTone: "success",
         icon: DollarSign,
         iconColor: "text-success",
       },
       {
         label: "New users",
-        value: Math.round(kpiBase.users * multiplier).toLocaleString(),
+        value: kpiBase.users.toLocaleString(),
         meta: `${kpiBase.users.toLocaleString()} in directory`,
         metaTone: "success",
         icon: Users,
@@ -174,9 +72,9 @@ export default function AdminReportsPage() {
       },
       {
         label: "Courses published",
-        value: Math.round(kpiBase.courses * multiplier),
+        value: kpiBase.courses,
         meta: snapshot.coursesPublishedMeta
-          ? `${snapshot.coursesPublishedMeta} enrollments (30d)`
+          ? `${snapshot.coursesPublishedMeta} enrollments (${period})`
           : "Published in catalog",
         metaTone: "muted",
         icon: BookOpen,
@@ -191,7 +89,7 @@ export default function AdminReportsPage() {
         iconColor: "text-warning",
       },
     ],
-    [multiplier, kpiBase]
+    [kpiBase, snapshot.revenueReport, snapshot.coursesPublishedMeta, period]
   );
 
   const filteredCourses = useMemo(() => {
@@ -220,12 +118,12 @@ export default function AdminReportsPage() {
       {
         title: "Top Categories",
         headers: ["Category", "Share %"],
-        rows: CATEGORIES.map((c) => [c.name, c.share]),
+        rows: categoriesData.map((c) => [c.name, c.share]),
       },
       {
         title: "User Geography",
         headers: ["Region", "Share %"],
-        rows: GEO_DATA.map((g) => [g.region, g.pct]),
+        rows: geographyData.map((g) => [g.region, g.pct]),
       },
       {
         title: "Top Performing Courses",

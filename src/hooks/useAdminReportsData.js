@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useAuthStore from '@/store/useAuthStore';
 import {
   fetchAdminDashboard,
@@ -13,18 +13,24 @@ import { buildAdminReportsSnapshot } from '@/lib/admin/adminMappers';
 
 const EMPTY = buildAdminReportsSnapshot({});
 
-function defaultDateRange() {
+function defaultDateRange(period = 'year') {
   const to = new Date();
   const from = new Date();
-  from.setDate(from.getDate() - 30);
+  if (period === 'month') {
+    from.setDate(from.getDate() - 30);
+  } else if (period === 'quarter') {
+    from.setDate(from.getDate() - 90);
+  } else {
+    from.setDate(from.getDate() - 365);
+  }
   const fmt = (d) => d.toISOString().slice(0, 10);
   return { from: fmt(from), to: fmt(to) };
 }
 
-export default function useAdminReportsData() {
+export default function useAdminReportsData(period = 'year') {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
-  const [range] = useState(defaultDateRange);
+  const range = useMemo(() => defaultDateRange(period), [period]);
   const [loading, setLoading] = useState(true);
   const [snapshot, setSnapshot] = useState(EMPTY);
 

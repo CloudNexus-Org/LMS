@@ -466,7 +466,7 @@ export default function UserManagementPage() {
 
                     {/* Spend */}
                     <td className="px-5 py-4">
-                      <span className={`text-sm font-bold ${user.spend !== '$0' ? 'text-success' : 'text-muted'}`}>{user.spend}</span>
+                      <span className={`text-sm font-bold ${user.spend && user.spend !== '$0' ? 'text-success' : 'text-muted'}`}>{user.spend ?? '—'}</span>
                     </td>
 
                     {/* Actions */}
