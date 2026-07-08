@@ -28,6 +28,10 @@ import {
 } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import ProfileHeroBanner from "@/components/profile/ProfileHeroBanner";
+import useAuthStore from "@/store/useAuthStore";
+import { fetchProfile, fetchUsers } from "@/lib/api/userApi";
+import { countJoinedThisMonth } from "@/lib/admin/adminMappers";
+import { fetchCourseApprovals, fetchFinancialSummary } from "@/lib/api/adminApi";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -56,42 +60,49 @@ const tabContent = {
   exit: { opacity: 0, y: -8, filter: "blur(4px)", transition: { duration: 0.22, ease: EASE } },
 };
 
-const PROFILE = {
-  firstName: "Jordan",
-  lastName: "Reeves",
-  username: "@jreeves_admin",
-  email: "jordan.reeves@cloudnexus.io",
-  phone: "+1 (628) 555-0142",
+const DEFAULT_PROFILE = {
+  firstName: "Admin",
+  lastName: "User",
+  username: "@admin",
+  email: "",
+  phone: "",
   headline: "Platform Administrator",
-  bio: "Lead platform admin overseeing user operations, course approvals, financial controls, and system reliability for Cloud Nexus.",
-  location: "Austin, TX",
-  timezone: "Central Time (CT)",
+  bio: "",
+  location: "",
+  timezone: "India Standard Time (IST)",
   language: "English",
-  memberSince: "January 2023",
-  lastActive: "5 min ago",
-  plan: "Super Admin",
-  role: "Super Administrator",
+  memberSince: "—",
+  lastActive: "—",
+  plan: "Administrator",
+  role: "Administrator",
   department: "Platform Operations",
-  avatar:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80",
+  avatar: "",
   cover: "/assets/profile-cover-default.svg",
   verified: true,
-  twoFactorEnabled: true,
-  social: {
-    github: "github.com/jreeves-admin",
-    linkedin: "linkedin.com/in/jordanreeves",
-    portfolio: "cloudnexus.io/team/jreeves",
-  },
+  twoFactorEnabled: false,
+  social: { github: "", linkedin: "", portfolio: "" },
 };
 
-const STATS = [
-  { label: "Total users", value: 12480, suffix: "", sub: "+124 this week", icon: Users, accent: "profile-kpi-primary" },
-  { label: "Pending approvals", value: 14, suffix: "", sub: "Need review", icon: BookOpen, accent: "profile-kpi-warning" },
-  { label: "Revenue MTD", value: 284, suffix: "K", sub: "+8.2% growth", icon: DollarSign, accent: "profile-kpi-success" },
-  { label: "Active mentors", value: 186, suffix: "", sub: "12 new", icon: User, accent: "profile-kpi-accent" },
-  { label: "Open tickets", value: 7, suffix: "", sub: "2 critical", icon: AlertTriangle, accent: "profile-kpi-warning" },
-  { label: "Uptime", value: 99.9, suffix: "%", sub: "Last 30 days", icon: Server, accent: "profile-kpi-primary" },
-];
+function buildProfileFromApi(apiUser) {
+  if (!apiUser) return DEFAULT_PROFILE;
+  const fullName = apiUser.fullName || apiUser.name || "Admin User";
+  const parts = fullName.trim().split(/\s+/);
+  return {
+    ...DEFAULT_PROFILE,
+    firstName: parts[0] || "Admin",
+    lastName: parts.slice(1).join(" ") || "User",
+    username: apiUser.username ? `@${apiUser.username.replace(/^@/, "")}` : DEFAULT_PROFILE.username,
+    email: apiUser.email || "",
+    phone: apiUser.phone || "",
+    headline: apiUser.professionalRole || DEFAULT_PROFILE.headline,
+    bio: apiUser.bio || "",
+    location: apiUser.location || "",
+    memberSince: apiUser.joined || "—",
+    lastActive: apiUser.lastActive || "—",
+    avatar: apiUser.avatar || "",
+    role: "Administrator",
+  };
+}
 
 const TIMEZONE_OPTIONS = [
   { value: "Pacific Time (PT)", label: "Pacific Time (PT)", offset: "UTC−08:00" },
@@ -115,7 +126,7 @@ const TABS = [
   { id: "security", label: "Security", icon: Shield },
 ];
 
-const PENDING_APPROVALS = [
+const PENDING_APPROVALS_STATIC = [
   { id: 1, title: "Azure Generative AI — Module 5", mentor: "Sarah Jenkins", submitted: "2h ago", status: "QA review" },
   { id: 2, title: "Docker for DevOps Teams", mentor: "James Wilson", submitted: "5h ago", status: "Content flag" },
   { id: 3, title: "System Design Interview Prep", mentor: "Marcus Lee", submitted: "1d ago", status: "New submission" },
@@ -223,9 +234,9 @@ function DetailRow({ icon: Icon, label, value, href }) {
   return content;
 }
 
-function PreferencesSection() {
-  const [timezone, setTimezone] = useState(PROFILE.timezone);
-  const [language, setLanguage] = useState(PROFILE.language);
+function PreferencesSection({ profile }) {
+  const [timezone, setTimezone] = useState(profile.timezone);
+  const [language, setLanguage] = useState(profile.language);
   const [saved, setSaved] = useState(false);
 
   const markSaved = () => {
@@ -279,8 +290,43 @@ function PreferencesSection() {
 
 export default function AdminProfilePage() {
   const heroRef = useRef(null);
+  const { user: authUser, token } = useAuthStore();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSaved, setIsSaved] = useState(false);
+  const [profile, setProfile] = useState(DEFAULT_PROFILE);
+  const [stats, setStats] = useState([]);
+  const [pendingApprovals, setPendingApprovals] = useState([]);
+
+  useEffect(() => {
+    if (!authUser?.id || !token) return;
+    Promise.all([
+      fetchProfile(authUser, token).catch(() => null),
+      fetchUsers(authUser, token, { size: 500 }).catch(() => ({ content: [] })),
+      fetchCourseApprovals(authUser, token).catch(() => []),
+      fetchFinancialSummary(authUser, token).catch(() => null),
+    ]).then(([apiProfile, usersPage, approvals, financials]) => {
+      setProfile(buildProfileFromApi(apiProfile));
+      const users = usersPage.content || [];
+      const mentors = users.filter((u) => (u.role || "").toLowerCase() === "mentor");
+      const pending = (approvals || []).filter((a) => (a.status || "").toLowerCase() === "pending");
+      setPendingApprovals(
+        pending.map((a) => ({
+          id: a.courseId || a.id,
+          title: a.title,
+          mentor: a.mentor,
+          submitted: a.submitted || "Recently",
+          status: a.status,
+        }))
+      );
+      const revenue = financials?.netRevenue ?? financials?.totalSales ?? 0;
+      setStats([
+        { label: "Total users", value: users.length, suffix: "", sub: `+${countJoinedThisMonth(users)} this month`, icon: Users, accent: "profile-kpi-primary" },
+        { label: "Pending approvals", value: pending.length, suffix: "", sub: pending.length ? "Need review" : "Queue clear", icon: BookOpen, accent: "profile-kpi-warning" },
+        { label: "Net revenue", value: revenue >= 1000 ? Math.round(revenue / 100) / 10 : revenue, suffix: revenue >= 1000 ? "K" : "", sub: "From ledger", icon: DollarSign, accent: "profile-kpi-success" },
+        { label: "Active mentors", value: mentors.length, suffix: "", sub: "Teaching roles", icon: User, accent: "profile-kpi-accent" },
+      ]);
+    });
+  }, [authUser, token]);
 
   const handleQuickSave = (e) => {
     e.preventDefault();
@@ -291,12 +337,12 @@ export default function AdminProfilePage() {
   return (
     <motion.div className="dashboard-page profile-page mx-auto w-full max-w-[1320px] space-y-3 sm:space-y-4" variants={container} initial="hidden" animate="visible">
       <motion.div variants={item}>
-        <ProfileHeroBanner ref={heroRef} profile={PROFILE} settingsPath="/admin/settings" showStreak={false} />
+        <ProfileHeroBanner ref={heroRef} profile={profile} settingsPath="/admin/settings" showStreak={false} />
       </motion.div>
 
       <motion.section className="profile-stats-wrap" variants={item}>
         <div className="profile-stats-scroll profile-stats-6">
-          {STATS.map((stat, i) => {
+          {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (
               <motion.div key={stat.label} className={`profile-stat-card ${stat.accent}`} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.05, duration: 0.4, ease: EASE }} whileHover={{ y: -3 }}>
@@ -338,14 +384,14 @@ export default function AdminProfilePage() {
                   <form onSubmit={handleQuickSave} className="mt-4 space-y-4">
                     <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                       {[
-                        { id: "first", label: "First name", value: PROFILE.firstName },
-                        { id: "last", label: "Last name", value: PROFILE.lastName },
-                        { id: "username", label: "Admin username", value: PROFILE.username },
-                        { id: "headline", label: "Title", value: PROFILE.headline },
-                        { id: "phone", label: "Phone", value: PROFILE.phone, type: "tel" },
-                        { id: "department", label: "Department", value: PROFILE.department },
-                        { id: "role", label: "Role", value: PROFILE.role },
-                        { id: "location", label: "Location", value: PROFILE.location },
+                        { id: "first", label: "First name", value: profile.firstName },
+                        { id: "last", label: "Last name", value: profile.lastName },
+                        { id: "username", label: "Admin username", value: profile.username },
+                        { id: "headline", label: "Title", value: profile.headline },
+                        { id: "phone", label: "Phone", value: profile.phone, type: "tel" },
+                        { id: "department", label: "Department", value: profile.department },
+                        { id: "role", label: "Role", value: profile.role },
+                        { id: "location", label: "Location", value: profile.location },
                       ].map((field, i) => (
                         <motion.div key={field.id} className="profile-field" custom={i} variants={listItem} initial="hidden" animate="visible">
                           <label htmlFor={field.id}>{field.label}</label>
@@ -355,11 +401,11 @@ export default function AdminProfilePage() {
                     </div>
                     <motion.div className="profile-field" variants={listItem} initial="hidden" animate="visible" custom={8}>
                       <label htmlFor="admin-email">Work email</label>
-                      <input id="admin-email" type="email" defaultValue={PROFILE.email} className="profile-input" />
+                      <input id="admin-email" type="email" defaultValue={profile.email} className="profile-input" />
                     </motion.div>
                     <motion.div className="profile-field" variants={listItem} initial="hidden" animate="visible" custom={9}>
                       <label htmlFor="admin-bio">Bio</label>
-                      <textarea id="admin-bio" rows={3} defaultValue={PROFILE.bio} className="profile-input profile-textarea" />
+                      <textarea id="admin-bio" rows={3} defaultValue={profile.bio} className="profile-input profile-textarea" />
                     </motion.div>
                     <AnimatePresence>
                       {isSaved && (
@@ -376,13 +422,13 @@ export default function AdminProfilePage() {
                     </div>
                   </form>
                 </Card>
-                <PreferencesSection />
+                <PreferencesSection profile={profile} />
                 <Card className="p-4 sm:p-5 md:p-6">
                   <SectionHeader title="Contact & channels" subtitle="Admin contact information" />
                   <div className="mt-4 space-y-2">
-                    <DetailRow icon={FaGithub} label="GitHub" value={PROFILE.social.github} href={`https://${PROFILE.social.github}`} />
-                    <DetailRow icon={FaLinkedinIn} label="LinkedIn" value={PROFILE.social.linkedin} href={`https://${PROFILE.social.linkedin}`} />
-                    <DetailRow icon={Link2} label="Team page" value={PROFILE.social.portfolio} href={`https://${PROFILE.social.portfolio}`} />
+                    <DetailRow icon={FaGithub} label="GitHub" value={profile.social.github} href={profile.social.github ? `https://${profile.social.github}` : undefined} />
+                    <DetailRow icon={FaLinkedinIn} label="LinkedIn" value={profile.social.linkedin} href={profile.social.linkedin ? `https://${profile.social.linkedin}` : undefined} />
+                    <DetailRow icon={Link2} label="Team page" value={profile.social.portfolio} href={profile.social.portfolio ? `https://${profile.social.portfolio}` : undefined} />
                   </div>
                 </Card>
               </div>
@@ -392,10 +438,10 @@ export default function AdminProfilePage() {
                   <SectionHeader title="Account summary" />
                   <div className="mt-3 space-y-2.5">
                     {[
-                      { icon: Zap, label: "Access level", value: PROFILE.plan },
-                      { icon: Mail, label: "Email", value: PROFILE.email },
-                      { icon: CalendarDays, label: "Admin since", value: PROFILE.memberSince },
-                      { icon: Clock3, label: "Last active", value: PROFILE.lastActive },
+                      { icon: Zap, label: "Access level", value: profile.plan },
+                      { icon: Mail, label: "Email", value: profile.email },
+                      { icon: CalendarDays, label: "Admin since", value: profile.memberSince },
+                      { icon: Clock3, label: "Last active", value: profile.lastActive },
                     ].map((row, i) => (
                       <motion.div key={row.label} className="profile-summary-row" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 + i * 0.06 }}>
                         <row.icon className="h-4 w-4 shrink-0 text-primary" />
@@ -405,9 +451,9 @@ export default function AdminProfilePage() {
                         </div>
                       </motion.div>
                     ))}
-                    <motion.div className={`profile-security-badge ${PROFILE.twoFactorEnabled ? "profile-security-on" : ""}`}>
+                    <motion.div className={`profile-security-badge ${profile.twoFactorEnabled ? "profile-security-on" : ""}`}>
                       <Shield className="h-4 w-4" />
-                      <span>{PROFILE.twoFactorEnabled ? "2FA enabled" : "2FA disabled"}</span>
+                      <span>{profile.twoFactorEnabled ? "2FA enabled" : "2FA disabled"}</span>
                       <Link to="/admin/settings" className="ml-auto text-xs font-semibold text-primary hover:underline">Manage</Link>
                     </motion.div>
                   </div>
@@ -451,7 +497,7 @@ export default function AdminProfilePage() {
             <div className="space-y-4">
               <div className="profile-learning-summary">
                 {[
-                  { label: "Pending approvals", value: PENDING_APPROVALS.length, icon: BookOpen },
+                  { label: "Pending approvals", value: pendingApprovals.length, icon: BookOpen },
                   { label: "Open tickets", value: 7, icon: AlertTriangle },
                   { label: "Active mentors", value: 186, icon: Users },
                 ].map((s, i) => (
@@ -466,7 +512,7 @@ export default function AdminProfilePage() {
               <Card className="p-4 sm:p-5 md:p-6">
                 <SectionHeader title="Pending course approvals" subtitle="Requires your review" badge={<Link to="/admin/approvals" className="text-xs font-semibold text-primary hover:underline">View all</Link>} />
                 <div className="mt-4 space-y-2">
-                  {PENDING_APPROVALS.map((item, i) => (
+                  {pendingApprovals.map((item, i) => (
                     <motion.div key={item.id} className="profile-completed-row" initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }} whileHover={{ x: 4 }}>
                       <div className="profile-completed-icon"><BookOpen className="h-4 w-4" /></div>
                       <div className="min-w-0 flex-1">
