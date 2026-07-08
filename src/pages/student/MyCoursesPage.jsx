@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   BookOpen,
   CheckCircle2,
   Clock3,
   Layers3,
-  Star,
 } from "lucide-react";
 
 import EmptyState from "@/components/ui/EmptyState";
 import { DashboardGridSkeleton } from "@/components/ui/Skeletons";
-import { getResumeUrlForTrack } from "@/features/learn/learningSession";
+import { getResumeUrlForCourse } from "@/features/learn/learningSession";
 import useAuthStore from "@/store/useAuthStore";
 import { fetchMyEnrollments } from "@/lib/api/enrollmentApi";
+import { formatRatingValue, resolveCourseRating } from "@/lib/course/courseStats";
+import { PartialStar } from "@/components/courses/CourseRatingStars";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -47,6 +48,24 @@ const FILTERS = [
   { id: "completed", label: "Completed" },
 ];
 
+
+function CourseRatingBadge({ course }) {
+  const { rating, hasReviews } = resolveCourseRating(course);
+  if (!hasReviews) {
+    return (
+      <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/40 px-2.5 py-1 backdrop-blur-md">
+        <PartialStar rating={0} size={12} />
+        <span className="text-[11px] font-semibold text-white/70">New</span>
+      </div>
+    );
+  }
+  return (
+    <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/40 px-2.5 py-1 backdrop-blur-md">
+      <PartialStar rating={rating} size={12} />
+      <span className="text-[12px] font-bold text-white">{formatRatingValue(rating)}</span>
+    </div>
+  );
+}
 
 function MyCourseCard({ course, index }) {
   const variant = CARD_VARIANTS[index % CARD_VARIANTS.length];
@@ -111,10 +130,7 @@ function MyCourseCard({ course, index }) {
               {course.badge}
             </div>
 
-            <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/40 px-2.5 py-1 backdrop-blur-md">
-              <Star size={12} className="fill-warning text-warning" />
-              <span className="text-[12px] font-bold text-white">{course.rating}</span>
-            </div>
+            <CourseRatingBadge course={course} />
           </div>
         </div>
 
@@ -189,11 +205,7 @@ function MyCourseCard({ course, index }) {
             )}
 
             <Link
-              to={
-                isCompleted
-                  ? `/learn/${course.trackId}/1`
-                  : getResumeUrlForTrack(course.trackId)
-              }
+              to={getResumeUrlForCourse(course)}
               className="
                 inline-flex h-8 shrink-0 items-center justify-center gap-1
                 rounded-lg bg-primary px-3.5
@@ -213,6 +225,7 @@ function MyCourseCard({ course, index }) {
 
 export default function MyCoursesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const [filter, setFilter] = useState("all");
@@ -225,11 +238,12 @@ export default function MyCoursesPage() {
       setIsLoading(false);
       return;
     }
+    setIsLoading(true);
     fetchMyEnrollments(user, token)
       .then((data) => setCourses(data || []))
       .catch(() => setCourses([]))
       .finally(() => setIsLoading(false));
-  }, [user?.id, token]);
+  }, [user?.id, token, location.pathname, location.key]);
 
   const filteredCourses = courses.filter((course) =>
     filter === "all" ? true : course.status === filter
@@ -293,7 +307,11 @@ export default function MyCoursesPage() {
         <>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredCourses.map((course, index) => (
-              <MyCourseCard key={course.id} course={course} index={index} />
+              <MyCourseCard
+                key={`${course.courseId ?? course.id}-${course.id}`}
+                course={course}
+                index={index}
+              />
             ))}
           </div>
 

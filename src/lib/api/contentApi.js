@@ -115,6 +115,11 @@ export async function fetchTrackLessons(trackId) {
   return (Array.isArray(list) ? list : []).map(mapLesson);
 }
 
+export async function fetchCatalogCourseLessons(catalogCourseId) {
+  const list = await getJson(`${base}/api/content/catalog-courses/${catalogCourseId}/lessons`);
+  return (Array.isArray(list) ? list : []).map(mapLesson);
+}
+
 export async function fetchLesson(lessonId) {
   const id = String(lessonId ?? '');
   if (!/^\d+$/.test(id)) return null;

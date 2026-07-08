@@ -31,6 +31,29 @@ export async function fetchPublishedCourses(params = {}) {
   return data.content || [];
 }
 
+/** Resolve parent track for a catalog course id (falls back to course-{id}). */
+export async function resolveTrackForCourseId(courseId) {
+  try {
+    const data = await getJson(`${base}/api/catalog/courses/id/${courseId}/track`);
+    return data?.trackId ? { id: data.trackId } : { id: `course-${courseId}` };
+  } catch {
+    return { id: `course-${courseId}` };
+  }
+}
+
+/** Build courseId → track map from published tracks (for offline/static fallback). */
+export async function buildCourseTrackIndex() {
+  const tracks = await fetchTracks().catch(() => []);
+  const index = new Map();
+  tracks.forEach((track) => {
+    (track.courseIds || []).forEach((courseId) => {
+      index.set(Number(courseId), track);
+      index.set(String(courseId), track);
+    });
+  });
+  return index;
+}
+
 export async function fetchFeaturedCourses() {
   const list = await getJson(`${base}/api/catalog/courses/featured`);
   return list.map(mapCourse);

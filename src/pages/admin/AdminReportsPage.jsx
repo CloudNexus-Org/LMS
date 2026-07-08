@@ -75,7 +75,9 @@ export default function AdminReportsPage() {
         value: kpiBase.courses,
         meta: snapshot.coursesPublishedMeta
           ? `${snapshot.coursesPublishedMeta} enrollments (${period})`
-          : "Published in catalog",
+          : kpiBase.courses > 0
+            ? `${kpiBase.courses} mentor course${kpiBase.courses === 1 ? '' : 's'} live`
+            : "No mentor courses published yet",
         metaTone: "muted",
         icon: BookOpen,
         iconColor: "text-accent",
@@ -226,7 +228,7 @@ export default function AdminReportsPage() {
           </div>
           <div className="space-y-4">
             {categoriesData.length === 0 ? (
-              <p className="text-sm text-muted">No category data from approvals yet.</p>
+              <p className="text-sm text-muted">No mentor course categories yet.</p>
             ) : (
             categoriesData.map((cat) => (
               <div key={cat.name}>
@@ -369,8 +371,14 @@ export default function AdminReportsPage() {
           {filteredCourses.length === 0 ? (
             <div className="py-16 text-center">
               <BookOpen className="mx-auto mb-4 h-12 w-12 text-muted opacity-20" />
-              <p className="font-bold text-text">No courses found</p>
-              <p className="mt-1 text-sm text-muted">Try a different search term.</p>
+              <p className="font-bold text-text">
+                {topCoursesData.length === 0 ? "No course performance data yet" : "No courses found"}
+              </p>
+              <p className="mt-1 text-sm text-muted">
+                {topCoursesData.length === 0
+                  ? "Enrollments and completions will appear here once learners join mentor courses."
+                  : "Try a different search term."}
+              </p>
             </div>
           ) : null}
         </div>

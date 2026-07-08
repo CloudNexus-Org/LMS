@@ -3,16 +3,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Search, Shield, Edit3, Ban, ShieldCheck,
   UserPlus, Users, X,
-  UserCheck, UserX, Download, Clock,
+  UserX, Download, Clock,
   Eye, CheckCircle2, Trash2, AlertTriangle,
 } from 'lucide-react';
-import { countJoinedThisMonth } from '@/lib/admin/adminMappers';
 import {
-  loadAdminUsers,
-  saveAdminUsers,
-  updateAdminUser,
-  removeAdminUser,
-  toggleUserBan,
   MENTOR_TRACK_OPTIONS,
 } from '@/data/adminUsers';
 import useAuthStore from '@/store/useAuthStore';
@@ -52,10 +46,6 @@ export default function UserManagementPage() {
   const [editingUser, setEditingUser] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-
-  const persistUsers = (next) => {
-    setUsers(next);
-  };
 
   const reloadUsers = async () => {
     if (!authUser || !token) {
@@ -113,34 +103,18 @@ export default function UserManagementPage() {
     }
 
     try {
-      if (authUser && token) {
-        const updated = await updateUser(authUser, token, editingUser.id, {
-          name,
-          email,
-          role: editingUser.role,
-          status: editingUser.status,
-          professionalRole: editingUser.professionalRole,
-          company: editingUser.company,
-          trackLabel: editingUser.trackLabel,
-          location: editingUser.location,
-          bio: editingUser.bio,
-        });
-        setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
-      } else {
-        const next = updateAdminUser(users, editingUser.id, {
-          name,
-          email,
-          role: editingUser.role,
-          status: editingUser.status,
-          professionalRole: editingUser.professionalRole,
-          company: editingUser.company,
-          trackLabel: editingUser.trackLabel,
-          location: editingUser.location,
-          bio: editingUser.bio,
-        });
-        persistUsers(next);
-        saveAdminUsers(next);
-      }
+      const updated = await updateUser(authUser, token, editingUser.id, {
+        name,
+        email,
+        role: editingUser.role,
+        status: editingUser.status,
+        professionalRole: editingUser.professionalRole,
+        company: editingUser.company,
+        trackLabel: editingUser.trackLabel,
+        location: editingUser.location,
+        bio: editingUser.bio,
+      });
+      setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
       setEditingUser(null);
       showToast(`${name} was updated successfully.`);
     } catch (err) {
@@ -157,25 +131,11 @@ export default function UserManagementPage() {
     const nextStatus = user.status === 'Banned' ? 'Active' : 'Banned';
 
     try {
-      if (authUser && token) {
-        const updated = await updateUserStatus(authUser, token, user.id, nextStatus);
-        setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
-        if (selectedUser?.id === user.id) setSelectedUser(updated);
-        showToast(
-          updated.status === 'Banned'
-            ? `${user.name} has been banned.`
-            : `${user.name} has been unbanned.`
-        );
-        return;
-      }
-
-      const next = toggleUserBan(users, user.id);
-      persistUsers(next);
-      saveAdminUsers(next);
-      const updated = next.find((u) => u.id === user.id);
-      if (selectedUser?.id === user.id) setSelectedUser(updated ?? null);
+      const updated = await updateUserStatus(authUser, token, user.id, nextStatus);
+      setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+      if (selectedUser?.id === user.id) setSelectedUser(updated);
       showToast(
-        updated?.status === 'Banned'
+        updated.status === 'Banned'
           ? `${user.name} has been banned.`
           : `${user.name} has been unbanned.`
       );
@@ -194,14 +154,8 @@ export default function UserManagementPage() {
     }
 
     try {
-      if (authUser && token) {
-        await deleteUserApi(authUser, token, deleteTarget.id);
-        setUsers((prev) => prev.filter((u) => u.id !== deleteTarget.id));
-      } else {
-        const next = removeAdminUser(users, deleteTarget.id);
-        persistUsers(next);
-        saveAdminUsers(next);
-      }
+      await deleteUserApi(authUser, token, deleteTarget.id);
+      setUsers((prev) => prev.filter((u) => u.id !== deleteTarget.id));
 
       if (selectedUser?.id === deleteTarget.id) setSelectedUser(null);
       if (editingUser?.id === deleteTarget.id) setEditingUser(null);
@@ -238,41 +192,40 @@ export default function UserManagementPage() {
     return matchQ && matchRole && matchStatus;
   }), [search, roleFilter, statusFilter, users]);
 
-  const total = users.length;
-  const active = users.filter(u => u.status === 'Active').length;
-  const banned = users.filter(u => u.status === 'Banned').length;
-  const mentors = users.filter(u => u.role === 'Mentor').length;
-  const newThisMonth = countJoinedThisMonth(users);
+  const students = users.filter((u) => u.role === 'Student').length;
+  const mentors = users.filter((u) => u.role === 'Mentor').length;
+  const admins = users.filter((u) => u.role === 'Admin').length;
+  const banned = users.filter((u) => u.status === 'Banned').length;
 
   const stats = [
     {
-      label: 'Total users',
-      value: total,
-      meta: newThisMonth > 0 ? `${newThisMonth} added this month` : 'Directory total',
-      metaTone: newThisMonth > 0 ? 'success' : 'muted',
+      label: 'Students',
+      value: students,
+      meta: students === 1 ? 'Learner account' : 'Learner accounts',
+      metaTone: 'muted',
       icon: Users,
       iconColor: 'text-primary',
     },
     {
-      label: 'Active accounts',
-      value: active,
-      meta: `${Math.round((active / total) * 100)}% of directory`,
-      metaTone: 'muted',
-      icon: UserCheck,
-      iconColor: 'text-success',
-    },
-    {
       label: 'Mentors',
       value: mentors,
-      meta: 'Teaching roles',
+      meta: mentors === 1 ? 'Teaching role' : 'Teaching roles',
       metaTone: 'muted',
       icon: Shield,
       iconColor: 'text-accent',
     },
     {
+      label: 'Admins',
+      value: admins,
+      meta: admins === 1 ? 'Administrator' : 'Administrators',
+      metaTone: 'muted',
+      icon: ShieldCheck,
+      iconColor: 'text-danger',
+    },
+    {
       label: 'Banned',
       value: banned,
-      meta: 'Requires review',
+      meta: banned > 0 ? 'Requires review' : 'No banned accounts',
       metaTone: banned > 0 ? 'warning' : 'muted',
       icon: UserX,
       iconColor: 'text-warning',

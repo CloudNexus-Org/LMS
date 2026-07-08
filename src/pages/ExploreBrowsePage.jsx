@@ -12,7 +12,6 @@ import {
   findExploreItem,
   getExploreSectionItems,
 } from '@/data/exploreMenu';
-import { featuredCourses } from '@/data/courses';
 import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import { pageShell } from '@/styles/theme';
 
@@ -101,12 +100,12 @@ function ExploreHub({ type }) {
 function ExploreDetail({ type, slug }) {
   const shouldReduceMotion = useReducedMotion();
   const item = findExploreItem(type, slug);
-  const [catalog, setCatalog] = useState(featuredCourses);
+  const [catalog, setCatalog] = useState([]);
 
   useEffect(() => {
     fetchPublishedCourses()
-      .then((data) => { if (data?.length) setCatalog(data); })
-      .catch(() => {});
+      .then((data) => setCatalog(data || []))
+      .catch(() => setCatalog([]));
   }, []);
 
   const filtered = useMemo(() => {

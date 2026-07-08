@@ -21,7 +21,7 @@ import {
   Keyboard,
 } from "lucide-react";
 import { getTrackById } from "@/data/tracks";
-import { fetchTrackLessons, fetchLesson } from "@/lib/api/contentApi";
+import { fetchTrackLessons, fetchCatalogCourseLessons, fetchLesson } from "@/lib/api/contentApi";
 import { mergeTrackLessons, apiLessonCount } from "@/features/learn/mergeTrackLessons";
 import { resolveMediaUrl } from "@/lib/api/mediaApi";
 import { getMentorBySlug } from "@/data/mentors";
@@ -94,26 +94,59 @@ export default function LessonPlayerPage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const shouldReduceMotion = useReducedMotion();
-  const track = useMemo(() => getTrackById(trackId), [trackId]);
+  const staticTrack = useMemo(() => getTrackById(trackId), [trackId]);
+  const catalogCourseId = useMemo(() => {
+    if (trackId?.startsWith("course-")) {
+      const raw = trackId.slice("course-".length);
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : null;
+    }
+    return null;
+  }, [trackId]);
+
+  const track = useMemo(() => {
+    if (staticTrack) return staticTrack;
+    if (!trackId) return null;
+    return {
+      id: trackId,
+      name: catalogCourseId != null ? "My Course" : trackId,
+      leadMentorSlug: null,
+    };
+  }, [staticTrack, trackId, catalogCourseId]);
 
   const [apiLessons, setApiLessons] = useState(null);
+  const [lessonsLoading, setLessonsLoading] = useState(true);
   const [lessonDetail, setLessonDetail] = useState(null);
   const [videoSrc, setVideoSrc] = useState(VIDEO_SRC);
   const [claimingCert, setClaimingCert] = useState(false);
 
   useEffect(() => {
     if (!trackId) return;
-    fetchTrackLessons(trackId)
-      .then((list) => {
-        if (list?.length) setApiLessons(list);
-      })
-      .catch(() => {});
-  }, [trackId]);
+    setLessonsLoading(true);
+    setApiLessons(null);
+
+    const loadLessons = catalogCourseId != null
+      ? fetchCatalogCourseLessons(catalogCourseId).catch(() => fetchTrackLessons(trackId))
+      : fetchTrackLessons(trackId);
+
+    loadLessons
+      .then((list) => setApiLessons(Array.isArray(list) ? list : []))
+      .catch(() => setApiLessons([]))
+      .finally(() => setLessonsLoading(false));
+  }, [trackId, catalogCourseId]);
 
   const lessons = useMemo(
     () => mergeTrackLessons(trackId, apiLessons),
     [apiLessons, trackId]
   );
+
+  const trackDisplayName = useMemo(() => {
+    if (staticTrack?.name) return staticTrack.name;
+    if (lessons[0]?.courseTitle) return lessons[0].courseTitle;
+    return track?.name || "My Course";
+  }, [staticTrack, lessons, track]);
+
+  const backUrl = staticTrack ? `/tracks/${track.id}` : "/student/courses";
 
   const progressTotal = apiLessonCount(apiLessons) || lessons.length;
 
@@ -169,20 +202,20 @@ export default function LessonPlayerPage() {
   }, []);
 
   useEffect(() => {
-    if (track && !lessonId && lessons[0]) {
+    if (!lessonId && lessons[0]) {
       navigate(`/learn/${trackId}/${lessons[0].id}`, { replace: true });
     }
-  }, [track, lessonId, lessons, trackId, navigate]);
+  }, [lessonId, lessons, trackId, navigate]);
 
   useEffect(() => {
     if (!track || !displayLesson) return;
     saveLastLearningSession({
       trackId,
       lessonId: displayLesson.id,
-      trackName: track.name,
+      trackName: trackDisplayName,
       lessonTitle: displayLesson.title,
     });
-  }, [track, trackId, displayLesson]);
+  }, [track, trackId, displayLesson, trackDisplayName]);
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -191,8 +224,16 @@ export default function LessonPlayerPage() {
     else setActiveTab("overview");
   }, [displayLesson?.id, displayLesson?.type]);
 
-  if (!track) return <Navigate to="/tracks" replace />;
-  if (!displayLesson) return <Navigate to={`/tracks/${trackId}`} replace />;
+  if (!trackId) return <Navigate to="/student/courses" replace />;
+  if (lessonsLoading) {
+    return (
+      <div className="learn-page flex min-h-screen items-center justify-center bg-bg text-text">
+        <p className="text-sm text-muted">Loading lessons…</p>
+      </div>
+    );
+  }
+  if (!lessons.length) return <Navigate to="/student/courses" replace />;
+  if (!displayLesson) return <Navigate to={`/learn/${trackId}/${lessons[0].id}`} replace />;
 
   const idx = lessons.findIndex((l) => String(l.id) === String(displayLesson.id));
   const prev = idx > 0 ? lessons[idx - 1] : null;
@@ -200,7 +241,7 @@ export default function LessonPlayerPage() {
   const isDone = completed[displayLesson.id];
   const TypeIcon = TYPE_ICON[displayLesson.type] || PlayCircle;
 
-  const mentor = track.leadMentorSlug ? getMentorBySlug(track.leadMentorSlug) : null;
+  const mentor = staticTrack?.leadMentorSlug ? getMentorBySlug(staticTrack.leadMentorSlug) : null;
 
   const onToggleComplete = () => toggleLessonComplete(displayLesson.id);
 
@@ -223,7 +264,7 @@ export default function LessonPlayerPage() {
     if (!isDone) markLessonComplete(displayLesson.id);
     setClaimingCert(true);
     try {
-      const cert = await claimTrackCertificate(user, token, trackId);
+      const cert = await claimTrackCertificate(user, token, trackId, catalogCourseId);
       navigate(cert?.id ? `/student/certificates/${cert.id}` : "/student/certificates");
     } catch {
       navigate("/student/certificates");
@@ -262,18 +303,20 @@ export default function LessonPlayerPage() {
         <div className="learn-header-inner">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <Link
-              to={`/tracks/${track.id}`}
+              to={backUrl}
               className="learn-back-btn"
-              aria-label="Back to track"
+              aria-label={staticTrack ? "Back to track" : "Back to my learning"}
             >
               <ArrowLeft size={15} aria-hidden />
-              <span className="hidden sm:inline">Back to track</span>
+              <span className="hidden sm:inline">
+                {staticTrack ? "Back to track" : "Back to learning"}
+              </span>
             </Link>
 
             <div className="hidden h-5 w-px bg-border md:block" />
 
             <div className="min-w-0 flex-1">
-              <p className="learn-breadcrumb">{track.name}</p>
+              <p className="learn-breadcrumb">{trackDisplayName}</p>
               <p className="learn-lesson-meta truncate">
                 Lesson {idx + 1} of {lessons.length} · {displayLesson.title}
               </p>
@@ -526,7 +569,7 @@ export default function LessonPlayerPage() {
           <aside className="learn-sidebar hidden lg:block">
             <div className="learn-sidebar-inner">
               <SidebarOutline
-                track={track}
+                track={{ ...track, name: trackDisplayName }}
                 lessons={lessons}
                 currentId={displayLesson.id}
                 completedMap={completed}
@@ -587,7 +630,7 @@ export default function LessonPlayerPage() {
               transition={{ type: "spring", stiffness: 340, damping: 34 }}
             >
               <SidebarOutline
-                track={track}
+                track={{ ...track, name: trackDisplayName }}
                 lessons={lessons}
                 currentId={displayLesson.id}
                 completedMap={completed}

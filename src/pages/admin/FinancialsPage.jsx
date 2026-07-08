@@ -114,7 +114,7 @@ export default function FinancialsPage() {
     {
       label: "Net platform revenue",
       value: netRevenue >= 1000 ? `$${(netRevenue / 1000).toFixed(1)}k` : `$${netRevenue.toFixed(0)}`,
-      meta: `${transactions.length} ledger entries`,
+      meta: transactions.length > 0 ? `${transactions.length} ledger entries` : "No transactions yet",
       metaTone: "success",
       icon: DollarSign,
       iconColor: "text-success",

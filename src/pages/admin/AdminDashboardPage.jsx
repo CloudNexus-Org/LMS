@@ -11,6 +11,7 @@ import {
   Award,
   BarChart2,
   UserCheck,
+  Shield,
   RefreshCw,
   Download,
   ChevronRight,
@@ -326,11 +327,26 @@ export default function AdminDashboardPage() {
       {
         title: "Learners",
         count: snapshot.activeLearners.toLocaleString(),
-        subtitle: `+${snapshot.learnerGrowth}% active`,
+        subtitle:
+          snapshot.activeLearners === 1
+            ? "1 student enrolled"
+            : `${snapshot.activeLearners} students enrolled`,
         icon: Users,
         iconBg: "bg-primary/10",
         iconColor: "text-primary",
         accent: "dashboard-kpi-primary",
+      },
+      {
+        title: "Mentors",
+        count: snapshot.totalMentors.toLocaleString(),
+        subtitle:
+          snapshot.totalMentors === 1
+            ? "1 mentor on platform"
+            : `${snapshot.totalMentors} mentors on platform`,
+        icon: Shield,
+        iconBg: "bg-violet-500/10",
+        iconColor: "text-violet-400",
+        accent: "dashboard-kpi-accent",
       },
       {
         title: "Completions",
@@ -452,7 +468,16 @@ export default function AdminDashboardPage() {
               <p className="dashboard-metric-value">
                 {snapshot.activeLearners.toLocaleString()}
               </p>
-              <p className="dashboard-metric-label">Active learners</p>
+              <p className="dashboard-metric-label">Students</p>
+            </div>
+          </div>
+          <div className="dashboard-analytics-metric">
+            <Shield className="h-3.5 w-3.5 text-violet-400" />
+            <div>
+              <p className="dashboard-metric-value">
+                {snapshot.totalMentors.toLocaleString()}
+              </p>
+              <p className="dashboard-metric-label">Mentors</p>
             </div>
           </div>
           <div className="dashboard-analytics-chart">
@@ -485,7 +510,7 @@ export default function AdminDashboardPage() {
       </section>
 
       {/* KPI stat cards */}
-      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-5">
         {kpis.map((item) => {
           const Icon = item.icon;
           return (

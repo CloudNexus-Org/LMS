@@ -126,12 +126,6 @@ const TABS = [
   { id: "security", label: "Security", icon: Shield },
 ];
 
-const PENDING_APPROVALS_STATIC = [
-  { id: 1, title: "Azure Generative AI — Module 5", mentor: "Sarah Jenkins", submitted: "2h ago", status: "QA review" },
-  { id: 2, title: "Docker for DevOps Teams", mentor: "James Wilson", submitted: "5h ago", status: "Content flag" },
-  { id: 3, title: "System Design Interview Prep", mentor: "Marcus Lee", submitted: "1d ago", status: "New submission" },
-];
-
 const ADMIN_ACTIVITY = [
   { id: 1, type: "approval", text: "Approved 6 mentor course updates", time: "1 hour ago" },
   { id: 2, type: "user", text: "Suspended 2 accounts for policy violations", time: "3 hours ago" },
