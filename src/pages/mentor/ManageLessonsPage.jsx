@@ -46,7 +46,7 @@ export default function ManageLessonsPage() {
       fetchMentorHubDashboard(user, token).catch(() => null),
       fetchMentorDashboard(user, token).catch(() => null),
     ])
-      .then(([list, hub, analytics]) => {
+      .then(async ([list, hub, analytics]) => {
         const mapped = Array.isArray(list) ? list.map(mapDraftToManageCourse) : [];
         setCourses(mapped);
         setExpandedCourse((prev) => {
@@ -58,6 +58,17 @@ export default function ManageLessonsPage() {
           totalRevenue: analytics?.revenue ?? 0,
           avgRating: hub?.rating ?? analytics?.rating ?? 0,
         });
+
+        if (mapped.length && user?.id && token) {
+          const entries = await Promise.all(
+            mapped.map((course) =>
+              fetchCourse(user, token, course.id)
+                .then((full) => [course.id, mapDraftToManageCourse(full)])
+                .catch(() => [course.id, course])
+            )
+          );
+          setCourseDetails(Object.fromEntries(entries));
+        }
       })
       .catch(() => {
         setCourses([]);
@@ -357,7 +368,8 @@ export default function ManageLessonsPage() {
         {filtered.map((course) => {
           const isExpanded = expandedCourse === course.id;
           const detail = courseDetails[course.id];
-          const lessons = detail?.lessons?.length ? detail.lessons : course.lessons;
+          const lessons = detail?.lessons?.length ? detail.lessons : course.lessons ?? [];
+          const lessonCount = detail?.lessonCount ?? course.lessonCount ?? lessons.length;
           return (
             <div key={course.id} className="bg-surface border border-border rounded-[5px] shadow-sm overflow-hidden transition-all duration-300">
 
@@ -462,14 +474,25 @@ export default function ManageLessonsPage() {
               {isExpanded && (
                 <div className="border-t border-border">
                   <div className="px-5 py-3 bg-bg/50 flex items-center justify-between">
-                    <p className="text-xs font-bold text-muted uppercase tracking-wider">{lessons.length} Lessons</p>
-                    <button className="flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+                    <p className="text-xs font-bold text-muted uppercase tracking-wider">{lessonCount} Lessons</p>
+                    <Link
+                      to={`/mentor/upload?courseId=${course.id}`}
+                      className="flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+                    >
                       <Plus className="h-3.5 w-3.5" /> Add Lesson
-                    </button>
+                    </Link>
                   </div>
 
                   <div className="divide-y divide-border">
-                    {lessons.map((lesson, idx) => (
+                    {lessons.length === 0 ? (
+                      <div className="px-5 py-8 text-center text-sm text-muted">
+                        No lessons yet.{' '}
+                        <Link to={`/mentor/upload?courseId=${course.id}`} className="font-semibold text-primary hover:underline">
+                          Add curriculum in course editor
+                        </Link>
+                      </div>
+                    ) : (
+                    lessons.map((lesson, idx) => (
                       <div key={lesson.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-bg/40 transition-colors group">
                         <GripVertical className="h-4 w-4 text-border group-hover:text-muted transition-colors cursor-grab flex-shrink-0" />
 
@@ -514,7 +537,8 @@ export default function ManageLessonsPage() {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    ))
+                    )}
                   </div>
 
                   {/* Course Footer */}

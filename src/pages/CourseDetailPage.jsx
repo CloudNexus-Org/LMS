@@ -12,8 +12,6 @@ import {
   Infinity,
   Layers3,
   ShoppingCart,
-  Star,
-  Users,
 } from 'lucide-react';
 import {
   featuredCourses as mockCourses,
@@ -28,6 +26,8 @@ import CatalogCourseCard, {
   formatPrice,
   getDiscountPercent,
 } from '@/components/courses/CatalogCourseCard';
+import CourseRatingDisplay from '@/components/courses/CourseRatingDisplay';
+import CourseReviewsSection from '@/components/courses/CourseReviewsSection';
 import useCartStore from '@/store/useCartStore';
 import useWishlistStore from '@/store/useWishlistStore';
 
@@ -164,19 +164,12 @@ export default function CourseDetailPage() {
                   <span className="font-semibold text-text">{course.professor}</span>
                 </p>
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
-                  <span className="inline-flex items-center gap-1.5 font-bold text-warning">
-                    {course.rating}
-                    <Star size={14} className="fill-warning text-warning" />
-                  </span>
-                  <span className="text-muted">
-                    {course.reviews?.toLocaleString('en-IN')} reviews
-                  </span>
-                  <span className="text-subtle" aria-hidden>·</span>
-                  <span className="inline-flex items-center gap-1.5 text-muted">
-                    <Users size={14} />
-                    {course.enrolled} students
-                  </span>
+                <div className="mt-4">
+                  <CourseRatingDisplay
+                    course={course}
+                    reviewSummary={reviewSummary}
+                    size="md"
+                  />
                 </div>
 
                 <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-muted md:text-[16px]">
@@ -302,6 +295,14 @@ export default function CourseDetailPage() {
                       )}
                     </div>
 
+                    <div className="mt-3 border-t border-border pt-4">
+                      <CourseRatingDisplay
+                        course={course}
+                        reviewSummary={reviewSummary}
+                        size="sm"
+                      />
+                    </div>
+
                     <div className="mt-4 flex flex-col gap-2.5">
                       <Button
                         size="lg"
@@ -358,6 +359,12 @@ export default function CourseDetailPage() {
                 </div>
               </motion.aside>
             </div>
+          </Container>
+        </section>
+
+        <section className="border-t border-border">
+          <Container size="lg">
+            <CourseReviewsSection course={course} reviewSummary={reviewSummary} />
           </Container>
         </section>
 

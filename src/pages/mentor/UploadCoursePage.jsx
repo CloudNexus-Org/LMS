@@ -103,6 +103,22 @@ const PRICING_PLANS = [
 
 const SUGGESTED_PRICES = ["29.99", "49.99", "69.99", "89.99", "129.99"];
 
+/** Ensure at least one lesson is marked free preview (required for publish). */
+function ensureFreePreviewLesson(modules) {
+  if (!modules?.length) return modules;
+  if (modules.some((m) => m.lessons.some((l) => l.free))) return modules;
+
+  for (let mi = 0; mi < modules.length; mi += 1) {
+    if (!modules[mi].lessons.length) continue;
+    return modules.map((m, idx) =>
+      idx === mi
+        ? { ...m, lessons: m.lessons.map((l, li) => (li === 0 ? { ...l, free: true } : l)) }
+        : m
+    );
+  }
+  return modules;
+}
+
 const INITIAL_FORM = {
   title: "",
   subtitle: "",
@@ -353,7 +369,7 @@ export default function UploadCoursePage() {
         if (course.pricingPlan) setPricingModel(course.pricingPlan);
         if (course.price != null) setCustomPrice(String(course.price));
         const uiModules = courseToUiModules(course);
-        if (uiModules?.length) setModules(uiModules);
+        if (uiModules?.length) setModules(ensureFreePreviewLesson(uiModules));
       })
       .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -363,6 +379,11 @@ export default function UploadCoursePage() {
     const timer = setTimeout(persistDraft, 600);
     return () => clearTimeout(timer);
   }, [persistDraft]);
+
+  useEffect(() => {
+    if (step !== 4) return;
+    setModules((prev) => ensureFreePreviewLesson(prev));
+  }, [step]);
 
   const updateForm = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -441,7 +462,12 @@ export default function UploadCoursePage() {
         await ensureCourseOnServer(user, token, id, form, url);
       }
 
-      const synced = await syncCurriculumToBackend(user, token, id, modules);
+      const synced = await syncCurriculumToBackend(
+        user,
+        token,
+        id,
+        ensureFreePreviewLesson(modules)
+      );
       setModules(synced);
       setCourseId(id);
 
@@ -551,15 +577,26 @@ export default function UploadCoursePage() {
   const removeTag = (tag) => updateForm("tags", form.tags.filter((t) => t !== tag));
 
   const addModule = () => {
-    setModules((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        title: "New module",
-        open: true,
-        lessons: [{ id: Date.now() + 1, title: "New lesson", type: "video", free: false, duration: "10:00" }],
-      },
-    ]);
+    setModules((prev) => {
+      const isFirstModule = prev.length === 0;
+      return [
+        ...prev,
+        {
+          id: Date.now(),
+          title: "New module",
+          open: true,
+          lessons: [
+            {
+              id: Date.now() + 1,
+              title: "New lesson",
+              type: "video",
+              free: isFirstModule,
+              duration: "10:00",
+            },
+          ],
+        },
+      ];
+    });
   };
 
   const toggleModule = (id) => {
@@ -636,18 +673,40 @@ export default function UploadCoursePage() {
           <strong className="text-text">{form.title || "Your course"}</strong> is queued for Cloud Nexus QA review.
           Typical approval takes 24–48 hours.
         </p>
-        <div className="mt-8 grid w-full grid-cols-3 gap-3">
-          {[
-            { icon: Clock3, label: "Review", value: "24–48h" },
-            { icon: Users, label: "Reach", value: "12k+" },
-            { icon: Star, label: "Avg rating", value: "4.8" },
-          ].map(({ icon: Icon, label, value }) => (
-            <div key={label} className="dashboard-card p-4">
-              <Icon className="mx-auto h-5 w-5 text-primary" />
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-muted">{label}</p>
-              <p className="mt-0.5 text-sm font-bold text-text">{value}</p>
-            </div>
-          ))}
+
+        <div className="mt-8 w-full rounded-xl border border-border bg-elevated/60 p-5 text-left">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-primary">What happens next</p>
+          <ol className="mt-4 space-y-4">
+            {[
+              {
+                icon: Clock3,
+                title: "QA review",
+                body: "Our team checks curriculum quality, preview lessons, and pricing (usually 24–48 hours).",
+              },
+              {
+                icon: Globe,
+                title: "Goes live in catalog",
+                body: "Once approved, students can discover your course, enroll, and start learning.",
+              },
+              {
+                icon: Star,
+                title: "Ratings from students",
+                body: "Reviews, star ratings, and enrollment counts appear on your course page — only after real students engage.",
+              },
+            ].map(({ icon: Icon, title, body }, i) => (
+              <li key={title} className="flex gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-primary">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-[13px] font-bold text-text">
+                    {i + 1}. {title}
+                  </p>
+                  <p className="mt-0.5 text-[12px] leading-relaxed text-muted">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link to="/mentor/lessons" className="upload-btn upload-btn-primary">
@@ -1254,7 +1313,22 @@ export default function UploadCoursePage() {
 
                   {!allChecksPass && (
                     <p className="text-center text-xs text-muted">
-                      Complete missing items to improve approval speed.
+                      {!publishChecks.find((c) => c.label === "Free preview lesson")?.ok ? (
+                        <>
+                          Mark at least one lesson as <strong className="text-text">Preview</strong> in
+                          Curriculum (step 2), or{" "}
+                          <button
+                            type="button"
+                            onClick={() => setModules((prev) => ensureFreePreviewLesson(prev))}
+                            className="font-bold text-primary underline-offset-2 hover:underline"
+                          >
+                            auto-mark first lesson as preview
+                          </button>
+                          .
+                        </>
+                      ) : (
+                        "Complete missing items to improve approval speed."
+                      )}
                     </p>
                   )}
 

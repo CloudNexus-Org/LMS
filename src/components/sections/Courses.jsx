@@ -7,7 +7,6 @@ import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
-import { featuredCourses as mockCourses } from '@/data/courses';
 import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import FeaturedCourseCard from '@/components/courses/FeaturedCourseCard';
 
@@ -24,7 +23,7 @@ import {
 
 // MAIN COMPONENT
 export default function Courses() {
-  const [courses, setCourses] = useState(mockCourses);
+  const [courses, setCourses] = useState([]);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
@@ -43,8 +42,8 @@ export default function Courses() {
 
   useEffect(() => {
     fetchPublishedCourses()
-      .then((data) => { if (data?.length) setCourses(data); })
-      .catch(() => {});
+      .then((data) => setCourses(data || []))
+      .catch(() => setCourses([]));
   }, []);
 
   const onScroll = useCallback(() => {

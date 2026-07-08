@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, Star } from 'lucide-react';
+import { Heart, ShoppingCart } from 'lucide-react';
 import { ROUTES } from '@/protectedroutes/routePaths';
+import { CourseRatingInline } from '@/components/courses/CourseRatingStars';
 import useCartStore from '@/store/useCartStore';
 import useWishlistStore from '@/store/useWishlistStore';
 
@@ -139,13 +140,7 @@ export default function CatalogCourseCard({
         </div>
 
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]">
-          <span className="inline-flex items-center gap-1 font-bold text-warning">
-            {course.rating}
-            <Star size={11} className="fill-warning text-warning" />
-          </span>
-          <span className="text-subtle">
-            ({course.reviews?.toLocaleString('en-IN') ?? '0'})
-          </span>
+          <CourseRatingInline course={course} starSize={11} />
           <span className="text-subtle" aria-hidden>·</span>
           <span className="text-muted">{course.duration}</span>
         </div>

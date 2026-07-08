@@ -13,7 +13,6 @@ import {
 import Button from '@/components/ui/Button';
 import useCartStore from '@/store/useCartStore';
 import useAuthStore from '@/store/useAuthStore';
-import { findTrackForCourse } from '@/data/courses';
 import { enrollPurchasedItems } from '@/lib/api/enrollmentApi';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -55,8 +54,7 @@ export default function StudentCartPage() {
       const { enrolled, skipped, failed } = await enrollPurchasedItems(
         user,
         token,
-        items,
-        findTrackForCourse
+        items
       );
 
       if (!enrolled.length && !skipped.length) {

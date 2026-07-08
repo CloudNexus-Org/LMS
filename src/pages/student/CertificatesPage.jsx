@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Award,
   BadgeCheck,
@@ -97,14 +97,22 @@ function CertificateListCard({ cert }) {
 export default function CertificatesPage() {
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
+  const location = useLocation();
   const [certs, setCerts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.id || !token) return;
+    if (!user?.id || !token) {
+      setCerts([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     fetchMyCertificates(user, token)
       .then((data) => setCerts(data || []))
-      .catch(() => setCerts([]));
-  }, [user?.id, token]);
+      .catch(() => setCerts([]))
+      .finally(() => setLoading(false));
+  }, [user?.id, token, location.pathname, location.key]);
 
   const totalHours = certs.reduce((sum, cert) => {
     const hours = parseInt(cert.duration, 10);
@@ -139,7 +147,11 @@ export default function CertificatesPage() {
         </section>
       )}
 
-      {certs.length === 0 ? (
+      {loading ? (
+        <div className="dashboard-card flex flex-col items-center justify-center px-6 py-16 text-center">
+          <p className="text-[15px] text-muted">Loading certificates…</p>
+        </div>
+      ) : certs.length === 0 ? (
         <div className="dashboard-card flex flex-col items-center justify-center px-6 py-16 text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
             <Award className="h-7 w-7 text-primary" />

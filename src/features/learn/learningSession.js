@@ -60,8 +60,7 @@ function numericProgressUrls(trackId, completed) {
 }
 
 export function getResumeUrlForTrack(trackId) {
-  const track = getTrackById(trackId);
-  if (!track) return `/learn/${trackId}`;
+  if (!trackId) return "/student/courses";
 
   const session = getLastLearningSession();
   if (session?.trackId === trackId && session.lessonId != null) {
@@ -72,11 +71,24 @@ export function getResumeUrlForTrack(trackId) {
   const apiUrl = numericProgressUrls(trackId, completed);
   if (apiUrl) return apiUrl;
 
-  const lessons = getLessonsByTrack(trackId);
-  if (!lessons.length) return `/learn/${trackId}`;
+  const track = getTrackById(trackId);
+  if (track) {
+    const lessons = getLessonsByTrack(trackId);
+    if (lessons.length) {
+      const nextLesson = lessons.find((l) => !completed[l.id]) || lessons[0];
+      return `/learn/${trackId}/${nextLesson.id}`;
+    }
+  }
 
-  const nextLesson = lessons.find((l) => !completed[l.id]) || lessons[0];
-  return `/learn/${trackId}/${nextLesson.id}`;
+  return `/learn/${trackId}/1`;
+}
+
+/** Resume URL for a My Learning enrollment (prefers course-scoped track id). */
+export function getResumeUrlForCourse({ trackId, courseId }) {
+  const resolvedTrackId =
+    courseId != null ? `course-${courseId}` : trackId;
+  if (!resolvedTrackId) return "/student/courses";
+  return getResumeUrlForTrack(resolvedTrackId);
 }
 
 export function getContinueLearningUrl() {

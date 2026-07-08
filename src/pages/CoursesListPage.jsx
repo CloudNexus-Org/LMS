@@ -11,7 +11,6 @@ import {
   Target,
   X,
 } from 'lucide-react';
-import { featuredCourses as mockCourses } from '@/data/courses';
 import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import CatalogCourseCard from '@/components/courses/CatalogCourseCard';
 import CoursesHeroBackground, { COURSES_HERO_EASE } from '@/components/courses/CoursesHeroBackground';
@@ -131,16 +130,21 @@ export default function CoursesListPage() {
   const [level, setLevel] = useState('all');
   const [sort, setSort] = useState('featured');
   const [searchFocused, setSearchFocused] = useState(false);
-  const [courses, setCourses] = useState(mockCourses);
+  const [courses, setCourses] = useState([]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
     fetchPublishedCourses()
       .then((data) => {
-        if (data?.length) setCourses(data);
+        setCourses(data || []);
         setApiError(null);
       })
-      .catch((err) => setApiError(err.message));
+      .catch((err) => {
+        setCourses([]);
+        setApiError(err.message);
+      })
+      .finally(() => setCoursesLoading(false));
   }, []);
 
   useEffect(() => {

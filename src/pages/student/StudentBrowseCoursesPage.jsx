@@ -11,7 +11,6 @@ import {
   TrendingUp,
   X,
 } from 'lucide-react';
-import { featuredCourses } from '@/data/courses';
 import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import CatalogCourseCard from '@/components/courses/CatalogCourseCard';
 
@@ -74,12 +73,14 @@ export default function StudentBrowseCoursesPage() {
   const [level, setLevel] = useState('all');
   const [sort, setSort] = useState('featured');
   const [searchFocused, setSearchFocused] = useState(false);
-  const [courses, setCourses] = useState(featuredCourses);
+  const [courses, setCourses] = useState([]);
+  const [coursesLoading, setCoursesLoading] = useState(true);
 
   useEffect(() => {
     fetchPublishedCourses()
-      .then((data) => { if (data?.length) setCourses(data); })
-      .catch(() => {});
+      .then((data) => setCourses(data || []))
+      .catch(() => setCourses([]))
+      .finally(() => setCoursesLoading(false));
   }, []);
 
   const filtered = useMemo(() => {
@@ -312,7 +313,12 @@ export default function StudentBrowseCoursesPage() {
       </div>
 
       {/* Results */}
-      {filtered.length === 0 ? (
+      {coursesLoading ? (
+        <div className="dashboard-card flex flex-col items-center justify-center py-16 text-center">
+          <BookOpen size={40} className="text-muted animate-pulse" strokeWidth={1.5} />
+          <p className="mt-4 text-[14px] text-muted">Loading courses…</p>
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="dashboard-card flex flex-col items-center justify-center py-16 text-center">
           <BookOpen size={40} className="text-muted" strokeWidth={1.5} />
           <h2 className="mt-4 font-display text-xl font-bold text-text">No courses found</h2>

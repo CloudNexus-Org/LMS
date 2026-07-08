@@ -20,6 +20,7 @@ import useAuthStore from "@/store/useAuthStore";
 import { fetchMyEnrollments } from "@/lib/api/enrollmentApi";
 import { mapEnrollmentToReviewCourse } from "@/lib/student/studentMappers";
 import { deleteReview, fetchMyReviews, submitReview, updateReview } from "@/lib/api/reviewApi";
+import { CoursePlatformRating, PartialStar } from "@/components/courses/CourseRatingStars";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -234,7 +235,7 @@ export default function CourseReviewsPage() {
           {[
             { label: "Reviews given", value: stats.reviewedCount, sub: "Published", icon: MessageSquare, accent: "profile-kpi-primary" },
             { label: "Pending", value: stats.pendingCount, sub: "Awaiting feedback", icon: BookOpen, accent: "profile-kpi-warning" },
-            { label: "Your avg. rating", value: stats.avgRating || "—", sub: "Stars given", icon: Star, accent: "profile-kpi-success" },
+            { label: "Your avg. rating", value: stats.avgRating || "—", sub: "Stars given", rating: stats.avgRating, accent: "profile-kpi-success" },
             { label: "Helpful votes", value: stats.totalHelpful, sub: "From community", icon: ThumbsUp, accent: "profile-kpi-accent" },
           ].map((stat, i) => {
             const Icon = stat.icon;
@@ -248,7 +249,11 @@ export default function CourseReviewsPage() {
                 whileHover={{ y: -3 }}
               >
                 <div className={`profile-stat-icon ${stat.accent}`}>
-                  <Icon className="h-4 w-4" />
+                  {stat.rating != null ? (
+                    <PartialStar rating={stat.rating} size={16} />
+                  ) : (
+                    <Icon className="h-4 w-4" />
+                  )}
                 </div>
                 <div className="min-w-0">
                   <p className="profile-stat-value">{stat.value}</p>
@@ -345,10 +350,7 @@ export default function CourseReviewsPage() {
                     <p className="mt-1 text-xs text-muted">{course.instructor}</p>
 
                     <div className="mt-2 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-xs text-muted">
-                        <Star className="h-3.5 w-3.5 fill-warning text-warning" />
-                        <span>{course.platformRating} course avg.</span>
-                      </div>
+                      <CoursePlatformRating rating={course.platformRating} />
                     </div>
 
                     {review ? (
