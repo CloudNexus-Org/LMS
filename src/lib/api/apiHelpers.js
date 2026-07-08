@@ -52,7 +52,7 @@ export function mapAdminUser(u) {
     role: toFrontendRole(u.role),
     status: toFrontendStatus(u.status),
     joined: u.joined || '',
-    courses: u.courses ?? 0,
+    courses: u.courses ?? null,
     lastActive: u.lastActive || '',
     avatar: u.avatar,
     spend: u.spend,

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import useAuthStore from '@/store/useAuthStore';
 import { fetchAdminDashboard } from '@/lib/api/analyticsApi';
-import { fetchCourseApprovals, fetchFinancialSummary } from '@/lib/api/adminApi';
+import { fetchCourseApprovals, fetchFinancialSummary, fetchTransactions } from '@/lib/api/adminApi';
 import { fetchUsers } from '@/lib/api/userApi';
 import { fetchPublishedCourses } from '@/lib/api/catalogApi';
 import { buildAdminDashboardSnapshot, EMPTY_SNAPSHOT } from '@/lib/admin/adminMappers';
@@ -23,13 +23,14 @@ export default function useAdminDashboardData() {
 
     setLoading(true);
     try {
-      const [analytics, approvals, financialSummary, userPage, catalogCourses] =
+      const [analytics, approvals, financialSummary, userPage, catalogCourses, transactions] =
         await Promise.all([
           fetchAdminDashboard(user, token).catch(() => null),
           fetchCourseApprovals(user, token).catch(() => []),
           fetchFinancialSummary(user, token).catch(() => null),
           fetchUsers(user, token, { size: 500 }).catch(() => ({ content: [] })),
           fetchPublishedCourses().catch(() => []),
+          fetchTransactions(user, token).catch(() => []),
         ]);
 
       setSnapshot(
@@ -39,6 +40,7 @@ export default function useAdminDashboardData() {
           financialSummary,
           users: userPage.content || [],
           catalogCourses: Array.isArray(catalogCourses) ? catalogCourses : [],
+          transactions: Array.isArray(transactions) ? transactions : [],
         })
       );
       setLastUpdated(new Date());
