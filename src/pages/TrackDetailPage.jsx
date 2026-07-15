@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -19,6 +19,7 @@ import {
   Cpu,
 } from "lucide-react";
 import { getTrackById } from '@/data/tracks';
+import { fetchTrack } from '@/lib/api/catalogApi';
 import { getMentorBySlug } from '@/data/mentors';
 import Container from '@/components/ui/Container';
 import useIsDarkTheme from '@/hooks/useIsDarkTheme';
@@ -86,20 +87,46 @@ function FaqItem({ q, a, isOpen, onToggle, index }) {
 
 export default function TrackDetailPage() {
   const { id } = useParams();
-  const track = useMemo(() => getTrackById(id), [id]);
+  const isDarkTheme = useIsDarkTheme();
+
+  const [track, setTrack] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchTrack(id)
+      .then((data) => {
+        setTrack(data);
+      })
+      .catch(() => {
+        setTrack(getTrackById(id));
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [id]);
+
+  const mentor = useMemo(() => {
+    if (!track) return null;
+    return track.leadMentorSlug ? getMentorBySlug(track.leadMentorSlug) : null;
+  }, [track]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-muted">
+        Loading track details…
+      </div>
+    );
+  }
 
   if (!track) {
     return <Navigate to="/tracks" replace />;
   }
 
-  const mentor = track.leadMentorSlug
-    ? getMentorBySlug(track.leadMentorSlug)
-    : null;
-
-
-
-  const isDarkTheme = useIsDarkTheme();
+  const leadMentorName = mentor?.name || track.leadMentor?.name || "Mentor";
+  const leadMentorRole = mentor?.role || track.leadMentor?.role || "Instructor";
+  const leadMentorPhoto = mentor?.avatar || track.leadMentor?.photo || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&q=80";
 
   return (
     <div 
@@ -355,8 +382,8 @@ export default function TrackDetailPage() {
                 {/* Glowing Avatar Frame */}
                 <div className="relative self-center shrink-0 transition-transform duration-500 group-hover/mentor:scale-105">
                   <img
-                    src={mentor?.avatar || track.leadMentor.photo}
-                    alt={track.leadMentor.name}
+                    src={leadMentorPhoto}
+                    alt={leadMentorName}
                     className="h-24 w-24 rounded-lg object-cover ring-4 ring-primary/20 transition-all duration-300 group-hover/mentor:ring-primary/45 md:h-32 md:w-32"
                   />
                   <div className="absolute -top-1 -right-1 flex h-8 w-8 items-center justify-center rounded-lg border-2 border-bg bg-primary text-white shadow-md">
@@ -367,18 +394,18 @@ export default function TrackDetailPage() {
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3">
                     <h3 className="font-display text-[22px] font-bold tracking-tight text-text md:text-[26px]">
-                      {track.leadMentor.name}
+                      {leadMentorName}
                     </h3>
                     <span className="inline-flex items-center rounded-lg bg-primary/10 px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase text-primary">
                       Lead Instructor
                     </span>
                   </div>
                   <p className="mt-1 text-[14.5px] font-semibold text-primary">
-                    {track.leadMentor.role}
+                    {leadMentorRole}
                   </p>
                   <p className="mt-3 max-w-[700px] text-[14px] leading-relaxed text-muted">
                     {mentor?.longBio ||
-                      `${track.leadMentor.name} leads the ${track.name} track at Cloud Nexus and brings deep production experience to every cohort.`}
+                      `${leadMentorName} leads the ${track.name} track at Cloud Nexus and brings deep production experience to every cohort.`}
                   </p>
                   {mentor?.specialties?.length ? (
                     <div className="mt-5 flex flex-wrap gap-2">

@@ -9,8 +9,22 @@ import {
   GraduationCap,
   Sparkles,
   TrendingUp,
+  Cloud,
+  Code2,
+  Server,
+  Database,
+  Cpu,
 } from "lucide-react";
 import { formatTrackPrice } from "@/data/tracks";
+
+const TRACK_ICONS = {
+  cloud: Cloud,
+  ai: Sparkles,
+  fullstack: Code2,
+  devops: Server,
+  data: Database,
+  backend: Cpu,
+};
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -56,7 +70,7 @@ export default function TrackCatalogCard({
   };
 
   const accent = TRACK_COLOR_TINT[track.color] || TRACK_COLOR_TINT.primary;
-  const Icon = track.icon;
+  const Icon = track.icon || TRACK_ICONS[track.iconKey] || GraduationCap;
   const isPayment = variant === "payment";
 
   const cardBody = (
@@ -120,20 +134,20 @@ export default function TrackCatalogCard({
           </span>
           <span className="inline-flex items-center gap-1.5">
             <GraduationCap size={12} className="text-subtle" aria-hidden />
-            {track.curriculum.length} courses
+            {track.curriculum?.length ?? track.courseIds?.length ?? 0} courses
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Calendar size={12} className="text-subtle" aria-hidden />
-            {track.nextCohort.split(",")[1]?.trim() || track.nextCohort}
+            {track.nextCohort ? (track.nextCohort.split(",")[1]?.trim() || track.nextCohort) : "—"}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <TrendingUp size={12} className="text-success" aria-hidden />
-            <span className="font-semibold text-success">{track.salary}</span>
+            <span className="font-semibold text-success">{track.salary || "—"}</span>
           </span>
         </div>
 
         <div className="mt-4 flex flex-wrap gap-1.5">
-          {track.skills.slice(0, 4).map((s) => (
+          {(track.skills || []).slice(0, 4).map((s) => (
             <span
               key={s}
               className="inline-flex items-center rounded-lg border border-border bg-bg/60 px-2 py-0.5 text-[11px] font-medium text-muted transition-colors duration-200 group-hover/track:border-border-strong"
@@ -141,9 +155,9 @@ export default function TrackCatalogCard({
               {s}
             </span>
           ))}
-          {track.skills.length > 4 ? (
+          {(track.skills || []).length > 4 ? (
             <span className="inline-flex items-center rounded-lg px-2 py-0.5 text-[11px] font-medium text-subtle">
-              +{track.skills.length - 4}
+              +{(track.skills || []).length - 4}
             </span>
           ) : null}
         </div>

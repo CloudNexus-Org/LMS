@@ -14,7 +14,7 @@ export default function PremiumCurriculum({ track }) {
   const badgeBgClass = isDarkTheme ? "border-primary/20 bg-primary/10 text-primary" : "border-primary/30 bg-primary/15 text-primary";
   const textMutedClass = isDarkTheme ? "text-white/70" : "text-slate-600";
 
-  const modules = track.curriculum;
+  const modules = track.curriculum || [];
   const displayModules = showAll ? modules : modules.slice(0, 5);
   const hasMore = modules.length > 5;
 

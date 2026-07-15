@@ -96,6 +96,10 @@ export async function fetchHowItWorks() {
   return getJson(`${base}/api/catalog/how-it-works`);
 }
 
+export async function fetchPublicStats() {
+  return getJson(`${base}/api/catalog/stats/public`);
+}
+
 /** Mentor submits course → creates PENDING course + admin approval queue entry */
 export async function submitCourseForApproval(user, token, payload) {
   return postJson(`${base}/api/catalog/courses/submit`, payload, authHeaders(user, token));
