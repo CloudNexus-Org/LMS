@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Code2, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import useIsDarkTheme from "@/hooks/useIsDarkTheme";
 import Container from "@/components/ui/Container";
+import { formatTrackPrice } from "@/data/tracks";
 
 export default function TrackHero({ track }) {
   const isDarkTheme = useIsDarkTheme();
@@ -77,11 +78,13 @@ export default function TrackHero({ track }) {
               </span>
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className={`text-primary text-4xl md:text-[48px] font-display font-medium tracking-normal leading-none`}>
-                  Rs.6999
+                  {track.price ? formatTrackPrice(track.price) : "Rs.6,999"}
                 </span>
-                <span className={`${isDarkTheme ? "text-zinc-500" : "text-slate-500"} line-through text-xl font-medium ml-2`}>
-                  Rs.14891
-                </span>
+                {track.originalPrice ? (
+                  <span className={`${isDarkTheme ? "text-zinc-500" : "text-slate-500"} line-through text-xl font-medium ml-2`}>
+                    {formatTrackPrice(track.originalPrice)}
+                  </span>
+                ) : null}
                 <span className={`text-[14px] ${isDarkTheme ? "text-zinc-400" : "text-slate-600"} font-medium ml-1`}>
                   (+GST)
                 </span>
@@ -147,7 +150,7 @@ export default function TrackHero({ track }) {
 
                 {/* Tags Row */}
                 <div className="flex flex-wrap gap-2.5 mt-5 px-1 justify-center sm:justify-start">
-                  {["Machine Learning", "Deep Learning", "Gen-AI", "Python"].map((tag) => (
+                  {(track.skills || ["Machine Learning", "Deep Learning", "Gen-AI", "Python"]).slice(0, 4).map((tag) => (
                     <span 
                       key={tag} 
                       className={`rounded-full border px-4 py-1.5 text-[11.5px] font-semibold transition-all cursor-default ${

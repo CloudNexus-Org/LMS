@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -10,7 +10,8 @@ import {
   Target,
   Shield,
 } from "lucide-react";
-import { tracks } from "@/data/tracks";
+import { tracks as fallbackTracks } from "@/data/tracks";
+import { fetchTracks } from "@/lib/api/catalogApi";
 import Container from "@/components/ui/Container";
 import TrackCatalogCard from "@/components/tracks/TrackCatalogCard";
 
@@ -106,6 +107,25 @@ export default function TracksListPage() {
   const [query, setQuery] = useState("");
   const [level, setLevel] = useState("all");
   const [sort, setSort] = useState("featured");
+  const [tracks, setTracks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTracks()
+      .then((data) => {
+        if (data?.length) {
+          setTracks(data);
+        } else {
+          setTracks(fallbackTracks);
+        }
+      })
+      .catch(() => {
+        setTracks(fallbackTracks);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -135,11 +155,22 @@ export default function TracksListPage() {
         break;
     }
     return list;
-  }, [query, level, sort]);
+  }, [query, level, sort, tracks]);
 
-  const totalLearners = tracks.reduce((acc, t) => acc + parseEnrolled(t.enrolled), 0);
+  const totalLearners = useMemo(() => {
+    return tracks.reduce((acc, t) => acc + parseEnrolled(t.enrolled), 0);
+  }, [tracks]);
+
   const clearAll = () => { setQuery(""); setLevel("all"); setSort("featured"); };
   const isFiltered = query.trim() !== "" || level !== "all" || sort !== "featured";
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-muted">
+        Loading career tracks…
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-bg text-text">

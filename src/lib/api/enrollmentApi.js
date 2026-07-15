@@ -1,13 +1,26 @@
 import { API } from './config';
 import { deleteJson, getJson, postJson, putJson } from './http';
 import { authHeaders, parseApiError } from './apiHelpers';
+import { resolveTrackForCourseId } from './catalogApi';
 
 const base = API.base;
+
+export function computeEnrollmentProgress(enrollment) {
+  const total = Number(enrollment?.totalLessons) || 0;
+  const completed = Number(enrollment?.completedLessons) || 0;
+  if (total > 0) {
+    return Math.min(100, Math.round((completed / total) * 100));
+  }
+  return Number(enrollment?.progress) || 0;
+}
 
 export function mapEnrollmentCourse(c) {
   if (!c) return null;
   const raw = String(c.status || '').toLowerCase();
-  const uiStatus =
+  const totalLessons = c.totalLessons ?? 0;
+  const completedLessons = c.completedLessons ?? 0;
+  const progress = computeEnrollmentProgress(c);
+  let uiStatus =
     raw === 'completed'
       ? 'completed'
       : raw === 'not-started'
@@ -17,19 +30,25 @@ export function mapEnrollmentCourse(c) {
           : raw === 'active'
             ? 'not-started'
             : 'in-progress';
+  if (uiStatus === 'not-started' && (completedLessons > 0 || progress > 0)) {
+    uiStatus = 'in-progress';
+  }
+  if (progress >= 100) {
+    uiStatus = 'completed';
+  }
   return {
     ...c,
     courseId: c.courseId,
     trackId: c.trackId,
     title: c.title,
     image: c.image,
-    progress: c.progress ?? 0,
+    progress,
     status: uiStatus,
-    totalLessons: c.totalLessons ?? 0,
-    completedLessons: c.completedLessons ?? 0,
+    totalLessons,
+    completedLessons,
     badge: c.badge ?? 'Intermediate',
     instructor: c.instructor ?? c.professor ?? 'Mentor',
-    rating: String(c.rating ?? '4.8'),
+    rating: String(c.rating ?? '0'),
     duration: c.duration ?? '',
     modules: c.modules ?? '',
     description: c.description ?? '',
@@ -42,28 +61,38 @@ export async function fetchMyEnrollments(user, token) {
 }
 
 export async function enrollInTrack(user, token, { trackId, courseId }) {
-  return postJson(`${base}/api/enrollments`, { trackId, courseId }, authHeaders(user, token));
+  return postJson(
+    `${base}/api/enrollments`,
+    { trackId, courseId },
+    authHeaders(user, token)
+  );
 }
 
-/** Enroll cart/checkout items — maps each course to its parent track via findTrackForCourse */
-export async function enrollPurchasedItems(user, token, items, findTrackForCourse) {
+/** Enroll cart/checkout items — one enrollment per purchased course */
+export async function enrollPurchasedItems(user, token, items) {
   const enrolled = [];
   const skipped = [];
   const failed = [];
 
   for (const item of items) {
     const courseId = item.id ?? item.courseId;
-    const track = findTrackForCourse?.(courseId);
-    if (!track?.id) {
-      failed.push({ item, error: 'Course is not linked to a career track' });
+    if (courseId == null) {
+      failed.push({ item, error: 'Missing course id' });
       continue;
     }
+
+    let trackId = item.trackId;
+    if (!trackId) {
+      const track = await resolveTrackForCourseId(courseId);
+      trackId = track?.id;
+    }
+
     try {
-      await enrollInTrack(user, token, { trackId: track.id, courseId });
-      enrolled.push({ trackId: track.id, courseId });
+      await enrollInTrack(user, token, { trackId, courseId });
+      enrolled.push({ trackId, courseId });
     } catch (err) {
       if (err?.status === 409) {
-        skipped.push({ trackId: track.id, courseId });
+        skipped.push({ trackId, courseId });
       } else {
         failed.push({ item, error: parseApiError(err) });
       }

@@ -65,6 +65,15 @@ export function buildCourseTitleMap(catalogCourses = []) {
   return map;
 }
 
+/** Mentor-uploaded catalog listings (exclude platform seed catalog). */
+export function filterMentorCatalogCourses(catalogCourses = []) {
+  return catalogCourses.filter((c) => {
+    const id = Number(c.id);
+    if (Number.isFinite(id) && id >= 10) return true;
+    return String(c.slug || '').startsWith('content-');
+  });
+}
+
 function resolveCourseName(course, titleMap = {}) {
   const id = course.courseId ?? course.id;
   const catalog = titleMap[id] || titleMap[String(id)];
@@ -285,8 +294,11 @@ export function buildAdminDashboardSnapshot({
       ? analytics.revenueTrend.map((v) => safeNumber(v, 0))
       : [0];
 
-  const mentors = (users || []).filter((u) => (u.role || '').toLowerCase() === 'mentor').length;
-  const totalUsers = users.length || safeNumber(analytics?.activeLearners, 0);
+  const mentors = (users || []).filter((u) => (u.role || '').toLowerCase() === 'mentor');
+  const students = (users || []).filter((u) => (u.role || '').toLowerCase() === 'student');
+  const totalMentors = mentors.length;
+  const activeLearners = students.length;
+  const totalUsers = users.length;
   const hasAnalytics = analytics && Object.keys(analytics).length > 0;
   const hasFinancials = financialSummary && Object.keys(financialSummary).length > 0;
   const hasUsers = users.length > 0;
@@ -307,11 +319,11 @@ export function buildAdminDashboardSnapshot({
     ? { week: txCharts.week, month: txCharts.month, year: txCharts.year }
     : mapRevenueData(analytics?.revenueData);
 
-  const newUsersToday = countJoinedToday(users) || safeNumber(analytics?.newUsersToday, 0);
+  const newUsersToday = countJoinedToday(students) || safeNumber(analytics?.newUsersToday, 0);
 
   return {
     mrrGrowth: safeNumber(analytics?.mrrGrowth, 0),
-    activeLearners: totalUsers,
+    activeLearners,
     learnerGrowth: safeNumber(analytics?.learnerGrowth, 0),
     mrrLabel,
     completions: safeNumber(analytics?.completions, 0),
@@ -327,7 +339,7 @@ export function buildAdminDashboardSnapshot({
     topCourses: mapTopCourses(analytics?.topCourses, approvals, titleMap),
     actionItems: buildAdminActionItems({ pendingApprovals, financialSummary }),
     totalUsers,
-    totalMentors: mentors,
+    totalMentors,
   };
 }
 
@@ -341,18 +353,27 @@ export function buildAdminReportsSnapshot({
   allUsers = [],
   catalogCourses = [],
 } = {}) {
-  const titleMap = buildCourseTitleMap(catalogCourses);
+  const mentorCatalogCourses = filterMentorCatalogCourses(catalogCourses);
+  const titleMap = buildCourseTitleMap(mentorCatalogCourses);
+  const mentorCourseIds = new Set(
+    mentorCatalogCourses.map((c) => Number(c.id)).filter((id) => Number.isFinite(id))
+  );
+
   const totalRevenue = revenueReport.reduce((sum, row) => sum + safeNumber(row.revenue, 0), 0);
-  const publishedCourses = catalogCourses.length || courseReport.length;
+  const publishedCourses = mentorCatalogCourses.length;
+
+  const mentorCourseReport = courseReport.filter((row) =>
+    mentorCourseIds.has(Number(row.courseId))
+  );
 
   const avgCompletion =
-    courseReport.length > 0
+    mentorCourseReport.length > 0
       ? Math.round(
-          courseReport.reduce((sum, c) => {
+          mentorCourseReport.reduce((sum, c) => {
             const enrollments = safeNumber(c.enrollments, 0);
             const completions = safeNumber(c.completions, 0);
             return sum + (enrollments > 0 ? (completions / enrollments) * 100 : 0);
-          }, 0) / courseReport.length
+          }, 0) / mentorCourseReport.length
         )
       : 0;
 
@@ -361,10 +382,14 @@ export function buildAdminReportsSnapshot({
     0
   );
 
-  const categories =
-    buildCategoriesFromCatalog(catalogCourses).length > 0
-      ? buildCategoriesFromCatalog(catalogCourses)
-      : buildCategoriesFromApprovals(approvals);
+  const categories = buildCategoriesFromCatalog(mentorCatalogCourses);
+
+  const rankedCourses = mentorCourseReport
+    .filter(
+      (course) =>
+        safeNumber(course.enrollments, 0) > 0 || safeNumber(course.completions, 0) > 0
+    )
+    .slice(0, 5);
 
   return {
     revenue: totalRevenue > 0 ? totalRevenue / 1000 : 0,
@@ -372,7 +397,7 @@ export function buildAdminReportsSnapshot({
     courses: publishedCourses,
     completion: avgCompletion,
     coursesPublishedMeta: coursesPublishedThisPeriod,
-    topCourses: courseReport.slice(0, 5).map((course, index) => ({
+    topCourses: rankedCourses.map((course, index) => ({
       rank: index + 1,
       name: resolveCourseName(course, titleMap),
       mentor: resolveCourseMentor(course, titleMap),

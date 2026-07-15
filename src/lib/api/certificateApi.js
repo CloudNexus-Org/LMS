@@ -29,19 +29,26 @@ export async function fetchMyCertificates(user, token) {
   return (list || []).map(mapCertificate);
 }
 
-/** Mark track finished and wait for Kafka-issued certificate, then return it. */
-export async function claimTrackCertificate(user, token, trackId) {
+/** Mark track finished and issue certificate synchronously for the student's course. */
+export async function claimTrackCertificate(user, token, trackId, courseId = null) {
   if (!user?.id || !token || !trackId) return null;
 
   await finishTrackLearning(user, token, trackId).catch(() => {});
 
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    if (attempt > 0) await sleep(600);
-    const list = await fetchMyCertificates(user, token);
-    const cert = list.find((c) => c.trackId === trackId);
-    if (cert) return cert;
+  try {
+    const body = { trackId };
+    if (courseId != null) body.courseId = courseId;
+    const cert = await postJson(`${base}/api/certificates/claim`, body, authHeaders(user, token));
+    return mapCertificate(cert);
+  } catch {
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      if (attempt > 0) await sleep(500);
+      const list = await fetchMyCertificates(user, token);
+      const cert = list.find((c) => c.trackId === trackId);
+      if (cert) return cert;
+    }
+    return null;
   }
-  return null;
 }
 
 export async function fetchCertificateById(user, token, certificateId) {

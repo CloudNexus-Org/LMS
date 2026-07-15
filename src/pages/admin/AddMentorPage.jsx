@@ -10,7 +10,6 @@ import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
 import { authItemMotion } from "@/components/auth/authMotion";
 import {
   MENTOR_TRACK_OPTIONS,
-  loadAdminUsers,
 } from "@/data/adminUsers";
 import useAuthStore from "@/store/useAuthStore";
 import { createMentor } from "@/lib/api/userApi";
@@ -73,11 +72,6 @@ export default function AddMentorPage() {
     }
     if (!formData.company.trim()) next.company = "Company is required";
     if (!formData.trackLabel) next.trackLabel = "Teaching track is required";
-
-    const existing = loadAdminUsers();
-    if (existing.some((u) => u.email.toLowerCase() === formData.email.trim().toLowerCase())) {
-      next.email = "This email is already registered";
-    }
 
     setErrors(next);
     return Object.keys(next).length === 0;

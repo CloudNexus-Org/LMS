@@ -7,7 +7,7 @@ import {
   Trophy,
   Clock3,
 } from "lucide-react";
-import { getAllPracticeQuizzes, getBestAttempt } from "@/data/quizzes";
+import { getBestAttempt, loadMentorQuizzes } from "@/data/quizzes";
 import { getEnrolledTrackIds } from "@/lib/student/studentMappers";
 import useStudentEnrollments from "@/hooks/useStudentEnrollments";
 
@@ -17,10 +17,11 @@ export default function PracticeQuizzesPage() {
   const { loading, enrollments } = useStudentEnrollments();
   const trackIds = useMemo(() => getEnrolledTrackIds(enrollments), [enrollments]);
 
-  const quizzes = useMemo(
-    () => (trackIds.length ? getAllPracticeQuizzes(trackIds) : []),
-    [trackIds]
-  );
+  const quizzes = useMemo(() => {
+    if (!trackIds.length) return [];
+    const enrolled = new Set(trackIds);
+    return loadMentorQuizzes().filter((q) => enrolled.has(q.trackId));
+  }, [trackIds]);
 
   const stats = useMemo(() => {
     const attempted = quizzes.filter((q) => getBestAttempt(q.id)).length;
