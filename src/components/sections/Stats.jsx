@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Compass, Users, Award, Star } from "lucide-react";
 
-import { stats } from '@/data/stats';
+import { stats as fallbackStats } from '@/data/stats';
+import { fetchPublicStats } from '@/lib/api/catalogApi';
 import SectionShell from "@/app/layouts/SectionShell";
 import Container from '@/components/ui/Container';
 import CountUp from '@/components/ui/CountUp';
@@ -84,14 +85,14 @@ function StatItem({
       text-text
     "
   >
-    <span className="stat-number">
+    <div className="stat-number">
       <CountUp
         end={value}
         duration={1.6}
         decimals={decimals || 0}
         delay={delay}
       />
-    </span>
+    </div>
     {suffix ? <span>{suffix}</span> : null}
   </div>
 </div>
@@ -116,6 +117,28 @@ function StatItem({
 }
 
 export default function Stats() {
+  const [statsData, setStatsData] = useState([]);
+
+  useEffect(() => {
+    fetchPublicStats()
+      .then((data) => {
+        const learnersStr = String(data.totalLearners || "0");
+        const val = parseInt(learnersStr) || 0;
+        const suf = learnersStr.replace(String(val), "");
+        setStatsData([
+          { value: val, suffix: suf, label: "Active learners", icon: "Compass" },
+          { value: data.totalMentors || 0, suffix: "+", label: "Expert mentors", icon: "Users" },
+          { value: data.totalCourses || 0, suffix: "+", label: "Catalog courses", icon: "Award" },
+          { value: data.totalTracks || 0, suffix: "", label: "Career tracks", icon: "Star" }
+        ]);
+      })
+      .catch(() => {
+        setStatsData(fallbackStats);
+      });
+  }, []);
+
+  if (!statsData.length) return null;
+
   return (
     <SectionShell size="sm">
       <Container>
@@ -141,7 +164,7 @@ export default function Stats() {
               xl:grid-cols-4
             "
           >
-            {stats.map((s, i) => (
+            {statsData.map((s, i) => (
               <StatItem
                 key={s.label}
                 value={s.value}
@@ -150,7 +173,7 @@ export default function Stats() {
                 label={s.label}
                 icon={s.icon}
                 delay={i * 0.08}
-                isLast={i === stats.length - 1}
+                isLast={i === statsData.length - 1}
               />
             ))}
           </div>
