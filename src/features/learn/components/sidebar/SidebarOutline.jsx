@@ -1,12 +1,10 @@
 import { useMemo, useState, useEffect, memo } from "react";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
   CheckCircle2,
   Circle,
   X,
-  ArrowUpRight,
   PlayCircle,
   BookOpen,
   ListChecks,
@@ -82,10 +80,7 @@ export const SidebarOutline = memo(function SidebarOutline({
       <div className="learn-sidebar-head">
         <div className="min-w-0">
           <p className="learn-sidebar-eyebrow">Career track</p>
-          <Link to={`/tracks/${track.id}`} className="learn-sidebar-track">
-            {track.name}
-            <ArrowUpRight size={12} className="shrink-0" aria-hidden />
-          </Link>
+          <p className="learn-sidebar-track">{track.name}</p>
         </div>
         {onClose ? (
           <button

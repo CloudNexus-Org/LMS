@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -32,21 +32,55 @@ const TABS = [
   { id: "preferences", label: "Notifications", icon: Bell },
 ];
 
-const PROFILE = {
-  firstName: "Alex",
-  lastName: "Chen",
-  email: "alex.chen@example.com",
-  phone: "+44 7700 900123",
-  bio: "Frontend developer learning advanced cloud architecture and scalable system design.",
-  role: "Student · Frontend Developer",
-  location: "Leeds, United Kingdom",
-  country: "United Kingdom",
-  city: "Leeds, East London",
-  postal: "LS1 4DY",
-  timezone: "GMT (UTC+0)",
-  avatar:
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+const EMPTY_PROFILE = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  bio: "",
+  role: "",
+  location: "",
+  country: "",
+  city: "",
+  postal: "",
+  timezone: "",
+  avatar: "",
 };
+
+function splitName(fullName = "") {
+  const parts = String(fullName).trim().split(/\s+/).filter(Boolean);
+  return {
+    firstName: parts[0] || "",
+    lastName: parts.slice(1).join(" ") || "",
+  };
+}
+
+function formatRoleLabel(authUser, professionalRole) {
+  const raw = String(authUser?.role || "Student").trim();
+  const role = raw ? raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase() : "Student";
+  const title = professionalRole || authUser?.professionalRole || "";
+  return title ? `${role} · ${title}` : role;
+}
+
+function buildInitialProfile(authUser) {
+  const { firstName, lastName } = splitName(authUser?.fullName || "");
+  return {
+    ...EMPTY_PROFILE,
+    firstName,
+    lastName,
+    email: authUser?.email || "",
+    phone: authUser?.phone || "",
+    bio: authUser?.bio || "",
+    location: authUser?.location || "",
+    avatar: authUser?.avatar || "",
+    role: formatRoleLabel(authUser, authUser?.professionalRole),
+  };
+}
+
+function displayValue(value, empty = "—") {
+  const v = String(value ?? "").trim();
+  return v || empty;
+}
 
 function PanelCard({ title, onEdit, children, action }) {
   return (
@@ -79,6 +113,7 @@ function Field({ label, value, span }) {
 
 export default function ProfileSettingsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user: authUser, token, refreshToken, logout, updateUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState("general");
   const [isSaved, setIsSaved] = useState(false);
@@ -88,28 +123,40 @@ export default function ProfileSettingsPage() {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [notificationPrefs, setNotificationPrefs] = useState(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [profile, setProfile] = useState(() => ({
-    ...PROFILE,
-    firstName: authUser?.fullName?.split(" ")[0] || PROFILE.firstName,
-    lastName: authUser?.fullName?.split(" ").slice(1).join(" ") || PROFILE.lastName,
-    email: authUser?.email || PROFILE.email,
-  }));
+  const [profile, setProfile] = useState(() => buildInitialProfile(authUser));
+
+  const isMentor = useMemo(() => {
+    const role = String(authUser?.role || "").toLowerCase();
+    return role === "mentor" || location.pathname.startsWith("/mentor");
+  }, [authUser?.role, location.pathname]);
+
+  const backTo = isMentor ? "/mentor/dashboard" : "/student/profile";
+  const backLabel = isMentor ? "Back to dashboard" : "Back to profile";
+
+  useEffect(() => {
+    setProfile(buildInitialProfile(authUser));
+  }, [authUser?.id]);
 
   useEffect(() => {
     if (!authUser?.id || !token) return;
     fetchProfile(authUser, token)
       .then((data) => {
         if (!data) return;
-        const parts = (data.fullName || "").trim().split(/\s+/);
+        const parts = splitName(data.fullName || "");
         setProfile((prev) => ({
           ...prev,
-          firstName: parts[0] || prev.firstName,
-          lastName: parts.slice(1).join(" ") || prev.lastName,
+          firstName: parts.firstName || prev.firstName,
+          lastName: parts.lastName || prev.lastName,
           email: data.email || prev.email,
           phone: data.phone || prev.phone,
           bio: data.bio || prev.bio,
           location: data.location || prev.location,
+          city: data.location || prev.city,
           avatar: data.avatar || prev.avatar,
+          role: formatRoleLabel(authUser, data.professionalRole || data.headline),
+          country: data.country || prev.country,
+          postal: data.postal || prev.postal,
+          timezone: data.timezone || prev.timezone,
         }));
       })
       .catch(() => {});
@@ -130,6 +177,10 @@ export default function ProfileSettingsPage() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [logoutOpen]);
+
+  const updateField = (key, value) => {
+    setProfile((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleTogglePushNotifications = async () => {
     if (!authUser?.id || !token) return;
@@ -172,7 +223,7 @@ export default function ProfileSettingsPage() {
           bio: profile.bio,
           location: profile.location || profile.city,
         });
-        updateUser({ fullName, email: profile.email });
+        updateUser({ fullName, email: profile.email, phone: profile.phone, bio: profile.bio });
       }
     } catch {
       /* keep UI feedback even if API unavailable */
@@ -196,16 +247,20 @@ export default function ProfileSettingsPage() {
     navigate("/login", { replace: true });
   };
 
+  const avatarSrc = profile.avatar || undefined;
+  const avatarInitials =
+    `${(profile.firstName || "?").charAt(0)}${(profile.lastName || "").charAt(0)}`.toUpperCase();
+
   return (
     <div className="dashboard-page mx-auto w-full max-w-[1320px] space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <Link
-            to="/student/profile"
+            to={backTo}
             className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Back to profile
+            {backLabel}
           </Link>
           <h1 className="text-2xl font-bold tracking-tight text-text font-display sm:text-[28px]">
             Account Settings
@@ -224,7 +279,6 @@ export default function ProfileSettingsPage() {
 
       <div className="dashboard-card settings-shell">
         <div className="settings-layout">
-          {/* Left sub-navigation */}
           <nav className="settings-nav" aria-label="Settings sections">
             {TABS.map((tab) => {
               const Icon = tab.icon;
@@ -257,11 +311,9 @@ export default function ProfileSettingsPage() {
             </div>
           </nav>
 
-          {/* Right content */}
           <div className="settings-content">
             {activeTab === "general" && (
               <form onSubmit={handleSave} className="flex flex-col gap-4 sm:gap-5">
-                {/* Profile summary */}
                 <PanelCard
                   onEdit={editingProfile ? undefined : () => setEditingProfile(true)}
                   action={
@@ -273,11 +325,13 @@ export default function ProfileSettingsPage() {
                 >
                   {editingProfile ? (
                     <div className="settings-avatar-upload">
-                      <img
-                        src={PROFILE.avatar}
-                        alt="Profile"
-                        className="settings-avatar-lg"
-                      />
+                      {avatarSrc ? (
+                        <img src={avatarSrc} alt="Profile" className="settings-avatar-lg" />
+                      ) : (
+                        <div className="settings-avatar-lg flex items-center justify-center bg-primary-soft text-primary font-bold text-xl">
+                          {avatarInitials}
+                        </div>
+                      )}
                       <div>
                         <p className="text-sm font-semibold text-text">Profile Photo</p>
                         <p className="mt-1 text-xs text-muted">
@@ -304,23 +358,31 @@ export default function ProfileSettingsPage() {
                     </div>
                   ) : (
                     <div className="settings-profile-summary">
-                      <img
-                        src={profile.avatar}
-                        alt={`${profile.firstName} ${profile.lastName}`}
-                        className="settings-avatar"
-                      />
+                      {avatarSrc ? (
+                        <img
+                          src={avatarSrc}
+                          alt={`${profile.firstName} ${profile.lastName}`}
+                          className="settings-avatar"
+                        />
+                      ) : (
+                        <div className="settings-avatar flex items-center justify-center bg-primary-soft text-primary font-bold">
+                          {avatarInitials}
+                        </div>
+                      )}
                       <div>
                         <p className="settings-profile-name">
-                          {profile.firstName} {profile.lastName}
+                          {displayValue(
+                            `${profile.firstName} ${profile.lastName}`.trim(),
+                            "Your name"
+                          )}
                         </p>
-                        <p className="settings-profile-meta">{profile.role}</p>
-                        <p className="settings-profile-meta">{profile.location}</p>
+                        <p className="settings-profile-meta">{displayValue(profile.role)}</p>
+                        <p className="settings-profile-meta">{displayValue(profile.location)}</p>
                       </div>
                     </div>
                   )}
                 </PanelCard>
 
-                {/* Personal information */}
                 <PanelCard
                   title="Personal Information"
                   onEdit={editingPersonal ? undefined : () => setEditingPersonal(true)}
@@ -334,7 +396,8 @@ export default function ProfileSettingsPage() {
                         <input
                           id="firstName"
                           type="text"
-                          defaultValue={profile.firstName}
+                          value={profile.firstName}
+                          onChange={(e) => updateField("firstName", e.target.value)}
                           className="settings-input"
                         />
                       </div>
@@ -345,7 +408,8 @@ export default function ProfileSettingsPage() {
                         <input
                           id="lastName"
                           type="text"
-                          defaultValue={PROFILE.lastName}
+                          value={profile.lastName}
+                          onChange={(e) => updateField("lastName", e.target.value)}
                           className="settings-input"
                         />
                       </div>
@@ -356,8 +420,11 @@ export default function ProfileSettingsPage() {
                         <input
                           id="email"
                           type="email"
-                          defaultValue={PROFILE.email}
+                          value={profile.email}
+                          onChange={(e) => updateField("email", e.target.value)}
                           className="settings-input"
+                          readOnly
+                          title="Email is managed from your account login"
                         />
                       </div>
                       <div>
@@ -367,8 +434,10 @@ export default function ProfileSettingsPage() {
                         <input
                           id="phone"
                           type="tel"
-                          defaultValue={PROFILE.phone}
+                          value={profile.phone}
+                          onChange={(e) => updateField("phone", e.target.value)}
                           className="settings-input"
+                          placeholder="Add phone number"
                         />
                       </div>
                       <div className="settings-field-span">
@@ -378,23 +447,24 @@ export default function ProfileSettingsPage() {
                         <textarea
                           id="bio"
                           rows={4}
-                          defaultValue={PROFILE.bio}
+                          value={profile.bio}
+                          onChange={(e) => updateField("bio", e.target.value)}
                           className="settings-textarea"
+                          placeholder="Tell students about yourself"
                         />
                       </div>
                     </div>
                   ) : (
                     <div className="settings-field-grid">
-                      <Field label="First Name" value={PROFILE.firstName} />
-                      <Field label="Last Name" value={PROFILE.lastName} />
-                      <Field label="Email Address" value={PROFILE.email} />
-                      <Field label="Phone" value={PROFILE.phone} />
-                      <Field label="Bio" value={PROFILE.bio} span />
+                      <Field label="First Name" value={displayValue(profile.firstName)} />
+                      <Field label="Last Name" value={displayValue(profile.lastName)} />
+                      <Field label="Email Address" value={displayValue(profile.email)} />
+                      <Field label="Phone" value={displayValue(profile.phone)} />
+                      <Field label="Bio" value={displayValue(profile.bio)} span />
                     </div>
                   )}
                 </PanelCard>
 
-                {/* Address */}
                 <PanelCard
                   title="Address"
                   onEdit={editingAddress ? undefined : () => setEditingAddress(true)}
@@ -408,8 +478,10 @@ export default function ProfileSettingsPage() {
                         <input
                           id="country"
                           type="text"
-                          defaultValue={PROFILE.country}
+                          value={profile.country}
+                          onChange={(e) => updateField("country", e.target.value)}
                           className="settings-input"
+                          placeholder="Country"
                         />
                       </div>
                       <div>
@@ -419,8 +491,13 @@ export default function ProfileSettingsPage() {
                         <input
                           id="city"
                           type="text"
-                          defaultValue={PROFILE.city}
+                          value={profile.city || profile.location}
+                          onChange={(e) => {
+                            updateField("city", e.target.value);
+                            updateField("location", e.target.value);
+                          }}
                           className="settings-input"
+                          placeholder="City / State"
                         />
                       </div>
                       <div>
@@ -430,8 +507,10 @@ export default function ProfileSettingsPage() {
                         <input
                           id="postal"
                           type="text"
-                          defaultValue={PROFILE.postal}
+                          value={profile.postal}
+                          onChange={(e) => updateField("postal", e.target.value)}
                           className="settings-input"
+                          placeholder="Postal code"
                         />
                       </div>
                       <div>
@@ -441,17 +520,22 @@ export default function ProfileSettingsPage() {
                         <input
                           id="timezone"
                           type="text"
-                          defaultValue={PROFILE.timezone}
+                          value={profile.timezone}
+                          onChange={(e) => updateField("timezone", e.target.value)}
                           className="settings-input"
+                          placeholder="e.g. IST (UTC+5:30)"
                         />
                       </div>
                     </div>
                   ) : (
                     <div className="settings-field-grid">
-                      <Field label="Country" value={PROFILE.country} />
-                      <Field label="City / State" value={PROFILE.city} />
-                      <Field label="Postal Code" value={PROFILE.postal} />
-                      <Field label="Timezone" value={PROFILE.timezone} />
+                      <Field label="Country" value={displayValue(profile.country)} />
+                      <Field
+                        label="City / State"
+                        value={displayValue(profile.city || profile.location)}
+                      />
+                      <Field label="Postal Code" value={displayValue(profile.postal)} />
+                      <Field label="Timezone" value={displayValue(profile.timezone)} />
                     </div>
                   )}
                 </PanelCard>
@@ -476,8 +560,8 @@ export default function ProfileSettingsPage() {
               <div className="flex flex-col gap-4 sm:gap-5">
                 <PanelCard title="Password" onEdit={() => {}}>
                   <div className="settings-field-grid">
-                    <Field label="Last Changed" value="3 months ago" />
-                    <Field label="Strength" value="Strong" />
+                    <Field label="Last Changed" value="—" />
+                    <Field label="Strength" value="—" />
                   </div>
                 </PanelCard>
 
@@ -504,8 +588,8 @@ export default function ProfileSettingsPage() {
 
                 <PanelCard title="Active Sessions">
                   <div className="settings-field-grid">
-                    <Field label="Current Device" value="Windows · Chrome" />
-                    <Field label="Last Login" value="Today, 2:14 PM" />
+                    <Field label="Current Device" value="This browser" />
+                    <Field label="Account" value={displayValue(profile.email)} />
                   </div>
                 </PanelCard>
               </div>
@@ -593,8 +677,7 @@ export default function ProfileSettingsPage() {
                 Are you sure you want to log out?
               </h2>
               <p id="logout-dialog-desc" className="mt-2 text-sm leading-relaxed text-muted">
-                You will be signed out of your account. You can sign back in anytime to continue
-                learning.
+                You will be signed out of your account. You can sign back in anytime.
               </p>
               <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
                 <Button variant="secondary" onClick={() => setLogoutOpen(false)} className="sm:min-w-[120px]">

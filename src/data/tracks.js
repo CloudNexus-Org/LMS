@@ -1,10 +1,8 @@
 import { Cloud, Sparkles, Code2, Server, Database, Cpu } from "lucide-react";
 
 /* ----------------------------------------------------------------------
-   Career tracks — used by:
-   - <Courses /> (preview cards on the landing page)
-   - /tracks listing page
-   - /tracks/:id detail page
+   Career tracks — used by learn player, payment checkout, quizzes,
+   and course↔track mapping. Public /tracks marketing pages were removed.
 ---------------------------------------------------------------------- */
 
 export const tracks = [

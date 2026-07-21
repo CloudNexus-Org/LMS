@@ -70,6 +70,7 @@ export function authHeaders(user, token) {
   if (token) headers.Authorization = `Bearer ${token}`;
   if (user?.id != null) headers['X-User-Id'] = String(user.id);
   if (user?.role) headers['X-User-Role'] = toBackendRole(user.role);
+  if (user?.email) headers['X-User-Email'] = String(user.email).trim();
   return headers;
 }
 
@@ -83,6 +84,11 @@ export function dashboardPathForRole(role) {
 export function parseApiError(err) {
   const msg = err?.message || '';
   const status = err?.status;
+
+  // Network errors and timeouts (status 0) — backend unreachable
+  if (status === 0 || status == null) {
+    return msg || 'Cannot reach the server. Please check your connection or start the backend.';
+  }
 
   try {
     const parsed = JSON.parse(msg);

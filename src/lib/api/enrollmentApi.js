@@ -130,6 +130,22 @@ export async function checkEnrollment(user, token, trackId) {
   return getJson(`${base}/api/enrollments/check/${trackId}`, authHeaders(user, token));
 }
 
+/** Active enrollment counts keyed by catalog course id. */
+export async function fetchEnrollmentCountsByCourse(courseIds = []) {
+  const ids = [...new Set((courseIds || []).map(Number).filter((id) => Number.isFinite(id) && id > 0))];
+  if (!ids.length) return {};
+  const data = await getJson(`${base}/api/enrollments/counts?courseIds=${ids.join(',')}`);
+  const map = {};
+  if (data && typeof data === 'object') {
+    Object.entries(data).forEach(([courseId, count]) => {
+      const n = Number(count) || 0;
+      map[String(courseId)] = n;
+      map[Number(courseId)] = n;
+    });
+  }
+  return map;
+}
+
 export async function finishTrackLearning(user, token, trackId) {
   return postJson(
     `${base}/api/enrollments/progress/tracks/${trackId}/finish`,

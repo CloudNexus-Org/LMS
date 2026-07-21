@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import {
   featuredCourses as mockCourses,
-  findTrackForCourse,
   getCourseBySlug,
 } from '@/data/courses';
 import { fetchCourseBySlug, fetchFeaturedCourses } from '@/lib/api/catalogApi';
@@ -69,11 +68,6 @@ export default function CourseDetailPage() {
       .finally(() => !cancelled && setLoading(false));
     return () => { cancelled = true; };
   }, [slug]);
-
-  const track = useMemo(
-    () => (course ? findTrackForCourse(course.id) : null),
-    [course]
-  );
 
   const addToCart = useCartStore((s) => s.addItem);
   const isInCart = useCartStore((s) =>
@@ -191,23 +185,6 @@ export default function CourseDetailPage() {
                     </span>
                   ))}
                 </div>
-
-                {track && (
-                  <div className="mt-8 rounded-xl border border-border bg-elevated/50 p-4 md:p-5">
-                    <p className="text-[12px] font-semibold uppercase tracking-wider text-subtle">
-                      Part of career track
-                    </p>
-                    <Link
-                      to={`/tracks/${track.id}`}
-                      className="mt-2 font-display text-[17px] font-bold text-text transition-colors hover:text-primary"
-                    >
-                      {track.name}
-                    </Link>
-                    <p className="mt-1 text-[13px] text-muted line-clamp-2">
-                      {track.tagline}
-                    </p>
-                  </div>
-                )}
 
                 {/* What you'll learn */}
                 {course.outcomes?.length > 0 && (

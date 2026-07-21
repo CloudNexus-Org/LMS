@@ -9,14 +9,33 @@ async function uploadMultipart(path, file, user, token, extraFields = {}) {
   form.append('file', file);
   Object.entries(extraFields).forEach(([k, v]) => form.append(k, v));
   const headers = authHeaders(user, token);
-  const res = await fetch(`${base}${path}`, { method: 'POST', headers, body: form });
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    const err = new Error(text || `Upload failed (${res.status})`);
-    err.status = res.status;
+  // Use a longer timeout for uploads — large video files can take time.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 120_000);
+  try {
+    const res = await fetch(`${base}${path}`, {
+      method: 'POST',
+      headers,
+      body: form,
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      const err = new Error(text || `Upload failed (${res.status})`);
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      const timeout = new Error('Upload timed out. Please try again.');
+      timeout.status = 0;
+      throw timeout;
+    }
     throw err;
+  } finally {
+    clearTimeout(timer);
   }
-  return res.json();
 }
 
 export async function uploadImage(user, token, file) {

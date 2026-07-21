@@ -146,7 +146,7 @@ export default function LessonPlayerPage() {
     return track?.name || "My Course";
   }, [staticTrack, lessons, track]);
 
-  const backUrl = staticTrack ? `/tracks/${track.id}` : "/student/courses";
+  const backUrl = "/student/courses";
 
   const progressTotal = apiLessonCount(apiLessons) || lessons.length;
 

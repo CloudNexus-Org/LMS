@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
@@ -35,7 +35,6 @@ import {
 import useAuthStore from "@/store/useAuthStore";
 import {
   fetchCourse,
-  fetchCourseDrafts,
   submitCourseForApproval,
   updateCoursePricing,
 } from "@/lib/api/contentApi";
@@ -270,7 +269,10 @@ export default function UploadCoursePage() {
   const shouldReduceMotion = useReducedMotion();
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
-  const draft = loadDraft();
+  const [searchParams] = useSearchParams();
+  const editCourseIdParam = searchParams.get("courseId");
+  const startNew = searchParams.get("new") === "1";
+  const draft = startNew ? null : loadDraft();
   const { user, token } = useAuthStore();
 
   const [step, setStep] = useState(draft?.step ?? 1);
@@ -279,7 +281,7 @@ export default function UploadCoursePage() {
   const [pricingModel, setPricingModel] = useState(draft?.pricingModel ?? "paid");
   const [customPrice, setCustomPrice] = useState(draft?.customPrice ?? "");
   const [thumbnailPreview, setThumbnailPreview] = useState(draft?.thumbnailPreview ?? null);
-  const [courseId, setCourseId] = useState(draft?.courseId ?? null);
+  const [courseId, setCourseId] = useState(editCourseIdParam || draft?.courseId || null);
   const [thumbnailUrl, setThumbnailUrl] = useState(draft?.thumbnailUrl ?? null);
   const [pendingThumbnailFile, setPendingThumbnailFile] = useState(null);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
@@ -290,6 +292,24 @@ export default function UploadCoursePage() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  const resetToBlankCourse = useCallback(() => {
+    sessionStorage.removeItem(DRAFT_KEY);
+    setStep(1);
+    setForm({ ...INITIAL_FORM });
+    setModules([]);
+    setPricingModel("paid");
+    setCustomPrice("");
+    setThumbnailPreview(null);
+    setCourseId(null);
+    setThumbnailUrl(null);
+    setPendingThumbnailFile(null);
+    setTagInput("");
+    setErrors({});
+    setSavedAt(null);
+    setSubmitted(false);
+    setSubmitError("");
+  }, []);
 
   const lessonCount = useMemo(
     () => modules.reduce((sum, m) => sum + m.lessons.length, 0),
@@ -339,14 +359,19 @@ export default function UploadCoursePage() {
 
   useEffect(() => {
     if (!user?.id || !token) return;
-    const id = draft?.courseId;
-    const load = id
-      ? fetchCourse(user, token, id)
-      : fetchCourseDrafts(user, token).then((list) => {
-          const latest = Array.isArray(list) ? list[0] : null;
-          return latest ? fetchCourse(user, token, latest.id) : null;
-        });
-    load
+
+    // Explicit new-course flow — do not reopen the mentor's previous draft.
+    if (startNew) {
+      resetToBlankCourse();
+      return;
+    }
+
+    // Only load a course when editing a specific id (URL or session draft).
+    // Never auto-pick "latest draft" — that blocked creating additional courses.
+    const id = editCourseIdParam || draft?.courseId;
+    if (!id) return;
+
+    fetchCourse(user, token, id)
       .then((course) => {
         if (!course) return;
         setCourseId(course.id);
@@ -373,7 +398,7 @@ export default function UploadCoursePage() {
       })
       .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, token]);
+  }, [user?.id, token, editCourseIdParam, startNew]);
 
   useEffect(() => {
     const timer = setTimeout(persistDraft, 600);
@@ -712,7 +737,7 @@ export default function UploadCoursePage() {
           <Link to="/mentor/lessons" className="upload-btn upload-btn-primary">
             Manage lessons
           </Link>
-          <button type="button" onClick={() => { setSubmitted(false); setStep(1); }} className="upload-btn upload-btn-outline">
+          <button type="button" onClick={resetToBlankCourse} className="upload-btn upload-btn-outline">
             Create another
           </button>
         </div>
@@ -1200,15 +1225,19 @@ export default function UploadCoursePage() {
                     >
                       <div className="max-w-xs">
                         <FieldLabel required>Course price (USD)</FieldLabel>
-                        <div className="relative">
-                          <DollarSign className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
+                        <div className="upload-price-field">
+                          <span className="upload-price-currency" aria-hidden>
+                            $
+                          </span>
                           <FieldInput
                             type="number"
                             min="0"
                             step="0.01"
                             value={customPrice}
                             onChange={(e) => setCustomPrice(e.target.value)}
-                            className="pl-10 text-lg font-bold"
+                            className="upload-price-input text-lg font-bold"
+                            placeholder="0.00"
+                            aria-label="Course price in USD"
                           />
                         </div>
                         {errors.price && <p className="mt-1 text-[10px] text-danger">{errors.price}</p>}

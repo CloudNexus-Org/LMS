@@ -9,8 +9,9 @@ import {
 import { Link } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { fetchCourseDrafts, publishCourse, fetchCourse, deleteCourse, deleteLesson } from '@/lib/api/contentApi';
-import { fetchMentorHubDashboard } from '@/lib/api/mentorApi';
+import { fetchMentorHubDashboard, fetchMentorStudentCountsByCourse } from '@/lib/api/mentorApi';
 import { fetchMentorDashboard } from '@/lib/api/analyticsApi';
+import { fetchEnrollmentCountsByCourse } from '@/lib/api/enrollmentApi';
 import { CONTENT_CHANGED, mapDraftToManageCourse } from '@/lib/api/contentSync';
 import { parseApiError } from '@/lib/api/apiHelpers';
 
@@ -44,26 +45,72 @@ export default function ManageLessonsPage() {
     Promise.all([
       fetchCourseDrafts(user, token).catch(() => []),
       fetchMentorHubDashboard(user, token).catch(() => null),
+      fetchMentorStudentCountsByCourse(user, token).catch(() => ({})),
       fetchMentorDashboard(user, token).catch(() => null),
     ])
-      .then(async ([list, hub, analytics]) => {
+      .then(async ([list, hub, mentorCounts, analytics]) => {
         const mapped = Array.isArray(list) ? list.map(mapDraftToManageCourse) : [];
-        setCourses(mapped);
-        setExpandedCourse((prev) => {
-          if (prev != null && mapped.some((c) => c.id === prev)) return prev;
-          return mapped[0]?.id ?? null;
+        const catalogIds = [...new Set(
+          mapped
+            .map((c) => c.catalogCourseId)
+            .filter((id) => id != null && Number(id) > 0)
+            .map(Number)
+        )];
+
+        const enrollmentCounts = catalogIds.length
+          ? await fetchEnrollmentCountsByCourse(catalogIds).catch(() => ({}))
+          : {};
+
+        const withStudents = mapped.map((course) => {
+          const catalogId = course.catalogCourseId != null ? Number(course.catalogCourseId) : null;
+          const fromEnrollment =
+            catalogId != null
+              ? (enrollmentCounts[catalogId] ?? enrollmentCounts[String(catalogId)] ?? null)
+              : null;
+          const fromMentor =
+            catalogId != null
+              ? (mentorCounts[catalogId] ?? mentorCounts[String(catalogId)] ?? null)
+              : null;
+          const students = Number(
+            fromEnrollment ?? fromMentor ?? course.students ?? 0
+          ) || 0;
+          return { ...course, students };
         });
+
+        setCourses(withStudents);
+        setExpandedCourse((prev) => {
+          if (prev != null && withStudents.some((c) => c.id === prev)) return prev;
+          return withStudents[0]?.id ?? null;
+        });
+
+        const enrolledSum = withStudents.reduce((sum, c) => sum + (c.students || 0), 0);
         setSummary({
-          totalStudents: hub?.totalStudents ?? analytics?.students ?? 0,
+          totalStudents: enrolledSum > 0 ? enrolledSum : Number(hub?.totalStudents) || 0,
           totalRevenue: analytics?.revenue ?? 0,
           avgRating: hub?.rating ?? analytics?.rating ?? 0,
         });
 
-        if (mapped.length && user?.id && token) {
+        if (withStudents.length && user?.id && token) {
           const entries = await Promise.all(
-            mapped.map((course) =>
+            withStudents.map((course) =>
               fetchCourse(user, token, course.id)
-                .then((full) => [course.id, mapDraftToManageCourse(full)])
+                .then((full) => {
+                  const detail = mapDraftToManageCourse(full);
+                  const catalogId = detail.catalogCourseId ?? course.catalogCourseId;
+                  const students =
+                    Number(
+                      (catalogId != null
+                        ? enrollmentCounts[catalogId] ??
+                          enrollmentCounts[String(catalogId)] ??
+                          mentorCounts[catalogId] ??
+                          mentorCounts[String(catalogId)]
+                        : null) ??
+                        detail.students ??
+                        course.students ??
+                        0
+                    ) || 0;
+                  return [course.id, { ...detail, catalogCourseId: catalogId, students }];
+                })
                 .catch(() => [course.id, course])
             )
           );
@@ -184,7 +231,7 @@ export default function ManageLessonsPage() {
           <p className="text-muted mt-1 font-medium">Build, edit, and organize your entire curriculum.</p>
         </div>
         <Link
-          to="/mentor/upload"
+          to="/mentor/upload?new=1"
          className="
                   relative
                   inline-flex
@@ -579,7 +626,7 @@ export default function ManageLessonsPage() {
               ? 'Create your first course to start building your curriculum.'
               : 'Try a different filter or create a new course.'}
           </p>
-          <Link to="/mentor/upload" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-[5px] font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
+          <Link to="/mentor/upload?new=1" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-[5px] font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
             <Plus className="h-4 w-4" /> Create Course
           </Link>
         </div>
