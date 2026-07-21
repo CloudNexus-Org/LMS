@@ -666,7 +666,7 @@ export default function MentorDashboardPage() {
             </motion.button>
             <motion.div whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }} className="w-full sm:w-auto">
               <Link
-                to="/mentor/upload"
+                to="/mentor/upload?new=1"
                 className="dashboard-header-btn dashboard-header-btn-primary w-full sm:w-auto"
               >
                 <Upload className="h-3.5 w-3.5" />

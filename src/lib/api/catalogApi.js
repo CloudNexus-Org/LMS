@@ -4,14 +4,38 @@ import { authHeaders } from './apiHelpers';
 
 const base = API.base;
 
+/** Parse catalog enrolled labels like "12", "1.2k", "2.5M" into an integer. */
+export function parseEnrolledCount(enrolled) {
+  if (enrolled == null || enrolled === '') return 0;
+  if (typeof enrolled === 'number') return Number.isFinite(enrolled) ? Math.max(0, Math.round(enrolled)) : 0;
+  const s = String(enrolled).trim().toLowerCase().replace(/,/g, '');
+  if (!s) return 0;
+  if (s.endsWith('m')) {
+    const n = parseFloat(s.slice(0, -1));
+    return Number.isFinite(n) ? Math.round(n * 1_000_000) : 0;
+  }
+  if (s.endsWith('k')) {
+    const n = parseFloat(s.slice(0, -1));
+    return Number.isFinite(n) ? Math.round(n * 1_000) : 0;
+  }
+  const n = parseInt(s, 10);
+  return Number.isFinite(n) ? Math.max(0, n) : 0;
+}
+
 /** Normalize backend course → frontend shape */
 export function mapCourse(c) {
   if (!c) return null;
+  const enrollmentCount =
+    c.enrollmentCount != null
+      ? Number(c.enrollmentCount) || 0
+      : parseEnrolledCount(c.enrolled);
   return {
     ...c,
     image: c.image || c.thumbnailUrl,
     originalPrice: c.originalPrice ?? c.original_price,
     reviews: c.reviews ?? c.reviewCount ?? 0,
+    enrollmentCount,
+    students: enrollmentCount,
   };
 }
 
@@ -61,6 +85,12 @@ export async function fetchFeaturedCourses() {
 
 export async function fetchCourseBySlug(slug) {
   const course = await getJson(`${base}/api/catalog/courses/${slug}`);
+  return mapCourse(course);
+}
+
+/** Catalog course by numeric id (includes enrollmentCount). */
+export async function fetchCourseById(courseId) {
+  const course = await getJson(`${base}/api/catalog/courses/id/${courseId}`);
   return mapCourse(course);
 }
 

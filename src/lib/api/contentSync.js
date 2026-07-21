@@ -83,10 +83,11 @@ export function mapDraftToManageCourse(course) {
 
   return {
     id: course.id,
+    catalogCourseId: course.courseId ?? course.catalogCourseId ?? null,
     title: course.title,
     status,
     category: course.category || '—',
-    students: course.students ?? 0,
+    students: Number(course.students ?? course.enrollmentCount ?? 0) || 0,
     rating: course.rating ?? 0,
     reviews: course.reviews ?? 0,
     revenue: course.revenue ?? '$0',
@@ -172,7 +173,15 @@ export function buildCoursePayload(form, thumbnailUrl) {
 export async function ensureCourseOnServer(user, token, courseId, form, thumbnailUrl) {
   const payload = buildCoursePayload(form, thumbnailUrl);
   if (courseId) {
-    return updateCourse(user, token, courseId, payload);
+    try {
+      return await updateCourse(user, token, courseId, payload);
+    } catch (err) {
+      // Stale courseId (DB reset, different session, etc.) — create a new draft instead
+      if (err?.status === 404) {
+        return createCourseDraft(user, token, payload);
+      }
+      throw err;
+    }
   }
   return createCourseDraft(user, token, payload);
 }

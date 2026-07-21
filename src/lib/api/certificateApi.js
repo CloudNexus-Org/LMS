@@ -65,9 +65,17 @@ export async function shareCertificate(user, token, certificateId) {
 }
 
 export async function downloadCertificate(user, token, certificateId) {
-  const res = await fetch(`${base}/api/certificates/${certificateId}/download`, {
-    headers: authHeaders(user, token),
-  });
-  if (!res.ok) throw new Error('Download failed');
-  return res.blob();
+  // Use a longer timeout for downloads — files can be larger.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30_000);
+  try {
+    const res = await fetch(`${base}/api/certificates/${certificateId}/download`, {
+      headers: authHeaders(user, token),
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error('Download failed');
+    return res.blob();
+  } finally {
+    clearTimeout(timer);
+  }
 }

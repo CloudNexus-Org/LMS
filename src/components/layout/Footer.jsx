@@ -20,7 +20,7 @@ const FOOTER_COLUMNS = [
       { label: "Certifications", to: "/student/certificates" },
       { label: "Live Classes", href: "#" },
       { label: "Free Courses", href: "#" },
-      { label: "Learning Paths", to: "/tracks" },
+      { label: "Learning Paths", to: "/courses" },
       { label: "Skill Assessments", href: "#" },
       { label: "Enterprise Plans", href: "#" },
     ],

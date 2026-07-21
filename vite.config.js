@@ -29,8 +29,8 @@ export default defineConfig({
     ],
   },
   server: {
-    host: '127.0.0.1',
+    host: true,
     port: 5173,
-    strictPort: true,
+    strictPort: false, // fall to 5174 if occupied, but CorsConfig covers both
   },
 })
