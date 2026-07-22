@@ -47,6 +47,9 @@ export function mapLesson(n) {
     summary: n.summary,
     free: n.free ?? n.previewFree,
     previewFree: n.previewFree,
+    quiz: n.quiz || null,
+    hasQuiz: n.hasQuiz ?? !!(n.quiz?.questions?.length),
+    uploadInProgress: !!n.uploadInProgress,
   };
 }
 

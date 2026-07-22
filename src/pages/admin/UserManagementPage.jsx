@@ -38,7 +38,7 @@ export default function UserManagementPage() {
   const navigate = useNavigate();
   const { user: authUser, token } = useAuthStore();
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -442,6 +442,16 @@ export default function UserManagementPage() {
                           aria-label={`Edit ${user.name}`}
                         >
                           <Edit3 className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDeleteTarget(user)}
+                          disabled={user.role === 'Admin'}
+                          className="h-8 w-8 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/5 transition-all disabled:cursor-not-allowed disabled:opacity-40"
+                          title="Delete"
+                          aria-label={`Delete ${user.name}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                         <button
                           type="button"

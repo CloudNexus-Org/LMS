@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { toCourseSummary } from '@/data/courses';
+import { toCourseSummary } from '@/lib/courseSummary';
 
 const useCartStore = create(
   persist(
@@ -26,7 +26,7 @@ const useCartStore = create(
 
       total: () => get().items.reduce((sum, item) => sum + item.price, 0),
     }),
-    { name: 'cloud-nexus-cart' }
+    { name: 'realm-cart' }
   )
 );
 

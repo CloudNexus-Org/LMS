@@ -28,7 +28,7 @@ const useAuthStore = create(
       })),
     }),
     {
-      name: 'cloud-nexus-auth',
+      name: 'realm-auth',
     }
   )
 );

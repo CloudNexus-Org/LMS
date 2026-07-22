@@ -18,11 +18,19 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  // Vite 8's Rolldown optimizer can hang on heavy PDF/canvas deps during first dev boot.
   optimizeDeps: {
-    exclude: ['jspdf', 'html2canvas'],
+    entries: ['./src/main.jsx', './src/**/*.jsx'],
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'lucide-react',
+      'zustand',
+    ],
   },
   server: {
-    host: true,
+    host: '127.0.0.1',
+    port: 5173,
+    strictPort: true,
   },
 })

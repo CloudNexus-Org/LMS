@@ -2,33 +2,6 @@ import { motion } from "framer-motion";
 
 export const EASE = [0.16, 1, 0.3, 1];
 
-export const COLOR_TINT = {
-  primary: {
-    bg: "bg-primary-soft",
-    text: "text-primary",
-    border: "border-primary/20",
-    grad: "from-primary via-primary to-accent",
-  },
-  accent: {
-    bg: "bg-accent-soft",
-    text: "text-accent",
-    border: "border-accent/20",
-    grad: "from-accent via-accent to-primary",
-  },
-  success: {
-    bg: "bg-[color:color-mix(in_oklab,var(--success)_12%,transparent)]",
-    text: "text-success",
-    border: "border-[color:color-mix(in_oklab,var(--success)_30%,transparent)]",
-    grad: "from-success via-success to-primary",
-  },
-  warning: {
-    bg: "bg-[color:color-mix(in_oklab,var(--warning)_12%,transparent)]",
-    text: "text-warning",
-    border: "border-[color:color-mix(in_oklab,var(--warning)_30%,transparent)]",
-    grad: "from-warning via-warning to-accent",
-  },
-};
-
 export function Eyebrow({ children, className = "" }) {
   return (
     <div className={`text-[11px] font-semibold uppercase tracking-[0.2em] text-subtle ${className}`}>

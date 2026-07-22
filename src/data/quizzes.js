@@ -165,26 +165,6 @@ export function loadMentorQuizzes() {
   return getStoredJSON(MENTOR_QUIZZES_KEY, []);
 }
 
-export function saveMentorQuizzes(quizzes) {
-  setStoredJSON(MENTOR_QUIZZES_KEY, quizzes);
-}
-
-export function upsertMentorQuiz(quiz) {
-  const list = loadMentorQuizzes();
-  const idx = list.findIndex((q) => q.id === quiz.id);
-  const next = { ...quiz, source: "mentor", updatedAt: Date.now() };
-  if (idx >= 0) list[idx] = next;
-  else list.push({ ...next, id: quiz.id || `mentor-quiz-${Date.now()}`, createdAt: Date.now() });
-  saveMentorQuizzes(list);
-  return list;
-}
-
-export function deleteMentorQuiz(quizId) {
-  const list = loadMentorQuizzes().filter((q) => q.id !== quizId);
-  saveMentorQuizzes(list);
-  return list;
-}
-
 export function getQuizForLesson(lessonId, trackId) {
   const mentorQuiz = loadMentorQuizzes().find(
     (q) => q.lessonId === lessonId || q.id === lessonId
@@ -209,27 +189,6 @@ export function getQuizForLesson(lessonId, trackId) {
   return buildGeneratedQuiz(lesson, track);
 }
 
-export function getAllPracticeQuizzes(trackIds = ["cloud", "ai", "fullstack"]) {
-  const quizzes = [];
-  trackIds.forEach((trackId) => {
-    const track = getTrackById(trackId);
-    if (!track) return;
-    getLessonsByTrack(trackId)
-      .filter((l) => l.type === "quiz")
-      .forEach((lesson) => {
-        quizzes.push({
-          ...buildGeneratedQuiz(lesson, track),
-          trackName: track.name,
-        });
-      });
-  });
-  loadMentorQuizzes().forEach((q) => {
-    const track = getTrackById(q.trackId);
-    quizzes.push({ ...q, trackName: track?.name ?? "Custom" });
-  });
-  return quizzes;
-}
-
 export function loadQuizAttempts() {
   return getStoredJSON(QUIZ_ATTEMPTS_KEY, {});
 }
@@ -250,11 +209,6 @@ export function getBestAttempt(quizId) {
   return attempts.reduce((best, a) => (a.score > best.score ? a : best), attempts[0]);
 }
 
-export function getLatestAttempt(quizId) {
-  const attempts = loadQuizAttempts()[quizId] ?? [];
-  return attempts[0] ?? null;
-}
-
 export function scoreQuiz(quiz, answers) {
   let correct = 0;
   const reviewed = quiz.questions.map((q) => {
@@ -263,12 +217,12 @@ export function scoreQuiz(quiz, answers) {
     if (isCorrect) correct += 1;
     return {
       questionId: q.id,
-      question: q.question,
+      question: q.question || q.prompt || "",
       selectedIndex: selected,
       correctIndex: q.correctIndex,
       isCorrect,
       explanation: q.explanation,
-      topic: q.topic,
+      topic: q.topic || "General",
     };
   });
 

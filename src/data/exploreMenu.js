@@ -1,5 +1,5 @@
 /**
- * Explore navigation — trimmed to Cloud Nexus course & track catalog.
+ * Explore navigation — trimmed to Realm course & track catalog.
  */
 
 export const EXPLORE_TYPES = {

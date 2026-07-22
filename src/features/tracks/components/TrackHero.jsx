@@ -1,4 +1,3 @@
-import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Code2, Play } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -10,16 +9,8 @@ export default function TrackHero({ track }) {
   const isDarkTheme = useIsDarkTheme();
 
   // Use track data falling back to default values from the design if they don't exist
-  const subtitle = "CODE. CREATE. CONQUER.";
   const title = track.name || "Data Science And Analytics\nWith GenAI";
   const desc = track.longDescription || "Gain hands-on experience in data analysis, visualization, and AI integration.";
-
-  // Fallback heroMentors if they don't exist
-  const heroMentors = track.heroMentors || [
-    { name: "Rohit Sharma", company: "Ex-AWS", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop&q=80" },
-    { name: "Ananya Verma", company: "Ex-Azure", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=800&fit=crop&q=80" },
-    { name: "Karan Patel", company: "Ex-Google", photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&h=800&fit=crop&q=80" },
-  ];
 
   // Theme-aware colors
   const textClass = isDarkTheme ? "text-white" : "text-black";

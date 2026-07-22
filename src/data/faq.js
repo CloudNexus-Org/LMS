@@ -1,9 +1,9 @@
 export const faqs = [{
-        question: "How is Cloud Nexus different from other LMS platforms?",
+        question: "How is Realm different from other LMS platforms?",
         answer: "We focus exclusively on career-aligned cloud, AI, devops, and full-stack tracks taught by ex-FAANG mentors. Every course ships with hands-on projects, live mentor sessions, and an industry-recognized verifiable certificate \u2014 not just video lectures.",
     },
     {
-        question: "Can I try Cloud Nexus before paying?",
+        question: "Can I try Realm before paying?",
         answer: "Yes. The Starter plan is free forever and gives you access to 3 starter courses. The Pro plan includes a 7-day free trial \u2014 no credit card required up front, cancel anytime.",
     },
     {
@@ -19,7 +19,7 @@ export const faqs = [{
         answer: "Pro Learner and Teams plans include weekly live mentor sessions, async Q&A in private community channels, and 1-on-1 office hours with your track mentor.",
     },
     {
-        question: "What devices does Cloud Nexus work on?",
+        question: "What devices does Realm work on?",
         answer: "Anywhere a modern browser runs desktop, tablet, and mobile. Lessons, quizzes, and the project workspace are fully responsive, with offline-capable note saving.",
     },
     {

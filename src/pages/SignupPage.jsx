@@ -29,7 +29,7 @@ export default function SignupPage() {
   const location = useLocation();
   const login = useAuthStore((state) => state.login);
 
-  const redirectTo = location.state?.from || ROUTES.student.dashboard;
+  const _redirectTo = location.state?.from || ROUTES.student.dashboard;
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

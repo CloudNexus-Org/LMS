@@ -244,9 +244,9 @@ export default function DashboardPreview() {
               <div className="flex items-center gap-2 rounded-lg border border-border bg-bg px-3 py-1 text-[11px] text-subtle">
                 <Lock size={11} className="text-success" />
                 <span className="hidden sm:inline">
-                  app.cloudnexus.io / dashboard
+                  app.realm.learn / dashboard
                 </span>
-                <span className="sm:hidden">cloudnexus.io</span>
+                <span className="sm:hidden">realm.learn</span>
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -272,7 +272,7 @@ export default function DashboardPreview() {
                       <Award size={12} className="text-white" />
                     </span>
                     <span className="font-display text-[11px] font-bold tracking-[0.18em] text-text">
-                      CLOUD NEXUS
+                      REALM
                     </span>
                   </div>
 
@@ -374,7 +374,7 @@ export default function DashboardPreview() {
                     <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-bg shadow-[var(--shadow-card)]">
                       {(!videoReady || videoFailed) && <VideoPlaceholder />}
 
-                      {!videoFailed ? (
+                      {!videoFailed && isInView ? (
                         <video
                           ref={videoRef}
                           src={VIDEO_SRC}
@@ -382,7 +382,7 @@ export default function DashboardPreview() {
                           muted={muted}
                           loop
                           playsInline
-                          preload="auto"
+                          preload="none"
                           aria-label="EC2 deep dive lesson preview"
                           onLoadedData={() => setVideoReady(true)}
                           onError={() => setVideoFailed(true)}

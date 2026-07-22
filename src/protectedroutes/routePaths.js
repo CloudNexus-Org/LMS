@@ -36,7 +36,6 @@ export const ROUTES = {
     dashboard: "/mentor/dashboard",
     upload: "/mentor/upload",
     lessons: "/mentor/lessons",
-    quizzes: "/mentor/quizzes",
     analytics: "/mentor/analytics",
     students: "/mentor/students",
     notifications: "/mentor/notifications",

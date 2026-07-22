@@ -131,8 +131,8 @@ export default function CoursesListPage() {
   const [sort, setSort] = useState('featured');
   const [searchFocused, setSearchFocused] = useState(false);
   const [courses, setCourses] = useState([]);
-  const [coursesLoading, setCoursesLoading] = useState(true);
-  const [apiError, setApiError] = useState(null);
+  const [_coursesLoading, setCoursesLoading] = useState(true);
+  const [_apiError, setApiError] = useState(null);
 
   useEffect(() => {
     fetchPublishedCourses()

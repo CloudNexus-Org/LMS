@@ -31,6 +31,7 @@ import {
   Target,
   Languages,
   Loader2,
+  Eye,
 } from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
 import {
@@ -47,15 +48,18 @@ import {
 } from "@/lib/api/contentSync";
 import { uploadCourseThumbnail, uploadVideo, resolveMediaUrl } from "@/lib/api/mediaApi";
 import { parseApiError } from "@/lib/api/apiHelpers";
+import { deleteModule as deleteModuleApi, updateLesson as updateLessonApi } from "@/lib/api/contentApi";
+import LessonQuizEditor, { createEmptyQuiz, quizIsValid } from "@/features/mentor/LessonQuizEditor";
 
 const EASE = [0.16, 1, 0.3, 1];
 const DRAFT_KEY = "lms-mentor-course-draft-v2";
 
 const STEPS = [
-  { id: 1, label: "Course Info", icon: BookOpen, desc: "Basic details" },
-  { id: 2, label: "Curriculum", icon: Video, desc: "Modules & lessons" },
-  { id: 3, label: "Pricing", icon: DollarSign, desc: "Monetization" },
-  { id: 4, label: "Publish", icon: Globe, desc: "Review & go live" },
+  { id: 1, label: "Course", icon: BookOpen, desc: "Create course" },
+  { id: 2, label: "Modules", icon: Layers3, desc: "Structure modules" },
+  { id: 3, label: "Lessons", icon: Video, desc: "Videos & quizzes" },
+  { id: 4, label: "Details", icon: DollarSign, desc: "Pricing & extras" },
+  { id: 5, label: "Publish", icon: Globe, desc: "Review & go live" },
 ];
 
 const CATEGORIES = [
@@ -94,7 +98,7 @@ const PRICING_PLANS = [
     id: "premium",
     label: "Premium",
     price: "Subscription",
-    desc: "Included in Cloud Nexus Pro",
+    desc: "Included in Realm Pro",
     icon: Award,
     accent: "upload-plan-premium",
     badge: "Higher revenue",
@@ -282,8 +286,10 @@ export default function UploadCoursePage() {
   const [courseId, setCourseId] = useState(draft?.courseId ?? null);
   const [thumbnailUrl, setThumbnailUrl] = useState(draft?.thumbnailUrl ?? null);
   const [pendingThumbnailFile, setPendingThumbnailFile] = useState(null);
-  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const [, setUploadingThumbnail] = useState(false);
   const [uploadingVideos, setUploadingVideos] = useState(false);
+  const [lessonProgress, setLessonProgress] = useState({});
+  const [previewingLessonId, setPreviewingLessonId] = useState(null);
   const [tagInput, setTagInput] = useState("");
   const [errors, setErrors] = useState({});
   const [savedAt, setSavedAt] = useState(null);
@@ -372,7 +378,6 @@ export default function UploadCoursePage() {
         if (uiModules?.length) setModules(ensureFreePreviewLesson(uiModules));
       })
       .catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, token]);
 
   useEffect(() => {
@@ -400,9 +405,17 @@ export default function UploadCoursePage() {
       else if (form.description.trim().length < 40) next.description = "Add at least 40 characters";
     }
     if (currentStep === 2) {
-      if (lessonCount < 1) next.curriculum = "Add at least one lesson";
+      if (!modules.length) next.curriculum = "Add at least one module";
+      else if (modules.some((m) => !m.title?.trim())) next.curriculum = "Every module needs a title";
     }
     if (currentStep === 3) {
+      if (lessonCount < 1) next.curriculum = "Add at least one lesson";
+      const missingQuiz = modules.some((m) => m.lessons.some((l) => !quizIsValid(l.quiz)));
+      if (lessonCount >= 1 && missingQuiz) {
+        next.curriculum = "Every lesson needs a valid quiz (question + 2 options)";
+      }
+    }
+    if (currentStep === 4) {
       if (pricingModel === "paid" && (!customPrice || parseFloat(customPrice) <= 0)) {
         next.price = "Enter a valid price";
       }
@@ -434,6 +447,21 @@ export default function UploadCoursePage() {
           return;
         } finally {
           setUploadingThumbnail(false);
+        }
+      }
+      // Persist modules (and empty lessons) after Modules step
+      if ((step === 2 || step === 3) && user?.id && token && courseId) {
+        try {
+          const synced = await syncCurriculumToBackend(
+            user,
+            token,
+            courseId,
+            step === 3 ? ensureFreePreviewLesson(modules) : modules
+          );
+          setModules(synced);
+        } catch (err) {
+          setSubmitError(parseApiError(err));
+          return;
         }
       }
       setStep((s) => s + 1);
@@ -525,6 +553,69 @@ export default function UploadCoursePage() {
     }
   };
 
+  const handleSingleVideoUpload = async (moduleId, lessonId, file) => {
+    if (!file || !user?.id || !token) return;
+    setLessonProgress((prev) => ({
+      ...prev,
+      [lessonId]: { percent: 0, uploading: true, fileName: file.name, error: "" },
+    }));
+    updateLesson(moduleId, lessonId, { uploadInProgress: true });
+
+    try {
+      let id = courseId;
+      if (!id) {
+        const saved = await ensureCourseOnServer(user, token, null, form, thumbnailUrl);
+        id = saved?.id || saved?.courseId;
+        if (id) setCourseId(id);
+      }
+
+      // Persist upload lock on server when lesson already exists
+      const mod = modules.find((m) => m.id === moduleId);
+      const lesson = mod?.lessons?.find((l) => l.id === lessonId);
+      if (id && lesson?.serverId) {
+        await updateLessonApi(user, token, id, lesson.serverId, { uploadInProgress: true }).catch(() => {});
+      }
+
+      const uploaded = await uploadVideo(user, token, file, (percent) => {
+        setLessonProgress((prev) => ({
+          ...prev,
+          [lessonId]: { ...prev[lessonId], percent },
+        }));
+      });
+
+      const url = resolveMediaUrl(uploaded);
+      updateLesson(moduleId, lessonId, {
+        contentUrl: url,
+        mediaFileId: uploaded.id,
+        videoName: file.name,
+        uploadInProgress: false,
+      });
+
+      if (id && lesson?.serverId) {
+        await updateLessonApi(user, token, id, lesson.serverId, {
+          contentUrl: url,
+          uploadInProgress: false,
+        }).catch(() => {});
+      }
+
+      setLessonProgress((prev) => ({
+        ...prev,
+        [lessonId]: { percent: 100, uploading: false, fileName: file.name, error: "" },
+      }));
+    } catch (err) {
+      updateLesson(moduleId, lessonId, { uploadInProgress: false });
+      setLessonProgress((prev) => ({
+        ...prev,
+        [lessonId]: {
+          percent: 0,
+          uploading: false,
+          fileName: "",
+          error: parseApiError(err) || "Upload failed",
+        },
+      }));
+    }
+  };
+
   const handleBulkVideos = async (fileList) => {
     if (!user?.id || !token || !fileList?.length) return;
     const files = Array.from(fileList).filter((f) => f.type.startsWith("video/"));
@@ -546,17 +637,37 @@ export default function UploadCoursePage() {
 
       const updatedModules = [...modules];
       for (let i = 0; i < files.length && i < videoLessons.length; i++) {
-        const uploaded = await uploadVideo(user, token, files[i]);
-        const url = resolveMediaUrl(uploaded);
         const { moduleId, lesson } = videoLessons[i];
-        const modIdx = updatedModules.findIndex((m) => m.id === moduleId);
-        if (modIdx >= 0) {
-          updatedModules[modIdx] = {
-            ...updatedModules[modIdx],
-            lessons: updatedModules[modIdx].lessons.map((l) =>
-              l.id === lesson.id ? { ...l, contentUrl: url, mediaFileId: uploaded.id } : l
-            ),
-          };
+        setLessonProgress((prev) => ({
+          ...prev,
+          [lesson.id]: { percent: 0, uploading: true, fileName: files[i].name, error: "" },
+        }));
+        try {
+          const uploaded = await uploadVideo(user, token, files[i], (percent) => {
+            setLessonProgress((prev) => ({
+              ...prev,
+              [lesson.id]: { ...prev[lesson.id], percent },
+            }));
+          });
+          const url = resolveMediaUrl(uploaded);
+          const modIdx = updatedModules.findIndex((m) => m.id === moduleId);
+          if (modIdx >= 0) {
+            updatedModules[modIdx] = {
+              ...updatedModules[modIdx],
+              lessons: updatedModules[modIdx].lessons.map((l) =>
+                l.id === lesson.id ? { ...l, contentUrl: url, mediaFileId: uploaded.id, videoName: files[i].name } : l
+              ),
+            };
+          }
+          setLessonProgress((prev) => ({
+            ...prev,
+            [lesson.id]: { percent: 100, uploading: false, fileName: files[i].name, error: "" },
+          }));
+        } catch {
+          setLessonProgress((prev) => ({
+            ...prev,
+            [lesson.id]: { percent: 0, uploading: false, fileName: "", error: "Upload failed" },
+          }));
         }
       }
       setModules(updatedModules);
@@ -577,26 +688,36 @@ export default function UploadCoursePage() {
   const removeTag = (tag) => updateForm("tags", form.tags.filter((t) => t !== tag));
 
   const addModule = () => {
-    setModules((prev) => {
-      const isFirstModule = prev.length === 0;
-      return [
-        ...prev,
-        {
-          id: Date.now(),
-          title: "New module",
-          open: true,
-          lessons: [
-            {
-              id: Date.now() + 1,
-              title: "New lesson",
-              type: "video",
-              free: isFirstModule,
-              duration: "10:00",
-            },
-          ],
-        },
-      ];
-    });
+    setModules((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        title: "New module",
+        open: true,
+        lessons: [],
+      },
+    ]);
+  };
+
+  const removeModule = async (moduleId) => {
+    const mod = modules.find((m) => m.id === moduleId);
+    if (!mod) return;
+    const uploading =
+      mod.lessons.some((l) => l.uploadInProgress) ||
+      mod.lessons.some((l) => lessonProgress[l.id]?.uploading);
+    if (uploading) {
+      setSubmitError("Cannot delete a module while a lesson video is uploading.");
+      return;
+    }
+    if (courseId && mod.serverId && user?.id && token) {
+      try {
+        await deleteModuleApi(user, token, courseId, mod.serverId);
+      } catch (err) {
+        setSubmitError(parseApiError(err));
+        return;
+      }
+    }
+    setModules((prev) => prev.filter((m) => m.id !== moduleId));
   };
 
   const toggleModule = (id) => {
@@ -615,7 +736,14 @@ export default function UploadCoursePage() {
               ...m,
               lessons: [
                 ...m.lessons,
-                { id: Date.now(), title: "New lesson", type: "video", free: false, duration: "10:00" },
+                {
+                  id: Date.now(),
+                  title: "New lesson",
+                  type: "video",
+                  free: m.lessons.length === 0 && modules[0]?.id === moduleId,
+                  duration: "10:00",
+                  quiz: createEmptyQuiz(),
+                },
               ],
             }
           : m
@@ -645,6 +773,7 @@ export default function UploadCoursePage() {
     { label: "Course title & description", ok: form.title.trim().length >= 10 && form.description.trim().length >= 40 },
     { label: "Category & skill level", ok: Boolean(form.category && form.level) },
     { label: "Curriculum (3+ lessons)", ok: lessonCount >= 3 },
+    { label: "Quiz on every lesson", ok: modules.every((m) => m.lessons.every((l) => quizIsValid(l.quiz))) },
     { label: "Free preview lesson", ok: modules.some((m) => m.lessons.some((l) => l.free)) },
     { label: "Course thumbnail", ok: Boolean(thumbnailPreview) },
     { label: "Pricing configured", ok: pricingModel === "free" || pricingModel === "premium" || parseFloat(customPrice) > 0 },
@@ -670,7 +799,7 @@ export default function UploadCoursePage() {
         </motion.div>
         <h1 className="mt-6 font-display text-3xl font-bold text-text">Course submitted!</h1>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-muted">
-          <strong className="text-text">{form.title || "Your course"}</strong> is queued for Cloud Nexus QA review.
+          <strong className="text-text">{form.title || "Your course"}</strong> is queued for Realm QA review.
           Typical approval takes 24–48 hours.
         </p>
 
@@ -738,7 +867,7 @@ export default function UploadCoursePage() {
             Create your next <span className="text-primary">hit course</span>
           </p>
           <p className="dashboard-greeting-sub">
-            Udemy-style wizard — build curriculum, set pricing, and publish to Cloud Nexus.
+            Udemy-style wizard — build curriculum, set pricing, and publish to Realm.
           </p>
         </div>
 
@@ -1013,7 +1142,7 @@ export default function UploadCoursePage() {
                 </motion.div>
               )}
 
-              {/* Step 2 */}
+              {/* Step 2 — Modules only */}
               {step === 2 && (
                 <motion.div
                   key="step2"
@@ -1025,8 +1154,81 @@ export default function UploadCoursePage() {
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-display text-xl font-bold text-text">Build curriculum</h2>
-                      <p className="mt-1 text-sm text-muted">Organize content into modules — Coursera-style sections with lessons.</p>
+                      <h2 className="font-display text-xl font-bold text-text">Create modules</h2>
+                      <p className="mt-1 text-sm text-muted">
+                        Structure your course into modules first. You&apos;ll add lessons and videos in the next step.
+                      </p>
+                    </div>
+                    <button type="button" onClick={addModule} className="upload-btn upload-btn-primary upload-btn-sm">
+                      <Plus className="h-4 w-4" /> Add module
+                    </button>
+                  </div>
+
+                  {errors.curriculum && (
+                    <div className="upload-alert">
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      {errors.curriculum}
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    {modules.map((mod, modIdx) => {
+                      const uploading =
+                        mod.lessons.some((l) => l.uploadInProgress) ||
+                        mod.lessons.some((l) => lessonProgress[l.id]?.uploading);
+                      return (
+                        <div key={mod.id} className="upload-module">
+                          <div className="upload-module-header">
+                            <GripVertical className="h-4 w-4 text-muted" />
+                            <span className="text-xs font-bold text-muted">Module {modIdx + 1}</span>
+                            <input
+                              value={mod.title}
+                              onChange={(e) => updateModuleTitle(mod.id, e.target.value)}
+                              className="min-w-0 flex-1 bg-transparent text-sm font-bold text-text outline-none"
+                              placeholder="Module title"
+                            />
+                            <span className="text-[10px] font-semibold text-muted">
+                              {mod.lessons.length} lessons
+                            </span>
+                            <button
+                              type="button"
+                              disabled={uploading}
+                              onClick={() => removeModule(mod.id)}
+                              title={uploading ? "Upload in progress" : "Delete module"}
+                              className="rounded-lg p-1.5 text-muted hover:bg-danger/10 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
+                              aria-label="Delete module"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {!modules.length && (
+                      <p className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted">
+                        No modules yet — click Add module to start.
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 3 — Lessons / videos / quizzes */}
+              {step === 3 && (
+                <motion.div
+                  key="step3"
+                  initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: shouldReduceMotion ? 0 : -16 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                  className="space-y-5"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h2 className="font-display text-xl font-bold text-text">Upload lessons</h2>
+                      <p className="mt-1 text-sm text-muted">
+                        Add lessons and videos inside each module, then attach a quiz to every lesson.
+                      </p>
                     </div>
                     <button type="button" onClick={addModule} className="upload-btn upload-btn-primary upload-btn-sm">
                       <Plus className="h-4 w-4" /> Add module
@@ -1087,6 +1289,22 @@ export default function UploadCoursePage() {
                             className="min-w-0 flex-1 bg-transparent text-sm font-bold text-text outline-none"
                           />
                           <span className="text-[10px] font-semibold text-muted">{mod.lessons.length} lessons</span>
+                          <button
+                            type="button"
+                            disabled={
+                              mod.lessons.some((l) => l.uploadInProgress) ||
+                              mod.lessons.some((l) => lessonProgress[l.id]?.uploading)
+                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeModule(mod.id);
+                            }}
+                            title="Delete module"
+                            className="rounded-lg p-1.5 text-muted hover:bg-danger/10 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
+                            aria-label="Delete module"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
                           <ChevronDown className={`h-4 w-4 text-muted transition-transform ${mod.open ? "rotate-180" : ""}`} />
                         </button>
 
@@ -1100,40 +1318,178 @@ export default function UploadCoursePage() {
                               className="overflow-hidden"
                             >
                               <div className="upload-module-lessons">
-                                {mod.lessons.map((lesson, idx) => (
-                                  <div key={lesson.id} className="upload-lesson">
-                                    <span className="text-[10px] font-bold text-muted">{String(idx + 1).padStart(2, "0")}</span>
-                                    <span className={`upload-lesson-type ${lesson.type === "quiz" ? "upload-lesson-quiz" : ""}`}>
-                                      {lesson.type === "quiz" ? <FileText className="h-3.5 w-3.5" /> : <Video className="h-3.5 w-3.5" />}
-                                    </span>
-                                    <input
-                                      value={lesson.title}
-                                      onChange={(e) => updateLesson(mod.id, lesson.id, { title: e.target.value })}
-                                      className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-text outline-none"
-                                    />
-                                    <input
-                                      value={lesson.duration}
-                                      onChange={(e) => updateLesson(mod.id, lesson.id, { duration: e.target.value })}
-                                      className="w-14 bg-transparent text-center text-[10px] font-bold text-muted outline-none"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() => updateLesson(mod.id, lesson.id, { free: !lesson.free })}
-                                      className={`upload-free-toggle ${lesson.free ? "upload-free-on" : ""}`}
-                                    >
-                                      {lesson.free ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
-                                      {lesson.free ? "Preview" : "Paid"}
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => removeLesson(mod.id, lesson.id)}
-                                      className="text-muted hover:text-danger"
-                                      aria-label="Remove lesson"
-                                    >
-                                      <Trash2 className="h-3.5 w-3.5" />
-                                    </button>
-                                  </div>
-                                ))}
+                                {mod.lessons.map((lesson, idx) => {
+                                  const prog = lessonProgress[lesson.id];
+                                  const hasVideo = Boolean(lesson.contentUrl || lesson.mediaFileId || prog?.percent === 100);
+                                  const isUploading = Boolean(prog?.uploading);
+                                  const videoUrl = resolveMediaUrl(lesson.contentUrl || lesson.mediaFileId);
+
+                                  return (
+                                    <div key={lesson.id} className="upload-lesson flex-col items-start gap-2.5 p-3 rounded-xl border border-border/80 bg-surface/40">
+                                      <div className="flex w-full items-center gap-3">
+                                        <span className="text-[10px] font-bold text-muted">{String(idx + 1).padStart(2, "0")}</span>
+                                        <span className={`upload-lesson-type ${lesson.type === "quiz" ? "upload-lesson-quiz" : ""}`}>
+                                          {lesson.type === "quiz" ? <FileText className="h-3.5 w-3.5" /> : <Video className="h-3.5 w-3.5" />}
+                                        </span>
+                                        <input
+                                          value={lesson.title}
+                                          onChange={(e) => updateLesson(mod.id, lesson.id, { title: e.target.value })}
+                                          className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-text outline-none"
+                                          placeholder="Lesson title..."
+                                        />
+                                        <input
+                                          value={lesson.duration}
+                                          onChange={(e) => updateLesson(mod.id, lesson.id, { duration: e.target.value })}
+                                          className="w-14 bg-transparent text-center text-[10px] font-bold text-muted outline-none"
+                                          placeholder="10:00"
+                                        />
+                                        <button
+                                          type="button"
+                                          onClick={() => updateLesson(mod.id, lesson.id, { free: !lesson.free })}
+                                          className={`upload-free-toggle ${lesson.free ? "upload-free-on" : ""}`}
+                                        >
+                                          {lesson.free ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+                                          {lesson.free ? "Preview" : "Paid"}
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeLesson(mod.id, lesson.id)}
+                                          className="text-muted hover:text-danger"
+                                          aria-label="Remove lesson"
+                                        >
+                                          <Trash2 className="h-3.5 w-3.5" />
+                                        </button>
+                                      </div>
+
+                                      {/* Video Upload & Preview Bar */}
+                                      {lesson.type === "video" && (
+                                        <div className="w-full pl-7">
+                                          {/* 1. Uploading State with Progress Bar */}
+                                          {isUploading && (
+                                            <div className="w-full rounded-lg border border-primary/30 bg-primary/10 p-2.5">
+                                              <div className="flex items-center justify-between text-xs font-semibold text-primary mb-1.5">
+                                                <span className="flex items-center gap-1.5">
+                                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                                  Uploading {prog?.fileName || "lesson video"}...
+                                                </span>
+                                                <span className="font-bold text-primary">{prog?.percent || 0}%</span>
+                                              </div>
+                                              <div className="h-2 w-full overflow-hidden rounded-full bg-border">
+                                                <div
+                                                  className="h-full bg-primary transition-all duration-200"
+                                                  style={{ width: `${prog?.percent || 0}%` }}
+                                                />
+                                              </div>
+                                            </div>
+                                          )}
+
+                                          {/* 2. Uploaded State (100% or URL present) with Interactive Video Player Bar */}
+                                          {!isUploading && hasVideo && (
+                                            <div className="w-full rounded-lg border border-success/30 bg-success/10 p-2.5">
+                                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                                <div className="flex items-center gap-2">
+                                                  <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
+                                                  <div>
+                                                    <p className="text-xs font-bold text-text truncate max-w-[280px]">
+                                                      {lesson.videoName || "Lecture Video Uploaded"}
+                                                    </p>
+                                                    <p className="text-[10px] font-bold text-success">
+                                                      100% Uploaded Successfully · Ready to check
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => setPreviewingLessonId(previewingLessonId === lesson.id ? null : lesson.id)}
+                                                    className="inline-flex items-center gap-1 rounded border border-border bg-surface px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-elevated transition-colors shadow-sm"
+                                                  >
+                                                    <Eye className="h-3.5 w-3.5" />
+                                                    {previewingLessonId === lesson.id ? "Hide Preview" : "Play & Check Video"}
+                                                  </button>
+                                                  <label className="cursor-pointer text-[11px] font-bold text-muted hover:text-text">
+                                                    Replace
+                                                    <input
+                                                      type="file"
+                                                      accept="video/*"
+                                                      className="hidden"
+                                                      onChange={(e) => {
+                                                        if (e.target.files?.[0]) {
+                                                          handleSingleVideoUpload(mod.id, lesson.id, e.target.files[0]);
+                                                          e.target.value = "";
+                                                        }
+                                                      }}
+                                                    />
+                                                  </label>
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => updateLesson(mod.id, lesson.id, { contentUrl: null, mediaFileId: null, videoName: null })}
+                                                    className="text-[11px] font-bold text-danger hover:underline"
+                                                  >
+                                                    Remove
+                                                  </button>
+                                                </div>
+                                              </div>
+
+                                              {/* Collapsible/Toggleable Video Player for Mentor to verify video */}
+                                              {previewingLessonId === lesson.id && (
+                                                <div className="mt-3 overflow-hidden rounded-lg border border-border bg-black/90 p-2">
+                                                  <div className="mb-1.5 flex items-center justify-between text-[11px] text-muted">
+                                                    <span className="font-bold text-success flex items-center gap-1">
+                                                      <CheckCircle2 className="h-3.5 w-3.5" /> Playing Uploaded Video
+                                                    </span>
+                                                    <span className="text-[10px]">Ensure correct video lecture</span>
+                                                  </div>
+                                                  <video
+                                                    controls
+                                                    controlsList="nodownload"
+                                                    preload="metadata"
+                                                    src={videoUrl}
+                                                    className="w-full max-h-[260px] rounded object-contain bg-black"
+                                                  >
+                                                    Your browser does not support video playback.
+                                                  </video>
+                                                </div>
+                                              )}
+                                            </div>
+                                          )}
+
+                                          {/* 3. Empty State (No video uploaded yet) with Upload Button */}
+                                          {!isUploading && !hasVideo && (
+                                            <div className="flex items-center gap-3">
+                                              <label className="upload-btn upload-btn-outline upload-btn-sm text-[11px] font-bold flex items-center gap-1.5 cursor-pointer border-dashed border-border/80 hover:border-primary hover:text-primary">
+                                                <Video className="h-3.5 w-3.5 text-accent" /> Upload Lesson Video
+                                                <input
+                                                  type="file"
+                                                  accept="video/*"
+                                                  className="hidden"
+                                                  onChange={(e) => {
+                                                    if (e.target.files?.[0]) {
+                                                      handleSingleVideoUpload(mod.id, lesson.id, e.target.files[0]);
+                                                      e.target.value = "";
+                                                    }
+                                                  }}
+                                                />
+                                              </label>
+                                              {prog?.error && (
+                                                <span className="text-[11px] font-semibold text-danger flex items-center gap-1">
+                                                  <AlertCircle className="h-3 w-3" /> {prog.error}
+                                                </span>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+                                      <div className="mt-3 border-t border-border pt-3">
+                                        <LessonQuizEditor
+                                          compact
+                                          quiz={lesson.quiz}
+                                          onChange={(quiz) => updateLesson(mod.id, lesson.id, { quiz })}
+                                        />
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                                 <button type="button" onClick={() => addLesson(mod.id)} className="upload-add-lesson">
                                   <Plus className="h-3.5 w-3.5" /> Add lesson
                                 </button>
@@ -1151,10 +1507,10 @@ export default function UploadCoursePage() {
                 </motion.div>
               )}
 
-              {/* Step 3 */}
-              {step === 3 && (
+              {/* Step 4 — Details / pricing */}
+              {step === 4 && (
                 <motion.div
-                  key="step3"
+                  key="step4"
                   initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: shouldReduceMotion ? 0 : -16 }}
@@ -1247,7 +1603,7 @@ export default function UploadCoursePage() {
                           </div>
                         </div>
                         <p className="upload-tip mt-3 !mb-0">
-                          Top Cloud Nexus courses price between $49–$129.
+                          Top Realm courses price between $49–$129.
                         </p>
                       </div>
                     </motion.div>
@@ -1255,10 +1611,10 @@ export default function UploadCoursePage() {
                 </motion.div>
               )}
 
-              {/* Step 4 */}
-              {step === 4 && (
+              {/* Step 5 — Publish */}
+              {step === 5 && (
                 <motion.div
-                  key="step4"
+                  key="step5"
                   initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: shouldReduceMotion ? 0 : -16 }}

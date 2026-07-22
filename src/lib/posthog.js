@@ -1,25 +1,54 @@
-import posthog from 'posthog-js';
+// Telemetry is optional and must never block first paint.
+// Dynamic-import posthog after the browser is idle.
 
-// In a real application, you would put this in your .env file
-// VITE_POSTHOG_KEY=phc_XXXXXXXXXXXX
-// VITE_POSTHOG_HOST=https://app.posthog.com
-const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY;
-const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com';
+let posthogInstance = null;
 
 export const initTelemetry = () => {
-  // Only initialize PostHog if a valid key is provided
-  if (typeof window !== 'undefined' && POSTHOG_KEY && !POSTHOG_KEY.includes('mock')) {
-    posthog.init(POSTHOG_KEY, {
-      api_host: POSTHOG_HOST,
-      // Enable debug mode in development
-      loaded: (posthog) => {
-        if (import.meta.env.DEV) posthog.debug(false);
-      },
-      // Automatically capture pageviews
-      capture_pageview: false, // We'll handle this manually via React Router
-      capture_pageleave: true,
-    });
+  if (typeof window === 'undefined') return;
+
+  const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY;
+  const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com';
+  if (!POSTHOG_KEY || POSTHOG_KEY.includes('mock')) return;
+
+  const boot = () => {
+    import('posthog-js')
+      .then(({ default: posthog }) => {
+        posthog.init(POSTHOG_KEY, {
+          api_host: POSTHOG_HOST,
+          loaded: (ph) => {
+            if (import.meta.env.DEV) ph.debug(false);
+          },
+          capture_pageview: false,
+          capture_pageleave: true,
+        });
+        posthogInstance = posthog;
+      })
+      .catch(() => {
+        /* telemetry must never break the app */
+      });
+  };
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(boot, { timeout: 4000 });
+  } else {
+    setTimeout(boot, 2000);
   }
 };
 
-export default posthog;
+const posthogProxy = new Proxy(
+  {},
+  {
+    get(_t, prop) {
+      if (posthogInstance && typeof posthogInstance[prop] !== 'undefined') {
+        const val = posthogInstance[prop];
+        return typeof val === 'function' ? val.bind(posthogInstance) : val;
+      }
+      if (prop === 'capture' || prop === 'identify' || prop === 'reset') {
+        return () => {};
+      }
+      return undefined;
+    },
+  }
+);
+
+export default posthogProxy;

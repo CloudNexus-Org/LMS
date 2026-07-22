@@ -9,9 +9,6 @@ export const pageShell = 'min-h-screen bg-page text-text';
 /** Section / footer / hero base background */
 export const pageBg = 'bg-page';
 
-/** Standard page content with theme text */
-export const pageSurface = 'bg-page text-text';
-
 /** Footer wrapper */
 export const footerShell =
   'border-t border-border bg-page dark:border-white/10';

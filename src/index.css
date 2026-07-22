@@ -2,9 +2,9 @@
     @import "./styles/theme.css";
     @variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
     @theme inline {
-        --font-sans: "Russo One", sans-serif;
-        --font-display: "Russo One", sans-serif;
-        --font-mono: "Russo One", sans-serif;
+        --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+        --font-display: 'Sora', 'Inter', system-ui, sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         --color-page: var(--page-bg);
         --color-bg: var(--bg);
         --color-surface: var(--surface);
@@ -55,7 +55,7 @@
         transition: background-color 200ms ease, color 200ms ease;
     }
 
-    /* Student dashboard — datalab / Cloud Nexus alignment */
+    /* Student dashboard — datalab / Realm alignment */
     .dashboard-page {
         width: 100%;
         font-size: 14px;

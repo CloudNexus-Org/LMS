@@ -1,12 +1,13 @@
-import AWS from '@/assets/courses/image1.png';
-import Azure from '@/assets/courses/image2.png';
-import JAVASCRIPT from '@/assets/courses/image3.png';
-import Go from '@/assets/courses/image4.png';
-import PYTHON from '@/assets/courses/image5.png';
-import GCP from '@/assets/courses/image6.png';
-import DOCKER from '@/assets/courses/image7.png';
-import KUBERNETES from '@/assets/courses/image8.png';
+import AWS from '@/assets/courses/image1.webp';
+import Azure from '@/assets/courses/image2.webp';
+import JAVASCRIPT from '@/assets/courses/image3.webp';
+import Go from '@/assets/courses/image4.webp';
+import PYTHON from '@/assets/courses/image5.webp';
+import GCP from '@/assets/courses/image6.webp';
+import DOCKER from '@/assets/courses/image7.webp';
+import KUBERNETES from '@/assets/courses/image8.webp';
 import { tracks } from '@/data/tracks';
+import { toCourseSummary as summarizeCourse } from '@/lib/courseSummary';
 
 export const featuredCourses = [{
         id: 1,
@@ -200,16 +201,4 @@ export function findTrackForCourse(courseId) {
 }
 
 /** Minimal shape stored in cart / wishlist */
-export function toCourseSummary(course) {
-    return {
-        id: course.id,
-        slug: course.slug,
-        title: course.title,
-        professor: course.professor,
-        image: course.image,
-        price: course.price,
-        originalPrice: course.originalPrice,
-        rating: course.rating,
-        reviews: course.reviews,
-    };
-}
+export const toCourseSummary = summarizeCourse;
