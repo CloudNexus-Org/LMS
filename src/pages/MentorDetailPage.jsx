@@ -194,7 +194,7 @@ export default function MentorDetailPage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    to="/tracks"
+                    to="/courses"
                     className="group"
                   >
                     See their courses
@@ -510,7 +510,7 @@ export default function MentorDetailPage() {
                   sub={`Tracks designed and delivered personally by ${firstName} — every module built around real production work.`}
                 />
                 <Link
-                  to="/tracks"
+                  to="/courses"
                   className="inline-flex items-center justify-center text-[13px] font-semibold text-primary transition-colors hover:text-primary-hover"
                 >
                   Browse all tracks
@@ -553,7 +553,7 @@ export default function MentorDetailPage() {
                       </span>
                     </div>
                     <Link
-                      to="/tracks"
+                      to="/courses"
                       className="mt-4 inline-flex w-fit items-center gap-1.5 text-[13px] font-semibold text-primary transition-colors hover:text-primary-hover"
                     >
                       View course

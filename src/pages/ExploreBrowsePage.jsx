@@ -222,7 +222,7 @@ export default function ExploreBrowsePage() {
   }
 
   if (type === 'degrees') {
-    return <Navigate to="/tracks" replace />;
+    return <Navigate to="/courses" replace />;
   }
 
   if (!slug) {

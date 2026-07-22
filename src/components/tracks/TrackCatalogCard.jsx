@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import useRequireStudentAuth from "@/hooks/useRequireStudentAuth";
 import { ROUTES } from "@/protectedroutes/routePaths";
@@ -104,28 +104,14 @@ export default function TrackCatalogCard({
           ) : null}
         </div>
 
-        {isPayment ? (
-          <div className="mt-4">
-            <h3 className="font-display text-[18px] font-extrabold leading-tight tracking-tight text-text">
-              {track.name}
-            </h3>
-            <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.6] text-muted">
-              {track.tagline}
-            </p>
-          </div>
-        ) : (
-          <Link
-            to={`/tracks/${track.id}`}
-            className="mt-4 block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-          >
-            <h3 className="font-display text-[18px] font-extrabold leading-tight tracking-tight text-text transition-colors group-hover/track:text-primary">
-              {track.name}
-            </h3>
-            <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.6] text-muted">
-              {track.tagline}
-            </p>
-          </Link>
-        )}
+        <div className="mt-4">
+          <h3 className="font-display text-[18px] font-extrabold leading-tight tracking-tight text-text">
+            {track.name}
+          </h3>
+          <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.6] text-muted">
+            {track.tagline}
+          </p>
+        </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2.5 text-[12px] text-muted">
           <span className="inline-flex items-center gap-1.5">

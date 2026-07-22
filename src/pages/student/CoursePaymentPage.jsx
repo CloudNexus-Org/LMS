@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -11,10 +11,25 @@ import TrackCatalogCard from "@/components/tracks/TrackCatalogCard";
 import { getResumeUrlForTrack } from "@/features/learn/learningSession";
 import { tracks, formatTrackPrice, getTrackById } from "@/data/tracks";
 import useAuthStore from "@/store/useAuthStore";
+import { initiatePayment, confirmPayment } from "@/lib/api/paymentApi";
 import { enrollInTrack } from "@/lib/api/enrollmentApi";
 import { parseApiError } from "@/lib/api/apiHelpers";
 
 const GST_RATE = 0.18;
+
+/**
+ * Loads the Razorpay checkout.js script once and resolves when ready.
+ */
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
 export default function CoursePaymentPage() {
   const navigate = useNavigate();
@@ -43,7 +58,7 @@ export default function CoursePaymentPage() {
       ? selected.originalPrice - selected.price
       : 0;
 
-  const handlePay = async () => {
+  const handlePay = useCallback(async () => {
     if (!selected || paying) return;
     if (!user?.id || !token) {
       setPayError("Please sign in to complete payment.");
@@ -54,19 +69,84 @@ export default function CoursePaymentPage() {
     setPayError("");
 
     try {
-      const courseId = selected.courseIds?.[0];
-      await enrollInTrack(user, token, { trackId: selected.id, courseId });
+      // 1. Load Razorpay script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error("Failed to load Razorpay. Check your internet connection.");
+      }
+
+      // 2. Create order on backend
+      const courseId = selected.courseIds?.[0] ?? null;
+      const orderData = await initiatePayment(user, token, {
+        courseIds: courseId ? [courseId] : [],
+        trackId: selected.id,
+        currency: 'INR',
+        // Pass subtotal as direct amount so backend doesn't fall back to ₹0
+        // when the track has no catalog courseId yet
+        amount: subtotal,
+        title: selected.name,
+      });
+
+      // 3. Open Razorpay modal
+      await new Promise((resolve, reject) => {
+        const options = {
+          key: orderData.razorpayKeyId,
+          amount: Math.round((orderData.total ?? total) * 100), // paise
+          currency: orderData.currency ?? "INR",
+          name: "Cloud Nexus LMS",
+          description: selected.name,
+          order_id: orderData.razorpayOrderId,
+          prefill: {
+            name: user.fullName ?? user.username ?? "",
+            email: user.email ?? "",
+          },
+          theme: { color: "#7c3aed" },
+          handler: async (response) => {
+            try {
+              // 4. Verify payment on backend → triggers Kafka payment.success → enrollment
+              await confirmPayment(user, token, {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              });
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          },
+          modal: {
+            ondismiss: () => reject(new Error("Payment cancelled")),
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", (response) => {
+          reject(new Error(response.error?.description || "Payment failed"));
+        });
+        rzp.open();
+      });
+
+      // 5. Fallback: also directly enroll in case Kafka is slow
+      try {
+        await enrollInTrack(user, token, { trackId: selected.id, courseId });
+      } catch (enrollErr) {
+        // 409 = already enrolled via Kafka — that's fine
+        if (enrollErr?.status !== 409) {
+          console.warn("Direct enroll fallback failed:", enrollErr);
+        }
+      }
+
       navigate(`/student/payment?track=${selected.id}&status=success`, { replace: true });
     } catch (err) {
-      if (err?.status === 409) {
-        navigate(`/student/payment?track=${selected.id}&status=success`, { replace: true });
-        return;
+      if (err?.message === "Payment cancelled") {
+        setPayError("Payment was cancelled. Try again when ready.");
+      } else {
+        setPayError(parseApiError(err) || "Payment failed. Please try again.");
       }
-      setPayError(parseApiError(err) || "Payment failed. Please try again.");
     } finally {
       setPaying(false);
     }
-  };
+  }, [selected, paying, user, token, total, navigate]);
 
   if (isSuccessView) {
     return (
@@ -106,7 +186,7 @@ export default function CoursePaymentPage() {
     <div className="mx-auto max-w-7xl space-y-8">
       <div>
         <Link
-          to="/tracks"
+          to="/courses"
           className="mb-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-primary"
         >
           <ArrowLeft size={14} aria-hidden />
@@ -122,8 +202,8 @@ export default function CoursePaymentPage() {
           Choose a track &amp; pay
         </h1>
         <p className="mt-1 max-w-[640px] text-[15px] text-muted">
-          All career tracks and prices are listed below — same as the catalog.
-          Select the course you want, then complete payment on the right.
+          All career tracks and prices are listed below. Select the course you
+          want, then complete payment via Razorpay.
         </p>
       </div>
 
@@ -167,14 +247,12 @@ export default function CoursePaymentPage() {
                   {formatTrackPrice(subtotal)}
                 </span>
               </li>
-              {savings > 0 ? (
+              {savings > 0 && (
                 <li className="flex justify-between text-success">
                   <span>Launch discount</span>
-                  <span className="font-medium">
-                    −{formatTrackPrice(savings)}
-                  </span>
+                  <span className="font-medium">−{formatTrackPrice(savings)}</span>
                 </li>
-              ) : null}
+              )}
               <li className="flex justify-between">
                 <span>GST (18%)</span>
                 <span className="font-medium text-text">
@@ -197,16 +275,18 @@ export default function CoursePaymentPage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-70"
             >
               <CreditCard size={16} aria-hidden />
-              {paying ? "Processing…" : "Pay now"}
+              {paying ? "Opening Razorpay…" : "Pay with Razorpay"}
             </button>
 
-            {payError ? (
-              <p className="text-center text-[13px] font-medium text-danger">{payError}</p>
-            ) : null}
+            {payError && (
+              <p className="text-center text-[13px] font-medium text-danger">
+                {payError}
+              </p>
+            )}
 
             <p className="flex items-center justify-center gap-1.5 text-[12px] text-muted">
               <ShieldCheck size={13} className="text-success" aria-hidden />
-              Secure checkout · 7-day money-back guarantee
+              Secure checkout · Powered by Razorpay
             </p>
           </div>
         </aside>

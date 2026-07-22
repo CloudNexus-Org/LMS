@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -27,7 +27,6 @@ import {
 } from 'lucide-react';
 import {
   featuredCourses as mockCourses,
-  findTrackForCourse,
   getCourseBySlug,
 } from '@/data/courses';
 import { fetchCourseBySlug, fetchFeaturedCourses } from '@/lib/api/catalogApi';
