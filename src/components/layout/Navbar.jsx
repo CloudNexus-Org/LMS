@@ -8,8 +8,8 @@ import CartButton from "../courses/CartButton";
 import ExploreMegaMenu, { MobileExploreAccordion } from "./ExploreMegaMenu";
 import { SHELL_MAX_WIDTH, SHELL_PADDING } from "../ui/Container";
 
-import cnlg from "@/assets/navbar/white.png";
-import cnlg1 from "@/assets/navbar/Blac.png";
+import cnlg from "@/assets/navbar/white.webp";
+import cnlg1 from "@/assets/navbar/Blac.webp";
 
 import useSmartNavbar from "../../hooks/useSmartNavbar";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";

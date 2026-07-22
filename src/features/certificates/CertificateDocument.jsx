@@ -63,7 +63,7 @@ function Seal({ sealPathId }) {
         <circle cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" strokeWidth="1" opacity="0.35" />
         <circle cx="50" cy="50" r="40" fill="none" stroke="var(--primary)" strokeWidth="0.8" strokeDasharray="2 3" opacity="0.55" />
         <text fontSize="9" fontWeight="800" letterSpacing="2.4" fill="var(--primary)" fontFamily="var(--font-display, sans-serif)">
-          <textPath href={`#${sealPathId}`}>OFFICIAL · VERIFIED · CLOUD NEXUS · </textPath>
+          <textPath href={`#${sealPathId}`}>OFFICIAL · VERIFIED · REALM · </textPath>
         </text>
       </svg>
       <div className="cert-seal-center">
@@ -103,7 +103,7 @@ export default function CertificateDocument({ cert, className = "" }) {
         <header className="cert-header">
           <div className="cert-academy-row">
             <Award size={16} strokeWidth={2.2} />
-            <span className="cert-academy-name">Cloud Nexus Academy</span>
+            <span className="cert-academy-name">Realm Academy</span>
             <Award size={16} strokeWidth={2.2} className="cert-academy-icon-mirror" />
           </div>
           <div className="cert-header-divider" aria-hidden="true">

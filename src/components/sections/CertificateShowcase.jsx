@@ -160,7 +160,7 @@ function Seal() {
           fontFamily="var(--font-display, sans-serif)"
         >
           <textPath href="#seal-text-path">
-            OFFICIAL · VERIFIED · CLOUD NEXUS ·{" "}
+            OFFICIAL · VERIFIED · REALM ·{" "}
           </textPath>
         </text>
       </svg>
@@ -266,7 +266,7 @@ export default function CertificateShowcase() {
                   <div className="flex items-center gap-2 text-primary">
                     <Award size={18} strokeWidth={2.2} />
                     <span className="font-display text-[11px] font-bold tracking-[0.32em] text-text sm:text-[12px]">
-                      CLOUD NEXUS ACADEMY
+                      REALM ACADEMY
                     </span>
                     <Award
                       size={18}
@@ -385,7 +385,7 @@ export default function CertificateShowcase() {
                     CN-AWSA-8412
                   </span>
                   <span className="hidden font-mono text-subtle sm:inline">
-                    cloudnexus.com/verify
+                    realm.learn/verify
                   </span>
                   <span className="font-mono text-subtle">
                     Mar 2026 · 24h

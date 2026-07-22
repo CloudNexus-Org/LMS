@@ -228,11 +228,11 @@ export default function LoginPage() {
             </li>
             <li>
               <span className="font-medium text-text">Mentor:</span>{" "}
-              arjan@cloudnexus.com / Password123!
+              arjan@realm.learn / Password123!
             </li>
             <li>
               <span className="font-medium text-text">Admin:</span>{" "}
-              admin@cloudnexus.com / Password123!
+              admin@realm.learn / Password123!
             </li>
           </ul>
         </motion.div>

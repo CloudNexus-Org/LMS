@@ -1,17 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   Award,
-  BookOpen,
   CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
   Clock3,
+  Code2,
+  FileText,
   Globe,
   Heart,
-  Infinity,
+  Infinity as InfinityIcon,
   Layers3,
+  PlayCircle,
+  Search,
+  ShieldCheck,
   ShoppingCart,
+  Sparkles,
+  Star,
+  Users,
+  X,
 } from 'lucide-react';
 import {
   featuredCourses as mockCourses,
@@ -21,24 +33,118 @@ import {
 import { fetchCourseBySlug, fetchFeaturedCourses } from '@/lib/api/catalogApi';
 import { fetchCourseReviewSummary } from '@/lib/api/reviewApi';
 import Container from '@/components/ui/Container';
-import Button from '@/components/ui/Button';
 import CatalogCourseCard, {
   formatPrice,
   getDiscountPercent,
 } from '@/components/courses/CatalogCourseCard';
-import CourseRatingDisplay from '@/components/courses/CourseRatingDisplay';
 import CourseReviewsSection from '@/components/courses/CourseReviewsSection';
 import useCartStore from '@/store/useCartStore';
 import useWishlistStore from '@/store/useWishlistStore';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-const INCLUDES = [
-  { icon: BookOpen, label: 'On-demand video' },
-  { icon: Layers3, label: 'Structured modules' },
-  { icon: Award, label: 'Certificate of completion' },
-  { icon: Infinity, label: 'Lifetime access' },
-  { icon: Globe, label: 'English' },
+const DEFAULT_INSTRUCTORS = [
+  {
+    id: 'love-babbar',
+    name: 'Love Babbar',
+    roleBadge: 'Founder',
+    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    tagline: 'Previously worked at Amazon and Microsoft.',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&h=400&q=80',
+    highlights: [
+      { title: 'Senior Software Engineer', desc: 'Ex-Amazon & Ex-Microsoft SDE with extensive industry experience.' },
+      { title: 'Popular Mentor & Educator', desc: 'Known for simplified explanations and real-life teaching examples.' },
+      { title: 'Proven Student Success', desc: 'Ex-students now working at Microsoft, Amazon, Google, De-Shaw, and top firms.' },
+      { title: 'Expert DSA Mentor', desc: 'Skilled at breaking down complex computer concepts into easy-to-grasp lessons.' },
+    ],
+  },
+  {
+    id: 'lakshay-kumar',
+    name: 'Lakshay Kumar',
+    roleBadge: 'Lead Instructor',
+    badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+    tagline: 'Currently working at Adobe & Instructor at CodeHelp.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&h=400&q=80',
+    highlights: [
+      { title: 'Computer Scientist II at Adobe', desc: '6+ years of industry experience solving real-world production problems.' },
+      { title: 'Popular CodeHelp Instructor', desc: 'Known for simplified explanations and hands-on coding demos.' },
+      { title: 'Proven Student Placements', desc: 'Ex-students now working at Microsoft, Amazon, De-Shaw, and other top firms.' },
+      { title: 'Expert Problem Solver', desc: 'Skilled at breaking down computer concepts into easy-to-grasp lessons.' },
+    ],
+  },
+];
+
+const DEFAULT_MODULES = [
+  {
+    id: 'mod-1',
+    title: 'Namaste Coder !!',
+    lessons: [
+      { title: 'Welcome to Red', duration: '05:12', type: 'doc' },
+      { title: 'What is LIVE Dashboard', duration: '08:45', type: 'doc' },
+      { title: 'What is RED Dashboard', duration: '07:30', type: 'doc' },
+      { title: 'How to access Lectures', duration: '10:15', type: 'video' },
+      { title: 'How to Join Discord', duration: '04:20', type: 'doc' },
+      { title: 'How to clear Doubts', duration: '09:10', type: 'video' },
+      { title: 'How to download Course Certificate', duration: '06:00', type: 'doc' },
+      { title: 'How to Raise Issue/Tickets', duration: '05:50', type: 'doc' },
+    ],
+  },
+  {
+    id: 'mod-2',
+    title: 'Learn C++ & Flowcharts',
+    lessons: [
+      { title: 'Introduction to Programming & Flowcharts', duration: '45:00', type: 'video' },
+      { title: 'C++ Setup, Variables & Data Types', duration: '52:10', type: 'video' },
+      { title: 'Conditionals & Loop Patterns', duration: '1:15:00', type: 'video' },
+      { title: 'Bitwise Operators & Functions', duration: '1:05:00', type: 'video' },
+    ],
+  },
+  {
+    id: 'mod-3',
+    title: 'Programming in C++ & Data Structures',
+    lessons: [
+      { title: 'Arrays & Vector Operations', duration: '1:20:00', type: 'video' },
+      { title: '2D Arrays & Matrix Traversals', duration: '1:10:00', type: 'video' },
+      { title: 'Strings & Character Arrays Mastery', duration: '1:05:00', type: 'video' },
+      { title: 'Pointers & Dynamic Memory Allocation', duration: '1:35:00', type: 'video' },
+    ],
+  },
+  {
+    id: 'mod-4',
+    title: 'Recursion & Backtracking Roadmap',
+    lessons: [
+      { title: 'Recursion Fundamentals & Call Stack', duration: '1:10:00', type: 'video' },
+      { title: 'Divide & Conquer: Merge Sort & Quick Sort', duration: '1:40:00', type: 'video' },
+      { title: 'Backtracking: N-Queens & Maze Problems', duration: '2:05:00', type: 'video' },
+    ],
+  },
+  {
+    id: 'mod-5',
+    title: 'Advanced Data Structures (LinkedList, Trees & Graphs)',
+    lessons: [
+      { title: 'Singly & Doubly Linked List Operations', duration: '2:10:00', type: 'video' },
+      { title: 'Stacks & Queues with Monotonic Applications', duration: '2:20:00', type: 'video' },
+      { title: 'Binary Trees & Binary Search Trees', duration: '2:45:00', type: 'video' },
+      { title: 'Graph Traversals: BFS, DFS & Shortest Path', duration: '2:15:00', type: 'video' },
+    ],
+  },
+  {
+    id: 'mod-6',
+    title: 'Dynamic Programming & Interview Patterns',
+    lessons: [
+      { title: '1D DP & Memoization Patterns', duration: '1:50:00', type: 'video' },
+      { title: '2D DP Grid & Subset Sum Problems', duration: '2:30:00', type: 'video' },
+      { title: 'Top 50 FAANG Interview Problem Walkthrough', duration: '3:10:00', type: 'video' },
+    ],
+  },
+];
+
+const ROADMAP_STEPS = [
+  { step: '01', title: 'Basics & C++', desc: 'Flowcharts, Conditionals, Loops & Bitwise Operators' },
+  { step: '02', title: 'Arrays & Strings', desc: 'Vectors, 2D Matrices, Search & Sorting Patterns' },
+  { step: '03', title: 'Recursion & Trees', desc: 'Divide & Conquer, BSTs, Heaps & Backtracking' },
+  { step: '04', title: 'Graphs & DP', desc: 'BFS/DFS, Shortest Path, 1D/2D Dynamic Programming' },
+  { step: '05', title: 'FAANG Interview Prep', desc: 'System Design Basics, Mock Interviews & Resume Review' },
 ];
 
 export default function CourseDetailPage() {
@@ -48,6 +154,12 @@ export default function CourseDetailPage() {
   const [relatedCourses, setRelatedCourses] = useState(mockCourses);
   const [reviewSummary, setReviewSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  // Accordion state
+  const [expandedModules, setExpandedModules] = useState({ 'mod-1': true });
+  const [searchSectionQuery, setSearchSectionQuery] = useState('');
+  const [currentInstructorIdx, setCurrentInstructorIdx] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,27 +179,23 @@ export default function CourseDetailPage() {
         }
       })
       .finally(() => !cancelled && setLoading(false));
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
-  const track = useMemo(
-    () => (course ? findTrackForCourse(course.id) : null),
-    [course]
-  );
-
   const addToCart = useCartStore((s) => s.addItem);
-  const isInCart = useCartStore((s) =>
-    course ? s.isInCart(course.id) : false
-  );
+  const isInCart = useCartStore((s) => (course ? s.isInCart(course.id) : false));
   const toggleWishlist = useWishlistStore((s) => s.toggleItem);
-  const isWishlisted = useWishlistStore((s) =>
-    course ? s.isInWishlist(course.id) : false
-  );
+  const isWishlisted = useWishlistStore((s) => (course ? s.isInWishlist(course.id) : false));
 
   if (loading) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center text-muted">
-        Loading course…
+      <div className="flex min-h-[50vh] items-center justify-center text-muted">
+        <div className="flex items-center gap-2">
+          <Sparkles className="animate-spin text-primary" size={20} />
+          <span>Loading course details…</span>
+        </div>
       </div>
     );
   }
@@ -96,10 +204,10 @@ export default function CourseDetailPage() {
     return <Navigate to="/courses" replace />;
   }
 
-  const discount = getDiscountPercent(course.price, course.originalPrice);
-  const related = relatedCourses
-    .filter((c) => c.id !== course.id)
-    .slice(0, 4);
+  const discount = getDiscountPercent(course.price, course.originalPrice) || 41;
+  const originalPriceVal = course.originalPrice || 7000;
+  const priceVal = course.price || 4100;
+  const related = relatedCourses.filter((c) => c.id !== course.id).slice(0, 4);
 
   const handleCart = () => {
     if (isInCart) {
@@ -114,247 +222,462 @@ export default function CourseDetailPage() {
     navigate('/cart');
   };
 
+  const toggleModule = (id) => {
+    setExpandedModules((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const toggleAllModules = () => {
+    const allExpanded = DEFAULT_MODULES.every((m) => expandedModules[m.id]);
+    if (allExpanded) {
+      setExpandedModules({});
+    } else {
+      const next = {};
+      DEFAULT_MODULES.forEach((m) => (next[m.id] = true));
+      setExpandedModules(next);
+    }
+  };
+
+  const filteredModules = DEFAULT_MODULES.filter((m) => {
+    if (!searchSectionQuery.trim()) return true;
+    const q = searchSectionQuery.toLowerCase();
+    return (
+      m.title.toLowerCase().includes(q) ||
+      m.lessons.some((l) => l.title.toLowerCase().includes(q))
+    );
+  });
+
+  const nextInstructor = () => {
+    setCurrentInstructorIdx((prev) => (prev + 1) % DEFAULT_INSTRUCTORS.length);
+  };
+
+  const prevInstructor = () => {
+    setCurrentInstructorIdx((prev) => (prev - 1 + DEFAULT_INSTRUCTORS.length) % DEFAULT_INSTRUCTORS.length);
+  };
+
+  const currentInstructor = DEFAULT_INSTRUCTORS[currentInstructorIdx];
+
   return (
-    <div className="min-h-screen bg-page text-text">
-      <main id="main" className="relative pb-16 md:pb-24">
-        {/* Hero */}
-        <section className="relative overflow-hidden pt-[88px] pb-10 md:pt-[104px] md:pb-14">
+    <div className="min-h-screen bg-[#0d0e12] text-white">
+      {/* Top Banner Notice */}
+      {!bannerDismissed && (
+        <div className="relative bg-gradient-to-r from-indigo-950 via-purple-900 to-indigo-950 px-4 py-2.5 text-center text-xs font-semibold text-purple-200 border-b border-purple-800/40">
+          <div className="flex items-center justify-center gap-2">
+            <span className="inline-block h-2 w-2 rounded-full bg-purple-400 animate-pulse" />
+            <span>Run/Submit are not working, we are trying to resolve it asap</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setBannerDismissed(true)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-300 hover:text-white"
+            aria-label="Dismiss banner"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      <main id="main" className="relative pb-12 md:pb-16">
+        {/* Main Content Area: 2-Column Layout */}
+        <section className="relative overflow-hidden pt-6 pb-10 md:pt-8 md:pb-14">
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-24 left-[10%] h-[420px] w-[520px] rounded-full bg-primary-soft opacity-50 blur-[140px]"
+            className="pointer-events-none absolute -top-32 left-[10%] h-[500px] w-[600px] rounded-full bg-purple-600/10 opacity-40 blur-[150px]"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute top-0 right-[-8%] h-[360px] w-[400px] rounded-full bg-accent-soft opacity-40 blur-[120px]"
+            className="pointer-events-none absolute top-10 right-[-10%] h-[400px] w-[500px] rounded-full bg-indigo-600/10 opacity-30 blur-[130px]"
           />
 
           <Container size="lg">
-            <nav
-              aria-label="Breadcrumb"
-              className="mb-8 flex flex-wrap items-center gap-2 text-[13px] text-subtle"
-            >
-              <Link
-                to="/courses"
-                className="inline-flex items-center gap-1.5 text-muted transition-colors hover:text-primary"
-              >
-                <ArrowLeft size={13} aria-hidden />
-                All courses
+            {/* Breadcrumb */}
+            <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs text-neutral-400">
+              <Link to="/courses" className="inline-flex items-center gap-1 hover:text-white transition-colors">
+                <ArrowLeft size={12} />
+                All Courses
               </Link>
-              <span aria-hidden>/</span>
-              <span className="truncate text-text">{course.title}</span>
+              <span>/</span>
+              <span className="text-neutral-200 truncate">{course.title}</span>
             </nav>
 
-            <div className="grid items-start gap-10 lg:grid-cols-[1fr_380px] lg:gap-12">
-              {/* Left — content */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE }}
-              >
-                <div className="inline-flex items-center gap-2 rounded-lg border border-primary/25 bg-primary-soft px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary">
-                  {course.difficulty}
-                </div>
+            {/* 2-Column Grid Layout: Left Content Flow, Right Sticky Purchase Card */}
+            <div className="grid items-start gap-8 lg:grid-cols-[1fr_380px] lg:gap-12">
+              {/* Left Column Flow (Header -> Description -> What You'll Learn -> Course Content -> Roadmap -> Instructors -> Reviews) */}
+              <div className="space-y-10 md:space-y-12 min-w-0">
+                {/* 1. Header & Title Section */}
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                >
+                  <h1 className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl md:text-4xl">
+                    {course.title}
+                  </h1>
 
-                <h1 className="mt-4 font-display text-[28px] font-bold leading-[1.1] tracking-tight text-text sm:text-[36px] md:text-[42px]">
-                  {course.title}
-                </h1>
-
-                <p className="mt-3 text-[15px] text-muted md:text-[16px]">
-                  Taught by{' '}
-                  <span className="font-semibold text-text">{course.professor}</span>
-                </p>
-
-                <div className="mt-4">
-                  <CourseRatingDisplay
-                    course={course}
-                    reviewSummary={reviewSummary}
-                    size="md"
-                  />
-                </div>
-
-                <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-muted md:text-[16px]">
-                  {course.description}
-                </p>
-
-                <div className="mt-6 flex flex-wrap gap-3 text-[13px] text-muted">
-                  {[
-                    { icon: Clock3, label: course.duration },
-                    { icon: Layers3, label: `${course.modules} modules` },
-                    { icon: BookOpen, label: `${course.lessons} lessons` },
-                  ].map(({ icon: Icon, label }) => (
-                    <span
-                      key={label}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated/60 px-3 py-1.5"
-                    >
-                      <Icon size={14} className="text-primary" />
-                      {label}
+                  {/* Badges Pill Row */}
+                  <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold text-neutral-300">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-950/60 px-3 py-1 text-purple-300 backdrop-blur-md">
+                      <Star size={12} className="fill-warning text-warning" />
+                      <span>{course.rating || '4.9'} ({course.reviews || '3k+'} Ratings)</span>
                     </span>
-                  ))}
-                </div>
 
-                {track && (
-                  <div className="mt-8 rounded-xl border border-border bg-elevated/50 p-4 md:p-5">
-                    <p className="text-[12px] font-semibold uppercase tracking-wider text-subtle">
-                      Part of career track
-                    </p>
-                    <Link
-                      to={`/tracks/${track.id}`}
-                      className="mt-2 font-display text-[17px] font-bold text-text transition-colors hover:text-primary"
-                    >
-                      {track.name}
-                    </Link>
-                    <p className="mt-1 text-[13px] text-muted line-clamp-2">
-                      {track.tagline}
-                    </p>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-950/60 px-3 py-1 text-indigo-300 backdrop-blur-md">
+                      <Users size={12} />
+                      <span>{course.enrolled || '3k+'} students</span>
+                    </span>
+
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-950/60 px-3 py-1 text-purple-300 backdrop-blur-md">
+                      <Clock3 size={12} />
+                      <span>{course.duration || '295 Hours'}</span>
+                    </span>
+
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-950/60 px-3 py-1 text-indigo-300 backdrop-blur-md">
+                      <Layers3 size={12} />
+                      <span>{course.sectionsCount || course.modules || '41'} Sections</span>
+                    </span>
+
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-950/60 px-3 py-1 text-purple-300 backdrop-blur-md">
+                      <Globe size={12} />
+                      <span>Hindi</span>
+                    </span>
                   </div>
-                )}
 
-                {/* What you'll learn */}
-                {course.outcomes?.length > 0 && (
-                  <section className="mt-10 md:mt-12" aria-labelledby="outcomes-title">
-                    <h2
-                      id="outcomes-title"
-                      className="font-display text-[22px] font-bold tracking-tight text-text md:text-[26px]"
-                    >
-                      What you&apos;ll learn
-                    </h2>
-                    <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-                      {course.outcomes.map((outcome) => (
-                        <motion.li
-                          key={outcome}
-                          initial={{ opacity: 0, x: -8 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.35, ease: EASE }}
-                          className="flex items-start gap-2.5 text-[14px] leading-relaxed text-muted"
-                        >
-                          <CheckCircle2
-                            size={16}
-                            className="mt-0.5 shrink-0 text-success"
-                            strokeWidth={2.5}
-                          />
-                          {outcome}
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
+                  {/* Description */}
+                  <p className="mt-5 text-sm md:text-base leading-relaxed text-neutral-300">
+                    Master Data Structures and Algorithms in this LIVE DSA Course led by Love Babbar (Ex-Amazon, Ex-Microsoft SDE) and Lakshay Kumar (Computer Scientist at Adobe with 6+ years of experience). Learn problem-solving techniques, crack coding interviews, and build a strong foundation with personalized guidance from top industry experts.
+                  </p>
+                </motion.div>
 
-                {/* Includes — desktop only inline list */}
-                <section className="mt-10 hidden lg:block" aria-labelledby="includes-title">
-                  <h2
-                    id="includes-title"
-                    className="font-display text-[22px] font-bold tracking-tight text-text"
-                  >
-                    This course includes
+                {/* 2. What You'll Learn Section */}
+                <section aria-labelledby="outcomes-heading" className="rounded-2xl border border-white/10 bg-[#13141a] p-6 shadow-xl">
+                  <h2 id="outcomes-heading" className="font-display text-xl md:text-2xl font-bold text-white">
+                    What you'll learn
                   </h2>
-                  <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
-                    {INCLUDES.map(({ icon: Icon, label }) => (
-                      <li
-                        key={label}
-                        className="flex items-center gap-2.5 text-[14px] text-muted"
-                      >
-                        <Icon size={16} className="text-primary" />
-                        {label}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </motion.div>
+                  <p className="mt-1 text-xs text-neutral-400">
+                    Discover the key skills and concepts you'll master in this course to advance your programming expertise.
+                  </p>
 
-              {/* Right — purchase card */}
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {(course.outcomes?.length ? course.outcomes : [
+                      "Master Arrays, Vectors, Strings, Matrices, and Recursion",
+                      "Build strong foundation in LinkedList, Trees, BSTs & Graphs",
+                      "Solve 250+ FAANG Coding Interview Problems with optimal approach",
+                      "Master 1D/2D Dynamic Programming & Backtracking algorithms",
+                      "Learn C++ Memory Management, Pointers & System Design basics",
+                      "Get Certificate of Completion & Lifetime Discord Community Access"
+                    ]).map((item) => (
+                      <div key={item} className="flex items-start gap-2.5 text-xs md:text-sm text-neutral-300">
+                        <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-purple-400" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* 3. Course Content Accordion Section */}
+                <section aria-labelledby="content-heading">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h2 id="content-heading" className="font-display text-2xl md:text-3xl font-bold text-white">
+                        Course Content
+                      </h2>
+                      <p className="mt-1 text-xs text-neutral-400">
+                        Explore detailed modules, lessons, and hands-on coding exercises.
+                      </p>
+                    </div>
+
+                    {/* Search sections */}
+                    <div className="relative min-w-[240px]">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                      <input
+                        type="text"
+                        value={searchSectionQuery}
+                        onChange={(e) => setSearchSectionQuery(e.target.value)}
+                        placeholder="Search sections..."
+                        className="h-10 w-full rounded-xl border border-white/10 bg-[#13141a] pl-9 pr-4 text-xs text-white placeholder:text-neutral-500 outline-none focus:border-purple-500/50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Modules Accordion List */}
+                  <div className="mt-6 space-y-3">
+                    {filteredModules.map((mod) => {
+                      const isExpanded = !!expandedModules[mod.id];
+                      return (
+                        <div
+                          key={mod.id}
+                          className="overflow-hidden rounded-xl border border-white/10 bg-[#13141a] transition-all duration-200"
+                        >
+                          {/* Header */}
+                          <button
+                            type="button"
+                            onClick={() => toggleModule(mod.id)}
+                            className="flex w-full items-center justify-between p-4 text-left font-semibold text-sm text-white hover:bg-white/5 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="font-bold text-purple-400">{mod.title}</span>
+                              <span className="text-xs font-normal text-neutral-400">
+                                ({mod.lessons.length} lessons)
+                              </span>
+                            </div>
+                            {isExpanded ? <ChevronUp size={16} className="text-neutral-400" /> : <ChevronDown size={16} className="text-neutral-400" />}
+                          </button>
+
+                          {/* Content Lessons */}
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25 }}
+                                className="border-t border-white/5 bg-[#0f1015] px-4 py-3 space-y-2"
+                              >
+                                {mod.lessons.map((lesson) => (
+                                  <div
+                                    key={lesson.title}
+                                    className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-neutral-300 hover:bg-white/5 transition-colors"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      {lesson.type === 'video' ? (
+                                        <PlayCircle size={14} className="text-purple-400 shrink-0" />
+                                      ) : (
+                                        <FileText size={14} className="text-neutral-400 shrink-0" />
+                                      )}
+                                      <span>{lesson.title}</span>
+                                    </div>
+                                    <span className="text-neutral-500 font-mono text-[11px]">{lesson.duration}</span>
+                                  </div>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Show All Modules Button */}
+                  <div className="mt-5 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={toggleAllModules}
+                      className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#13141a] px-6 py-2.5 text-xs font-semibold text-neutral-300 hover:border-white/20 hover:text-white transition-all"
+                    >
+                      <span>{DEFAULT_MODULES.every((m) => expandedModules[m.id]) ? 'Collapse all modules' : 'Show all modules'}</span>
+                      <ChevronDown size={14} />
+                    </button>
+                  </div>
+                </section>
+
+                {/* 4. Full Roadmap Timeline Section */}
+                <section aria-labelledby="roadmap-heading" className="rounded-2xl border border-white/10 bg-[#0f1015] p-6">
+                  <span className="text-xs font-bold uppercase tracking-widest text-purple-400">Step by Step Path</span>
+                  <h2 id="roadmap-heading" className="mt-1 font-display text-xl md:text-2xl font-bold text-white">
+                    Course Learning Roadmap
+                  </h2>
+                  <p className="mt-1 text-xs text-neutral-400">
+                    Structured path designed to take you from foundational concepts to FAANG interview readiness.
+                  </p>
+
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {ROADMAP_STEPS.map((s) => (
+                      <div key={s.step} className="rounded-xl border border-white/10 bg-[#13141a] p-4 shadow-md">
+                        <span className="font-display text-xl font-extrabold text-purple-500/50">{s.step}</span>
+                        <h3 className="mt-1 text-sm font-bold text-white">{s.title}</h3>
+                        <p className="mt-1 text-xs text-neutral-400 leading-relaxed">{s.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* 5. Our Instructors Section */}
+                <section aria-labelledby="instructors-heading">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 id="instructors-heading" className="font-display text-xl md:text-2xl font-bold text-white">
+                        Our Instructors
+                      </h2>
+                      <p className="mt-1 text-xs text-neutral-400">
+                        Passionate mentors dedicated to fuelling your coding journey at CodeHelp.
+                      </p>
+                    </div>
+
+                    {/* Slider Controls */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={prevInstructor}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#13141a] text-neutral-300 hover:border-white/20 hover:text-white transition-all"
+                        aria-label="Previous instructor"
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={nextInstructor}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#13141a] text-neutral-300 hover:border-white/20 hover:text-white transition-all"
+                        aria-label="Next instructor"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Instructor Card */}
+                  <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-[#13141a] p-5 md:p-6">
+                    <div className="grid items-center gap-6 sm:grid-cols-[160px_1fr]">
+                      {/* Avatar */}
+                      <div className="flex flex-col items-center text-center">
+                        <img
+                          src={currentInstructor.image}
+                          alt={currentInstructor.name}
+                          className="h-36 w-36 rounded-2xl object-cover border-2 border-purple-500/30 shadow-xl"
+                        />
+                      </div>
+
+                      {/* Info & Highlights Grid */}
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-display text-xl font-bold text-white">
+                            {currentInstructor.name}
+                          </h3>
+                          <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${currentInstructor.badgeColor}`}>
+                            {currentInstructor.roleBadge}
+                          </span>
+                        </div>
+
+                        <p className="mt-1 text-xs text-neutral-300 font-medium">
+                          {currentInstructor.tagline}
+                        </p>
+
+                        {/* Highlights 2x2 Grid */}
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                          {currentInstructor.highlights.map((h) => (
+                            <div key={h.title} className="rounded-xl border border-white/5 bg-[#0d0e12] p-3">
+                              <div className="flex items-center gap-1.5 text-xs font-bold text-purple-300">
+                                <Code2 size={13} />
+                                <span>{h.title}</span>
+                              </div>
+                              <p className="mt-1 text-[11px] text-neutral-400 leading-relaxed">
+                                {h.desc}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 6. Student Reviews */}
+                <section className="pt-2">
+                  <CourseReviewsSection course={course} reviewSummary={reviewSummary} />
+                </section>
+              </div>
+
+              {/* Right Column: Sticky Purchase Card */}
               <motion.aside
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE, delay: 0.08 }}
+                transition={{ duration: 0.55, ease: EASE, delay: 0.1 }}
                 className="lg:sticky lg:top-24"
               >
-                <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-[var(--shadow-elevated)]">
-                  <div className="relative aspect-video overflow-hidden bg-elevated">
+                <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#13141a] shadow-2xl backdrop-blur-xl">
+                  <div className="relative aspect-video overflow-hidden bg-neutral-900">
                     <img
                       src={course.image}
-                      alt=""
+                      alt={course.title}
                       className="h-full w-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     {discount > 0 && (
-                      <span className="absolute left-3 top-3 rounded-md bg-success px-2.5 py-1 text-[11px] font-bold text-white">
-                        {discount}% off
+                      <span className="absolute left-3 top-3 rounded-md bg-emerald-500 px-2.5 py-1 text-xs font-bold text-white shadow-md">
+                        {discount}% Off
                       </span>
                     )}
                   </div>
 
-                  <div className="p-5">
-                    <div className="flex flex-wrap items-baseline gap-2">
-                      <span className="font-display text-[28px] font-bold text-primary">
-                        {formatPrice(course.price)}
+                  <div className="p-6">
+                    {/* Pricing */}
+                    <div className="flex items-baseline gap-2.5">
+                      <span className="font-display text-3xl font-extrabold text-white">
+                        {formatPrice(priceVal)}
                       </span>
-                      {course.originalPrice > course.price && (
-                        <span className="text-[14px] text-muted line-through">
-                          {formatPrice(course.originalPrice)}
+                      <span className="text-sm text-neutral-400 line-through">
+                        {formatPrice(originalPriceVal)}
+                      </span>
+                      {discount > 0 && (
+                        <span className="rounded-md bg-purple-500/20 border border-purple-500/30 px-2 py-0.5 text-xs font-bold text-purple-300">
+                          {discount}% Off
                         </span>
                       )}
                     </div>
+                    <p className="mt-1 text-xs text-neutral-400 font-medium">
+                      (Included in subscription)
+                    </p>
 
-                    <div className="mt-3 border-t border-border pt-4">
-                      <CourseRatingDisplay
-                        course={course}
-                        reviewSummary={reviewSummary}
-                        size="sm"
-                      />
-                    </div>
-
-                    <div className="mt-4 flex flex-col gap-2.5">
-                      <Button
-                        size="lg"
-                        fullWidth
+                    {/* Action Buttons */}
+                    <div className="mt-6 flex flex-col gap-3">
+                      <button
+                        type="button"
                         onClick={handleBuyNow}
+                        className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:from-purple-600 hover:to-indigo-700 active:scale-[0.98]"
                       >
-                        Buy now
-                      </Button>
-                      <Button
-                        size="lg"
-                        variant="secondary"
-                        fullWidth
-                        leftIcon={<ShoppingCart size={16} />}
+                        Buy Course
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={handleCart}
+                        className="w-full rounded-xl border border-white/15 bg-white/5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/10 active:scale-[0.98] flex items-center justify-center gap-2"
                       >
-                        {isInCart ? 'View cart' : 'Add to cart'}
-                      </Button>
+                        <ShoppingCart size={16} />
+                        {isInCart ? 'Go to Cart' : 'Add to Cart'}
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => toggleWishlist(course)}
-                        className={`
-                          inline-flex w-full items-center justify-center gap-2 rounded-lg border
-                          px-4 py-2.5 text-[14px] font-semibold transition-colors
-                          ${isWishlisted
-                            ? 'border-danger/30 bg-danger/10 text-danger'
-                            : 'border-border bg-elevated text-text hover:border-primary hover:text-primary'
-                          }
-                        `}
+                        className={`w-full rounded-xl border py-2.5 text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+                          isWishlisted
+                            ? 'border-red-500/40 bg-red-500/10 text-red-400'
+                            : 'border-white/10 bg-neutral-900/80 text-neutral-300 hover:border-white/20'
+                        }`}
                       >
-                        <Heart
-                          size={16}
-                          className={isWishlisted ? 'fill-current' : ''}
-                        />
-                        {isWishlisted ? 'Saved to wishlist' : 'Add to wishlist'}
+                        <Heart size={14} className={isWishlisted ? 'fill-current' : ''} />
+                        {isWishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}
                       </button>
                     </div>
 
-                    <p className="mt-4 text-center text-[12px] text-subtle">
-                      30-day money-back guarantee
-                    </p>
+                    <div className="mt-5 border-t border-white/10 pt-4 text-center">
+                      <p className="text-xs text-neutral-400 flex items-center justify-center gap-1.5">
+                        <ShieldCheck size={14} className="text-emerald-400" />
+                        <span>30-day money-back guarantee</span>
+                      </p>
+                    </div>
 
-                    <ul className="mt-5 space-y-2.5 border-t border-border pt-5 lg:hidden">
-                      {INCLUDES.map(({ icon: Icon, label }) => (
-                        <li
-                          key={label}
-                          className="flex items-center gap-2.5 text-[13px] text-muted"
-                        >
-                          <Icon size={15} className="text-primary" />
-                          {label}
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Included Features */}
+                    <div className="mt-5 space-y-2 border-t border-white/10 pt-4 text-xs text-neutral-300">
+                      <div className="flex items-center gap-2">
+                        <PlayCircle size={14} className="text-purple-400" />
+                        <span>On-demand video lectures & LIVE sessions</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FileText size={14} className="text-indigo-400" />
+                        <span>Downloadable DSA Cheat Sheets & Notes</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Award size={14} className="text-purple-400" />
+                        <span>Certificate of Completion</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <InfinityIcon size={14} className="text-indigo-400" />
+                        <span>Lifetime Access & Discord Doubt Support</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.aside>
@@ -362,34 +685,23 @@ export default function CourseDetailPage() {
           </Container>
         </section>
 
-        <section className="border-t border-border">
-          <Container size="lg">
-            <CourseReviewsSection course={course} reviewSummary={reviewSummary} />
-          </Container>
-        </section>
-
-        {/* Related courses */}
+        {/* Related Courses */}
         {related.length > 0 && (
-          <section className="border-t border-border py-12 md:py-16">
+          <section className="border-t border-white/5 py-12 md:py-16">
             <Container size="lg">
-              <div className="flex flex-wrap items-end justify-between gap-3">
+              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-subtle">
-                    Keep learning
-                  </p>
-                  <h2 className="mt-1 font-display text-[24px] font-bold tracking-tight text-text md:text-[28px]">
-                    Related courses
+                  <span className="text-xs font-bold uppercase tracking-widest text-purple-400">Keep Learning</span>
+                  <h2 className="mt-1 font-display text-2xl font-bold text-white">
+                    Related Courses
                   </h2>
                 </div>
-                <Link
-                  to="/courses"
-                  className="inline-flex items-center justify-center text-[13px] font-semibold text-primary hover:text-primary-hover"
-                >
-                  Browse all
+                <Link to="/courses" className="text-xs font-semibold text-purple-400 hover:underline">
+                  Browse All Courses
                 </Link>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {related.map((c) => (
                   <CatalogCourseCard key={c.id} course={c} />
                 ))}

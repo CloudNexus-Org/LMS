@@ -412,9 +412,9 @@ export default function AdminReportsPage() {
           </button>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {topMentorsData.map((mentor) => (
+          {topMentorsData.map((mentor, idx) => (
             <div
-              key={mentor.name}
+              key={mentor.id || `mentor-${idx}`}
               className="rounded-xl border border-border bg-bg/50 p-4 transition-all duration-200 hover:border-primary/25"
             >
               <div className="mb-4 flex items-center gap-3">

@@ -106,10 +106,35 @@ export async function fetchTrackProgress(user, token, trackId) {
   return getJson(`${base}/api/enrollments/progress/tracks/${trackId}`, authHeaders(user, token));
 }
 
-export async function completeLesson(user, token, lessonId, trackId) {
+export async function completeLesson(user, token, lessonId, trackId, options = {}) {
   return postJson(
     `${base}/api/enrollments/progress/lessons/${lessonId}/complete`,
-    { trackId },
+    {
+      trackId,
+      requireQuizPass: options.requireQuizPass === true ? true : undefined,
+    },
+    authHeaders(user, token)
+  );
+}
+
+export async function submitQuizAttempt(user, token, lessonId, payload) {
+  return postJson(
+    `${base}/api/enrollments/progress/lessons/${lessonId}/quiz-attempts`,
+    payload,
+    authHeaders(user, token)
+  );
+}
+
+export async function fetchQuizAttempts(user, token, lessonId) {
+  return getJson(
+    `${base}/api/enrollments/progress/lessons/${lessonId}/quiz-attempts`,
+    authHeaders(user, token)
+  );
+}
+
+export async function fetchLessonProgressStatus(user, token, lessonId, trackId) {
+  return getJson(
+    `${base}/api/enrollments/progress/lessons/${lessonId}/status?trackId=${encodeURIComponent(trackId)}`,
     authHeaders(user, token)
   );
 }

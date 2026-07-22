@@ -1,9 +1,15 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { getStoredJSON, setStoredJSON } from "@/utils/storage";
 import useAuthStore from "@/store/useAuthStore";
-import { completeLesson, fetchTrackProgress, finishTrackLearning } from "@/lib/api/enrollmentApi";
+import {
+  completeLesson,
+  fetchTrackProgress,
+  finishTrackLearning,
+  submitQuizAttempt,
+} from "@/lib/api/enrollmentApi";
 
 const completedKey = (trackId) => `cn:progress:${trackId}`;
+const quizPassedKey = (trackId) => `cn:quiz-passed:${trackId}`;
 const progressTotalKey = (trackId) => `cn:progress:${trackId}:total`;
 
 export function lessonProgressKey(lesson) {
@@ -17,8 +23,23 @@ function isLessonComplete(completed, lesson) {
   return !!(completed[key] || completed[lesson.id]);
 }
 
+function lessonHasQuiz(lesson) {
+  return !!(lesson?.hasQuiz || lesson?.quiz?.questions?.length);
+}
+
 function mergeApiProgress(stored, requiredLessons, data) {
   const next = { ...stored };
+  if (Array.isArray(data.completedLessonIds) && data.completedLessonIds.length) {
+    const idSet = new Set(data.completedLessonIds.map(String));
+    requiredLessons.forEach((l) => {
+      if (idSet.has(String(l.id)) || idSet.has(String(l.apiId))) {
+        const key = lessonProgressKey(l);
+        if (key != null) next[key] = true;
+        next[l.id] = true;
+      }
+    });
+    return next;
+  }
   if (data.progress >= 100) {
     requiredLessons.forEach((l) => {
       const key = lessonProgressKey(l);
@@ -41,6 +62,9 @@ export function useCourseProgress({ trackId, lessons, progressTotal: progressTot
 
   const [completed, setCompleted] = useState(() =>
     getStoredJSON(completedKey(trackId), {})
+  );
+  const [quizPassed, setQuizPassed] = useState(() =>
+    getStoredJSON(quizPassedKey(trackId), {})
   );
   const finishCalled = useRef(false);
 
@@ -84,6 +108,20 @@ export function useCourseProgress({ trackId, lessons, progressTotal: progressTot
         setCompleted(next);
         setStoredJSON(completedKey(trackId), next);
         setStoredJSON(progressTotalKey(trackId), progressTotal);
+
+        if (Array.isArray(data.quizPassedLessonIds)) {
+          const qp = { ...getStoredJSON(quizPassedKey(trackId), {}) };
+          const idSet = new Set(data.quizPassedLessonIds.map(String));
+          requiredLessons.forEach((l) => {
+            if (idSet.has(String(l.id)) || idSet.has(String(l.apiId))) {
+              qp[l.id] = true;
+              const key = lessonProgressKey(l);
+              if (key != null) qp[key] = true;
+            }
+          });
+          setQuizPassed(qp);
+          setStoredJSON(quizPassedKey(trackId), qp);
+        }
       })
       .catch(() => {});
   }, [user?.id, token, trackId, lessons, progressTotal, requiredLessons]);
@@ -99,10 +137,57 @@ export function useCourseProgress({ trackId, lessons, progressTotal: progressTot
 
   const trackComplete = progressPct >= 100;
 
+  const lessonCleared = useCallback(
+    (lesson) => {
+      if (!lesson) return false;
+      const done = isLessonComplete(completed, lesson);
+      if (!done) return false;
+      if (!lessonHasQuiz(lesson)) return true;
+      const key = lessonProgressKey(lesson);
+      return !!(quizPassed[key] || quizPassed[lesson.id]);
+    },
+    [completed, quizPassed]
+  );
+
+  const isLessonUnlocked = useCallback(
+    (lessonOrIndex) => {
+      if (!requiredLessons.length) return true;
+      const index =
+        typeof lessonOrIndex === "number"
+          ? lessonOrIndex
+          : requiredLessons.findIndex((l) => String(l.id) === String(lessonOrIndex?.id));
+      if (index <= 0) return true;
+      if (index < 0) return true;
+      return lessonCleared(requiredLessons[index - 1]);
+    },
+    [requiredLessons, lessonCleared]
+  );
+
+  const getLessonStatus = useCallback(
+    (lesson) => {
+      const unlocked = isLessonUnlocked(lesson);
+      const done = isLessonComplete(completed, lesson);
+      const hasQuiz = lessonHasQuiz(lesson);
+      const key = lessonProgressKey(lesson);
+      const passed = !!(quizPassed[key] || quizPassed[lesson?.id]);
+      if (!unlocked) return "locked";
+      if (done && hasQuiz && !passed) return "quiz_pending";
+      if (done && (!hasQuiz || passed)) return "completed";
+      if (passed) return "quiz_passed";
+      return "available";
+    },
+    [completed, quizPassed, isLessonUnlocked]
+  );
+
   const maybeFinishTrack = useCallback(
-    (nextMap) => {
+    (nextMap, nextQuiz) => {
       if (!requiredLessons.length || !user?.id || !token || finishCalled.current) return;
-      const requiredDone = requiredLessons.every((l) => isLessonComplete(nextMap, l));
+      const requiredDone = requiredLessons.every((l) => {
+        if (!isLessonComplete(nextMap, l)) return false;
+        if (!lessonHasQuiz(l)) return true;
+        const key = lessonProgressKey(l);
+        return !!(nextQuiz[key] || nextQuiz[l.id]);
+      });
       if (!requiredDone) return;
       finishCalled.current = true;
       finishTrackLearning(user, token, trackId).catch(() => {
@@ -123,10 +208,10 @@ export function useCourseProgress({ trackId, lessons, progressTotal: progressTot
         if (!Number.isNaN(numericId)) {
           completeLesson(user, token, numericId, trackId).catch(() => {});
         }
-        maybeFinishTrack(nextMap);
+        maybeFinishTrack(nextMap, quizPassed);
       }
     },
-    [trackId, user, token, maybeFinishTrack, progressTotal, lessons]
+    [trackId, user, token, maybeFinishTrack, progressTotal, lessons, quizPassed]
   );
 
   const toggleLessonComplete = useCallback(
@@ -154,9 +239,48 @@ export function useCourseProgress({ trackId, lessons, progressTotal: progressTot
       const key = lessonProgressKey(lesson) ?? lessonId;
       if (completed[key] || completed[lessonId]) return;
       const next = { ...completed, [key]: true };
+      if (String(key) !== String(lessonId)) next[lessonId] = true;
       syncComplete(lessonId, next);
     },
     [completed, syncComplete, lessons]
+  );
+
+  const markQuizPassed = useCallback(
+    async (lessonId, attemptPayload = {}) => {
+      const lesson = lessons?.find((l) => String(l.id) === String(lessonId));
+      const key = lessonProgressKey(lesson) ?? lessonId;
+      const nextQuiz = { ...quizPassed, [key]: true, [lessonId]: true };
+      setQuizPassed(nextQuiz);
+      setStoredJSON(quizPassedKey(trackId), nextQuiz);
+
+      if (user?.id && token) {
+        const numericId = Number(lesson?.apiId ?? lessonId);
+        if (!Number.isNaN(numericId)) {
+          try {
+            await submitQuizAttempt(user, token, numericId, {
+              trackId,
+              score: attemptPayload.score ?? attemptPayload.correct ?? 0,
+              totalQuestions: attemptPayload.total ?? attemptPayload.totalQuestions ?? 1,
+              passingScore: attemptPayload.passingScore ?? 70,
+              passed: true,
+              answers: attemptPayload.answers,
+            });
+          } catch {
+            /* local state still updated */
+          }
+        }
+      }
+
+      // Ensure lesson is marked complete when quiz is passed
+      if (!(completed[key] || completed[lessonId])) {
+        const nextCompleted = { ...completed, [key]: true, [lessonId]: true };
+        syncComplete(lessonId, nextCompleted);
+        maybeFinishTrack(nextCompleted, nextQuiz);
+      } else {
+        maybeFinishTrack(completed, nextQuiz);
+      }
+    },
+    [quizPassed, trackId, user, token, lessons, completed, syncComplete, maybeFinishTrack]
   );
 
   const completedMap = useMemo(() => {
@@ -172,13 +296,31 @@ export function useCourseProgress({ trackId, lessons, progressTotal: progressTot
     return map;
   }, [completed, lessons]);
 
+  const quizPassedMap = useMemo(() => {
+    if (!lessons?.length) return quizPassed;
+    const map = { ...quizPassed };
+    for (const l of lessons) {
+      const key = lessonProgressKey(l);
+      if (quizPassed[key] || quizPassed[l.id]) {
+        if (key != null) map[key] = true;
+        map[l.id] = true;
+      }
+    }
+    return map;
+  }, [quizPassed, lessons]);
+
   return {
     completedMap,
+    quizPassedMap,
     doneCount,
     progressPct,
     progressTotal,
     trackComplete,
     toggleLessonComplete,
     markLessonComplete,
+    markQuizPassed,
+    isLessonUnlocked,
+    getLessonStatus,
+    lessonHasQuiz,
   };
 }

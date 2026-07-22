@@ -450,7 +450,7 @@ export default function AdminDashboardPage() {
             Platform <span className="text-primary">Overview</span>
           </p>
           <p className="dashboard-greeting-sub">
-            Global metrics, system health &amp; insights for Cloud Nexus.
+            Global metrics, system health &amp; insights for Realm.
           </p>
         </div>
 

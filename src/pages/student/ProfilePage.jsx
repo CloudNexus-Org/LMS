@@ -802,7 +802,7 @@ export default function ProfilePage() {
   });
 
   const {
-    loading,
+    loading: _loading,
     profile,
     stats,
     coursesInProgress,

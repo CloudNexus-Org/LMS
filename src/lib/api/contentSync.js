@@ -54,6 +54,9 @@ export function courseToUiModules(course) {
       contentUrl: l.contentUrl,
       readingContent: l.readingContent,
       mediaFileId: l.mediaFileId,
+      quiz: l.quiz || null,
+      hasQuiz: l.hasQuiz ?? !!(l.quiz?.questions?.length),
+      uploadInProgress: !!l.uploadInProgress,
     })),
   }));
 }
@@ -131,6 +134,8 @@ export async function syncCurriculumToBackend(user, token, courseId, modules) {
         contentUrl: lesson.contentUrl || undefined,
         readingContent: lesson.readingContent || undefined,
         summary: lesson.summary || undefined,
+        quiz: lesson.quiz || undefined,
+        uploadInProgress: !!lesson.uploadInProgress,
       };
 
       if (!lesson.serverId) {

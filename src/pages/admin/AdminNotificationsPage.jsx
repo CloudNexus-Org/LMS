@@ -117,7 +117,7 @@ const NOTIFICATIONS = [
     type: "deployment",
     priority: "normal",
     title: "Platform deployment successful",
-    content: "Cloud Nexus v1.2.4 deployed to production. Zero-downtime rollout completed across all regions.",
+    content: "Realm v1.2.4 deployed to production. Zero-downtime rollout completed across all regions.",
     time: "2 days ago",
     unread: false,
     action: null,

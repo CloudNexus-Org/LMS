@@ -12,6 +12,7 @@ import {
   ListChecks,
   Award,
   Radio,
+  Lock,
 } from "lucide-react";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -35,6 +36,8 @@ export const SidebarOutline = memo(function SidebarOutline({
   lessons,
   currentId,
   completedMap,
+  quizPassedMap = {},
+  getLessonStatus,
   onPick,
   onClose,
 }) {
@@ -146,13 +149,19 @@ export const SidebarOutline = memo(function SidebarOutline({
                     {courseLessons.map((l) => {
                       const isActive = String(l.id) === String(currentId);
                       const isDone = !!completedMap[l.id];
+                      const status = getLessonStatus?.(l) || (isDone ? "completed" : "available");
+                      const isLocked = status === "locked";
+                      const quizPending = status === "quiz_pending";
+                      const quizPassed = !!(quizPassedMap[l.id] || status === "quiz_passed" || status === "completed");
                       const Icon = TYPE_ICON[l.type] || PlayCircle;
 
                       return (
                         <li key={l.id}>
                           <button
                             type="button"
+                            disabled={isLocked}
                             onClick={() => {
+                              if (isLocked) return;
                               setCollapsed((prev) => {
                                 const next = new Set(prev);
                                 next.delete(gi);
@@ -161,13 +170,22 @@ export const SidebarOutline = memo(function SidebarOutline({
                               onPick(l);
                             }}
                             aria-current={isActive ? "true" : undefined}
-                            className={`learn-lesson-row ${isActive ? "learn-lesson-row-active" : ""}`}
+                            title={
+                              isLocked
+                                ? "Complete previous lesson quiz to unlock"
+                                : quizPending
+                                  ? "Quiz pending"
+                                  : undefined
+                            }
+                            className={`learn-lesson-row ${isActive ? "learn-lesson-row-active" : ""} ${isLocked ? "opacity-50 cursor-not-allowed" : ""}`}
                           >
                             <span
                               className={`learn-lesson-status ${isDone ? "learn-lesson-done" : isActive ? "learn-lesson-playing" : ""}`}
                               aria-hidden
                             >
-                              {isDone ? (
+                              {isLocked ? (
+                                <Lock size={14} />
+                              ) : isDone && quizPassed ? (
                                 <CheckCircle2 size={14} />
                               ) : isActive ? (
                                 <Radio size={14} className="learn-now-playing" />
@@ -177,6 +195,15 @@ export const SidebarOutline = memo(function SidebarOutline({
                             </span>
                             <span className="min-w-0 flex-1">
                               <span className="learn-lesson-name">{l.title}</span>
+                              {quizPending ? (
+                                <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-wide text-warning">
+                                  Quiz pending
+                                </span>
+                              ) : isLocked ? (
+                                <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-wide text-muted">
+                                  Locked
+                                </span>
+                              ) : null}
                               <span className="learn-lesson-meta-row">
                                 <Icon size={10} aria-hidden />
                                 {TYPE_LABEL[l.type]}

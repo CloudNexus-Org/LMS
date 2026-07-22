@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { toCourseSummary } from '@/data/courses';
+import { toCourseSummary } from '@/lib/courseSummary';
 
 const useWishlistStore = create(
   persist(
@@ -25,7 +25,7 @@ const useWishlistStore = create(
 
       isInWishlist: (id) => get().items.some((item) => item.id === id),
     }),
-    { name: 'cloud-nexus-wishlist' }
+    { name: 'realm-wishlist' }
   )
 );
 

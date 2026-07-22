@@ -42,7 +42,7 @@ export default function CourseApprovalsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [selected, setSelected] = useState(null);
-  const [actionError, setActionError] = useState('');
+  const [_actionError, setActionError] = useState('');
 
   useEffect(() => {
     if (!user || !token) {

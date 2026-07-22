@@ -86,7 +86,7 @@ export default function Courses() {
       setCanScrollNext(emblaApi.canScrollNext());
       setSelectedIndex(emblaApi.selectedScrollSnap());
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // Keyboard navigation
   useEffect(() => {
@@ -170,7 +170,7 @@ export default function Courses() {
             onMouseLeave={() => emblaApi?.plugins()?.autoplay?.play()}
           >
             <div className="flex gap-4 px-4 md:gap-6 md:px-6">
-              {courses.map((course, i) => (
+              {courses.map((course) => (
                 <div
                   key={course.id}
                   className="flex-none w-full sm:w-[300px] md:w-[320px]"

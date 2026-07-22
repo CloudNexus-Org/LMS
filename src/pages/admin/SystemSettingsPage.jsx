@@ -83,8 +83,8 @@ export default function SystemSettingsPage() {
     mentorAutoApprove: false,
     commission: 30,
     minPayout: 100,
-    platformName: 'Cloud Nexus',
-    supportEmail: 'support@cloudnexus.io',
+    platformName: 'Realm',
+    supportEmail: 'support@realm.learn',
     maxFileSize: 500,
     maxVideoSize: 4096,
   });

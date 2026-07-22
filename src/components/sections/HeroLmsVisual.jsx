@@ -1,9 +1,9 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Star, Clock3, Users, TrendingUp, Award } from "lucide-react";
 
-import AWS from "@/assets/courses/image1.png";
-import Azure from "@/assets/courses/image2.png";
-import KUBERNETES from "@/assets/courses/image8.png";
+import AWS from "@/assets/courses/thumbs/image1.webp";
+import Azure from "@/assets/courses/thumbs/image2.webp";
+import KUBERNETES from "@/assets/courses/thumbs/image8.webp";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -76,6 +76,10 @@ function CourseCard({ course, index, reduced }) {
           <img
             src={course.image}
             alt={course.title}
+            width={76}
+            height={76}
+            decoding="async"
+            fetchPriority={index === 0 ? "high" : "low"}
             className="h-full w-full object-cover"
           />
         </div>

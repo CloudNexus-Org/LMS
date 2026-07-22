@@ -349,7 +349,7 @@ export function buildAdminReportsSnapshot({
   revenueReport = [],
   courseReport = [],
   mentors = [],
-  approvals = [],
+  _approvals = [],
   allUsers = [],
   catalogCourses = [],
 } = {}) {

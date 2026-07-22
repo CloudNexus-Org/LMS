@@ -4,8 +4,8 @@ import Button from "../ui/Button";
 import Container from "../ui/Container";
 import HeroBackdrop from "./HeroBackdrop";
 import HeroLmsVisual from "./HeroLmsVisual";
-import HeroLight from "../../assets/hero-section/custom_light_bg.png";
-import HeroDark from "../../assets/hero-section/custom_dark_bg.png";
+import HeroLight from "../../assets/hero-section/custom_light_bg.webp";
+import HeroDark from "../../assets/hero-section/custom_dark_bg.webp";
 import useIsDarkTheme from "../../hooks/useIsDarkTheme";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -108,7 +108,7 @@ export default function Hero() {
                 text-muted
               "
             >
-              Cloud Nexus offers career-focused learning in cloud, AI, devops,
+              Realm offers career-focused learning in cloud, AI, devops,
               and full-stack development taught by expert mentors.
             </motion.p>
 

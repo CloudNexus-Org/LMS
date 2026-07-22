@@ -23,8 +23,8 @@ import { fetchTrack } from '@/lib/api/catalogApi';
 import { getMentorBySlug } from '@/data/mentors';
 import Container from '@/components/ui/Container';
 import useIsDarkTheme from '@/hooks/useIsDarkTheme';
-import bgDark from '@/assets/hero-section/custom_dark_bg.png';
-import bgLight from '@/assets/hero-section/custom_light_bg.png';
+import bgDark from '@/assets/hero-section/custom_dark_bg.webp';
+import bgLight from '@/assets/hero-section/custom_light_bg.webp';
 import {
   EASE,
   SectionTitle,
@@ -405,7 +405,7 @@ export default function TrackDetailPage() {
                   </p>
                   <p className="mt-3 max-w-[700px] text-[14px] leading-relaxed text-muted">
                     {mentor?.longBio ||
-                      `${leadMentorName} leads the ${track.name} track at Cloud Nexus and brings deep production experience to every cohort.`}
+                      `${leadMentorName} leads the ${track.name} track at Realm and brings deep production experience to every cohort.`}
                   </p>
                   {mentor?.specialties?.length ? (
                     <div className="mt-5 flex flex-wrap gap-2">

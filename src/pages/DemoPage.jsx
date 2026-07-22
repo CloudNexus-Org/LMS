@@ -70,7 +70,7 @@ export default function DemoPage() {
           <span className="gradient-text">never before</span>
         </h1>
         <p className="mt-4 max-w-[640px] text-center text-[15px] leading-7 text-muted md:text-[17px]">
-          A 90-second walkthrough of the Cloud Nexus learner workspace &mdash;
+          A 90-second walkthrough of the Realm learner workspace &mdash;
           mentors, modules, and live sessions in one place.
         </p>
 
@@ -81,7 +81,7 @@ export default function DemoPage() {
                 <iframe
                   className="aspect-video w-full"
                   src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1`}
-                  title="Cloud Nexus product demo"
+                  title="Realm product demo"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
@@ -94,7 +94,7 @@ export default function DemoPage() {
                 >
                   <img
                     src={`https://i.ytimg.com/vi/${VIDEO_ID}/maxresdefault.jpg`}
-                    alt="Cloud Nexus product demo thumbnail"
+                    alt="Realm product demo thumbnail"
                     className="h-full w-full object-cover"
                     loading="lazy"
                   />
