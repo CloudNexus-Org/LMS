@@ -122,6 +122,39 @@ function ensureFreePreviewLesson(modules) {
   return modules;
 }
 
+const ROADMAP_STEPS = [
+  { step: '01', title: 'Basics & C++', desc: 'Flowcharts, Conditionals, Loops & Bitwise Operators' },
+  { step: '02', title: 'Arrays & Strings', desc: 'Vectors, 2D Matrices, Search & Sorting Patterns' },
+  { step: '03', title: 'Recursion & Trees', desc: 'Divide & Conquer, BSTs, Heaps & Backtracking' },
+  { step: '04', title: 'Graphs & DP', desc: 'BFS/DFS, Shortest Path, 1D/2D Dynamic Programming' },
+  { step: '05', title: 'FAANG Interview Prep', desc: 'System Design Basics, Mock Interviews & Resume Review' },
+];
+
+const DEFAULT_INSTRUCTORS = [
+  {
+    id: 'love-babbar',
+    name: 'Love Babbar',
+    roleBadge: 'Founder',
+    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    tagline: 'Previously worked at Amazon and Microsoft.',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&h=400&q=80',
+    highlights: [
+      { title: 'Senior Software Engineer', desc: 'Ex-Amazon & Ex-Microsoft SDE with extensive industry experience.' },
+      { title: 'Popular Mentor & Educator', desc: 'Known for simplified explanations and real-life teaching examples.' },
+      { title: 'Proven Student Success', desc: 'Ex-students now working at Microsoft, Amazon, Google, De-Shaw, and top firms.' },
+      { title: 'Expert DSA Mentor', desc: 'Skilled at breaking down complex computer concepts into easy-to-grasp lessons.' },
+    ],
+  }
+];
+
+function safeJsonParse(str, fallback) {
+  try {
+    return str ? JSON.parse(str) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
 const INITIAL_FORM = {
   title: "",
   subtitle: "",
@@ -132,6 +165,8 @@ const INITIAL_FORM = {
   requirements: "",
   language: "English",
   tags: [],
+  roadmap: ROADMAP_STEPS,
+  instructors: DEFAULT_INSTRUCTORS,
 };
 
 const pageVariants = {
@@ -396,6 +431,8 @@ export default function UploadCoursePage() {
           tags: course.tags?.length ? course.tags : prev.tags,
           outcomes: course.outcomes?.length ? course.outcomes : prev.outcomes,
           requirements: course.requirements || prev.requirements,
+          roadmap: safeJsonParse(course.roadmap, prev.roadmap),
+          instructors: safeJsonParse(course.instructors, prev.instructors),
         }));
         if (course.pricingPlan) setPricingModel(course.pricingPlan);
         if (course.price != null) setCustomPrice(String(course.price));
@@ -1162,6 +1199,200 @@ export default function UploadCoursePage() {
                           placeholder="Add tag…"
                           className="min-w-[80px] flex-1 bg-transparent text-sm outline-none"
                         />
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-2 border-t border-border/60 pt-4">
+                      <FieldLabel>Course Learning Roadmap</FieldLabel>
+                      <p className="mb-3 text-xs text-muted">Define the step-by-step milestones students will achieve in this course.</p>
+                      <div className="space-y-3">
+                        {form.roadmap?.map((step, i) => (
+                          <div key={i} className="flex flex-col gap-2 rounded-xl border border-border/80 bg-surface/30 p-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-primary">Step {String(i + 1).padStart(2, '0')}</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const next = form.roadmap.filter((_, idx) => idx !== i);
+                                  updateForm("roadmap", next);
+                                }}
+                                className="text-muted hover:text-danger"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                            <div className="grid gap-2 sm:grid-cols-3">
+                              <div className="sm:col-span-1">
+                                <FieldInput
+                                  value={step.title}
+                                  onChange={(e) => {
+                                    const next = [...form.roadmap];
+                                    next[i] = { ...step, title: e.target.value };
+                                    updateForm("roadmap", next);
+                                  }}
+                                  placeholder="Milestone Title (e.g., Arrays & Strings)"
+                                />
+                              </div>
+                              <div className="sm:col-span-2">
+                                <FieldInput
+                                  value={step.desc}
+                                  onChange={(e) => {
+                                    const next = [...form.roadmap];
+                                    next[i] = { ...step, desc: e.target.value };
+                                    updateForm("roadmap", next);
+                                  }}
+                                  placeholder="Milestone Description (e.g., Vectors, 2D Matrices, Search Patterns)"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = [...(form.roadmap || [])];
+                            const stepNum = String(next.length + 1).padStart(2, '0');
+                            next.push({ step: stepNum, title: "", desc: "" });
+                            updateForm("roadmap", next);
+                          }}
+                          className="upload-btn upload-btn-outline upload-btn-sm"
+                        >
+                          <Plus size={14} className="mr-1" /> Add Milestone Step
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-2 border-t border-border/60 pt-4">
+                      <FieldLabel>Course Instructors</FieldLabel>
+                      <p className="mb-3 text-xs text-muted">Add one or more instructors who will teach this course.</p>
+                      <div className="space-y-4">
+                        {form.instructors?.map((inst, i) => (
+                          <div key={i} className="flex flex-col gap-3 rounded-xl border border-border/80 bg-surface/30 p-4">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-accent">Instructor #{i + 1}</span>
+                              {form.instructors.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = form.instructors.filter((_, idx) => idx !== i);
+                                    updateForm("instructors", next);
+                                  }}
+                                  className="text-muted hover:text-danger"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
+                            </div>
+                            <div className="grid gap-3 sm:grid-cols-2">
+                              <div>
+                                <FieldLabel>Full Name</FieldLabel>
+                                <FieldInput
+                                  value={inst.name}
+                                  onChange={(e) => {
+                                    const next = [...form.instructors];
+                                    next[i] = { ...inst, name: e.target.value };
+                                    updateForm("instructors", next);
+                                  }}
+                                  placeholder="Instructor Name"
+                                />
+                              </div>
+                              <div>
+                                <FieldLabel>Role/Badge Title</FieldLabel>
+                                <FieldInput
+                                  value={inst.roleBadge}
+                                  onChange={(e) => {
+                                    const next = [...form.instructors];
+                                    next[i] = { ...inst, roleBadge: e.target.value };
+                                    updateForm("instructors", next);
+                                  }}
+                                  placeholder="e.g. Founder, Lead Instructor"
+                                />
+                              </div>
+                              <div className="sm:col-span-2">
+                                <FieldLabel>Tagline</FieldLabel>
+                                <FieldInput
+                                  value={inst.tagline}
+                                  onChange={(e) => {
+                                    const next = [...form.instructors];
+                                    next[i] = { ...inst, tagline: e.target.value };
+                                    updateForm("instructors", next);
+                                  }}
+                                  placeholder="e.g. Ex-Amazon & Ex-Microsoft SDE"
+                                />
+                              </div>
+                              <div className="sm:col-span-2">
+                                <FieldLabel>Avatar Image URL</FieldLabel>
+                                <FieldInput
+                                  value={inst.image}
+                                  onChange={(e) => {
+                                    const next = [...form.instructors];
+                                    next[i] = { ...inst, image: e.target.value };
+                                    updateForm("instructors", next);
+                                  }}
+                                  placeholder="https://images.unsplash.com/... or media URL"
+                                />
+                              </div>
+                            </div>
+                            <div className="mt-2 space-y-2">
+                              <span className="text-[11px] font-bold text-muted uppercase tracking-wider">Instructor Highlights (4 Bullet Points)</span>
+                              <div className="grid gap-2 sm:grid-cols-2">
+                                {(inst.highlights || [{}, {}, {}, {}]).map((h, hIdx) => (
+                                  <div key={hIdx} className="rounded-lg bg-surface/50 p-2.5 space-y-1">
+                                    <span className="text-[10px] font-semibold text-primary">Highlight {hIdx + 1}</span>
+                                    <FieldInput
+                                      value={h.title || ""}
+                                      onChange={(e) => {
+                                        const next = [...form.instructors];
+                                        const nextHighlights = [...(inst.highlights || [{}, {}, {}, {}])];
+                                        nextHighlights[hIdx] = { ...h, title: e.target.value };
+                                        next[i] = { ...inst, highlights: nextHighlights };
+                                        updateForm("instructors", next);
+                                      }}
+                                      className="text-xs py-1"
+                                      placeholder="Title (e.g. Proven Success)"
+                                    />
+                                    <FieldInput
+                                      value={h.desc || ""}
+                                      onChange={(e) => {
+                                        const next = [...form.instructors];
+                                        const nextHighlights = [...(inst.highlights || [{}, {}, {}, {}])];
+                                        nextHighlights[hIdx] = { ...h, desc: e.target.value };
+                                        next[i] = { ...inst, highlights: nextHighlights };
+                                        updateForm("instructors", next);
+                                      }}
+                                      className="text-xs py-1"
+                                      placeholder="Brief Description"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = [...(form.instructors || [])];
+                            next.push({
+                              id: 'inst-' + Date.now(),
+                              name: "",
+                              roleBadge: "Instructor",
+                              badgeColor: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                              tagline: "",
+                              image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&h=400&q=80",
+                              highlights: [
+                                { title: "", desc: "" },
+                                { title: "", desc: "" },
+                                { title: "", desc: "" },
+                                { title: "", desc: "" }
+                              ]
+                            });
+                            updateForm("instructors", next);
+                          }}
+                          className="upload-btn upload-btn-outline upload-btn-sm"
+                        >
+                          <Plus size={14} className="mr-1" /> Add Instructor
+                        </button>
                       </div>
                     </div>
                   </div>

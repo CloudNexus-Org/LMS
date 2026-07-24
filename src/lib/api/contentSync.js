@@ -167,6 +167,8 @@ export function buildCoursePayload(form, thumbnailUrl) {
     requirements: form.requirements?.trim() || '',
     trackId: trackIdForCategory(form.category),
     thumbnailUrl: thumbnailUrl || undefined,
+    roadmap: form.roadmap ? JSON.stringify(form.roadmap) : undefined,
+    instructors: form.instructors ? JSON.stringify(form.instructors) : undefined,
   };
 }
 

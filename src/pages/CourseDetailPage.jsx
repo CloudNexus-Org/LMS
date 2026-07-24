@@ -31,6 +31,7 @@ import {
 } from '@/data/courses';
 import { fetchCourseBySlug, fetchFeaturedCourses } from '@/lib/api/catalogApi';
 import { fetchCourseReviewSummary } from '@/lib/api/reviewApi';
+import { fetchCatalogCourseCurriculum } from '@/lib/api/contentApi';
 import Container from '@/components/ui/Container';
 import CatalogCourseCard, {
   formatPrice,
@@ -155,29 +156,72 @@ export default function CourseDetailPage() {
   const [loading, setLoading] = useState(true);
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
+  // Dynamic Course Elements
+  const [courseCurriculum, setCourseCurriculum] = useState([]);
+  const [courseRoadmap, setCourseRoadmap] = useState([]);
+  const [courseInstructors, setCourseInstructors] = useState([]);
+
   // Accordion state
-  const [expandedModules, setExpandedModules] = useState({ 'mod-1': true });
+  const [expandedModules, setExpandedModules] = useState({});
   const [searchSectionQuery, setSearchSectionQuery] = useState('');
   const [currentInstructorIdx, setCurrentInstructorIdx] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    Promise.all([
-      fetchCourseBySlug(slug).catch(() => getCourseBySlug(slug)),
-      fetchFeaturedCourses().catch(() => mockCourses),
-    ])
-      .then(([c, all]) => {
+    
+    fetchCourseBySlug(slug)
+      .catch(() => getCourseBySlug(slug))
+      .then((c) => {
         if (cancelled) return;
         setCourse(c);
-        setRelatedCourses(all || mockCourses);
+        
+        const promises = [
+          fetchFeaturedCourses().catch(() => mockCourses),
+        ];
+        
         if (c?.id) {
-          fetchCourseReviewSummary(c.id)
-            .then((s) => !cancelled && setReviewSummary(s))
-            .catch(() => {});
+          promises.push(fetchCourseReviewSummary(c.id).catch(() => null));
+          promises.push(fetchCatalogCourseCurriculum(c.id).catch(() => []));
+        } else {
+          promises.push(Promise.resolve(null));
+          promises.push(Promise.resolve([]));
         }
+        
+        return Promise.all(promises).then(([all, summary, curriculum]) => {
+          if (cancelled) return;
+          setRelatedCourses(all || mockCourses);
+          setReviewSummary(summary);
+          
+          const finalCurr = (curriculum && curriculum.length > 0) ? curriculum : DEFAULT_MODULES;
+          setCourseCurriculum(finalCurr);
+          if (finalCurr.length > 0) {
+            setExpandedModules({ [finalCurr[0].id]: true });
+          }
+          
+          let parsedRoadmap = ROADMAP_STEPS;
+          if (c?.roadmap) {
+            try {
+              parsedRoadmap = JSON.parse(c.roadmap);
+            } catch (e) {
+              /* ignore */
+            }
+          }
+          setCourseRoadmap(parsedRoadmap);
+
+          let parsedInstructors = DEFAULT_INSTRUCTORS;
+          if (c?.instructors) {
+            try {
+              parsedInstructors = JSON.parse(c.instructors);
+            } catch (e) {
+              /* ignore */
+            }
+          }
+          setCourseInstructors(parsedInstructors);
+        });
       })
       .finally(() => !cancelled && setLoading(false));
+
     return () => {
       cancelled = true;
     };
@@ -229,17 +273,17 @@ export default function CourseDetailPage() {
   };
 
   const toggleAllModules = () => {
-    const allExpanded = DEFAULT_MODULES.every((m) => expandedModules[m.id]);
+    const allExpanded = courseCurriculum.every((m) => expandedModules[m.id]);
     if (allExpanded) {
       setExpandedModules({});
     } else {
       const next = {};
-      DEFAULT_MODULES.forEach((m) => (next[m.id] = true));
+      courseCurriculum.forEach((m) => (next[m.id] = true));
       setExpandedModules(next);
     }
   };
 
-  const filteredModules = DEFAULT_MODULES.filter((m) => {
+  const filteredModules = courseCurriculum.filter((m) => {
     if (!searchSectionQuery.trim()) return true;
     const q = searchSectionQuery.toLowerCase();
     return (
@@ -249,14 +293,16 @@ export default function CourseDetailPage() {
   });
 
   const nextInstructor = () => {
-    setCurrentInstructorIdx((prev) => (prev + 1) % DEFAULT_INSTRUCTORS.length);
+    if (!courseInstructors.length) return;
+    setCurrentInstructorIdx((prev) => (prev + 1) % courseInstructors.length);
   };
 
   const prevInstructor = () => {
-    setCurrentInstructorIdx((prev) => (prev - 1 + DEFAULT_INSTRUCTORS.length) % DEFAULT_INSTRUCTORS.length);
+    if (!courseInstructors.length) return;
+    setCurrentInstructorIdx((prev) => (prev - 1 + courseInstructors.length) % courseInstructors.length);
   };
 
-  const currentInstructor = DEFAULT_INSTRUCTORS[currentInstructorIdx];
+  const currentInstructor = courseInstructors[currentInstructorIdx] || DEFAULT_INSTRUCTORS[0];
 
   return (
     <div className="min-h-screen bg-[#0d0e12] text-white">
@@ -336,16 +382,11 @@ export default function CourseDetailPage() {
                       <Layers3 size={12} />
                       <span>{course.sectionsCount || course.modules || '41'} Sections</span>
                     </span>
-
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-950/60 px-3 py-1 text-purple-300 backdrop-blur-md">
-                      <Globe size={12} />
-                      <span>Hindi</span>
-                    </span>
                   </div>
 
                   {/* Description */}
                   <p className="mt-5 text-sm md:text-base leading-relaxed text-neutral-300">
-                    Master Data Structures and Algorithms in this LIVE DSA Course led by Love Babbar (Ex-Amazon, Ex-Microsoft SDE) and Lakshay Kumar (Computer Scientist at Adobe with 6+ years of experience). Learn problem-solving techniques, crack coding interviews, and build a strong foundation with personalized guidance from top industry experts.
+                    {course.description || "Master Data Structures and Algorithms in this LIVE DSA Course led by Love Babbar (Ex-Amazon, Ex-Microsoft SDE) and Lakshay Kumar (Computer Scientist at Adobe with 6+ years of experience). Learn problem-solving techniques, crack coding interviews, and build a strong foundation with personalized guidance from top industry experts."}
                   </p>
                 </motion.div>
 
@@ -465,7 +506,7 @@ export default function CourseDetailPage() {
                       onClick={toggleAllModules}
                       className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#13141a] px-6 py-2.5 text-xs font-semibold text-neutral-300 hover:border-white/20 hover:text-white transition-all"
                     >
-                      <span>{DEFAULT_MODULES.every((m) => expandedModules[m.id]) ? 'Collapse all modules' : 'Show all modules'}</span>
+                      <span>{courseCurriculum.every((m) => expandedModules[m.id]) ? 'Collapse all modules' : 'Show all modules'}</span>
                       <ChevronDown size={14} />
                     </button>
                   </div>
@@ -482,7 +523,7 @@ export default function CourseDetailPage() {
                   </p>
 
                   <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {ROADMAP_STEPS.map((s) => (
+                    {courseRoadmap.map((s) => (
                       <div key={s.step} className="rounded-xl border border-white/10 bg-[#13141a] p-4 shadow-md">
                         <span className="font-display text-xl font-extrabold text-purple-500/50">{s.step}</span>
                         <h3 className="mt-1 text-sm font-bold text-white">{s.title}</h3>

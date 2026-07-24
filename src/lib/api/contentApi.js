@@ -123,6 +123,14 @@ export async function fetchCatalogCourseLessons(catalogCourseId) {
   return (Array.isArray(list) ? list : []).map(mapLesson);
 }
 
+export async function fetchCatalogCourseCurriculum(catalogCourseId) {
+  const list = await getJson(`${base}/api/content/catalog-courses/${catalogCourseId}/curriculum`);
+  return (Array.isArray(list) ? list : []).map(mod => ({
+    ...mod,
+    lessons: (mod.lessons || []).map(mapLesson)
+  }));
+}
+
 export async function fetchLesson(lessonId) {
   const id = String(lessonId ?? '');
   if (!/^\d+$/.test(id)) return null;
