@@ -106,10 +106,35 @@ export async function fetchTrackProgress(user, token, trackId) {
   return getJson(`${base}/api/enrollments/progress/tracks/${trackId}`, authHeaders(user, token));
 }
 
-export async function completeLesson(user, token, lessonId, trackId) {
+export async function completeLesson(user, token, lessonId, trackId, options = {}) {
   return postJson(
     `${base}/api/enrollments/progress/lessons/${lessonId}/complete`,
-    { trackId },
+    {
+      trackId,
+      requireQuizPass: options.requireQuizPass === true ? true : undefined,
+    },
+    authHeaders(user, token)
+  );
+}
+
+export async function submitQuizAttempt(user, token, lessonId, payload) {
+  return postJson(
+    `${base}/api/enrollments/progress/lessons/${lessonId}/quiz-attempts`,
+    payload,
+    authHeaders(user, token)
+  );
+}
+
+export async function fetchQuizAttempts(user, token, lessonId) {
+  return getJson(
+    `${base}/api/enrollments/progress/lessons/${lessonId}/quiz-attempts`,
+    authHeaders(user, token)
+  );
+}
+
+export async function fetchLessonProgressStatus(user, token, lessonId, trackId) {
+  return getJson(
+    `${base}/api/enrollments/progress/lessons/${lessonId}/status?trackId=${encodeURIComponent(trackId)}`,
     authHeaders(user, token)
   );
 }
@@ -128,6 +153,22 @@ export async function fetchEnrollmentDashboard(user, token) {
 
 export async function checkEnrollment(user, token, trackId) {
   return getJson(`${base}/api/enrollments/check/${trackId}`, authHeaders(user, token));
+}
+
+/** Active enrollment counts keyed by catalog course id. */
+export async function fetchEnrollmentCountsByCourse(courseIds = []) {
+  const ids = [...new Set((courseIds || []).map(Number).filter((id) => Number.isFinite(id) && id > 0))];
+  if (!ids.length) return {};
+  const data = await getJson(`${base}/api/enrollments/counts?courseIds=${ids.join(',')}`);
+  const map = {};
+  if (data && typeof data === 'object') {
+    Object.entries(data).forEach(([courseId, count]) => {
+      const n = Number(count) || 0;
+      map[String(courseId)] = n;
+      map[Number(courseId)] = n;
+    });
+  }
+  return map;
 }
 
 export async function finishTrackLearning(user, token, trackId) {

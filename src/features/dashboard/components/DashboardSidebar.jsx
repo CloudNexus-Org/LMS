@@ -31,7 +31,6 @@ const navConfig = {
   mentor: [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/mentor/dashboard' },
     { name: 'Manage Lessons', icon: BookOpen, path: '/mentor/lessons' },
-    { name: 'Quizzes', icon: ListChecks, path: '/mentor/quizzes' },
     { name: 'Upload Course', icon: UploadCloud, path: '/mentor/upload' },
     { name: 'Analytics', icon: BarChart, path: '/mentor/analytics' },
     { name: 'Students', icon: Users, path: '/mentor/students' },

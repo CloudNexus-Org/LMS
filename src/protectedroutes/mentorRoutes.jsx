@@ -13,9 +13,6 @@ const UploadCoursePage = lazy(() => import("@/pages/mentor/UploadCoursePage"));
 const ManageLessonsPage = lazy(() =>
   import("@/pages/mentor/ManageLessonsPage")
 );
-const ManageQuizzesPage = lazy(() =>
-  import("@/pages/mentor/ManageQuizzesPage")
-);
 const AnalyticsPage = lazy(() => import("@/pages/mentor/AnalyticsPage"));
 const StudentsPage = lazy(() => import("@/pages/mentor/StudentsPage"));
 const MentorNotificationsPage = lazy(() =>
@@ -33,7 +30,7 @@ export const mentorRoutes = (
       <Route path="dashboard" element={<MentorDashboardPage />} />
       <Route path="upload" element={<UploadCoursePage />} />
       <Route path="lessons" element={<ManageLessonsPage />} />
-      <Route path="quizzes" element={<ManageQuizzesPage />} />
+      <Route path="quizzes" element={<Navigate to="/mentor/lessons" replace />} />
       <Route
         path="revenue"
         element={<Navigate to="/mentor/analytics" replace />}

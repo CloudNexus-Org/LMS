@@ -9,9 +9,11 @@ import {
 import { Link } from 'react-router-dom';
 import useAuthStore from '@/store/useAuthStore';
 import { fetchCourseDrafts, publishCourse, fetchCourse, deleteCourse, deleteLesson } from '@/lib/api/contentApi';
-import { fetchMentorHubDashboard } from '@/lib/api/mentorApi';
+import { fetchMentorHubDashboard, fetchMentorStudentCountsByCourse } from '@/lib/api/mentorApi';
 import { fetchMentorDashboard } from '@/lib/api/analyticsApi';
+import { fetchEnrollmentCountsByCourse } from '@/lib/api/enrollmentApi';
 import { CONTENT_CHANGED, mapDraftToManageCourse } from '@/lib/api/contentSync';
+import { resolveMediaUrl } from '@/lib/api/mediaApi';
 import { parseApiError } from '@/lib/api/apiHelpers';
 
 function LessonTypeIcon({ type }) {
@@ -32,6 +34,7 @@ export default function ManageLessonsPage() {
   });
 
   const [courseDetails, setCourseDetails] = useState({});
+  const [previewLessonId, setPreviewLessonId] = useState(null);
 
   const loadCourses = useCallback(() => {
     if (!user?.id || !token) {
@@ -44,26 +47,72 @@ export default function ManageLessonsPage() {
     Promise.all([
       fetchCourseDrafts(user, token).catch(() => []),
       fetchMentorHubDashboard(user, token).catch(() => null),
+      fetchMentorStudentCountsByCourse(user, token).catch(() => ({})),
       fetchMentorDashboard(user, token).catch(() => null),
     ])
-      .then(async ([list, hub, analytics]) => {
+      .then(async ([list, hub, mentorCounts, analytics]) => {
         const mapped = Array.isArray(list) ? list.map(mapDraftToManageCourse) : [];
-        setCourses(mapped);
-        setExpandedCourse((prev) => {
-          if (prev != null && mapped.some((c) => c.id === prev)) return prev;
-          return mapped[0]?.id ?? null;
+        const catalogIds = [...new Set(
+          mapped
+            .map((c) => c.catalogCourseId)
+            .filter((id) => id != null && Number(id) > 0)
+            .map(Number)
+        )];
+
+        const enrollmentCounts = catalogIds.length
+          ? await fetchEnrollmentCountsByCourse(catalogIds).catch(() => ({}))
+          : {};
+
+        const withStudents = mapped.map((course) => {
+          const catalogId = course.catalogCourseId != null ? Number(course.catalogCourseId) : null;
+          const fromEnrollment =
+            catalogId != null
+              ? (enrollmentCounts[catalogId] ?? enrollmentCounts[String(catalogId)] ?? null)
+              : null;
+          const fromMentor =
+            catalogId != null
+              ? (mentorCounts[catalogId] ?? mentorCounts[String(catalogId)] ?? null)
+              : null;
+          const students = Number(
+            fromEnrollment ?? fromMentor ?? course.students ?? 0
+          ) || 0;
+          return { ...course, students };
         });
+
+        setCourses(withStudents);
+        setExpandedCourse((prev) => {
+          if (prev != null && withStudents.some((c) => c.id === prev)) return prev;
+          return withStudents[0]?.id ?? null;
+        });
+
+        const enrolledSum = withStudents.reduce((sum, c) => sum + (c.students || 0), 0);
         setSummary({
-          totalStudents: hub?.totalStudents ?? analytics?.students ?? 0,
+          totalStudents: enrolledSum > 0 ? enrolledSum : Number(hub?.totalStudents) || 0,
           totalRevenue: analytics?.revenue ?? 0,
           avgRating: hub?.rating ?? analytics?.rating ?? 0,
         });
 
-        if (mapped.length && user?.id && token) {
+        if (withStudents.length && user?.id && token) {
           const entries = await Promise.all(
-            mapped.map((course) =>
+            withStudents.map((course) =>
               fetchCourse(user, token, course.id)
-                .then((full) => [course.id, mapDraftToManageCourse(full)])
+                .then((full) => {
+                  const detail = mapDraftToManageCourse(full);
+                  const catalogId = detail.catalogCourseId ?? course.catalogCourseId;
+                  const students =
+                    Number(
+                      (catalogId != null
+                        ? enrollmentCounts[catalogId] ??
+                          enrollmentCounts[String(catalogId)] ??
+                          mentorCounts[catalogId] ??
+                          mentorCounts[String(catalogId)]
+                        : null) ??
+                        detail.students ??
+                        course.students ??
+                        0
+                    ) || 0;
+                  return [course.id, { ...detail, catalogCourseId: catalogId, students }];
+                })
                 .catch(() => [course.id, course])
             )
           );
@@ -98,16 +147,6 @@ export default function ManageLessonsPage() {
       } catch {
         /* keep summary */
       }
-    }
-  };
-
-  const handlePublish = async (courseId) => {
-    if (!user?.id || !token) return;
-    try {
-      await publishCourse(user, token, courseId);
-      loadCourses();
-    } catch {
-      /* keep UI state */
     }
   };
 
@@ -184,7 +223,7 @@ export default function ManageLessonsPage() {
           <p className="text-muted mt-1 font-medium">Build, edit, and organize your entire curriculum.</p>
         </div>
         <Link
-          to="/mentor/upload"
+          to="/mentor/upload?new=1"
          className="
                   relative
                   inline-flex
@@ -492,52 +531,99 @@ export default function ManageLessonsPage() {
                         </Link>
                       </div>
                     ) : (
-                    lessons.map((lesson, idx) => (
-                      <div key={lesson.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-bg/40 transition-colors group">
-                        <GripVertical className="h-4 w-4 text-border group-hover:text-muted transition-colors cursor-grab flex-shrink-0" />
+                    lessons.map((lesson, idx) => {
+                      const videoUrl = resolveMediaUrl(lesson.contentUrl || lesson.mediaFileId);
+                      const hasVideo = Boolean(videoUrl);
 
-                        <span className="text-xs font-bold text-muted w-5 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
+                      return (
+                        <div key={lesson.id} className="flex flex-col gap-2 px-5 py-3.5 hover:bg-bg/40 transition-colors group">
+                          <div className="flex items-center gap-4">
+                            <GripVertical className="h-4 w-4 text-border group-hover:text-muted transition-colors cursor-grab flex-shrink-0" />
 
-                        <div className={`h-7 w-7 rounded-[5px] flex items-center justify-center flex-shrink-0 ${
-                          lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
-                        }`}>
-                          <LessonTypeIcon type={lesson.type} />
-                        </div>
+                            <span className="text-xs font-bold text-muted w-5 flex-shrink-0">{String(idx + 1).padStart(2, '0')}</span>
 
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-text truncate">{lesson.title}</p>
-                        </div>
+                            <div className={`h-7 w-7 rounded-[5px] flex items-center justify-center flex-shrink-0 ${
+                              lesson.type === 'quiz' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
+                            }`}>
+                              <LessonTypeIcon type={lesson.type} />
+                            </div>
 
-                        <div className="flex items-center gap-3 flex-shrink-0">
-                          {lesson.free && (
-                            <span className="text-[10px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-lg uppercase tracking-wider">Free</span>
-                          )}
-                          {!lesson.free && (
-                            <Lock className="h-3.5 w-3.5 text-muted" />
-                          )}
-                          <span className="text-xs font-medium text-muted flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {lesson.duration}
-                          </span>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider ${
-                            lesson.published ? 'bg-success/10 text-success' : 'bg-border text-muted'
-                          }`}>{lesson.published ? 'Live' : 'Draft'}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-text truncate">{lesson.title}</p>
+                              {hasVideo && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-success mt-0.5">
+                                  <CheckCircle2 className="h-3 w-3" /> Video Attached
+                                </span>
+                              )}
+                            </div>
 
-                          <div className="hidden group-hover:flex items-center gap-1">
-                            <button className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 transition-all">
-                              <Edit3 className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteLesson(course.id, lesson.id)}
-                              className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 transition-all"
-                              title="Delete lesson"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
+                            <div className="flex items-center gap-3 flex-shrink-0">
+                              {hasVideo && (
+                                <button
+                                  type="button"
+                                  onClick={() => setPreviewLessonId(previewLessonId === lesson.id ? null : lesson.id)}
+                                  className="inline-flex items-center gap-1 rounded border border-border bg-surface px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-elevated transition-colors shadow-sm"
+                                >
+                                  <Eye className="h-3.5 w-3.5" />
+                                  {previewLessonId === lesson.id ? 'Hide Video' : 'Check Video'}
+                                </button>
+                              )}
+                              {lesson.free && (
+                                <span className="text-[10px] font-bold bg-success/10 text-success px-2 py-0.5 rounded-lg uppercase tracking-wider">Free</span>
+                              )}
+                              {!lesson.free && (
+                                <Lock className="h-3.5 w-3.5 text-muted" />
+                              )}
+                              <span className="text-xs font-medium text-muted flex items-center gap-1">
+                                <Clock className="h-3 w-3" /> {lesson.duration}
+                              </span>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg uppercase tracking-wider ${
+                                lesson.published ? 'bg-success/10 text-success' : 'bg-border text-muted'
+                              }`}>{lesson.published ? 'Live' : 'Draft'}</span>
+
+                              <div className="hidden group-hover:flex items-center gap-1">
+                                <Link
+                                  to={`/mentor/upload?courseId=${course.id}`}
+                                  className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-primary hover:border-primary/40 transition-all"
+                                  title="Edit lesson"
+                                >
+                                  <Edit3 className="h-3.5 w-3.5" />
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteLesson(course.id, lesson.id)}
+                                  className="h-7 w-7 flex items-center justify-center rounded-[5px] border border-border text-muted hover:text-danger hover:border-danger/40 transition-all"
+                                  title="Delete lesson"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            </div>
                           </div>
+
+                          {/* Video Player Preview inside Manage Lessons accordion */}
+                          {previewLessonId === lesson.id && hasVideo && (
+                            <div className="mt-2 overflow-hidden rounded-lg border border-border bg-black/90 p-2 ml-9">
+                              <div className="mb-1.5 flex items-center justify-between text-[11px] text-muted">
+                                <span className="font-bold text-success flex items-center gap-1">
+                                  <CheckCircle2 className="h-3.5 w-3.5" /> Playing Uploaded Video
+                                </span>
+                                <span className="text-[10px]">{lesson.title}</span>
+                              </div>
+                              <video
+                                controls
+                                controlsList="nodownload"
+                                preload="metadata"
+                                src={videoUrl}
+                                className="w-full max-h-[260px] rounded object-contain bg-black"
+                              >
+                                Your browser does not support video playback.
+                              </video>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                     )}
                   </div>
 
@@ -579,7 +665,7 @@ export default function ManageLessonsPage() {
               ? 'Create your first course to start building your curriculum.'
               : 'Try a different filter or create a new course.'}
           </p>
-          <Link to="/mentor/upload" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-[5px] font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
+          <Link to="/mentor/upload?new=1" className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-primary text-white rounded-[5px] font-bold text-sm shadow-sm hover:bg-primary-hover transition-all">
             <Plus className="h-4 w-4" /> Create Course
           </Link>
         </div>

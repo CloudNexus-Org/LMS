@@ -192,7 +192,7 @@ export default function AddMentorPage() {
             inputMode="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="mentor@cloudnexus.com"
+            placeholder="mentor@realm.learn"
             required
             error={errors.email}
             delay={0.12}

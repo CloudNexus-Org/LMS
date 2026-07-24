@@ -4,11 +4,11 @@ import App from "./App.jsx";
 import { ThemeProvider } from "@/app/providers/ThemeProvider.jsx";
 import { initTelemetry } from "@/lib/posthog";
 
-// Initialize PostHog before rendering
-initTelemetry();
-
 createRoot(document.getElementById("root")).render(
   <ThemeProvider>
     <App />
   </ThemeProvider>
 );
+
+// Never block first paint on analytics
+initTelemetry();

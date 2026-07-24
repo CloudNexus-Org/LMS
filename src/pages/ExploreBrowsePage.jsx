@@ -61,7 +61,7 @@ function ExploreHub({ type }) {
               {label}
             </h1>
             <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
-              Browse topics curated by Cloud Nexus mentors. Select a path to see matching courses and learning tracks.
+              Browse topics curated by Realm mentors. Select a path to see matching courses and learning tracks.
             </p>
           </motion.div>
 
@@ -222,7 +222,7 @@ export default function ExploreBrowsePage() {
   }
 
   if (type === 'degrees') {
-    return <Navigate to="/tracks" replace />;
+    return <Navigate to="/courses" replace />;
   }
 
   if (!slug) {

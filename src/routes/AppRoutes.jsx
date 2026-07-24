@@ -11,15 +11,12 @@ import {
 } from "@/protectedroutes";
 
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
-const DemoPage = lazy(() => import("@/pages/DemoPage"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
 const SignupPage = lazy(() => import("@/pages/SignupPage"));
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPasswordPage"));
 const VerifyOtpPage = lazy(() => import("@/pages/OtpVerificationPage"));
 const MentorDetailPage = lazy(() => import("@/pages/MentorDetailPage"));
 const MentorsListPage = lazy(() => import("@/pages/MentorsListPage"));
-const TrackDetailPage = lazy(() => import("@/pages/TrackDetailPage"));
-const TracksListPage = lazy(() => import("@/pages/TracksListPage"));
 const CoursesListPage = lazy(() => import("@/pages/CoursesListPage"));
 const ExploreBrowsePage = lazy(() => import("@/pages/ExploreBrowsePage"));
 const CourseDetailPage = lazy(() => import("@/pages/CourseDetailPage"));
@@ -29,11 +26,8 @@ const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 export const publicRoutes = (
   <Route path="/" element={<PublicLayout />}>
     <Route index element={<LandingPage />} />
-    <Route path="demo" element={<DemoPage />} />
     <Route path="mentors" element={<MentorsListPage />} />
     <Route path="mentors/:slug" element={<MentorDetailPage />} />
-    <Route path="tracks" element={<TracksListPage />} />
-    <Route path="tracks/:id" element={<TrackDetailPage />} />
     <Route path="courses" element={<CoursesListPage />} />
     <Route path="courses/:slug" element={<CourseDetailPage />} />
     <Route path="explore/:type" element={<ExploreBrowsePage />} />

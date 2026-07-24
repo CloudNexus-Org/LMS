@@ -54,17 +54,14 @@ export function mapQaThread(q) {
 }
 
 export async function fetchResumeSession(user, token) {
-  const res = await fetch(`${base}/api/learning/sessions/resume`, {
-    headers: authHeaders(user, token),
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    const err = new Error(text || `Request failed (${res.status})`);
-    err.status = res.status;
+  // Use getJson so the timeout wrapper and error handling apply consistently.
+  // A 404 just means no active session — return null instead of throwing.
+  try {
+    return await getJson(`${base}/api/learning/sessions/resume`, authHeaders(user, token));
+  } catch (err) {
+    if (err?.status === 404) return null;
     throw err;
   }
-  return res.json();
 }
 
 export async function saveLearningSession(user, token, payload) {

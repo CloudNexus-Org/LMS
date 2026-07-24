@@ -47,6 +47,9 @@ export function mapLesson(n) {
     summary: n.summary,
     free: n.free ?? n.previewFree,
     previewFree: n.previewFree,
+    quiz: n.quiz || null,
+    hasQuiz: n.hasQuiz ?? !!(n.quiz?.questions?.length),
+    uploadInProgress: !!n.uploadInProgress,
   };
 }
 
@@ -118,6 +121,14 @@ export async function fetchTrackLessons(trackId) {
 export async function fetchCatalogCourseLessons(catalogCourseId) {
   const list = await getJson(`${base}/api/content/catalog-courses/${catalogCourseId}/lessons`);
   return (Array.isArray(list) ? list : []).map(mapLesson);
+}
+
+export async function fetchCatalogCourseCurriculum(catalogCourseId) {
+  const list = await getJson(`${base}/api/content/catalog-courses/${catalogCourseId}/curriculum`);
+  return (Array.isArray(list) ? list : []).map(mod => ({
+    ...mod,
+    lessons: (mod.lessons || []).map(mapLesson)
+  }));
 }
 
 export async function fetchLesson(lessonId) {

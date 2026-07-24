@@ -1,7 +1,6 @@
 /** Central route path constants */
 export const ROUTES = {
   home: "/",
-  demo: "/demo",
   login: "/login",
   signup: "/signup",
   forgotPassword: "/forgot-password",
@@ -9,7 +8,6 @@ export const ROUTES = {
 
   courses: "/courses",
   cart: "/cart",
-  tracks: "/tracks",
   mentors: "/mentors",
 
   student: {
@@ -36,7 +34,6 @@ export const ROUTES = {
     dashboard: "/mentor/dashboard",
     upload: "/mentor/upload",
     lessons: "/mentor/lessons",
-    quizzes: "/mentor/quizzes",
     analytics: "/mentor/analytics",
     students: "/mentor/students",
     notifications: "/mentor/notifications",

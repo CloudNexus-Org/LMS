@@ -4,11 +4,8 @@ import Footer from './Footer';
 
 export default function PublicLayout() {
   const location = useLocation();
-  
-  // Hide footer on specific pages
-  const isTrackDetailPage = location.pathname.match(/^\/tracks\/[^/]+$/);
   const isMentorDetailPage = location.pathname.match(/^\/mentors\/[^/]+$/);
-  const hideFooter = isTrackDetailPage || isMentorDetailPage;
+  const hideFooter = Boolean(isMentorDetailPage);
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">

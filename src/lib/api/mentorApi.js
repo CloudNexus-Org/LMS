@@ -43,6 +43,19 @@ export async function fetchMyMentorStudents(user, token) {
   return getJson(`${base}/api/mentors/me/students`, authHeaders(user, token));
 }
 
+/** Map of catalogCourseId → enrolled student count for the logged-in mentor. */
+export async function fetchMentorStudentCountsByCourse(user, token) {
+  const data = await getJson(`${base}/api/mentors/me/student-counts`, authHeaders(user, token));
+  const map = {};
+  if (data && typeof data === 'object') {
+    Object.entries(data).forEach(([courseId, count]) => {
+      map[String(courseId)] = Number(count) || 0;
+      map[Number(courseId)] = Number(count) || 0;
+    });
+  }
+  return map;
+}
+
 export async function updateMentorProfile(body, userId = DEV_USER.mentorId) {
   return mapMentor(
     await putJson(`${base}/api/mentors/me/profile`, body, { 'X-User-Id': userId })

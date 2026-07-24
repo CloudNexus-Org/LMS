@@ -132,7 +132,7 @@ function VideoFrame({ src, videoRef, onReady }) {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="none"
           aria-label="How it works walkthrough"
           onLoadedData={() => {
             setReady(true);
@@ -359,7 +359,7 @@ export default function HowItWorks() {
 
               {/* Screen */}
               <div className="relative aspect-video overflow-hidden rounded-lg bg-elevated">
-                <VideoFrame src={VIDEO_SRC} videoRef={videoRef} />
+                <VideoFrame src={isInView ? VIDEO_SRC : undefined} videoRef={videoRef} />
 
                 {/* Subtle screen glare */}
                 <div

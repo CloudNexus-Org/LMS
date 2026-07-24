@@ -213,29 +213,122 @@ export function buildGeoFromUsers(users = []) {
     }));
 }
 
-function mapTopCourses(courseReport = [], approvals = [], titleMap = {}) {
+/** Count successful course purchases from admin financial transactions. */
+function buildPurchaseStats(transactions = []) {
+  const counts = {};
+  const revenue = {};
+  (transactions || []).forEach((tx) => {
+    if ((tx.type || '').toLowerCase() !== 'course sale') return;
+    const key = String(tx.course || '').trim().toLowerCase();
+    if (!key) return;
+    counts[key] = (counts[key] || 0) + 1;
+    revenue[key] = (revenue[key] || 0) + safeNumber(tx.amount, 0);
+  });
+  return { counts, revenue };
+}
+
+function parseEnrolledLabel(enrolled) {
+  if (enrolled == null || enrolled === '') return 0;
+  if (typeof enrolled === 'number') return Number.isFinite(enrolled) ? Math.max(0, Math.round(enrolled)) : 0;
+  const s = String(enrolled).trim().toLowerCase().replace(/,/g, '');
+  if (!s) return 0;
+  if (s.endsWith('m')) {
+    const n = parseFloat(s.slice(0, -1));
+    return Number.isFinite(n) ? Math.round(n * 1_000_000) : 0;
+  }
+  if (s.endsWith('k')) {
+    const n = parseFloat(s.slice(0, -1));
+    return Number.isFinite(n) ? Math.round(n * 1_000) : 0;
+  }
+  const n = parseInt(s, 10);
+  return Number.isFinite(n) ? Math.max(0, n) : 0;
+}
+
+function resolveStudentCount(course, purchaseCount = 0) {
+  const fromEnrollmentField = safeNumber(
+    course.enrollmentCount ?? course.enrollments ?? course.students,
+    0
+  );
+  const fromLabel = parseEnrolledLabel(course.enrolled);
+  // Real purchases / enrollments — never fall back to lesson counts
+  return Math.max(fromEnrollmentField, fromLabel, purchaseCount);
+}
+
+function mapTopCourses(
+  courseReport = [],
+  approvals = [],
+  titleMap = {},
+  catalogCourses = [],
+  transactions = []
+) {
+  const purchaseStats = buildPurchaseStats(transactions);
+
   if (courseReport.length) {
-    return courseReport.slice(0, 5).map((course) => ({
-      name: resolveCourseName(course, titleMap),
-      mentor: resolveCourseMentor(course, titleMap),
-      students: safeNumber(course.enrollments ?? course.students, 0),
-      rating: safeNumber(course.avgRating ?? course.rating, 0),
-      revenue: `$${safeNumber(course.revenue ?? course.enrollments * 90, 0).toLocaleString()}`,
-      trend:
-        safeNumber(course.completions, 0) >= safeNumber(course.enrollments, 0) / 2
-          ? 'up'
-          : 'down',
-    }));
+    return courseReport.slice(0, 5).map((course) => {
+      const name = resolveCourseName(course, titleMap);
+      const purchaseCount = purchaseStats.counts[name.toLowerCase()] || 0;
+      const students = resolveStudentCount(course, purchaseCount);
+      const saleRevenue = purchaseStats.revenue[name.toLowerCase()] || 0;
+      return {
+        name,
+        mentor: resolveCourseMentor(course, titleMap),
+        students,
+        rating: safeNumber(course.avgRating ?? course.rating, 0),
+        revenue:
+          saleRevenue > 0
+            ? `$${saleRevenue.toLocaleString()}`
+            : students > 0
+              ? `$${safeNumber(course.revenue ?? students * 90, 0).toLocaleString()}`
+              : '—',
+        trend:
+          safeNumber(course.completions, 0) >= students / 2 || students === 0
+            ? 'up'
+            : 'down',
+      };
+    });
   }
 
-  return (approvals || []).slice(0, 5).map((course) => ({
-    name: course.title || course.courseId,
-    mentor: course.mentor || '—',
-    students: safeNumber(course.lessons, 0),
-    rating: safeNumber(course.previewRating, 0),
-    revenue: '—',
-    trend: 'up',
-  }));
+  const mentorCourses = filterMentorCatalogCourses(catalogCourses);
+  if (mentorCourses.length) {
+    return [...mentorCourses]
+      .map((course) => {
+        const name = course.title || course.name || `Course #${course.id}`;
+        const purchaseCount = purchaseStats.counts[name.toLowerCase()] || 0;
+        const students = resolveStudentCount(course, purchaseCount);
+        const saleRevenue = purchaseStats.revenue[name.toLowerCase()] || 0;
+        return {
+          name,
+          mentor: course.professor || course.mentorName || '—',
+          students,
+          rating: safeNumber(course.rating, 0),
+          revenue:
+            saleRevenue > 0
+              ? `$${saleRevenue.toLocaleString()}`
+              : students > 0 && safeNumber(course.price, 0) > 0
+                ? `$${(students * safeNumber(course.price, 0)).toLocaleString()}`
+                : '—',
+          trend: 'up',
+        };
+      })
+      .sort((a, b) => b.students - a.students || a.name.localeCompare(b.name))
+      .slice(0, 5);
+  }
+
+  return (approvals || []).slice(0, 5).map((course) => {
+    const name = course.title || course.courseId || 'Course';
+    const purchaseCount = purchaseStats.counts[String(name).toLowerCase()] || 0;
+    return {
+      name,
+      mentor: course.mentor || '—',
+      students: purchaseCount,
+      rating: safeNumber(course.previewRating, 0),
+      revenue:
+        purchaseCount > 0 && purchaseStats.revenue[String(name).toLowerCase()]
+          ? `$${purchaseStats.revenue[String(name).toLowerCase()].toLocaleString()}`
+          : '—',
+      trend: 'up',
+    };
+  });
 }
 
 export function buildAdminActionItems({ pendingApprovals = 0, financialSummary = null }) {
@@ -336,7 +429,13 @@ export function buildAdminDashboardSnapshot({
     revenueData,
     systemHealth: analytics?.systemHealth || [],
     newUsersToday,
-    topCourses: mapTopCourses(analytics?.topCourses, approvals, titleMap),
+    topCourses: mapTopCourses(
+      analytics?.topCourses,
+      approvals,
+      titleMap,
+      catalogCourses,
+      transactions
+    ),
     actionItems: buildAdminActionItems({ pendingApprovals, financialSummary }),
     totalUsers,
     totalMentors,
@@ -349,7 +448,7 @@ export function buildAdminReportsSnapshot({
   revenueReport = [],
   courseReport = [],
   mentors = [],
-  approvals = [],
+  _approvals = [],
   allUsers = [],
   catalogCourses = [],
 } = {}) {

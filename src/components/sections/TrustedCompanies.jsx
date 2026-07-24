@@ -1,21 +1,21 @@
 import useIsDarkTheme from '@/hooks/useIsDarkTheme';
 
 // Logos that look the same in both themes
-import google from '@/assets/company-logo/google.png';
-import ibm from '@/assets/company-logo/ibm.png';
-import microsoft from '@/assets/company-logo/microsoft.png';
-import adobe from '@/assets/company-logo/adobe-removebg-preview.png';
-import netflix from '@/assets/company-logo/netflix.png';
+import google from '@/assets/company-logo/google.webp';
+import ibm from '@/assets/company-logo/ibm.webp';
+import microsoft from '@/assets/company-logo/microsoft.webp';
+import adobe from '@/assets/company-logo/adobe-removebg-preview.webp';
+import netflix from '@/assets/company-logo/netflix.webp';
 
 // Logos that need a different version per theme
-import jpmorganBlack from '@/assets/company-logo/jpmorgan-black.png';
-import jpmorganWhite from '@/assets/company-logo/jpmorgan-white.png';
-import amazonBlack from '@/assets/company-logo/amazon-black.png';
-import amazonOrange from '@/assets/company-logo/amazon-orange.png';
-import toyotaBlack from '@/assets/company-logo/toyota-black.png';
-import toyotaWhite from '@/assets/company-logo/toyota-white-removebg-preview.png';
-import metaLight from '@/assets/company-logo/meta-black.png';
-import metaDark from '@/assets/company-logo/meta.png';
+import jpmorganBlack from '@/assets/company-logo/jpmorgan-black.webp';
+import jpmorganWhite from '@/assets/company-logo/jpmorgan-white.webp';
+import amazonBlack from '@/assets/company-logo/amazon-black.webp';
+import amazonOrange from '@/assets/company-logo/amazon-orange.webp';
+import toyotaBlack from '@/assets/company-logo/toyota-black.webp';
+import toyotaWhite from '@/assets/company-logo/toyota-white-removebg-preview.webp';
+import metaLight from '@/assets/company-logo/meta-black.webp';
+import metaDark from '@/assets/company-logo/meta.webp';
 const companies = [
   {
     name: "JPMorgan",
@@ -75,6 +75,10 @@ function LogoCard({ company }) {
       <img
         src={isDarkTheme ? company.darkLogo : company.lightLogo}
         alt={company.name}
+        width={140}
+        height={90}
+        loading="lazy"
+        decoding="async"
         className="h-[90px] w-auto max-w-[140px] object-contain transition duration-300 group-hover/logo:scale-110"
       />
     </div>

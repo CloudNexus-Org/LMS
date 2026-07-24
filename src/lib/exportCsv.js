@@ -64,5 +64,5 @@ export function downloadMultiSectionCsv(filename, sections) {
 
 export function csvFilename(prefix) {
   const date = new Date().toISOString().slice(0, 10);
-  return `cloud-nexus-${prefix}-${date}`;
+  return `realm-${prefix}-${date}`;
 }

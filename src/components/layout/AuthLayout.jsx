@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import useIsDarkTheme from "@/hooks/useIsDarkTheme";
-import HeroLight from "@/assets/hero-section/custom_light_bg.png";
-import HeroDark from "@/assets/hero-section/custom_dark_bg.png";
+import HeroLight from "@/assets/hero-section/custom_light_bg.webp";
+import HeroDark from "@/assets/hero-section/custom_dark_bg.webp";
 
 export default function AuthLayout() {
   const isDarkTheme = useIsDarkTheme();
@@ -14,6 +14,8 @@ export default function AuthLayout() {
         <img
           src={heroBackground}
           alt=""
+          decoding="async"
+          fetchPriority="low"
           className="h-full w-full object-cover object-center transition-opacity duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-bg/55 via-bg/75 to-bg/95 dark:from-transparent dark:via-bg/5 dark:to-bg/25" />

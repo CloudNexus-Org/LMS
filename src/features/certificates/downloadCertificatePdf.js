@@ -101,7 +101,7 @@ function saveTextPdfFallback(certEl, filename) {
 
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(20);
-  pdf.text("Cloud Nexus Academy", centerX, 35, { align: "center" });
+  pdf.text("Realm Academy", centerX, 35, { align: "center" });
 
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(12);

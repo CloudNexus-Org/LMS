@@ -80,7 +80,7 @@ export function OverviewPane({ lesson, mentor }) {
             <User size={18} />
           </span>
           <div>
-            <p className="text-sm font-bold text-text">Cloud Nexus mentor</p>
+            <p className="text-sm font-bold text-text">Realm mentor</p>
             <p className="text-xs text-muted">Senior industry engineer</p>
           </div>
         </div>
@@ -109,7 +109,7 @@ export const NotesPane = memo(function NotesPane({ trackId, lessonId }) {
         className="learn-notes-input"
       />
       <p className="learn-notes-hint">
-        Notes are saved locally in this browser. Sync across devices with Cloud Nexus Pro.
+        Notes are saved locally in this browser. Sync across devices with Realm Pro.
       </p>
     </motion.div>
   );

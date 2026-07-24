@@ -64,8 +64,8 @@ export async function updateAdminSettings(user, token, payload) {
 export function mapSettingsToFrontend(settings) {
   const commissionPct = settings['platform.commission_pct'];
   return {
-    platformName: settings['platform.name'] || 'Cloud Nexus',
-    supportEmail: settings['platform.support_email'] || 'support@cloudnexus.io',
+    platformName: settings['platform.name'] || 'Realm',
+    supportEmail: settings['platform.support_email'] || 'support@realm.learn',
     commission: commissionPct != null ? Math.round(parseFloat(commissionPct) * 100) : 30,
     allowSignups: settings['platform.allow_signups'] !== 'false',
     maintenanceMode: settings['platform.maintenance_mode'] === 'true',

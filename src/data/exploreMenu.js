@@ -1,5 +1,5 @@
 /**
- * Explore navigation — trimmed to Cloud Nexus course & track catalog.
+ * Explore navigation — trimmed to Realm course & track catalog.
  */
 
 export const EXPLORE_TYPES = {
@@ -45,10 +45,10 @@ export const EXPLORE_CERTIFICATES = [
 ];
 
 export const EXPLORE_DEGREES = [
-  { slug: 'learning-paths', label: 'Career Learning Paths', to: '/tracks' },
-  { slug: 'cloud-track', label: 'Cloud Engineer Track', to: '/tracks/cloud' },
-  { slug: 'ai-track', label: 'AI Engineer Track', to: '/tracks/ai' },
-  { slug: 'fullstack-track', label: 'Full Stack Track', to: '/tracks/fullstack' },
+  { slug: 'learning-paths', label: 'Career Learning Paths', to: '/courses' },
+  { slug: 'cloud-track', label: 'Cloud Engineer Courses', to: '/courses' },
+  { slug: 'ai-track', label: 'AI Engineer Courses', to: '/courses' },
+  { slug: 'fullstack-track', label: 'Full Stack Courses', to: '/courses' },
 ];
 
 export const EXPLORE_CERTIFICATIONS = [
@@ -82,7 +82,7 @@ export const EXPLORE_SECTION_LABELS = {
 };
 
 export function explorePath(type, slug) {
-  if (type === 'degrees') return slug ? `/tracks/${slug}` : '/tracks';
+  if (type === 'degrees') return '/courses';
   if (slug) return `/explore/${type}/${slug}`;
   return `/explore/${type}`;
 }

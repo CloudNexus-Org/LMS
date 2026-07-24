@@ -146,7 +146,7 @@ export default function LessonPlayerPage() {
     return track?.name || "My Course";
   }, [staticTrack, lessons, track]);
 
-  const backUrl = staticTrack ? `/tracks/${track.id}` : "/student/courses";
+  const backUrl = "/student/courses";
 
   const progressTotal = apiLessonCount(apiLessons) || lessons.length;
 
@@ -182,10 +182,15 @@ export default function LessonPlayerPage() {
 
   const {
     completedMap: completed,
+    quizPassedMap,
     doneCount,
     progressPct,
     toggleLessonComplete,
     markLessonComplete,
+    markQuizPassed,
+    isLessonUnlocked,
+    getLessonStatus,
+    lessonHasQuiz,
     trackComplete,
   } = useCourseProgress({ trackId, lessons, progressTotal });
 
@@ -246,6 +251,7 @@ export default function LessonPlayerPage() {
   const onToggleComplete = () => toggleLessonComplete(displayLesson.id);
 
   const onPickLesson = (l) => {
+    if (!isLessonUnlocked(l)) return;
     setDrawerOpen(false);
     navigate(`/learn/${trackId}/${l.id}`, { replace: false });
   };
@@ -255,8 +261,8 @@ export default function LessonPlayerPage() {
     setActiveTab("quiz");
   };
 
-  const onQuizPassed = () => {
-    markLessonComplete(displayLesson.id);
+  const onQuizPassed = (attemptPayload) => {
+    markQuizPassed(displayLesson.id, attemptPayload);
   };
 
   const onClaimCertificate = async () => {
@@ -281,7 +287,11 @@ export default function LessonPlayerPage() {
       );
     markLessonComplete(displayLesson.id);
     if (trackComplete || isLastRequired) return;
-    if (next) onPickLesson(next);
+    if (lessonHasQuiz(displayLesson) && !quizPassedMap[displayLesson.id]) {
+      setActiveTab("quiz");
+      return;
+    }
+    if (next && isLessonUnlocked(next)) onPickLesson(next);
   };
 
   return (
@@ -555,7 +565,13 @@ export default function LessonPlayerPage() {
                     className="learn-nav-card learn-nav-card-next"
                   >
                     <div className="min-w-0 text-right">
-                      <p className="learn-nav-label learn-nav-label-primary">Up next</p>
+                      <p className="learn-nav-label learn-nav-label-primary">
+                        {lessonHasQuiz(displayLesson) && !quizPassedMap[displayLesson.id]
+                          ? "Quiz required"
+                          : isLessonUnlocked(next)
+                            ? "Up next"
+                            : "Locked"}
+                      </p>
                       <p className="learn-nav-title">{next.title}</p>
                     </div>
                     <ChevronRight size={16} className="shrink-0 text-primary" />
@@ -573,6 +589,8 @@ export default function LessonPlayerPage() {
                 lessons={lessons}
                 currentId={displayLesson.id}
                 completedMap={completed}
+                quizPassedMap={quizPassedMap}
+                getLessonStatus={getLessonStatus}
                 onPick={onPickLesson}
               />
               <div className="learn-sidebar-footer">
@@ -634,6 +652,8 @@ export default function LessonPlayerPage() {
                 lessons={lessons}
                 currentId={displayLesson.id}
                 completedMap={completed}
+                quizPassedMap={quizPassedMap}
+                getLessonStatus={getLessonStatus}
                 onPick={onPickLesson}
                 onClose={() => setDrawerOpen(false)}
               />

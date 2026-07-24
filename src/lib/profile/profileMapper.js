@@ -69,7 +69,6 @@ export function mapApiProfileToView(apiProfile, authUser) {
 
 export function buildProfileStats(dashboard, enrollments = [], certificates = []) {
   const activeCourses = enrollments.filter((c) => c.status !== 'completed').length;
-  const completedCourses = enrollments.filter((c) => c.status === 'completed').length;
   const avgProgress = enrollments.length
     ? Math.round(enrollments.reduce((sum, c) => sum + (c.progress || 0), 0) / enrollments.length)
     : 0;

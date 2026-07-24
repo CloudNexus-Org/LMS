@@ -2,9 +2,9 @@
     @import "./styles/theme.css";
     @variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
     @theme inline {
-        --font-sans: "Russo One", sans-serif;
-        --font-display: "Russo One", sans-serif;
-        --font-mono: "Russo One", sans-serif;
+        --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+        --font-display: 'Sora', 'Inter', system-ui, sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         --color-page: var(--page-bg);
         --color-bg: var(--bg);
         --color-surface: var(--surface);
@@ -55,7 +55,7 @@
         transition: background-color 200ms ease, color 200ms ease;
     }
 
-    /* Student dashboard — datalab / Cloud Nexus alignment */
+    /* Student dashboard — datalab / Realm alignment */
     .dashboard-page {
         width: 100%;
         font-size: 14px;
@@ -5206,6 +5206,48 @@
         font-weight: 500;
         color: var(--text);
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .upload-price-field {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        overflow: hidden;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .upload-price-field:focus-within {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+    }
+
+    .upload-price-currency {
+        flex-shrink: 0;
+        padding: 0.65rem 0 0.65rem 0.85rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--muted);
+        line-height: 1;
+        user-select: none;
+    }
+
+    .upload-price-input.upload-input {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+        padding-left: 0.4rem;
+        padding-right: 0.85rem;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .upload-price-input.upload-input:focus {
+        border: 0;
+        box-shadow: none;
     }
 
     .upload-input:focus {

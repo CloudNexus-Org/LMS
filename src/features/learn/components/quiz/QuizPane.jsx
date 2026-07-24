@@ -15,8 +15,31 @@ import {
   saveQuizAttempt,
   scoreQuiz,
 } from "@/data/quizzes";
+import { submitQuizAttempt } from "@/lib/api/enrollmentApi";
+import useAuthStore from "@/store/useAuthStore";
 
 const EASE = [0.16, 1, 0.3, 1];
+
+function quizFromLessonPayload(lesson, trackId) {
+  if (!lesson?.quiz?.questions?.length) return null;
+  return {
+    id: `lesson-${lesson.id}`,
+    lessonId: lesson.id,
+    trackId,
+    title: `${lesson.title} Quiz`,
+    passingScore: lesson.quiz.passingScore ?? 70,
+    questions: lesson.quiz.questions.map((q, i) => ({
+      id: q.id || `q-${i}`,
+      // Mentor editor stores `prompt`; practice quizzes use `question`.
+      question: q.question || q.prompt || "",
+      prompt: q.prompt || q.question || "",
+      options: q.options,
+      correctIndex: q.correctIndex,
+      topic: q.topic,
+      explanation: q.explanation,
+    })),
+  };
+}
 
 export default function QuizPane({
   trackId,
@@ -26,7 +49,13 @@ export default function QuizPane({
   onPassed,
   onGoToQuizLesson,
 }) {
-  const quiz = useMemo(() => getQuizForLesson(lessonId, trackId), [lessonId, trackId]);
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const quiz = useMemo(() => {
+    const fromLesson = quizFromLessonPayload(lesson, trackId);
+    if (fromLesson) return fromLesson;
+    return getQuizForLesson(lessonId, trackId);
+  }, [lesson, lessonId, trackId]);
   const best = quiz ? getBestAttempt(quiz.id) : null;
 
   const [phase, setPhase] = useState("intro");
@@ -58,7 +87,7 @@ export default function QuizPane({
     setAnswers((prev) => ({ ...prev, [questionId]: index }));
   };
 
-  const submitQuiz = () => {
+  const submitQuiz = async () => {
     const scored = scoreQuiz(quiz, answers);
     setResult(scored);
     setPhase("results");
@@ -70,7 +99,29 @@ export default function QuizPane({
       passingScore: quiz.passingScore,
       ...scored,
     });
-    if (scored.passed && onPassed) onPassed();
+
+    if (user?.id && token) {
+      try {
+        await submitQuizAttempt(user, token, Number(targetLessonId), {
+          trackId,
+          score: scored.correct ?? scored.score ?? 0,
+          totalQuestions: scored.total ?? quiz.questions.length,
+          passingScore: quiz.passingScore,
+          passed: scored.passed,
+        });
+      } catch {
+        /* local attempt still saved */
+      }
+    }
+
+    if (scored.passed && onPassed) {
+      onPassed({
+        score: scored.correct ?? scored.score ?? 0,
+        total: scored.total ?? quiz.questions.length,
+        passingScore: quiz.passingScore,
+        answers,
+      });
+    }
   };
 
   const unanswered = quiz.questions.filter((q) => answers[q.id] === undefined).length;
@@ -162,7 +213,7 @@ export default function QuizPane({
               />
             </div>
 
-            <h4 className="learn-quiz-question">{q.question}</h4>
+            <h4 className="learn-quiz-question">{q.question || q.prompt}</h4>
 
             <div className="learn-quiz-options">
               {q.options.map((opt, i) => {

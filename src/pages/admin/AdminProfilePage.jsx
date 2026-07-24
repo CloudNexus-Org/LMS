@@ -29,7 +29,7 @@ import {
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import ProfileHeroBanner from "@/components/profile/ProfileHeroBanner";
 import useAuthStore from "@/store/useAuthStore";
-import { fetchProfile, fetchUsers } from "@/lib/api/userApi";
+import { fetchProfile, fetchUsers, updateProfile } from "@/lib/api/userApi";
 import { countJoinedThisMonth } from "@/lib/admin/adminMappers";
 import { fetchCourseApprovals, fetchFinancialSummary } from "@/lib/api/adminApi";
 
@@ -83,23 +83,27 @@ const DEFAULT_PROFILE = {
   social: { github: "", linkedin: "", portfolio: "" },
 };
 
-function buildProfileFromApi(apiUser) {
-  if (!apiUser) return DEFAULT_PROFILE;
-  const fullName = apiUser.fullName || apiUser.name || "Admin User";
-  const parts = fullName.trim().split(/\s+/);
+function buildProfileFromApi(apiUser, authUser) {
+  const source = apiUser || authUser;
+  if (!source) return DEFAULT_PROFILE;
+  const fullName = source.fullName || source.name || "";
+  const parts = String(fullName).trim().split(/\s+/).filter(Boolean);
+  const usernameRaw = source.username || authUser?.username || "";
   return {
     ...DEFAULT_PROFILE,
-    firstName: parts[0] || "Admin",
-    lastName: parts.slice(1).join(" ") || "User",
-    username: apiUser.username ? `@${apiUser.username.replace(/^@/, "")}` : DEFAULT_PROFILE.username,
-    email: apiUser.email || "",
-    phone: apiUser.phone || "",
-    headline: apiUser.professionalRole || DEFAULT_PROFILE.headline,
-    bio: apiUser.bio || "",
-    location: apiUser.location || "",
-    memberSince: apiUser.joined || "—",
-    lastActive: apiUser.lastActive || "—",
-    avatar: apiUser.avatar || "",
+    firstName: parts[0] || DEFAULT_PROFILE.firstName,
+    lastName: parts.slice(1).join(" ") || (parts.length ? "" : DEFAULT_PROFILE.lastName),
+    username: usernameRaw
+      ? `@${String(usernameRaw).replace(/^@/, "")}`
+      : DEFAULT_PROFILE.username,
+    email: source.email || authUser?.email || "",
+    phone: source.phone || "",
+    headline: source.professionalRole || DEFAULT_PROFILE.headline,
+    bio: source.bio || "",
+    location: source.location || "",
+    memberSince: source.joined || apiUser?.joined || "—",
+    lastActive: source.lastActive || apiUser?.lastActive || "—",
+    avatar: source.avatar || "",
     role: "Administrator",
   };
 }
@@ -284,10 +288,12 @@ function PreferencesSection({ profile }) {
 
 export default function AdminProfilePage() {
   const heroRef = useRef(null);
-  const { user: authUser, token } = useAuthStore();
+  const { user: authUser, token, updateUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSaved, setIsSaved] = useState(false);
-  const [profile, setProfile] = useState(DEFAULT_PROFILE);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [profile, setProfile] = useState(() => buildProfileFromApi(null, authUser));
   const [stats, setStats] = useState([]);
   const [pendingApprovals, setPendingApprovals] = useState([]);
 
@@ -299,7 +305,7 @@ export default function AdminProfilePage() {
       fetchCourseApprovals(authUser, token).catch(() => []),
       fetchFinancialSummary(authUser, token).catch(() => null),
     ]).then(([apiProfile, usersPage, approvals, financials]) => {
-      setProfile(buildProfileFromApi(apiProfile));
+      setProfile(buildProfileFromApi(apiProfile, authUser));
       const users = usersPage.content || [];
       const mentors = users.filter((u) => (u.role || "").toLowerCase() === "mentor");
       const pending = (approvals || []).filter((a) => (a.status || "").toLowerCase() === "pending");
@@ -320,12 +326,84 @@ export default function AdminProfilePage() {
         { label: "Active mentors", value: mentors.length, suffix: "", sub: "Teaching roles", icon: User, accent: "profile-kpi-accent" },
       ]);
     });
-  }, [authUser, token]);
+  }, [authUser?.id, token]);
 
-  const handleQuickSave = (e) => {
+  const updateField = (key, value) => {
+    setProfile((prev) => ({ ...prev, [key]: value }));
+    setSaveError("");
+  };
+
+  const handleQuickSave = async (e) => {
     e.preventDefault();
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
+    const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+    const username = String(profile.username || "").replace(/^@/, "").trim();
+
+    if (!fullName) {
+      setSaveError("First and last name are required.");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveError("");
+
+    const nextProfile = {
+      ...profile,
+      firstName: profile.firstName.trim(),
+      lastName: profile.lastName.trim(),
+      username: username ? `@${username}` : profile.username,
+      headline: profile.headline.trim() || DEFAULT_PROFILE.headline,
+      phone: profile.phone.trim(),
+      location: profile.location.trim(),
+      bio: profile.bio.trim(),
+      email: profile.email.trim(),
+      department: profile.department.trim() || DEFAULT_PROFILE.department,
+    };
+
+    // Optimistic UI — reverted if API fails
+    setProfile(nextProfile);
+
+    try {
+      if (!authUser?.id || !token) {
+        throw new Error("Not signed in");
+      }
+      const updated = await updateProfile(authUser, token, {
+        fullName,
+        phone: nextProfile.phone,
+        bio: nextProfile.bio,
+        location: nextProfile.location,
+        username,
+        professionalRole: nextProfile.headline,
+      });
+      if (updated) {
+        setProfile(buildProfileFromApi(updated, { ...authUser, fullName, email: nextProfile.email }));
+      }
+      updateUser({
+        fullName,
+        email: nextProfile.email || authUser.email,
+        username,
+        phone: nextProfile.phone,
+        bio: nextProfile.bio,
+        location: nextProfile.location,
+        professionalRole: nextProfile.headline,
+      });
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 3000);
+    } catch (err) {
+      const message =
+        err?.message && !String(err.message).startsWith("Request failed")
+          ? String(err.message)
+          : "Could not save profile to the database. Please try again.";
+      setSaveError(message);
+      // Reload authoritative profile from API so UI does not look "saved"
+      try {
+        const apiProfile = await fetchProfile(authUser, token);
+        if (apiProfile) setProfile(buildProfileFromApi(apiProfile, authUser));
+      } catch {
+        /* keep form values so user can retry */
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -378,29 +456,51 @@ export default function AdminProfilePage() {
                   <form onSubmit={handleQuickSave} className="mt-4 space-y-4">
                     <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                       {[
-                        { id: "first", label: "First name", value: profile.firstName },
-                        { id: "last", label: "Last name", value: profile.lastName },
-                        { id: "username", label: "Admin username", value: profile.username },
-                        { id: "headline", label: "Title", value: profile.headline },
-                        { id: "phone", label: "Phone", value: profile.phone, type: "tel" },
-                        { id: "department", label: "Department", value: profile.department },
-                        { id: "role", label: "Role", value: profile.role },
-                        { id: "location", label: "Location", value: profile.location },
+                        { id: "firstName", label: "First name", key: "firstName" },
+                        { id: "lastName", label: "Last name", key: "lastName" },
+                        { id: "username", label: "Admin username", key: "username" },
+                        { id: "headline", label: "Title", key: "headline" },
+                        { id: "phone", label: "Phone", key: "phone", type: "tel" },
+                        { id: "department", label: "Department", key: "department" },
+                        { id: "role", label: "Role", key: "role", readOnly: true },
+                        { id: "location", label: "Location", key: "location" },
                       ].map((field, i) => (
                         <motion.div key={field.id} className="profile-field" custom={i} variants={listItem} initial="hidden" animate="visible">
                           <label htmlFor={field.id}>{field.label}</label>
-                          <input id={field.id} type={field.type || "text"} defaultValue={field.value} className="profile-input" />
+                          <input
+                            id={field.id}
+                            type={field.type || "text"}
+                            value={profile[field.key] ?? ""}
+                            readOnly={field.readOnly}
+                            onChange={(e) => updateField(field.key, e.target.value)}
+                            className="profile-input"
+                          />
                         </motion.div>
                       ))}
                     </div>
                     <motion.div className="profile-field" variants={listItem} initial="hidden" animate="visible" custom={8}>
                       <label htmlFor="admin-email">Work email</label>
-                      <input id="admin-email" type="email" defaultValue={profile.email} className="profile-input" />
+                      <input
+                        id="admin-email"
+                        type="email"
+                        value={profile.email}
+                        onChange={(e) => updateField("email", e.target.value)}
+                        className="profile-input"
+                      />
                     </motion.div>
                     <motion.div className="profile-field" variants={listItem} initial="hidden" animate="visible" custom={9}>
                       <label htmlFor="admin-bio">Bio</label>
-                      <textarea id="admin-bio" rows={3} defaultValue={profile.bio} className="profile-input profile-textarea" />
+                      <textarea
+                        id="admin-bio"
+                        rows={3}
+                        value={profile.bio}
+                        onChange={(e) => updateField("bio", e.target.value)}
+                        className="profile-input profile-textarea"
+                      />
                     </motion.div>
+                    {saveError && (
+                      <p className="text-sm text-danger">{saveError}</p>
+                    )}
                     <AnimatePresence>
                       {isSaved && (
                         <motion.div className="profile-save-toast" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
@@ -412,7 +512,15 @@ export default function AdminProfilePage() {
                       <button type="button" className="profile-link-btn" onClick={() => heroRef.current?.openAvatarUpload()}>
                         <UploadCloud className="h-4 w-4" />Upload new photo
                       </button>
-                      <motion.button type="submit" className="profile-btn profile-btn-primary w-full sm:w-auto" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>Save changes</motion.button>
+                      <motion.button
+                        type="submit"
+                        disabled={isSaving}
+                        className="profile-btn profile-btn-primary w-full sm:w-auto"
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        {isSaving ? "Saving…" : "Save changes"}
+                      </motion.button>
                     </div>
                   </form>
                 </Card>

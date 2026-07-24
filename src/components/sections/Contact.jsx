@@ -14,7 +14,7 @@ import SectionShell from "@/app/layouts/SectionShell";
 import SectionHeading from "@/app/layouts/SectionHeading";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
-import photo from "@/assets/Girlimage.png";
+import photo from "@/assets/Girlimage.webp";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -22,14 +22,14 @@ const CONTACT_ITEMS = [
   {
     icon: MapPin,
     title: "Address",
-    text: "Cloud Nexus, Katara Hills (Bhopal)",
+    text: "Realm, Katara Hills (Bhopal)",
     href: null,
   },
   {
     icon: Mail,
     title: "Email",
-    text: "hello@cloudnexus.io",
-    href: "mailto:hello@cloudnexus.io",
+    text: "hello@realm.learn",
+    href: "mailto:hello@realm.learn",
   },
   {
     icon: Phone,
@@ -157,7 +157,7 @@ export default function Contact() {
                     </span>
                   </div>
                   <p className="mt-1 max-w-[200px] text-[11px] text-muted">
-                    Join thousands who trust Cloud Nexus for career growth.
+                    Join thousands who trust Realm for career growth.
                   </p>
                 </div>
                 <img
